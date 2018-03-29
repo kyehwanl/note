@@ -1,0 +1,129 @@
+
+Python Snippet Code Tip
+=======================
+
+
+1. version
+==========
+python import sys; print(sys.version)
+
+
+
+2. subprocess input/output cascading
+====================================
+
+2.1 in bird-bgpsec, keytool.py
+
+    procs = []
+    for args in argses:
+      procs.append(subprocess.Popen((self.args.openssl_binary,) + args,
+                                    stdout = subprocess.PIPE,
+                                    stdin = procs[-1].stdout if procs else subprocess.PIPE))
+                                    # liking procs[0] 's output into the input of procs[1]
+    if "input" in kwargs:
+      procs[0].stdin.write(kwargs["input"])
+    procs[0].stdin.close()
+    output = procs[-1].stdout.read()
+
+ 
+
+2.2 lambda with an ignored variable
+
+ class Message ():
+   Length = {                                           
+       CODE.OPEN:           lambda _:  _ >= 29,  # noqa 
+       CODE.UPDATE:         lambda _:  _ >= 23,  # noqa 
+       CODE.NOTIFICATION:   lambda _:  _ >= 21,  # noqa 
+       CODE.KEEPALIVE:      lambda _:  _ == 19,  # noqa 
+       CODE.ROUTE_REFRESH:  lambda _:  _ == 23,  # noqa 
+   }                                                    
+
+
+ <application code>
+ validator = Message.Length.get(msg, lambda _: _ >=19)
+ if validator(length) :
+    pass
+
+
+
+
+
+3. pdb
+======
+
+3.1 attribute
+     pp dir(object)
+     pp locals()
+     pp globals()
+
+3.2 'whatis' : prints the type of the argument 
+
+
+3.3 setting breakpoint
+    3.3.1 breakpoint with set_trace()
+
+        < in source code>
+        import pdb
+        ...
+        pdb.set_trace()
+        ...
+
+
+    3.3.2 breakpoint with a dynamic condition
+
+        b(reak) ([file:])lineno | function) [, condition]
+
+        (Pdb) <file path>/capabilities.py:136, k == 7                    
+        Breakpoint 2 at <path>/capability/capabilities.py:136 
+
+    3.3.3 using history
+        CTRL+r can be used to search in histories
+
+
+3.4 execute python script in pdb command
+    ! statement
+
+
+3.5 'run' [args...] command
+    same as 'restart', not 'start a program' the way the gdb does
+
+
+3.6 ignore  bpnumber [count]
+    ingore a breakpoint, it can be useful to count the number of loop 
+
+
+3.7 commands [bpnumber]
+    allows to run multiple commands when a breakpoint is hit
+
+    (Pdb) commands 1
+    (com) args
+    (com) p "inside function()"
+    (com) end
+    (Pdb) c  
+    Then, when the bp #1 is hit, the "commands 1" (1 is bp number)
+    will be executed (args, print)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

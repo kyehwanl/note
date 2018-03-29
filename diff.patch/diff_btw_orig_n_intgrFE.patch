@@ -1,0 +1,2455 @@
+--- ./zebra/if_ioctl_solaris.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/if_ioctl_solaris.c	2011-10-06 21:54:38.697364699 -0400
+@@ -351,6 +351,7 @@
+ void
+ interface_list ()
+ {
++	printf(" interface_list in if_ioctl_solaris.c \n");
+   interface_list_ioctl (AF_INET);
+   interface_list_ioctl (AF_INET6);
+   interface_list_ioctl (AF_UNSPEC);
+--- ./zebra/rt_netlink.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/rt_netlink.c	2011-10-06 21:54:39.040368125 -0400
+@@ -1041,7 +1041,6 @@
+ interface_lookup_netlink (void)
+ {
+   int ret;
+-
+   /* Get interface information. */
+   ret = netlink_request (AF_PACKET, RTM_GETLINK, &netlink_cmd);
+   if (ret < 0)
+--- ./zebra/zserv.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/zserv.c	2011-10-06 21:54:39.372457790 -0400
+@@ -53,7 +53,35 @@
+ extern struct zebra_privs_t zserv_privs;
+ 
+ static void zebra_client_close (struct zserv *client);
++// add by jw
++FORCES_PAYLOAD *msg_gen(int vPri, int vType)
++{
++        FORCES_PAYLOAD *send_forces_data = (FORCES_PAYLOAD *)malloc(sizeof(FORCES_PAYLOAD));
++        memset (send_forces_data, 0, sizeof(FORCES_PAYLOAD));
++        send_forces_data->header.message_type = vType;
++        send_forces_data->header.flags.pri = vPri;
++        send_forces_data->header.source_id.TS = 0x00;
++        send_forces_data->header.source_id.sub_id = FE_INDEX;
++        send_forces_data->header.dest_id.TS = 0x01;
++        send_forces_data->header.dest_id.sub_id = 0x00000001;
++             
++        return send_forces_data;
++}
+ 
++int fe_assoc_setup_req(void) 
++{   
++        FORCES_PAYLOAD *send_data;// = (FORCES_PAYLOAD*)malloc(sizeof(FORCES_PAYLOAD));
++        send_data = msg_gen(7, MSG_ASSOCIATION_SETUP);
++//	srand(time(NULL));
++//	send_data->header.source_id.sub_id = rand() % 0x3fffffff;
++
++	printf("[test...] fe_assoc_setup_req function is called...\n");
++        tml_SendMsg(send_data);
++   
++//	free(send_data); 
++        return 1;
++}   
++// end of addtion
+ static int
+ zserv_delayed_close(struct thread *thread)
+ {
+@@ -158,8 +186,14 @@
+   zserv_create_header (s, ZEBRA_INTERFACE_ADD);
+ 
+   /* Interface information. */
++
++  ifp->feid = FE_INDEX;
++
+   stream_put (s, ifp->name, INTERFACE_NAMSIZ);
+-  stream_putl (s, ifp->ifindex);
++//  stream_putl (s, ifp->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, ifp->feid, ifp->ifindex);
++/////////////////////////////////////////////////////////////
+   stream_putc (s, ifp->status);
+   stream_putq (s, ifp->flags);
+   stream_putl (s, ifp->metric);
+@@ -197,7 +231,10 @@
+   
+   /* Interface information. */
+   stream_put (s, ifp->name, INTERFACE_NAMSIZ);
+-  stream_putl (s, ifp->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, ifp->feid, ifp->ifindex);
++/////////////////////////////////////////////////////////////
++//  stream_putl (s, ifp->ifindex);
+   stream_putc (s, ifp->status);
+   stream_putq (s, ifp->flags);
+   stream_putl (s, ifp->metric);
+@@ -257,6 +294,9 @@
+   struct stream *s;
+   struct prefix *p;
+ 
++  printf(" function call zsend interface address \n");
++  printf(" interface name is %s \n", ifp->name);
++  printf(" interface index is %d \n", ifp->ifindex);
+   /* Check this client need interface information. */
+   if (! client->ifinfo)
+     return 0;
+@@ -265,7 +305,11 @@
+   stream_reset (s);
+   
+   zserv_create_header (s, cmd);
+-  stream_putl (s, ifp->ifindex);
++  ifp->feid = FE_INDEX;
++///////////////////////// KT ////////////////////////////////////
++  stream_putfl (s, ifp->feid, ifp->ifindex);
++///////////////////////////////////////////////////////////////
++//  stream_putl (s, ifp->ifindex);
+ 
+   /* Interface address flag. */
+   stream_putc (s, ifc->flags);
+@@ -322,7 +366,10 @@
+ 
+   /* Interface information. */
+   stream_put (s, ifp->name, INTERFACE_NAMSIZ);
+-  stream_putl (s, ifp->ifindex);
++//  stream_putl (s, ifp->ifindex);
++/////////////////////// KT ////////////////////////////////
++  stream_putfl (s, ifp->feid, ifp->ifindex);
++//////////////////////////////////////////////////////////
+   stream_putc (s, ifp->status);
+   stream_putq (s, ifp->flags);
+   stream_putl (s, ifp->metric);
+@@ -444,8 +491,10 @@
+ 
+           /* Interface index. */
+           stream_putc (s, 1);
+-          stream_putl (s, nexthop->ifindex);
+-
++ //         stream_putl (s, nexthop->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, nexthop->feid, nexthop->ifindex);
++/////////////////////////////////////////////////////////////
+           break;
+         }
+     }
+@@ -511,11 +560,17 @@
+ 	      case ZEBRA_NEXTHOP_IPV6_IFINDEX:
+ 	      case ZEBRA_NEXTHOP_IPV6_IFNAME:
+ 		stream_put (s, &nexthop->gate.ipv6, 16);
+-		stream_putl (s, nexthop->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, nexthop->feid, nexthop->ifindex);
++/////////////////////////////////////////////////////////////
++//		stream_putl (s, nexthop->ifindex);
+ 		break;
+ 	      case ZEBRA_NEXTHOP_IFINDEX:
+ 	      case ZEBRA_NEXTHOP_IFNAME:
+-		stream_putl (s, nexthop->ifindex);
++//		stream_putl (s, nexthop->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, nexthop->feid, nexthop->ifindex);
++/////////////////////////////////////////////////////////////
+ 		break;
+ 	      default:
+                 /* do nothing */
+@@ -574,7 +629,10 @@
+ 		break;
+ 	      case ZEBRA_NEXTHOP_IFINDEX:
+ 	      case ZEBRA_NEXTHOP_IFNAME:
+-		stream_putl (s, nexthop->ifindex);
++//		stream_putl (s, nexthop->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, nexthop->feid, nexthop->ifindex);
++/////////////////////////////////////////////////////////////
+ 		break;
+ 	      default:
+                 /* do nothing */
+@@ -632,7 +690,10 @@
+ 		break;
+ 	      case ZEBRA_NEXTHOP_IFINDEX:
+ 	      case ZEBRA_NEXTHOP_IFNAME:
+-		stream_putl (s, nexthop->ifindex);
++//		stream_putl (s, nexthop->ifindex);
++///////////////////////// KT /////////////////////////////////
++  stream_putfl (s, nexthop->feid, nexthop->ifindex);
++/////////////////////////////////////////////////////////////
+ 		break;
+ 	      default:
+                 /* do nothing */
+@@ -697,7 +758,9 @@
+ 
+   for (ALL_LIST_ELEMENTS (iflist, ifnode, ifnnode, ifp))
+     {
++      printf(" interface index number is %d \n", ifp->ifindex);
+       /* Skip pseudo interface. */
++    
+       if (! CHECK_FLAG (ifp->status, ZEBRA_INTERFACE_ACTIVE))
+ 	continue;
+ 
+@@ -772,7 +835,11 @@
+ 	  switch (nexthop_type)
+ 	    {
+ 	    case ZEBRA_NEXTHOP_IFINDEX:
+-	      ifindex = stream_getl (s);
++	    //  ifindex = stream_getl (s);
++//////////////////////////// KT ///////////////////////////////
++	      ifindex = stream_getil (s);
++///////////////////////////////////////////////////////////////
++
+ 	      nexthop_ifindex_add (rib, ifindex);
+ 	      break;
+ 	    case ZEBRA_NEXTHOP_IFNAME:
+@@ -848,7 +915,10 @@
+ 	  switch (nexthop_type)
+ 	    {
+ 	    case ZEBRA_NEXTHOP_IFINDEX:
+-	      ifindex = stream_getl (s);
++	   //   ifindex = stream_getl (s);
++//////////////////////////// KT ////////////////////////////////
++	       ifindex = stream_getil (s);
++////////////////////////////////////////////////////////////////
+ 	      break;
+ 	    case ZEBRA_NEXTHOP_IFNAME:
+ 	      ifname_len = stream_getc (s);
+@@ -947,7 +1017,10 @@
+ 	      stream_get (&nexthop, s, 16);
+ 	      break;
+ 	    case ZEBRA_NEXTHOP_IFINDEX:
+-	      ifindex = stream_getl (s);
++	    //  ifindex = stream_getl (s);
++//////////////////////////// KT ////////////////////////////////
++               ifindex = stream_getil (s);
++////////////////////////////////////////////////////////////////
+ 	      break;
+ 	    }
+ 	}
+@@ -1014,7 +1087,10 @@
+ 	      stream_get (&nexthop, s, 16);
+ 	      break;
+ 	    case ZEBRA_NEXTHOP_IFINDEX:
+-	      ifindex = stream_getl (s);
++	 //     ifindex = stream_getl (s);
++//////////////////////////// KT ////////////////////////////////
++               ifindex = stream_getil (s);
++////////////////////////////////////////////////////////////////
+ 	      break;
+ 	    }
+ 	}
+@@ -1109,6 +1185,7 @@
+ {
+   struct zserv *client;
+ 
++  printf("[test...] zebra_client_create function is called...\n");
+   client = XCALLOC (0, sizeof (struct zserv));
+ 
+   /* Make client input/output buffer. */
+@@ -1137,6 +1214,8 @@
+   uint16_t length, command;
+   uint8_t marker, version;
+ 
++  //printf("[test...] zebra_client_read thread...\n");
++
+   /* Get thread data.  Reset reading thread because I'm running. */
+   sock = THREAD_FD (thread);
+   client = THREAD_ARG (thread);
+@@ -1148,28 +1227,33 @@
+       return -1;
+     }
+ 
++        client->ibuf->endp = 0;
++  
+   /* Read length and command (if we don't have it already). */
+-  if ((already = stream_get_endp(client->ibuf)) < ZEBRA_HEADER_SIZE)
+-    {
++//  if ((already = stream_get_endp(client->ibuf)) < ZEBRA_HEADER_SIZE)
++//   {
+       ssize_t nbyte;
+       if (((nbyte = stream_read_try (client->ibuf, sock,
+ 				     ZEBRA_HEADER_SIZE-already)) == 0) ||
+ 	  (nbyte == -1))
+ 	{
+-	  if (IS_ZEBRA_DEBUG_EVENT)
++/*	  if (IS_ZEBRA_DEBUG_EVENT)
+ 	    zlog_debug ("connection closed socket [%d]", sock);
+ 	  zebra_client_close (client);
+ 	  return -1;
+ 	}
+       if (nbyte != (ssize_t)(ZEBRA_HEADER_SIZE-already))
+ 	{
+-	  /* Try again later. */
++	  // Try again later. 
+ 	  zebra_event (ZEBRA_READ, sock, client);
+ 	  return 0;
+ 	}
+-      already = ZEBRA_HEADER_SIZE;
++//      already = ZEBRA_HEADER_SIZE; */
++//	printf(" zebra read thread restart \n");
++	usleep(1);
++	zebra_event (ZEBRA_READ, sock, client);
++	return 0;
+     }
+-
+   /* Reset to read from the beginning of the incoming packet. */
+   stream_set_getp(client->ibuf, 0);
+ 
+@@ -1178,7 +1262,6 @@
+   marker = stream_getc (client->ibuf);
+   version = stream_getc (client->ibuf);
+   command = stream_getw (client->ibuf);
+-
+   if (marker != ZEBRA_HEADER_MARKER || version != ZSERV_VERSION)
+     {
+       zlog_err("%s: socket %d version mismatch, marker %d, version %d",
+@@ -1202,7 +1285,7 @@
+     }
+ 
+   /* Read rest of data. */
+-  if (already < length)
++/*  if (already < length)
+     {
+       ssize_t nbyte;
+       if (((nbyte = stream_read_try (client->ibuf, sock,
+@@ -1216,12 +1299,12 @@
+ 	}
+       if (nbyte != (ssize_t)(length-already))
+         {
+-	  /* Try again later. */
++//	   Try again later. 
+ 	  zebra_event (ZEBRA_READ, sock, client);
+ 	  return 0;
+ 	}
+     }
+-
++*/
+   length -= ZEBRA_HEADER_SIZE;
+ 
+   /* Debug packet information. */
+@@ -1235,52 +1318,67 @@
+   switch (command) 
+     {
+     case ZEBRA_ROUTER_ID_ADD:
++	printf(" route id add case start \n");
+       zread_router_id_add (client, length);
+       break;
+     case ZEBRA_ROUTER_ID_DELETE:
++	printf(" route id delete case start \n");
+       zread_router_id_delete (client, length);
+       break;
+     case ZEBRA_INTERFACE_ADD:
++	printf(" interface add case start \n");
+       zread_interface_add (client, length);
+       break;
+     case ZEBRA_INTERFACE_DELETE:
++	printf(" interface delete case start \n");
+       zread_interface_delete (client, length);
+       break;
+     case ZEBRA_IPV4_ROUTE_ADD:
++	printf(" ipv4 route add case start \n");
+       zread_ipv4_add (client, length);
+       break;
+     case ZEBRA_IPV4_ROUTE_DELETE:
++	printf(" ipv4 route delete case start \n");
+       zread_ipv4_delete (client, length);
+       break;
+ #ifdef HAVE_IPV6
+     case ZEBRA_IPV6_ROUTE_ADD:
++	printf(" ipv6 route add case start \n");
+       zread_ipv6_add (client, length);
+       break;
+     case ZEBRA_IPV6_ROUTE_DELETE:
++	printf(" ipv6 route case start \n");
+       zread_ipv6_delete (client, length);
+       break;
+ #endif /* HAVE_IPV6 */
+     case ZEBRA_REDISTRIBUTE_ADD:
++	printf(" redistribute add case start \n");
+       zebra_redistribute_add (command, client, length);
+       break;
+     case ZEBRA_REDISTRIBUTE_DELETE:
++	printf(" redistribute delete case start \n");
+       zebra_redistribute_delete (command, client, length);
+       break;
+     case ZEBRA_REDISTRIBUTE_DEFAULT_ADD:
++	printf(" redistfibute default case start \n");
+       zebra_redistribute_default_add (command, client, length);
+       break;
+     case ZEBRA_REDISTRIBUTE_DEFAULT_DELETE:
++	printf(" redistribute default case start \n");
+       zebra_redistribute_default_delete (command, client, length);
+       break;
+     case ZEBRA_IPV4_NEXTHOP_LOOKUP:
++	printf(" ipv4 nexthop lookup case start \n");
+       zread_ipv4_nexthop_lookup (client, length);
+       break;
+ #ifdef HAVE_IPV6
+     case ZEBRA_IPV6_NEXTHOP_LOOKUP:
++	printf(" ipv6 nexthop lookup case start \n");
+       zread_ipv6_nexthop_lookup (client, length);
+       break;
+ #endif /* HAVE_IPV6 */
+     case ZEBRA_IPV4_IMPORT_LOOKUP:
++	printf(" ipv4 import lookup case start \n");
+       zread_ipv4_import_lookup (client, length);
+       break;
+     default:
+@@ -1333,11 +1431,13 @@
+   return 0;
+ }
+ 
+-#ifdef HAVE_TCP_ZEBRA
++//#ifdef HAVE_TCP_ZEBRA
+ /* Make zebra's server socket. */
+ static void
+ zebra_serv ()
+ {
++  printf(" zebra server socket function call \n");
++
+   int ret;
+   int accept_sock;
+   struct sockaddr_in addr;
+@@ -1355,25 +1455,27 @@
+   memset (&addr, 0, sizeof (struct sockaddr_in));
+   addr.sin_family = AF_INET;
+   addr.sin_port = htons (ZEBRA_PORT);
+-#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+-  addr.sin_len = sizeof (struct sockaddr_in);
+-#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
+-  addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+-
+-  sockopt_reuseaddr (accept_sock);
+-  sockopt_reuseport (accept_sock);
++//#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
++// addr.sin_len = sizeof (struct sockaddr_in);
++//#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
++// addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++  addr.sin_addr.s_addr = inet_addr("192.10.3.3");
++//  sockopt_reuseaddr (accept_sock);
++//  sockopt_reuseport (accept_sock);
+ 
+   if ( zserv_privs.change(ZPRIVS_RAISE) )
+     zlog (NULL, LOG_ERR, "Can't raise privileges");
+-    
++  /*
+   ret  = bind (accept_sock, (struct sockaddr *)&addr, 
+ 	       sizeof (struct sockaddr_in));
++
++  printf(" bind \n");
+   if (ret < 0)
+     {
+       zlog_warn ("Can't bind to stream socket: %s", 
+                  safe_strerror (errno));
+       zlog_warn ("zebra can't provice full functionality due to above error");
+-      close (accept_sock);      /* Avoid sd leak. */
++      close (accept_sock);    // Avoid sd leak. 
+       return;
+     }
+     
+@@ -1381,18 +1483,35 @@
+     zlog (NULL, LOG_ERR, "Can't lower privileges");
+ 
+   ret = listen (accept_sock, 1);
++
++  printf(" listen \n");
+   if (ret < 0)
+     {
+       zlog_warn ("Can't listen to stream socket: %s", 
+                  safe_strerror (errno));
+       zlog_warn ("zebra can't provice full functionality due to above error");
+-      close (accept_sock);	/* Avoid sd leak. */
++      close (accept_sock);	// Avoid sd leak. 
+       return;
+     }
++  */
++  ///////////////////////////////// KT /////////////////////////////////////////////
++/*
++  ret = connect (accept_sock, (struct sockaddr *) &addr, sizeof (addr));
+ 
+-  zebra_event (ZEBRA_SERV, accept_sock, NULL);
++  if( ret < 0 )
++  {
++	  printf(" Can't connect to stream socket \n");
++	  close(accept_sock);
++	  exit(1);
++	  return;
++  }
++ */
++ // zebra_event (ZEBRA_SERV, accept_sock, NULL);
++//  set_nonblocking (accept_sock);
++
++  zebra_client_create (accept_sock);
+ }
+-#endif /* HAVE_TCP_ZEBRA */
++//#endif /* HAVE_TCP_ZEBRA */
+ 
+ /* For sockaddr_un. */
+ #include <sys/un.h>
+@@ -1401,6 +1520,8 @@
+ static void
+ zebra_serv_un (const char *path)
+ {
++  printf(" zebra server un function call \n");
++
+   int ret;
+   int sock, len;
+   struct sockaddr_un serv;
+@@ -1457,7 +1578,6 @@
+   zebra_event (ZEBRA_SERV, sock, NULL);
+ }
+ 
+-
+ static void
+ zebra_event (enum event event, int sock, struct zserv *client)
+ {
+@@ -1467,6 +1587,8 @@
+       thread_add_read (zebrad.master, zebra_accept, client, sock);
+       break;
+     case ZEBRA_READ:
++// jw //
++//      printf("[test...] zebra_event function is call...\n");
+       client->t_read = 
+ 	thread_add_read (zebrad.master, zebra_client_read, client, sock);
+       break;
+@@ -1735,9 +1857,49 @@
+ void
+ zebra_zserv_socket_init (void)
+ {
+-#ifdef HAVE_TCP_ZEBRA
++//#ifdef HAVE_TCP_ZEBRA
+   zebra_serv ();
+-#else
+-  zebra_serv_un (ZEBRA_SERV_PATH);
+-#endif /* HAVE_TCP_ZEBRA */
++  zebra_fd = zebra_sock_init ();
++  pthread_create(&zebra_thread, NULL, zebra_recvmsg, 0);
++//#else
++// zebra_serv_un (ZEBRA_SERV_PATH);
++//#endif /* HAVE_TCP_ZEBRA */
++}
++
++/////////////////////////// KT ///////////////////////////////////////
++
++void *
++zebra_recvmsg (void)
++{
++  FORCES_PAYLOAD *vMsg;
++  int nbytes = 0;
++  struct msghdr msg;
++  struct stream ibuf;
++  struct iovec iov;
++  char buff [1024];
++  ibuf.data = (char *)malloc(1024);
++
++  while(1)
++  {
++    memset (buff, 0, 1024);
++//    memset (&ibuf, 0, sizeof (struct stream));
++    memset (&msg, 0, sizeof (struct msghdr));
++    memset (&iov, 0, sizeof (struct iovec));
++    msg.msg_iov = &iov;
++    msg.msg_iovlen = 1;
++    msg.msg_control = (caddr_t) buff;
++    msg.msg_controllen = sizeof (buff);
++ 
++    nbytes = stream_ospf_recvmsg (&ibuf, zebra_fd, &msg, 0, MAX_PACKET_SIZE+1);
++    if(nbytes > 0)
++    {
++      printf(" received packet from another FE \n");
++      printf(" nbytes is %d \n", nbytes);
++      vMsg = tml_MakeMsghdrPayload (7, MSG_OSPF_CONFIG, &msg, nbytes);
++      tml_SendMsg(vMsg);
+ }
++    usleep(10);
++  }
++}
++
++////////////////////////////////////////////////////////////////////
+--- ./zebra/rib.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/rib.h	2011-10-06 21:54:38.992363184 -0400
+@@ -179,7 +179,8 @@
+ 
+   /* Interface index. */
+   char *ifname;
+-  unsigned int ifindex;
++  unsigned int ifindex:16,
++	       feid:16;
+   
+   enum nexthop_types_t type;
+ 
+--- ./zebra/main.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/main.c	2011-10-06 21:54:38.936361429 -0400
+@@ -21,6 +21,8 @@
+ 
+ #include <zebra.h>
+ 
++#include <pthread.h>
++
+ #include <lib/version.h>
+ #include "getopt.h"
+ #include "command.h"
+@@ -40,6 +42,28 @@
+ #include "zebra/irdp.h"
+ #include "zebra/rtadv.h"
+ 
++#include "tml_core.h"
++
++#define DEST_ADDR "192.10.3.3" //yu antl CE
++//#define DEST_ADDR "10.0.1.2" //etri CE
++
++void *t_function(void)
++{
++	struct zebra *client;
++	size_t already;
++	FORCES_PAYLOAD* vMsg;
++	int PPID;
++	printf("created temp thread...!!\n");
++	while(1)
++	{
++	//	stream_read_try();
++		tml_RecvMsg(vMsg, PPID);
++		printf("receved messge from CE, messge type is %x\n", vMsg->header.message_type);
++		fe_assoc_setup_req();
++		usleep(1000);
++	}
++}
++
+ /* Zebra instance */
+ struct zebra_t zebrad =
+ {
+@@ -215,6 +239,8 @@
+   char *progname;
+   struct thread thread;
+ 
++  pthread_t p_thread;
++
+   /* Set umask before anything for security */
+   umask (0027);
+ 
+@@ -299,6 +325,7 @@
+ 	  break;
+ 	}
+     }
++  printf("[test..] after while(1)....\n");
+ 
+   /* Make master thread emulator. */
+   zebrad.master = thread_master_create ();
+@@ -367,10 +394,8 @@
+       zlog_err("Zebra daemon failed: %s", strerror(errno));
+       exit (1);
+     }
+-
+   /* Output pid of zebra. */
+   pid_output (pid_file);
+-
+   /* After we have successfully acquired the pidfile, we can be sure
+   *  about being the only copy of zebra process, which is submitting
+   *  changes to the FIB.
+@@ -385,6 +410,11 @@
+   /* Needed for BSD routing socket. */
+   pid = getpid ();
+ 
++  tml_core_init(DEST_ADDR);
++  fe_assoc_setup_req();
++  
++//  pthread_create(&p_thread, NULL, t_function, 0);
++
+   /* This must be done only after locking pidfile (bug #403). */
+   zebra_zserv_socket_init ();
+ 
+--- ./zebra/if_ioctl.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/if_ioctl.c	2011-10-06 21:54:38.686612482 -0400
+@@ -427,6 +427,7 @@
+   
+   for (ALL_LIST_ELEMENTS (iflist, node, nnode, ifp))
+     {
++  
+       if_get_index (ifp);
+ #ifdef SIOCGIFHWADDR
+       if_get_hwaddr (ifp);
+@@ -444,6 +445,7 @@
+ void
+ interface_list ()
+ {
++	printf(" interface list in if_ioctl.c \n");
+   /* Linux can do both proc & ioctl, ioctl is the only way to get
+      interface aliases in 2.2 series kernels. */
+ #ifdef HAVE_PROC_NET_DEV
+--- ./zebra/zserv.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./zebra/zserv.h	2011-10-06 21:54:39.383387395 -0400
+@@ -26,6 +26,7 @@
+ #include "if.h"
+ #include "workqueue.h"
+ 
++
+ /* Default port information. */
+ #define ZEBRA_VTY_PORT                2601
+ 
+@@ -110,4 +111,10 @@
+ 
+ extern pid_t pid;
+ 
++/* add by jw */
++extern FORCES_PAYLOAD *msg_gen(int vPri, int vType);
++extern int fe_setup_assoc(void);
++extern void *zebra_recvmsg (void);
++/* end of addition */
++
+ #endif /* _ZEBRA_ZEBRA_H */
+--- ./ospfd/ospf_network.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_network.c	2011-10-06 21:54:35.805381425 -0400
+@@ -51,6 +51,7 @@
+ 			   unsigned int ifindex)
+ {
+   int ret;
++  printf(" zclient socket number is %d in ospf_if_add_allspfrouters function (ospf_network.c) \n", top->fd);
+   
+   ret = setsockopt_multicast_ipv4 (top->fd, IP_ADD_MEMBERSHIP,
+                                    p->u.prefix4, htonl (OSPF_ALLSPFROUTERS),
+--- ./ospfd/ospf_zebra.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_zebra.c	2011-10-06 21:54:36.014370604 -0400
+@@ -20,6 +20,7 @@
+  * Boston, MA 02111-1307, USA. 
+  */
+ 
++#include <stdio.h>
+ #include <zebra.h>
+ 
+ #include "thread.h"
+@@ -45,10 +46,13 @@
+ #include "ospfd/ospf_dump.h"
+ #include "ospfd/ospf_route.h"
+ #include "ospfd/ospf_zebra.h"
++#include "tml_core.h"
+ #ifdef HAVE_SNMP
+ #include "ospfd/ospf_snmp.h"
+ #endif /* HAVE_SNMP */
+ 
++#define MY_ADDR "192.10.3.3"
++
+ /* Zebra structure to hold current status. */
+ struct zclient *zclient = NULL;
+ 
+@@ -89,6 +93,7 @@
+   struct interface *ifp;
+ 
+   ifp = zebra_interface_add_read (zclient->ibuf);
++  printf(" zclient socket number is %d in ospf_interface_add function (ospf_zebra.c) \n", zclient->sock);
+ 
+   if (IS_DEBUG_OSPF (zebra, ZEBRA_INTERFACE))
+     zlog_debug ("Zebra: interface add %s index %d flags %llx metric %d mtu %d",
+@@ -96,7 +101,8 @@
+                ifp->metric, ifp->mtu);
+ 
+   assert (ifp->info);
+-
++//  printf(" interface add %s feindex %d index %d flags %11x metric %d mtu %d \n", ifp->name, ifp->feindex, ifp->ifindex, 
++//		  (unsigned long long)ifp->flags, ifp->metric, ifp->mtu);
+   if (!OSPF_IF_PARAM_CONFIGURED (IF_DEF_PARAMS (ifp), type))
+     {
+       SET_IF_PARAM (IF_DEF_PARAMS (ifp), type);
+@@ -253,6 +259,8 @@
+ ospf_interface_address_add (int command, struct zclient *zclient,
+                             zebra_size_t length)
+ {
++ printf(" zclient socket number is %d in ospf_interface_address_add function (ospf_zebra.c) \n", zclient->sock);
++
+   struct connected *c;
+ 
+   c = zebra_interface_address_read (command, zclient->ibuf);
+@@ -1258,9 +1266,18 @@
+ void
+ ospf_zebra_init ()
+ {
++  printf(" ospf zebra init function call \n");
++  
++  if(!tml_core_init(MY_ADDR))
++  {
++	  printf(" Error init_tml_core() \n");
++	  exit(1);
++  }
+   /* Allocate zebra structure. */
+   zclient = zclient_new ();
++ // zclient_read_thread_start(zclient);
+   zclient_init (zclient, ZEBRA_ROUTE_OSPF);
++  zclient_read_thread_start(zclient);
+   zclient->router_id_update = ospf_router_id_update_zebra;
+   zclient->interface_add = ospf_interface_add;
+   zclient->interface_delete = ospf_interface_delete;
+@@ -1275,4 +1292,6 @@
+   access_list_delete_hook (ospf_filter_update);
+   prefix_list_add_hook (ospf_prefix_list_update);
+   prefix_list_delete_hook (ospf_prefix_list_update);
++
++  
+ }
+--- ./ospfd/ospf_main.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_main.c	2011-10-06 21:54:35.779366014 -0400
+@@ -21,7 +21,7 @@
+  */
+ 
+ #include <zebra.h>
+-
++#include <string.h>
+ #include <lib/version.h>
+ #include "getopt.h"
+ #include "thread.h"
+@@ -49,6 +49,10 @@
+ #include "ospfd/ospf_zebra.h"
+ #include "ospfd/ospf_vty.h"
+ 
++#include "tml_core.h"
++#include "table.h"
++#include "common.h"
++
+ /* ospfd privileges */
+ zebra_capabilities_t _caps_p [] = 
+ {
+@@ -172,6 +176,7 @@
+   },
+ };
+ 
++
+ /* OSPFd main routine. */
+ int
+ main (int argc, char **argv)
+@@ -215,9 +220,11 @@
+       int opt;
+ 
+       opt = getopt_long (argc, argv, "df:i:hA:P:u:g:avC", longopts, 0);
+-    
+       if (opt == EOF)
+ 	break;
++      opt = argv[1][1];
++
++      printf(" fe name %s \n", argv[2]);
+ 
+       switch (opt) 
+ 	{
+@@ -268,6 +275,7 @@
+ 	case 'h':
+ 	  usage (progname, 0);
+ 	  break;
++	
+ 	default:
+ 	  usage (progname, 1);
+ 	  break;
+@@ -292,48 +300,48 @@
+   ospf_if_init ();
+   ospf_zebra_init ();
+ 
+-  /* OSPF vty inits. */
++  // OSPF vty inits. 
+   ospf_vty_init ();
+   ospf_vty_show_init ();
+ 
+   ospf_route_map_init ();
+ #ifdef HAVE_SNMP
+   ospf_snmp_init ();
+-#endif /* HAVE_SNMP */
++#endif // HAVE_SNMP 
+ #ifdef HAVE_OPAQUE_LSA
+   ospf_opaque_init ();
+-#endif /* HAVE_OPAQUE_LSA */
++#endif // HAVE_OPAQUE_LSA 
+   
+   sort_node ();
+ 
+-  /* Get configuration file. */
++  // Get configuration file. 
+   vty_read_config (config_file, config_default);
+ 
+-  /* Start execution only if not in dry-run mode */
++  // Start execution only if not in dry-run mode 
+   if (dryrun)
+     return(0);
+   
+-  /* Change to the daemon program. */
++  // Change to the daemon program. 
+   if (daemon_mode && daemon (0, 0) < 0)
+     {
+       zlog_err("OSPFd daemon failed: %s", strerror(errno));
+       exit (1);
+     }
+ 
+-  /* Process id file create. */
++  // Process id file create. 
+   pid_output (pid_file);
+ 
+-  /* Create VTY socket */
++  // Create VTY socket 
+   vty_serv_sock (vty_addr, vty_port, OSPF_VTYSH_PATH);
+ 
+-  /* Print banner. */
++  // Print banner. 
+   zlog_notice ("OSPFd %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+ 
+-  /* Fetch next active thread. */
++  // Fetch next active thread. 
+   while (thread_fetch (master, &thread))
+     thread_call (&thread);
+ 
+-  /* Not reached. */
++  // Not reached. 
+   return (0);
+ }
+ 
+--- ./ospfd/ospf_interface.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_interface.c	2011-10-06 21:54:35.684450592 -0400
+@@ -148,6 +148,7 @@
+ struct ospf_interface *
+ ospf_if_table_lookup (struct interface *ifp, struct prefix *prefix)
+ {
++
+   struct prefix p;
+   struct route_node *rn;
+   struct ospf_interface *rninfo = NULL;
+@@ -156,12 +157,15 @@
+   p.prefixlen = IPV4_MAX_PREFIXLEN;
+   
+   /* route_node_get implicitely locks */
+-  if ((rn = route_node_lookup (IF_OIFS (ifp), &p)))
++  
++  if ((rn = route_node_lookup (IF_OIFS (ifp), &p))) // ospf_if_info->oifs(struct route_table)
+     {
++
+       rninfo = (struct ospf_interface *) rn->info;
++
++
+       route_unlock_node (rn);
+     }
+-  
+   return rninfo;
+ }
+ 
+@@ -599,6 +603,8 @@
+     }
+ 
+   return NULL;
++
++
+ }
+ 
+ struct ospf_if_params *
+@@ -722,6 +728,8 @@
+       (oi->type != OSPF_IFTYPE_VIRTUALLINK) &&
+       (OSPF_IF_PASSIVE_STATUS(oi) == OSPF_IF_ACTIVE))
+     {
++	    printf(" zclient socket number is %d in ospf_if_set_multicast function (ospf_interface.c) \n", oi->ospf->fd);
++
+       /* The interface should belong to the OSPF-all-routers group. */
+       if (!OI_MEMBER_CHECK(oi, MEMBER_ALLROUTERS) &&
+ 	  (ospf_if_add_allspfrouters(oi->ospf, oi->address,
+@@ -777,6 +785,10 @@
+ int
+ ospf_if_up (struct ospf_interface *oi)
+ {
++  printf(" ospf if up function start in ospf_interface.c \n");
++  printf(" zclient socket number is %d in ospf if up function (ospf_interface.c) \n", oi->ospf->fd);
++
++
+   if (oi == NULL)
+     return 0;
+ 
+@@ -792,7 +804,6 @@
+       ospf_if_stream_set (oi);
+       OSPF_ISM_EVENT_SCHEDULE (oi, ISM_InterfaceUp);
+     }
+-
+   return 1;
+ }
+ 
+--- ./ospfd/ospf_packet.c	2010-01-14 08:25:38.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_packet.c	2011-10-06 21:54:35.869415870 -0400
+@@ -2396,6 +2396,7 @@
+ 	   * make sure it is removed.
+ 	   */
+ 	  OI_MEMBER_JOINED(oi, MEMBER_ALLROUTERS);
++	 // printf(" ospf_packet.c line 2399 : ospf_read functation call \n");
+ 	  ospf_if_set_multicast(oi);
+ 	}
+       return 0;
+@@ -2433,6 +2434,7 @@
+     }
+   else if (oi->state == ISM_Down)
+     {
++  //    printf(" ospf_packet.c, line 2437, ospf_read function call \n");
+       char buf[2][INET_ADDRSTRLEN];
+       zlog_warn ("Ignoring packet from %s to %s received on interface that is "
+       		 "down [%s]; interface flags are %s",
+--- ./ospfd/ospf_ism.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_ism.c	2011-10-06 21:54:35.713638690 -0400
+@@ -535,6 +535,9 @@
+ static void
+ ism_change_state (struct ospf_interface *oi, int state)
+ {
++  printf(" ism_change_state function start in ospf_ism.c\n");
++  printf(" zclient socket number is %d in ism_change_state function (ospf_ism.c) \n", oi->ospf->fd);
++
+   int old_state;
+   struct ospf_lsa *lsa;
+ 
+@@ -615,6 +618,8 @@
+ 
+   oi = THREAD_ARG (thread);
+   event = THREAD_VAL (thread);
++  printf(" ospf ism event function start in ospf_ism.c \n");
++  printf(" zclient socket number is %d in ospf ism evetn function (ospf_ism.c) \n", oi->ospf->fd );
+ 
+   /* Call function. */
+   next_state = (*(ISM [oi->state][event].func))(oi);
+--- ./ospfd/ospf_flood.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospf_flood.c	2011-10-06 21:54:35.642512018 -0400
+@@ -561,6 +561,8 @@
+ ospf_flood_through_area (struct ospf_area *area,
+ 			 struct ospf_neighbor *inbr, struct ospf_lsa *lsa)
+ {
++  printf(" flooding start \n");
++
+   struct listnode *node, *nnode;
+   struct ospf_interface *oi;
+   int lsa_ack_flag = 0;
+--- ./ospfd/ospfd.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospfd/ospfd.c	2011-10-06 21:54:36.045456586 -0400
+@@ -698,7 +698,9 @@
+ void
+ ospf_area_add_if (struct ospf_area *area, struct ospf_interface *oi)
+ {
++ 
+   listnode_add (area->oiflist, oi);
++
+ }
+ 
+ void
+@@ -845,6 +847,8 @@
+ ospf_network_run_interface (struct prefix *p, struct ospf_area *area,
+                             struct interface *ifp)
+ {
++ printf(" ospf network run interface function call in ospfd.c file \n");
++
+   struct listnode *cnode;
+   struct connected *co;
+   
+@@ -863,9 +867,13 @@
+ 	  && ! ospf_if_table_lookup(ifp, co->address)
+           && ospf_network_match_iface(co,p))
+         {
++
+            struct ospf_interface *oi;
+             
+             oi = ospf_if_new (area->ospf, ifp, co->address);
++
++	    printf(" zclient socket number is %d in ospf network run interface (ospfd.c) \n", area->ospf->fd);
++
+             oi->connected = co;
+             
+             oi->area = area;
+@@ -891,11 +899,14 @@
+              * ospf_router_id_update() will call ospf_if_update
+              * whenever r-id is configured instead.
+              */
++
+             if ((area->ospf->router_id.s_addr != 0)
+                 && if_is_operative (ifp)) 
+               ospf_if_up (oi);
++
+           }
+     }
++
+ }
+ 
+ static void
+@@ -943,6 +954,8 @@
+ void
+ ospf_if_update (struct ospf *ospf, struct interface *ifp)
+ {
++ printf(" ospf if update function call in ospfd.c file \n");
++
+   struct route_node *rn;
+   struct ospf_network *network;
+   struct ospf_area *area;
+@@ -950,10 +963,12 @@
+   if (!ospf)
+     ospf = ospf_lookup ();
+ 
+-  /* OSPF must be on and Router-ID must be configured. */
++
+   if (!ospf || ospf->router_id.s_addr == 0)
+     return;
+   
++  printf(" zclient socket number is %d in ospf if update function (ospfd.c) \n", ospf->fd);
++ 
+   /* Run each netowrk for this interface. */
+   for (rn = route_top (ospf->networks); rn; rn = route_next (rn))
+     if (rn->info != NULL)
+@@ -973,9 +988,8 @@
+   for (ALL_LIST_ELEMENTS (ospf->vlinks, node, nnode, vl_data))
+     if (IPV4_ADDR_SAME (&vl_data->vl_area_id, &area->area_id))
+       ospf_vl_delete (ospf, vl_data);
+-}
+-
+ 
++}
+ static const struct message ospf_area_type_msg[] =
+ {
+   { OSPF_AREA_DEFAULT,	"Default" },
+--- ./lib/buffer.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/buffer.c	2011-10-06 21:54:33.196413498 -0400
+@@ -463,7 +463,7 @@
+ buffer_write(struct buffer *b, int fd, const void *p, size_t size)
+ {
+   ssize_t nbytes;
+-
++  FORCES_PAYLOAD *send_data;
+ #if 0
+   /* Should we attempt to drain any previously buffered data?  This could help
+      reduce latency in pushing out the data if we are stuck in a long-running
+@@ -475,7 +475,7 @@
+   if (b->head)
+     /* Buffer is not empty, so do not attempt to write the new data. */
+     nbytes = 0;
+-  else if ((nbytes = write(fd, p, size)) < 0)
++ /* else if ((nbytes = write(fd, p, size)) < 0)
+     {
+       if (ERRNO_IO_RETRY(errno))
+         nbytes = 0;
+@@ -486,6 +486,15 @@
+ 	  return BUFFER_ERROR;
+ 	}
+     }
++  */
++  //////////////////////////// KT /////////////////////////////////////
++  else
++  {
++        nbytes = size;
++        send_data = tml_MakePayload(7, MSG_ROUTE_CONFIG_RESPONSE, p, size);
++        tml_SendMsg(send_data);
++  }
++  /////////////////////////////////////////////////////////////////////
+   /* Add any remaining data to the buffer. */
+   {
+     size_t written = nbytes;
+--- ./lib/table.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/table.h	2011-10-06 21:54:34.014449483 -0400
+@@ -23,6 +23,8 @@
+ #ifndef _ZEBRA_TABLE_H
+ #define _ZEBRA_TABLE_H
+ 
++#include "common.h"
++
+ /* Routing table top structure. */
+ struct route_table
+ {
+@@ -39,6 +41,7 @@
+   struct route_table *table;
+   struct route_node *parent;
+   struct route_node *link[2];
++
+ #define l_left   link[0]
+ #define l_right  link[1]
+ 
+@@ -52,6 +55,35 @@
+   void *aggregate;
+ };
+ 
++/////////////////////////////////// KT /////////////////////////////////////////////////////////////
++
++struct forwarding_element
++{
++	struct forwarding_element *next_FE;
++	struct forwarding_element *prev_FE;
++
++//	unsigned int FE_id;
++	ForCES_ID FE_id;
++
++	unsigned int sock_id;
++
++	unsigned short port;
++
++	struct in_addr address;
++
++};
++
++struct forwarding_element_table
++{
++	unsigned int FE_count;
++
++	struct forwarding_element *FE_table_head;
++	struct forwarding_element *FE_table_tail;
++};
++
++struct forwarding_element_table FE_table;
++///////////////////////////////////////////////////////////////////////////////////////////////////
++
+ /* Prototypes. */
+ extern struct route_table *route_table_init (void);
+ extern void route_table_finish (struct route_table *);
+@@ -70,6 +102,15 @@
+                                             const struct prefix *);
+ extern struct route_node *route_node_match_ipv4 (const struct route_table *,
+ 						 const struct in_addr *);
++
++///////////////////////////// KT /////////////////////////////////////////////////////////////////
++//extern void FE_table_init ();
++//extern int FE_table_check (struct sockaddr_in *);
++//extern void FE_table_add (unsigned int , struct sockaddr_in *);
++extern void FE_table_init ();
++extern void FE_table_add (FORCES_PAYLOAD *);
++extern int FE_table_check (FORCES_PAYLOAD *);
++//////////////////////////////////////////////////////////////////////////////////////////////////
+ #ifdef HAVE_IPV6
+ extern struct route_node *route_node_match_ipv6 (const struct route_table *,
+ 						 const struct in6_addr *);
+--- ./lib/table.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/table.c	2011-10-06 21:54:33.992542867 -0400
+@@ -27,6 +27,8 @@
+ #include "memory.h"
+ #include "sockunion.h"
+ 
++#include "common.h"
++
+ void route_node_delete (struct route_node *);
+ void route_table_free (struct route_table *);
+ 
+@@ -253,6 +255,7 @@
+ struct route_node *
+ route_node_lookup (struct route_table *table, struct prefix *p)
+ {
++
+   struct route_node *node;
+ 
+   node = table->top;
+@@ -260,12 +263,14 @@
+   while (node && node->p.prefixlen <= p->prefixlen && 
+ 	 prefix_match (&node->p, p))
+     {
++
+       if (node->p.prefixlen == p->prefixlen && node->info)
+ 	return route_lock_node (node);
+ 
+       node = node->link[prefix_bit(&p->u.prefix, node->p.prefixlen)];
+     }
+ 
++
+   return NULL;
+ }
+ 
+@@ -459,3 +464,80 @@
+   route_unlock_node (start);
+   return NULL;
+ }
++
++/////////////////////////////////////////////////// KT //////////////////////////////////////////////
++
++/* This function is initialization of forwarding table.
++ * Forwarding table be composed of Linked list.
++ */
++
++//extern forwarding_element_table FE_table;
++
++void 
++FE_table_init ()
++{
++	FE_table.FE_count = 0;
++	FE_table.FE_table_head = NULL;
++	FE_table.FE_table_tail = NULL;
++
++	FE_table.FE_table_head = (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++	FE_table.FE_table_tail = (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++
++	FE_table.FE_table_head->next_FE = FE_table.FE_table_tail;
++	FE_table.FE_table_head->prev_FE = FE_table.FE_table_head;
++	FE_table.FE_table_tail->next_FE = FE_table.FE_table_tail;
++	FE_table.FE_table_tail->prev_FE = FE_table.FE_table_head;
++
++}
++
++/* This function is overlap of forwarding address and port number checking in forwarding table.
++ * If There is same address and port number, return 1.
++ * If There is not same address and port number, return 0.
++ */
++
++int
++FE_table_check (FORCES_PAYLOAD *vPDU)
++{
++	struct forwarding_element *FE_ptr;
++	
++	for(FE_ptr = FE_table.FE_table_head->next_FE; FE_ptr != FE_table.FE_table_tail; FE_ptr = FE_ptr->next_FE)
++	{
++//		if(FE_ptr->port == check_sockaddr->sin_port &&
++//			strcmp(inet_ntoa(FE_ptr->address), inet_ntoa(check_sockaddr->sin_addr)) == 0)
++		if(FE_ptr->FE_id.sub_id == vPDU->header.dest_id.sub_id)
++		{
++			return 1;
++		}	
++	}
++
++	return 0;
++			
++}
++
++/* This function is addition of forwarding to forwarding table.
++ */
++
++void
++FE_table_add (FORCES_PAYLOAD *vPDU)
++{
++	struct forwarding_element *new_FE;
++	new_FE = (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++	memset((char *)new_FE, NULL, sizeof(struct forwarding_element));
++/*
++	new_FE->sock_id = socket_id;
++	new_FE->port = new_forwarding_address->sin_port;
++	new_FE->address = new_forwarding_address->sin_addr;
++*/
++	new_FE->FE_id = vPDU->header.source_id;
++
++	new_FE->next_FE = FE_table.FE_table_head->next_FE;
++	new_FE->prev_FE = FE_table.FE_table_head;
++	FE_table.FE_table_head->next_FE->prev_FE = new_FE;
++	FE_table.FE_table_head->next_FE = new_FE;
++
++	FE_table.FE_count++;
++
++	printf(" Forwarding Element add success in table !! \n");
++}
++
++//////////////////////////////////////////////////////////////////////////////////////////////////////////
+--- ./lib/stream.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/stream.h	2011-10-06 21:54:33.982388055 -0400
+@@ -24,6 +24,7 @@
+ #define _ZEBRA_STREAM_H
+ 
+ #include "prefix.h"
++#include "if.h"
+ 
+ /*
+  * A stream is an arbitrary buffer, whose contents generally are assumed to
+@@ -114,7 +115,7 @@
+   struct stream *head;
+   struct stream *tail;
+ };
+-
++int ipid;
+ /* Utility macros. */
+ #define STREAM_SIZE(S)  ((S)->size)
+   /* number of bytes which can still be written */
+@@ -170,6 +171,13 @@
+ extern u_int16_t stream_getw_from (struct stream *, size_t);
+ extern u_int32_t stream_getl (struct stream *);
+ extern u_int32_t stream_getl_from (struct stream *, size_t);
++/////////////////////////////////////// KT ////////////////////////////////////////////////
++extern void stream_getfl (struct stream *, struct interface *);
++extern u_int32_t stream_getil (struct stream *);
++extern void stream_putfl (struct stream *, u_int16_t, u_int16_t);
++extern int tml_read(char*, size_t );
++extern int stream_ospf_recvmsg(struct stream *, int fd, struct msghdr *, int flags, size_t size);
++//////////////////////////////////////////////////////////////////////////////////////////
+ extern uint64_t stream_getq (struct stream *);
+ extern uint64_t stream_getq_from (struct stream *, size_t);
+ extern u_int32_t stream_get_ipv4 (struct stream *);
+--- ./lib/Makefile.am	2010-01-27 04:37:34.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/Makefile.am	2011-10-06 21:54:33.143461830 -0400
+@@ -12,7 +12,8 @@
+ 	sockunion.c prefix.c thread.c if.c memory.c buffer.c table.c hash.c \
+ 	filter.c routemap.c distribute.c stream.c str.c log.c plist.c \
+ 	zclient.c sockopt.c smux.c md5.c if_rmap.c keychain.c privs.c \
+-	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c
++	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c \
++	queue.c link_list.c tml_core.c
+ 
+ BUILT_SOURCES = memtypes.h route_types.h
+ 
+@@ -27,7 +28,7 @@
+ 	str.h stream.h table.h thread.h vector.h version.h vty.h zebra.h \
+ 	plist.h zclient.h sockopt.h smux.h md5.h if_rmap.h keychain.h \
+ 	privs.h sigevent.h pqueue.h jhash.h zassert.h memtypes.h \
+-	workqueue.h route_types.h
++	workqueue.h route_types.h queue.h link_list.h tml_core.h common.h
+ 
+ EXTRA_DIST = regex.c regex-gnu.h memtypes.awk route_types.awk route_types.txt
+ 
+--- ./lib/thread.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/thread.c	2011-10-06 21:54:34.033364666 -0400
+@@ -616,13 +616,11 @@
+   struct thread *thread;
+ 
+   assert (m != NULL);
+-
+   if (FD_ISSET (fd, &m->readfd))
+     {
+       zlog (NULL, LOG_WARNING, "There is already read fd [%d]", fd);
+       return NULL;
+     }
+-
+   thread = thread_get (m, THREAD_READ, func, arg, funcname);
+   FD_SET (fd, &m->readfd);
+   thread->u.fd = fd;
+--- ./lib/zclient.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/zclient.c	2011-10-06 21:54:34.179453133 -0400
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include <zebra.h>
++#include <stdio.h>
+ 
+ #include "prefix.h"
+ #include "stream.h"
+@@ -33,8 +34,12 @@
+ #include "memory.h"
+ #include "table.h"
+ 
++#define MY_ADDR "192.10.3.3"
++/* SCTP connection mode setting - add by wook */
++#define HAVE_SCTP_ZEBRA 1
++
+ /* Zebra client events. */
+-enum event {ZCLIENT_SCHEDULE, ZCLIENT_READ, ZCLIENT_CONNECT};
++enum event {ZCLIENT_SERV, ZCLIENT_SCHEDULE, ZCLIENT_READ, ZCLIENT_CONNECT};
+ 
+ /* Prototype for event manager. */
+ static void zclient_event (enum event, struct zclient *);
+@@ -44,9 +49,11 @@
+ /* This file local debug flag. */
+ int zclient_debug = 0;
+ 
++struct zclient *temp_zclient;
++
+ /* Allocate zclient structure. */
+-struct zclient *
+-zclient_new ()
++struct zclient
++*zclient_new ()
+ {
+   struct zclient *zclient;
+   zclient = XCALLOC (MTYPE_ZCLIENT, sizeof (struct zclient));
+@@ -87,7 +94,7 @@
+   zclient->enable = 1;
+ 
+   /* Set -1 to the default socket value. */
+-  zclient->sock = -1;
++  zclient->sock = 1;
+ 
+   /* Clear redistribution flags. */
+   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
+@@ -104,8 +111,13 @@
+   /* Schedule first zclient connection. */
+   if (zclient_debug)
+     zlog_debug ("zclient start scheduled");
+-
+-  zclient_event (ZCLIENT_SCHEDULE, zclient);
++////////////////////////////////////// KT /////////////////////////////////////////////////
++/* Forwarding table initalization. */
++  FE_table_init ();
++///////////////////////////////////////////////////////////////////////////////////////////
++ // zclient_event (ZCLIENT_SCHEDULE, zclient);
++  temp_zclient = zclient;
++  zclient_connect (zclient);
+ }
+ 
+ /* Stop zebra client services. */
+@@ -115,6 +127,9 @@
+   if (zclient_debug)
+     zlog_debug ("zclient stopped");
+ 
++  /* SCTP: destroy tml_core - add by wook */
++  tml_core_destroy();
++
+   /* Stop threads. */
+   THREAD_OFF(zclient->t_read);
+   THREAD_OFF(zclient->t_connect);
+@@ -128,11 +143,11 @@
+   buffer_reset(zclient->wb);
+ 
+   /* Close socket. */
+-  if (zclient->sock >= 0)
+-    {
+-      close (zclient->sock);
+-      zclient->sock = -1;
+-    }
++ // if (zclient->sock >= 0)
++ //   {
++ //     close (zclient->sock);
++  //    zclient->sock = -1;
++  //  }
+   zclient->fail = 0;
+ }
+ 
+@@ -145,12 +160,16 @@
+ 
+ /* Make socket to zebra daemon. Return zebra socket. */
+ int
+-zclient_socket(void)
++ForCES_ospf_server_socket(void)
+ {
+   int sock;
+   int ret;
++  
++  struct sockaddr_in client_addr;
+   struct sockaddr_in serv;
+ 
++  int cliaddr_len = sizeof(client_addr);
++
+   /* We should think about IPv6 connection. */
+   sock = socket (AF_INET, SOCK_STREAM, 0);
+   if (sock < 0)
+@@ -160,18 +179,45 @@
+   memset (&serv, 0, sizeof (struct sockaddr_in));
+   serv.sin_family = AF_INET;
+   serv.sin_port = htons (ZEBRA_PORT);
+-#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+-  serv.sin_len = sizeof (struct sockaddr_in);
+-#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
+-  serv.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++//#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
++//serv.sin_len = sizeof (struct sockaddr_in);
++//#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
++// serv.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++ 
++ serv.sin_addr.s_addr = inet_addr("192.168.138.138");
+ 
+   /* Connect to zebra. */
+-  ret = connect (sock, (struct sockaddr *) &serv, sizeof (serv));
++ /* ret = connect (sock, (struct sockaddr *) &serv, sizeof (serv));
+   if (ret < 0)
+     {
+       close (sock);
+       return -1;
+     }
++ */
++ //  sockopt_reuseaddr ( sock);
++ //  sockopt_reuseport ( sock);
++  ////////////////////////////// KT ////////////////////////////////////
++
++  ret = bind ( sock, (struct sockaddr *)&serv, sizeof (struct sockaddr_in));
++
++  if(ret < 0)
++  {
++	  printf(" Can't bind to stream socket\n");
++	  close(sock);
++	  return -1;
++  }
++  printf(" Server socket bind OK!!! \n");
++  ret = listen (sock, 7);
++
++  if( ret < 0 )
++  {
++	  printf(" Can't listen to stream socket \n");
++	  close (sock);
++	  return -1;
++  }
++
++  printf(" Server socket listen OK !!! \n");
++  ////////////////////////////////////////////////////////////////////
+   return sock;
+ }
+ 
+@@ -181,6 +227,8 @@
+ int
+ zclient_socket_un (const char *path)
+ {
++  printf(" zclient socket un function call \n");
++
+   int ret;
+   int sock, len;
+   struct sockaddr_un addr;
+@@ -192,7 +240,9 @@
+   /* Make server socket. */ 
+   memset (&addr, 0, sizeof (struct sockaddr_un));
+   addr.sun_family = AF_UNIX;
++
+   strncpy (addr.sun_path, path, strlen (path));
++ // addr.sin_addr.s_addr = inet_addr("192.168.29.1");
+ #ifdef HAVE_STRUCT_SOCKADDR_UN_SUN_LEN
+   len = addr.sun_len = SUN_LEN(&addr);
+ #else
+@@ -282,6 +332,9 @@
+ {
+   struct stream *s;
+ 
++  struct FORCES_PAYLOAD *vPDU;
++  vPDU = (struct FORCES_PAYLOAD *)malloc(sizeof(struct tagFORCES_PAYLOAD));
++
+   /* Get zclient output buffer. */
+   s = zclient->obuf;
+   stream_reset (s);
+@@ -294,31 +347,36 @@
+ 
+ /* Make connection to zebra daemon. */
+ int
+-zclient_start (struct zclient *zclient)
++zclient_start ()
+ {
+   int i;
+-
+   if (zclient_debug)
+     zlog_debug ("zclient_start is called");
++  printf(" zclient_start function call \n");
+ 
+-  /* zclient is disabled. */
++/* 
++  // zclient is disabled.
+   if (! zclient->enable)
+     return 0;
+ 
+-  /* If already connected to the zebra. */
++  // If already connected to the zebra.
+   if (zclient->sock >= 0)
+     return 0;
+ 
+-  /* Check connect thread. */
++  // Check connect thread.
+   if (zclient->t_connect)
+     return 0;
++*/
+ 
+-  /* Make socket. */
+-#ifdef HAVE_TCP_ZEBRA
+-  zclient->sock = zclient_socket ();
+-#else
+-  zclient->sock = zclient_socket_un (ZEBRA_SERV_PATH);
+-#endif /* HAVE_TCP_ZEBRA */
++  /* Make socket. *///
++//#ifdef HAVE_SCTP_ZEBRA
++//  init_tml_core(MY_ADDR, ReceivePDU);   
++//#ifdef HAVE_TCP_ZEBRA
++ // temp_zclient->sock = ForCES_ospf_server_socket ();
++//#else
++// zclient->sock = zclient_socket_un (ZEBRA_SERV_PATH);
++//#endif /* HAVE_TCP_ZEBRA */
++ /*
+   if (zclient->sock < 0)
+     {
+       if (zclient_debug)
+@@ -327,52 +385,134 @@
+       zclient_event (ZCLIENT_CONNECT, zclient);
+       return -1;
+     }
++  //////////////////////////////// KT //////////////////////////////////////////////////
++//accept thread using TCP;
++//zclient_event(ZCLIENT_SERV, zclient);
++  //////////////////////////////////////////////////////////////////////////////////////
+ 
+   if (set_nonblocking(zclient->sock) < 0)
+     zlog_warn("%s: set_nonblocking(%d) failed", __func__, zclient->sock);
+ 
+-  /* Clear fail count. */
++
++  // Clear fail count. 
+   zclient->fail = 0;
+   if (zclient_debug)
+     zlog_debug ("zclient connect success with socket [%d]", zclient->sock);
++ */  
++  // Create read thread. 
+       
+-  /* Create read thread. */
+-  zclient_event (ZCLIENT_READ, zclient);
++ // zclient_event (ZCLIENT_READ, temp_zclient);
+ 
+-  /* We need interface information. */
+-  zebra_message_send (zclient, ZEBRA_INTERFACE_ADD);
++  // We need interface information. 
++  zebra_message_send (temp_zclient, ZEBRA_INTERFACE_ADD);
+ 
+-  /* We need router-id information. */
+-  zebra_message_send (zclient, ZEBRA_ROUTER_ID_ADD);
++  // We need router-id information. 
++  zebra_message_send (temp_zclient, ZEBRA_ROUTER_ID_ADD);
+ 
+-  /* Flush all redistribute request. */
++  // Flush all redistribute request. 
+   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
+-    if (i != zclient->redist_default && zclient->redist[i])
+-      zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, i);
++    if (i != temp_zclient->redist_default && temp_zclient->redist[i])
++      zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, temp_zclient, i);
+ 
+-  /* If default information is needed. */
+-  if (zclient->default_information)
+-    zebra_message_send (zclient, ZEBRA_REDISTRIBUTE_DEFAULT_ADD);
++  // If default information is needed.
++  if (temp_zclient->default_information)
++    zebra_message_send (temp_zclient, ZEBRA_REDISTRIBUTE_DEFAULT_ADD);
+ 
+   return 0;
+ }
+-
++///////////////////////////////////////////// KT ///////////////////////////////////
++void
++zclient_read_thread_start(struct zclient *zclient)
++{
++	zclient_event(ZCLIENT_READ, zclient);
++}
++///////////////////////////////////////////////////////////////////////////////////
+ /* This function is a wrapper function for calling zclient_start from
+    timer or event thread. */
+ static int
+-zclient_connect (struct thread *t)
++zclient_connect (struct zclient *zclient)
+ {
+-  struct zclient *zclient;
++  printf(" zclient connect function call \n");
+ 
+-  zclient = THREAD_ARG (t);
++ // struct zclient *zclient;
++
++ // zclient = THREAD_ARG (t);
+   zclient->t_connect = NULL;
+ 
+   if (zclient_debug)
+     zlog_debug ("zclient_connect is called");
++  return 0;
++}
++
++//////////////////////////////////////// KT ////////////////////////////////////////////
++static int
++zclient_accept (struct thread *thread)
++{
++	printf(" zclient accept function call \n");
++
++	int i = 0;
++	int accept_sock;
++	int client_sock;
++	struct sockaddr_in client;
++	socklen_t len;
++	struct zclient *zclient;
++	
++	zclient = THREAD_ARG (thread);
++	accept_sock = THREAD_FD (thread);
++	printf(" accept sock number is %d \n", zclient->sock);
++
++	zclient->sock = accept_sock;
+ 
+-  return zclient_start (zclient);
++	/* Reregister myself. */
++	zclient_event (ZCLIENT_SERV, zclient);
++
++	len = sizeof (struct sockaddr_in);
++
++	client_sock = accept (accept_sock, (struct sockaddr *)&client, &len);
++
++	if (client_sock < 0)
++	{
++		printf("Can't accept zclient server socket \n");
++		return -1;
++	}
++
++	printf(" Server socket accept OK!!! \n");
++	printf(" accept number : %d \n", client_sock);
++	
++	if(!FE_table_check (&client)) // overlap check.
++	{
++		//FE_table_add (client_sock, &client);
+ }
+ 
++	zclient->sock = client_sock;
++	printf(" zclient sock number is %d \n", zclient->sock);
++
++	sockopt_reuseaddr(client_sock);
++	sockopt_reuseport(client_sock);
++
++	set_nonblocking(client_sock);
++	
++	/* Create read thread. */
++	
++	/* We need interface information */
++	zebra_message_send (zclient, ZEBRA_INTERFACE_ADD);
++
++	/* We need router-id information. */
++	zebra_message_send (zclient, ZEBRA_ROUTER_ID_ADD);
++
++	/* Flush all redistribute request. */
++	for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
++		if( i!= zclient->redist_default && zclient->redist[i])
++			zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, i);
++
++	/* If default information is needed. */
++	if (zclient->default_information)
++		zebra_message_send (zclient, ZEBRA_REDISTRIBUTE_DEFAULT_ADD);
++
++	return 0;
++}
++///////////////////////////////////////////////////////////////////////////////////////////
++
+  /* 
+   * "xdr_encode"-like interface that allows daemon (client) to send
+   * a message to zebra server for a route that needs to be
+@@ -612,6 +752,9 @@
+   ifp = if_get_by_name_len (ifname_tmp, strnlen(ifname_tmp, INTERFACE_NAMSIZ));
+ 
+   /* Read interface's index. */
++  /////////////////////////////////////////// KT ///////////////////////////////////////
++ // stream_getfl (s, ifp);
++  //////////////////////////////////////////////////////////////////////////////////////
+   ifp->ifindex = stream_getl (s);
+ 
+   /* Read interface's value. */
+@@ -658,6 +801,9 @@
+ 
+   /* Read interface's index. */
+   ifp->ifindex = stream_getl (s);
++ //////////////////////////////// KT ///////////////////////////////////////
++//  stream_getfl (s, ifp);
++  //////////////////////////////////////////////////////////////////////////
+ 
+   /* Read interface's value. */
+   ifp->status = stream_getc (s);
+@@ -707,6 +853,9 @@
+ {
+   /* Read interface's index. */
+   ifp->ifindex = stream_getl (s);
++  ////////////////////////////// KT ///////////////////////////////////////////
++ // stream_getfl (s, ifp);
++  /////////////////////////////////////////////////////////////////////////////
+   ifp->status = stream_getc (s);
+ 
+   /* Read interface's value. */
+@@ -805,7 +954,6 @@
+   /* Get socket to zebra. */
+   zclient = THREAD_ARG (thread);
+   zclient->t_read = NULL;
+-
+   /* Read zebra header (if we don't have it already). */
+   if ((already = stream_get_endp(zclient->ibuf)) < ZEBRA_HEADER_SIZE)
+     {
+@@ -836,6 +984,7 @@
+   version = stream_getc (zclient->ibuf);
+   command = stream_getw (zclient->ibuf);
+   
++ // zlog_debug("zclient 0x%p command 0x%x \n", zclient, command);
+   if (marker != ZEBRA_HEADER_MARKER || version != ZSERV_VERSION)
+     {
+       zlog_err("%s: socket %d version mismatch, marker %d, version %d",
+@@ -890,46 +1039,57 @@
+   switch (command)
+     {
+     case ZEBRA_ROUTER_ID_UPDATE:
++	    printf(" zebra router id update \n");
+       if (zclient->router_id_update)
+ 	ret = (*zclient->router_id_update) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_ADD:
++      printf(" zebra interface add \n");
+       if (zclient->interface_add)
+ 	ret = (*zclient->interface_add) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_DELETE:
++      printf(" zebra interface delete \n");
+       if (zclient->interface_delete)
+ 	ret = (*zclient->interface_delete) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_ADDRESS_ADD:
++      printf(" zebra interface address add \n");
+       if (zclient->interface_address_add)
+ 	ret = (*zclient->interface_address_add) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_ADDRESS_DELETE:
++      printf(" zebra interface address delete \n");
+       if (zclient->interface_address_delete)
+ 	ret = (*zclient->interface_address_delete) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_UP:
++      printf(" zebra interface up \n");
+       if (zclient->interface_up)
+ 	ret = (*zclient->interface_up) (command, zclient, length);
+       break;
+     case ZEBRA_INTERFACE_DOWN:
++      printf(" zebra interface down \n");
+       if (zclient->interface_down)
+ 	ret = (*zclient->interface_down) (command, zclient, length);
+       break;
+     case ZEBRA_IPV4_ROUTE_ADD:
++      printf(" zebra ipv4 route add \n");
+       if (zclient->ipv4_route_add)
+ 	ret = (*zclient->ipv4_route_add) (command, zclient, length);
+       break;
+     case ZEBRA_IPV4_ROUTE_DELETE:
++      printf(" zebra ipv4 route delete \n");
+       if (zclient->ipv4_route_delete)
+ 	ret = (*zclient->ipv4_route_delete) (command, zclient, length);
+       break;
+     case ZEBRA_IPV6_ROUTE_ADD:
++      printf(" zebra ipv6 route add \n");
+       if (zclient->ipv6_route_add)
+ 	ret = (*zclient->ipv6_route_add) (command, zclient, length);
+       break;
+     case ZEBRA_IPV6_ROUTE_DELETE:
++      printf(" zebra ipv6 route delete \n");
+       if (zclient->ipv6_route_delete)
+ 	ret = (*zclient->ipv6_route_delete) (command, zclient, length);
+       break;
+@@ -996,10 +1156,15 @@
+ {
+   switch (event)
+     {
++    case ZCLIENT_SERV:
++	    zclient->t_read = 
++		    thread_add_read (master, zclient_accept, zclient, zclient->sock);
++	    break;
+     case ZCLIENT_SCHEDULE:
+-      if (! zclient->t_connect)
+-	zclient->t_connect =
+-	  thread_add_event (master, zclient_connect, zclient, 0);
++ //     if (! zclient->t_connect)
++	//zclient->t_connect =
++	 // thread_add_event (master, zclient_connect, zclient, 0);
++	// zclient_connect (zclient);
+       break;
+     case ZCLIENT_CONNECT:
+       if (zclient->fail >= 10)
+@@ -1008,9 +1173,9 @@
+ 	zlog_debug ("zclient connect schedule interval is %d", 
+ 		   zclient->fail < 3 ? 10 : 60);
+       if (! zclient->t_connect)
+-	zclient->t_connect = 
+-	  thread_add_timer (master, zclient_connect, zclient,
+-			    zclient->fail < 3 ? 10 : 60);
++	// zclient->t_connect = 
++	 // thread_add_timer (master, zclient_connect, zclient,
++		//	    zclient->fail < 3 ? 10 : 60);
+       break;
+     case ZCLIENT_READ:
+       zclient->t_read = 
+--- ./lib/stream.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/stream.c	2011-10-06 21:54:33.969737625 -0400
+@@ -28,6 +28,11 @@
+ #include "network.h"
+ #include "prefix.h"
+ #include "log.h"
++#include "sys/socket.h"
++
++#define HP_PPID 21
++#define MP_PPID 22
++#define LP_PPID 23
+ 
+ /* Tests whether a position is valid */ 
+ #define GETP_VALID(S,G) \
+@@ -340,7 +345,7 @@
+ u_int32_t
+ stream_getl_from (struct stream *s, size_t from)
+ {
+-  u_int32_t l;
++  u_int16_t l;
+ 
+   STREAM_VERIFY_SANE(s);
+   
+@@ -357,8 +362,48 @@
+   
+   return l;
+ }
++////////////////////////////////////// KT ///////////////////////////////////
++/* Get next long word from the stream. */
++void
++stream_getfl (struct stream *s, struct interface *iptr)
++{
++
++	STREAM_VERIFY_SANE(s);
++
++	if (STREAM_READABLE (s) < sizeof (u_int32_t))
++	{
++		STREAM_BOUND_WARN (s, "get long");
++		return 0;
++	}
++
++	iptr->feid  = s->data[s->getp++] << 8;
++	iptr->feid |= s->data[s->getp++];
++	iptr->ifindex = s->data[s->getp++] << 8;
++	iptr->ifindex |= s->data[s->getp++];
++}
+ 
+ u_int32_t
++stream_getil (struct stream *s)
++{
++  u_int32_t l;
++ 
++  STREAM_VERIFY_SANE(s);
++
++  if (STREAM_READABLE (s) < sizeof (u_int32_t))
++  {
++      STREAM_BOUND_WARN (s, "get long");
++      return 0;
++  }
++  
++  s->getp++;
++  s->getp++;
++  l  = s->data[s->getp++] << 8;
++  l |= s->data[s->getp++];
++
++  return l;
++}
++/////////////////////////////////////////////////////////////////////////////
++u_int32_t
+ stream_getl (struct stream *s)
+ {
+   u_int32_t l;
+@@ -533,6 +578,25 @@
+ 
+   return 4;
+ }
++///////////////////////////////////////////// KT /////////////////////////////////////
++/* put long word to the stream */
++void 	
++stream_putfl (struct stream *s, u_int16_t f, u_int16_t i)
++{
++	STREAM_VERIFY_SANE (s);
++
++	if (STREAM_WRITEABLE (s) < sizeof (u_int16_t))
++	{
++		STREAM_BOUND_WARN (s, "put");
++		return 0;
++	}
++	
++	s->data[s->endp++] = (u_char)(f >> 8);
++	s->data[s->endp++] = (u_char)f;
++	s->data[s->endp++] = (u_char)(i >> 8);
++	s->data[s->endp++] = (u_char)i;
++}
++//////////////////////////////////////////////////////////////////////////////////////
+ 
+ /* Put quad word to the stream. */
+ int
+@@ -740,8 +804,7 @@
+ ssize_t
+ stream_read_try(struct stream *s, int fd, size_t size)
+ {
+-  ssize_t nbytes;
+-
++  int nbytes;
+   STREAM_VERIFY_SANE(s);
+   
+   if (STREAM_WRITEABLE(s) < size)
+@@ -751,22 +814,123 @@
+          (stream is too small to contain the desired data). */
+       return -1;
+     }
+-
++/*
+   if ((nbytes = read(fd, s->data + s->endp, size)) >= 0)
+     {
+       s->endp += nbytes;
+       return nbytes;
+     }
++*/
++  if ((nbytes = tml_read(s->data + s->endp, size)) >= 0)
++  {
++	s->endp += nbytes;
++	return nbytes;
++  }
+   /* Error: was it transient (return -2) or fatal (return -1)? */
+-  if (ERRNO_IO_RETRY(errno))
+-    return -2;
+-  zlog_warn("%s: read failed on fd %d: %s", __func__, fd, safe_strerror(errno));
++//  if (ERRNO_IO_RETRY(errno))
++//    return -2;
++//  zlog_warn("%s: read failed on fd %d: %s", __func__, fd, safe_strerror(errno));
+   return -1;
+ }
+ 
+-/* Read up to size bytes into the stream from the fd, using recvmsgfrom
+- * whose arguments match the remaining arguments to this function
+- */
++int tml_read(char *s, size_t size)
++{
++    struct tagFORCES_PAYLOAD *vMsg;
++    struct msghdr msg;
++    struct sockaddr_in sa_dst;
++    int vPPID = 0;
++    int n = 0;
++    int ret = 0;
++    const int on = 1;
++    struct iovec iov[2];
++    struct ip iph;
++    struct stream temp_s;
++    char ospf_version;
++    char *data;
++    vMsg = (struct tagFORCES_PAYLOAD *)malloc(sizeof(struct tagFORCES_PAYLOAD));
++    memset(vMsg, 0, sizeof(struct tagFORCES_PAYLOAD));
++    if (ipid == 0)
++        ipid = (time(NULL) & 0xffff);	
++
++    if((n = tml_RecvMsg(vMsg, &vPPID)) > 0)
++    {
++	printf(" received packet \n");
++	switch (vPPID) 
++	{
++            case HP_PPID:
++	    switch(vMsg->header.message_type)
++	    {
++//	    struct sockaddr_in sa_dst;
++            case MSG_ASSOCIATION_SETUP_RESPONSE:
++                ipid = 0;
++		free(vMsg);
++		return -1;
++	    case MSG_ROUTE_CONFIG:
++		n = vMsg->TLV_pdu.value.payload.AppData.Length;
++		memcpy(s, &vMsg->TLV_pdu.value.payload.AppData.Data.data, n);
++		return n;	
++	    case MSG_OSPF_CONFIG:
++                memset(&iph, 0, sizeof (struct ip));
++                memset(&sa_dst, 0, sizeof (sa_dst));
++                memset(&msg, 0, sizeof (msg));
++                data = (unsigned char *)malloc(vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data_length);
++                memset(data, 0, vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data_length);
++                memcpy(data,
++                  vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data,
++                  vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data_length);
++                sa_dst = vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.sa_dst;
++                msg.msg_name = (caddr_t) &sa_dst;
++                msg.msg_namelen = sizeof(sa_dst);
++                msg.msg_iov = iov;
++                msg.msg_iovlen = 2;
++                iph = vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.iph;
++                iov[0].iov_base = (char *)&iph;
++                iov[0].iov_len = iph.ip_hl << 2;
++                iov[1].iov_base = data;
++                iov[1].iov_len = vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data_length;
++           //     sockopt_iphdrincl_swab_htosys (&iph);
++                ret = sendmsg(zebra_fd, &msg, 0);
++           //     sockopt_iphdrincl_swab_systoh (&iph);
++
++////////////////////////////// KT //////////////////////////////////////////////////////
++  printf ("ip_v %d \n", iph.ip_v);
++  printf ("ip_hl %d \n", iph.ip_hl);
++  printf ("ip_tos %d \n", iph.ip_tos);
++  printf ("ip_len %d \n", iph.ip_len);
++  printf ("ip_id %u \n", (u_int32_t) iph.ip_id);
++  printf ("ip_off %u \n", (u_int32_t) iph.ip_off);
++  printf ("ip_ttl %d \n", iph.ip_ttl);
++  printf ("ip_p %d \n", iph.ip_p);
++  printf ("ip_sum 0x%x \n", (u_int32_t) iph.ip_sum);
++  printf ("ip_src %s \n",  inet_ntoa (iph.ip_src));
++  printf ("ip_dst %s \n", inet_ntoa (iph.ip_dst));
++///////////////////////////////////////////////////////////////////////////////////////////
++		if(ret < 0)
++         	{
++		    printf (" send msg failed \n");
++		}
++		else 
++                    printf(" successful send msg !! \n");
++                    free(data);
++		    free(vMsg); 
++		    return -1;
++		default:
++		    perror("undefined message type. \n");
++		    free(vMsg);
++		    return -1;
++		}
++		break;
++		case MP_PPID:
++		case LP_PPID:
++		default:
++		    perror("undefined PPID. \n");
++		    free(vMsg);
++		    return -1;
++	    }
++    }
++    free(vMsg);
++    return -1;
++}
+ ssize_t 
+ stream_recvfrom (struct stream *s, int fd, size_t size, int flags,
+                  struct sockaddr *from, socklen_t *fromlen)                     
+@@ -807,10 +971,8 @@
+ {
+   int nbytes;
+   struct iovec *iov;
+-  
+   STREAM_VERIFY_SANE(s);
+   assert (msgh->msg_iovlen > 0);  
+-  
+   if (STREAM_WRITEABLE (s) < size)
+     {
+       STREAM_BOUND_WARN (s, "put");
+@@ -818,7 +980,6 @@
+          to hold the desired data! */
+       return -1;
+     }
+-  
+   iov = &(msgh->msg_iov[0]);
+   iov->iov_base = (s->data + s->endp);
+   iov->iov_len = size;
+@@ -830,7 +991,23 @@
+   
+   return nbytes;
+ }
+-  
++/////////////////////////////////////// KT ////////////////////////////
++ssize_t
++stream_ospf_recvmsg(struct stream *s, int fd, struct msghdr *msgh, int flags, size_t size)
++{
++  int nbytes;
++  struct iovec *iov;
++//  char data[128];
++//  s->data = (char *)malloc(128);
++  memset (s->data, 0, 1024);
++  iov = &(msgh->msg_iov[0]);
++//  iov->iov_base = (u_char*)&data;
++  iov->iov_base = s->data;
++  iov->iov_len = size;
++  nbytes = recvmsg (fd, msgh, flags);
++  return nbytes;	
++}
++/////////////////////////////////////////////////////////////////////
+ /* Write data to buffer. */
+ size_t
+ stream_write (struct stream *s, const void *ptr, size_t size)
+--- ./lib/prefix.c	2009-12-21 05:06:06.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/prefix.c	2011-10-06 21:54:33.711467939 -0400
+@@ -68,6 +68,7 @@
+ int
+ prefix_match (const struct prefix *n, const struct prefix *p)
+ {
++ // printf(" prefix match function call in prefix.c file \n");
+   int offset;
+   int shift;
+ 
+@@ -82,13 +83,19 @@
+   offset = n->prefixlen / PNBBY;
+   shift =  n->prefixlen % PNBBY;
+ 
++//  printf(" shift : %d in prefix_match function (prefix.c) \n", shift);
++
+   if (shift)
+     if (maskbit[shift] & (np[offset] ^ pp[offset]))
+       return 0;
++//  printf(" offset : %d in prefix_match function (prefix.c) \n", offset);
+   
+   while (offset--)
+     if (np[offset] != pp[offset])
+       return 0;
++
++//  printf(" return 1 in prefix_match function (prefix.c) \n");
++
+   return 1;
+ }
+ 
+--- ./lib/network.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/network.c	2011-10-06 21:54:33.642362254 -0400
+@@ -23,7 +23,6 @@
+ #include <zebra.h>
+ #include "log.h"
+ #include "network.h"
+-
+ /* Read nbytes from fd and store into ptr. */
+ int
+ readn (int fd, u_char *ptr, int nbytes)
+@@ -93,3 +92,70 @@
+     }
+   return 0;
+ }
++
++//////////////////////////////// KT //////////////////////////////////////
++
++int
++zebra_sock_init (void)
++{
++  int zebra_sock;
++  int ret, hincl = 1;
++#if 1
++  unsigned int yes=1, no=0;
++  int val = 1;
++  struct sockaddr_in uncastAddr;//, uncastAddreth4;
++  struct sockaddr_in McastAddr;
++  struct ip_mreq McastMreq;
++
++  memset(&uncastAddr, 0, sizeof(uncastAddr));
++  uncastAddr.sin_family = AF_INET;
++  uncastAddr.sin_port = htons(0);
++  uncastAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++/* 
++  memset(&uncastAddreth4, 0, sizeof(uncastAddr));
++  uncastAddreth4.sin_family = AF_INET;
++  uncastAddreth4.sin_port = htons(0);
++  uncastAddreth4.sin_addr.s_addr = inet_addr("192.168.16.1");
++  */
++//  bind(zebra_sock, (struct sockaddr *)&uncastAddreth4, sizeof(uncastAddr));
++
++  memset(&McastAddr, 0 , sizeof(McastAddr));
++  McastAddr.sin_family = AF_INET;
++  McastAddr.sin_port = htons(0);
++  McastAddr.sin_addr.s_addr = inet_addr("224.0.0.5");
++  McastMreq.imr_multiaddr = McastAddr.sin_addr;
++  McastMreq.imr_interface.s_addr = htonl(INADDR_ANY);
++#endif
++
++  zebra_sock = socket (AF_INET, SOCK_RAW, IPPROTO_ZEBRAIGP);
++  if (zebra_sock < 0)
++    {
++      printf ("zebra_sock_init error \n");
++
++      exit(1);
++    }
++
++ ret = setsockopt (zebra_sock, IPPROTO_IP, IP_HDRINCL, &hincl, sizeof (hincl));
++  if (ret < 0)
++    {
++        printf ("zebra_sock_init error \n");
++    }
++
++#if 1
++  setsockopt(zebra_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &uncastAddr, sizeof(uncastAddr));
++//  setsockopt(zebra_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &uncastAddreth4, sizeof(uncastAddr));
++  setsockopt(zebra_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &McastMreq, sizeof(McastMreq));
++  setsockopt(zebra_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
++  setsockopt(zebra_sock, IPPROTO_IP, IP_MULTICAST_LOOP, &no, sizeof(no));
++
++//  bind(zebra_sock, (struct sockaddr*)&McastAddr, sizeof(McastAddr));
++#endif
++  ret = setsockopt_ifindex (AF_INET, zebra_sock, 1);
++
++  if (ret < 0)
++     zlog_warn ("Can't set pktinfo option for fd %d", zebra_sock);
++
++
++  return zebra_sock;
++}
++///////////////////////////////////////////////////////////////////////////
+--- ./lib/network.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/network.h	2011-10-06 21:54:33.651473502 -0400
+@@ -33,6 +33,10 @@
+    -1 on error. */
+ extern int set_nonblocking(int fd);
+ 
++//////////////////////////// KT /////////////////////////////
++extern int zebra_sock_init (void);
++#define SIOCSIPMSFILTER  _IO('s', 130)
++/////////////////////////////////////////////////////////////
+ /* Does the I/O error indicate that the operation should be retried later? */
+ #define ERRNO_IO_RETRY(EN) \
+ 	(((EN) == EAGAIN) || ((EN) == EWOULDBLOCK) || ((EN) == EINTR))
+--- ./lib/zclient.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/zclient.h	2011-10-06 21:54:34.190377770 -0400
+@@ -122,14 +122,14 @@
+ /* Prototypes of zebra client service functions. */
+ extern struct zclient *zclient_new (void);
+ extern void zclient_init (struct zclient *, int);
+-extern int zclient_start (struct zclient *);
++extern int zclient_start ();
+ extern void zclient_stop (struct zclient *);
+ extern void zclient_reset (struct zclient *);
+ extern void zclient_free (struct zclient *);
+-
++static int zclient_connect (struct zclient *);
+ /* Get TCP socket connection to zebra daemon at loopback address. */
+-extern int zclient_socket (void);
+-
++//extern int zclient_socket (void);
++extern int ForCES_ospf_server_socket(void);
+ /* Get unix stream socket connection to zebra daemon at given path. */
+ extern int zclient_socket_un (const char *);
+ 
+@@ -157,6 +157,8 @@
+ extern int zapi_ipv4_route (u_char, struct zclient *, struct prefix_ipv4 *, 
+                             struct zapi_ipv4 *);
+ 
++//////////////////////////////////// KT /////////////////////////////////////////////
++extern void zclient_read_thread_start(struct zclient *);
+ #ifdef HAVE_IPV6
+ /* IPv6 prefix add and delete function prototype. */
+ 
+--- ./lib/zebra.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/zebra.h	2011-10-06 21:54:34.201648863 -0400
+@@ -47,6 +47,7 @@
+ #include <string.h>
+ #include <pwd.h>
+ #include <grp.h>
++#include <netinet/igmp.h>
+ #ifdef HAVE_STROPTS_H
+ #include <stropts.h>
+ #endif /* HAVE_STROPTS_H */
+@@ -141,7 +142,7 @@
+ #ifdef HAVE_SYS_SOCKIO_H
+ #include <sys/sockio.h>
+ #endif /* HAVE_SYS_SOCKIO_H */
+-
++//#include <sys/libmcast.h>
+ #ifdef HAVE_NETINET_IN_H
+ #include <netinet/in.h>
+ #endif /* HAVE_NETINET_IN_H */
+@@ -267,6 +268,16 @@
+ #include "zassert.h"
+ #include "str.h"
+ 
++///////////////////////////// KT ////////////////////////////////////////////////
++#include "tml_core.h"
++#include "common.h"
++
++#define FE_INDEX 1
++#define  IPPROTO_ZEBRAIGP         89
++int zebra_fd;
++pthread_t zebra_thread;
++#define MAX_PACKET_SIZE		65535U
++/////////////////////////////////////////////////////////////////////////////////
+ 
+ #ifdef HAVE_BROKEN_CMSG_FIRSTHDR
+ /* This bug is present in Solaris 8 and pre-patch Solaris 9 <sys/socket.h>;
+--- ./lib/if.c	2009-12-10 11:23:16.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/if.c	2011-10-06 21:54:33.445492620 -0400
+@@ -182,10 +182,18 @@
+ {
+   struct listnode *node;
+   struct interface *ifp;
++  u_int16_t feindex, ifindex;
++
++  feindex = index >> 16;
++  ifindex = index;
++
+ 
+   for (ALL_LIST_ELEMENTS_RO(iflist, node, ifp))
+     {
+-      if (ifp->ifindex == index)
++
++     // if (ifp->ifindex == ifindex && ifp->feindex == feindex)
++//	return ifp;
++	if(ifp->ifindex == ifindex)
+ 	return ifp;
+     }
+   return NULL;
+--- ./lib/sockopt.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/sockopt.c	2011-10-06 21:54:33.907451943 -0400
+@@ -222,6 +222,7 @@
+     case IP_MULTICAST_IF:
+     case IP_ADD_MEMBERSHIP:
+     case IP_DROP_MEMBERSHIP:
++     
+       memset (&mreqn, 0, sizeof(mreqn));
+ 
+       if (mcast_addr)
+@@ -234,8 +235,12 @@
+       
+       ret = setsockopt(sock, IPPROTO_IP, optname,
+ 		       (void *)&mreqn, sizeof(mreqn));
++
++ //     printf(" socket number is %d in setsockopt multicat ipv4 function (sockopt.c) \n", sock );
++
+       if ((ret < 0) && (optname == IP_ADD_MEMBERSHIP) && (errno == EADDRINUSE))
+         {
++
+ 	  /* see above: handle possible problem when interface comes back up */
+ 	  char buf[2][INET_ADDRSTRLEN];
+ 	  zlog_info("setsockopt_multicast_ipv4 attempting to drop and "
+--- ./lib/if.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./lib/if.h	2011-10-06 21:54:33.458476649 -0400
+@@ -82,7 +82,12 @@
+ 
+   /* Interface index (should be IFINDEX_INTERNAL for non-kernel or
+      deleted interfaces). */
+-  unsigned int ifindex;
++ 
++  unsigned int ifindex:16,
++	       feid:16;
++	   
++//  unsigned int ifindex; 
++  
+ #define IFINDEX_INTERNAL	0
+ 
+   /* Zebra internal interface status */
+--- ./ospf6d/ospf6_message.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_FE/quagga-0.99.16/./ospf6d/ospf6_message.c	2011-10-06 21:54:34.773590661 -0400
+@@ -1352,7 +1352,7 @@
+     }
+ 
+   /* send message */
+-  len = ospf6_sendmsg (src, dst, &oi->interface->ifindex, iovector);
++ // len = ospf6_sendmsg (src, dst, &oi->interface->ifindex, iovector);
+   if (len != ntohs (oh->length))
+     zlog_err ("Could not send entire message");
+ }

@@ -1,0 +1,27 @@
+diff --git a/Makefile.am b/Makefile.am
+index fde82e6..a356cfa 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -54,13 +54,21 @@ dist_sysconf_DATA = srxcryptoapi.conf.sample \
+ 
+ 
+ # SRxCryptoAPI Test program
+-sbin_PROGRAMS = srx_crypto_tester
++sbin_PROGRAMS = srx_crypto_tester perf_test
+ 
+ srx_crypto_tester_LDFLAGS = $(L_FLAGS) $(LIBS) -ldl $(OPENSSL_LDFLAGS) @OPENSSL_LIBS@
+ srx_crypto_tester_SOURCES = srx_api_test.c
+ srx_crypto_tester_CFLAGS = @CFLAGS@ $(OPENSSL_CFLAGS)
+ srx_crypto_tester_LDADD = $(top_srcdir)/libSRxCryptoAPI.la
+ 
++
++perf_test_SOURCES = perf_test.c 
++INCLUDES_PERF_TEST = -I/users/kyehwanl/proj-bgp/quaggasrx -I/users/kyehwanl/proj-bgp/quaggasrx/lib -I./srx
++perf_test_CFLAGS = $(INCLUDES_PERF_TEST)
++perf_test_LDFLAGS = -L/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -L/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/
++perf_test_LDADD = -lzebra -lSRxCryptoAPI
++
++
+ distclean-local:
+ 	rm -f srxcryptoapi-*.spec; \
+ 	rm -f srxcryptoapi-*.rpm; \

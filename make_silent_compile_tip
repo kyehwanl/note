@@ -1,0 +1,13 @@
+
+ Makefile Option: Silent Compile
+================================
+
+
+1. in <configure>
+ add the following switch "--enable-silent-rules"
+
+2. in <configure.ac>
+ add "AM_SILENT_RULES" macros 
+
+3. when doing 'make'
+ make V=0|1  (VERBOSE)

@@ -1,0 +1,106 @@
+0. configuration
+================
+
+[kyehwanl@node5 yabgp]$ sudo pip install -r requirements.txt
+Collecting pbr<1.0,>=0.5.21 (from -r requirements.txt (line 1))
+/usr/lib/python2.7/site-packages/pip-8.0.3-py2.7.egg/pip/_vendor/requests/packages/urllib3/util/ssl_.py:315: SNIMissingWarning: An HTTPS request has been made, but the SNI (Subject Name Indication) extension to TLS is not available on this platform. This may cause the server to present an incorrect TLS certificate, which can cause validation failures. For more information, see https://urllib3.readthedocs.org/en/latest/security.html#snimissingwarning.
+  SNIMissingWarning
+/usr/lib/python2.7/site-packages/pip-8.0.3-py2.7.egg/pip/_vendor/requests/packages/urllib3/util/ssl_.py:120: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
+  InsecurePlatformWarning
+  Downloading pbr-0.11.1-py2.py3-none-any.whl (79kB)
+    100% |████████████████████████████████| 81kB 270kB/s
+Collecting oslo.config>=2.1.0 (from -r requirements.txt (line 2))
+  Downloading oslo.config-3.9.0-py2.py3-none-any.whl (90kB)
+    100% |████████████████████████████████| 90kB 180kB/s
+Collecting Twisted==15.0.0 (from -r requirements.txt (line 3))
+  Downloading Twisted-15.0.0.tar.bz2 (4.4MB)
+    100% |████████████████████████████████| 4.4MB 46kB/s
+Collecting Flask==0.10.1 (from -r requirements.txt (line 4))
+  Downloading Flask-0.10.1.tar.gz (544kB)
+    100% |████████████████████████████████| 544kB 233kB/s
+Collecting Flask-HTTPAuth==2.5.0 (from -r requirements.txt (line 5))
+  Downloading Flask-HTTPAuth-2.5.0.tar.gz
+Collecting netaddr>=0.7.12 (from -r requirements.txt (line 6))
+  Downloading netaddr-0.7.18-py2.py3-none-any.whl (1.5MB)
+    100% |████████████████████████████████| 1.5MB 102kB/s
+Collecting pika==0.9.14 (from -r requirements.txt (line 7))
+  Downloading pika-0.9.14.tar.gz (72kB)
+    100% |████████████████████████████████| 73kB 1.9MB/s
+Collecting pymongo==3.0.3 (from -r requirements.txt (line 8))
+  Downloading pymongo-3.0.3.tar.gz (419kB)
+    100% |████████████████████████████████| 421kB 240kB/s
+Requirement already satisfied (use --upgrade to upgrade): pip in /usr/lib/python2.7/site-packages/pip-8.0.3-py2.7.egg (from pbr<1.0,>=0.5.21->-r requirements.txt (line 1))
+Collecting stevedore>=1.5.0 (from oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading stevedore-1.12.0-py2.py3-none-any.whl
+Collecting debtcollector>=1.2.0 (from oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading debtcollector-1.3.0-py2.py3-none-any.whl
+Collecting six>=1.9.0 (from oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading six-1.10.0-py2.py3-none-any.whl
+Collecting zope.interface>=3.6.0 (from Twisted==15.0.0->-r requirements.txt (line 3))
+  Downloading zope.interface-4.1.3.tar.gz (141kB)
+    100% |████████████████████████████████| 143kB 1.0MB/s
+Collecting Werkzeug>=0.7 (from Flask==0.10.1->-r requirements.txt (line 4))
+  Downloading Werkzeug-0.11.4-py2.py3-none-any.whl (305kB)
+    100% |████████████████████████████████| 307kB 256kB/s
+Collecting Jinja2>=2.4 (from Flask==0.10.1->-r requirements.txt (line 4))
+  Downloading Jinja2-2.8-py2.py3-none-any.whl (263kB)
+    100% |████████████████████████████████| 266kB 833kB/s
+Collecting itsdangerous>=0.21 (from Flask==0.10.1->-r requirements.txt (line 4))
+  Downloading itsdangerous-0.24.tar.gz (46kB)
+    100% |████████████████████████████████| 49kB 292kB/s
+Collecting Babel>=1.3 (from debtcollector>=1.2.0->oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading Babel-2.2.0-py2.py3-none-any.whl (6.5MB)
+    100% |████████████████████████████████| 6.5MB 41kB/s
+Collecting funcsigs>=0.4 (from debtcollector>=1.2.0->oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading funcsigs-0.4-py2.py3-none-any.whl
+Collecting wrapt>=1.7.0 (from debtcollector>=1.2.0->oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading wrapt-1.10.6.tar.gz
+Requirement already satisfied (use --upgrade to upgrade): setuptools in /usr/lib/python2.7/site-packages (from zope.interface>=3.6.0->Twisted==15.0.0->-r requirements.txt (line 3))
+Requirement already satisfied (use --upgrade to upgrade): MarkupSafe in /usr/lib/python2.7/site-packages/MarkupSafe-0.15-py2.7-linux-i686.egg (from Jinja2>=2.4->Flask==0.10.1->-r requirements.txt (line 4))
+Collecting pytz>=0a (from Babel>=1.3->debtcollector>=1.2.0->oslo.config>=2.1.0->-r requirements.txt (line 2))
+  Downloading pytz-2015.7-py2.py3-none-any.whl (476kB)
+    100% |████████████████████████████████| 479kB 362kB/s
+Installing collected packages: pbr, six, stevedore, netaddr, pytz, Babel, funcsigs, wrapt, debtcollector, oslo.config, zope.interface, Twisted, Werkzeug, Jinja2, itsdangerous, Flask, Flask-HTTPAuth, pika, pymongo
+  Found existing installation: netaddr 0.7.6
+    Uninstalling netaddr-0.7.6:
+      Successfully uninstalled netaddr-0.7.6
+  Running setup.py install for wrapt ... done
+  Running setup.py install for zope.interface ... done
+  Running setup.py install for Twisted ... done
+  Running setup.py install for itsdangerous ... done
+  Running setup.py install for Flask ... done
+  Running setup.py install for Flask-HTTPAuth ... done
+  Running setup.py install for pika ... done
+  Running setup.py install for pymongo ... done
+Successfully installed Babel-2.2.0 Flask-0.10.1 Flask-HTTPAuth-2.5.0 Jinja2-2.8 Twisted-15.0.0 Werkzeug-0.11.4 debtcollector-1.3.0 funcsigs-0.4 itsdangerous-0.24 netaddr-0.7.18 oslo.config-3.9.0 pbr-0.11.1 pika-0.9.14 pymongo-3.0.3 pytz-2015.7 six-1.10.0 stevedore-1.12.0 wrapt-1.10.6 zope.interface-4.1.3
+/usr/lib/python2.7/site-packages/pip-8.0.3-py2.7.egg/pip/_vendor/requests/packages/urllib3/util/ssl_.py:120: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
+  InsecurePlatformWarning
+
+
+
+1. running
+==========
+ ./bin/yabgpd --bgp-local_addr=10.1.1.6 --bgp-local_as=60006 --bgp-remote_addr=10.1.1.2 --bgp-remote_as=60002 
+
+ or
+
+ ./bin/yabgpd --config-file=./etc/yabgp/yabgp.ini
+
+
+
+
+2. result data - update
+=======================
+
+update, withdraw message generated in forms of JSON under the data
+
+[kyehwanl@node5 ~]$ less data/bgp/10.1.1.2/msg/1456935480.29.msg
+{"msg": {"version": 4, "hold_time": 180, "asn": 60002, "bgp_id": "10.1.1.2", "capabilities": {"cisco_route_refresh": true, "four_bytes_as": true, "afi_safi": [[1, 1]], "route_refresh": true, "72": "'\\x00\\x00\\x01'"}}, "type": 1, "t": 1456935480.57844, "seq": 1}
+{"msg": {"attr": {"1": 0, "2": [[2, [60002]]], "3": "10.1.1.2", "4": 0}, "withdraw": [], "nlri": ["10.0.0.0/8"]}, "type": 2, "t": 1456935481.5847, "seq": 2}
+{"msg": {"attr": {"1": 0, "2": [[2, [60002, 61417]]], "3": "10.1.1.2"}, "withdraw": [], "nlri": ["129.0.0.0/8"]}, "type": 2, "t": 1456935481.586424, "seq": 3}
+{"msg": {"attr": {"1": 0, "2": [[2, [60002, 61417]]], "3": "10.1.1.2"}, "withdraw": [], "nlri": ["129.0.30.0/23"]}, "type": 2, "t": 1456935481.587548, "seq": 4}
+{"msg": {"version": 4, "hold_time": 180, "asn": 60002, "bgp_id": "10.1.1.2", "capabilities": {"cisco_route_refresh": true, "four_bytes_as": true, "afi_safi": [[1, 1]], "route_refresh": true, "72": "'\\x00\\x00\\x01'"}}, "type": 1, "t": 1456935632.781439, "seq": 5}
+{"msg": {"attr": {"1": 0, "2": [[2, [60002]]], "3": "10.1.1.2", "4": 0}, "withdraw": [], "nlri": ["10.0.0.0/8"]}, "type": 2, "t": 1456935633.787689, "seq": 6}
+{"msg": {"data": "''", "sub_error": "Peer reconfigured", "error": "Cease"}, "type": 3, "t": 1456935794.960138, "seq": 7}
+{"msg": "Client connection failed: Connection was refused by other side: 111: Connection refused.", "type": 0, "t": 1456935824.964913, "seq": 8}
+{"msg": "Client connection failed: Connection was refused by other side: 111: Connection refused.", "type": 0, "t": 1456935941.052472, "seq": 9}

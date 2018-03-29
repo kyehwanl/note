@@ -1,0 +1,14 @@
+<autopager>
+<site><urlPattern>http://images.infoworld.com/news*</urlPattern>
+<guid>0793B735-0A21-C968-850C-55D7-5F0B-5C58</guid>
+<margin>1</margin>
+<owner>kyehwanl</owner>
+<enableJS>false</enableJS>
+<quickLoad>true</quickLoad>
+<published>true</published>
+<contentXPath>//div[@id='news']/ul</contentXPath>
+<testLink>http://images.infoworld.com/news</testLink>
+<linkXPath>//a[@class='active' and (text()='next page ›')]</linkXPath>
+<desc>AutoPager rule for images.infoworld.com</desc>
+</site>
+</autopager>

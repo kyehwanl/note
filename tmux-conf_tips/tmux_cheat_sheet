@@ -1,0 +1,68 @@
+###############################
+< tmux cheat sheet> 
+###############################
+
+## Default command key bindings
+
+C-b         Send the prefix key (C-b) through to the application.
+
+f           Prompt to search for text in open windows.
+#           List all paste buffers.
+-           Delete the most recently copied buffer of text.
+=           Choose which buffer to paste interactively from a list.
+
+c           Create a new window.
+,           Rename the current window.
+'           Prompt for a window index to select.
+.           Prompt for an index to move the current window.
+0 to 9      Select windows 0 to 9.
+&           Kill the current window.
+i           Display some information about the current window.
+l           Move to the previously selected window.
+n           Change to the next window.
+p           Change to the previous window.
+w           Choose the current window interactively.
+M-n         Move to the next window with a bell or activity marker.
+M-p         Move to the previous window with a bell or activity marker.
+
+;           Move to the previously active pane.
+o           Select the next pane in the current window.
+x           Kill the current pane.
+{           Swap the current pane with the previous pane.
+}           Swap the current pane with the next pane.
+!           Break the current pane out of the window.
+"           Split the current pane into two, top and bottom.
+%           Split the current pane into two, left and right.
+
+C-o         Rotate the panes in the current window forwards.
+            Change to the pane above, below, to the left, or to the right of the current pane.
+M-1 to M-5  Arrange panes in one of the five preset layouts: even-horizontal, even-vertical, main-horizontal, main-vertical, or tiled.
+C-Up, C-Down
+C-Left, C-Right
+            Resize the current pane in steps of one cell.
+M-Up, M-Down
+M-Left, M-Right
+            Resize the current pane in steps of five cells.
+q           Briefly display pane indexes.
+M-o         Rotate the panes in the current window backwards.
+
+:           Enter the tmux command prompt.
+?           List all key bindings.
+
+[           Enter copy mode to copy text or view the history.
+Page Up     Enter copy mode and scroll one page up.
+Up, Down
+Left, Right
+]           Paste the most recently copied buffer of text.
+
+C-z         Suspend the tmux client.
+$           Rename the current session.
+s           Select a new session for the attached client interactively.
+L           Switch the attached client back to the last session.
+d           Detach the current client.
+D           Choose a client to detach.
+r           Force redraw of the attached client.
+
+t           Show the time.
+~           Show previous messages from tmux, if any.
+

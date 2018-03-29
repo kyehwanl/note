@@ -1,0 +1,24 @@
+Creating a new region
+
+Once you started screen, you will be able to create regions. To create a region, type:
+C-a S
+That is, typing a while holding the control key, then typing a capital S. The new region will be below the current shell session with no prompt it in.
+
+Moving between regions
+
+To start a new shell in the new region, we first need to move to it, or change the focus to the new region.
+C-a TAB
+That is, typing a while holding the control key, then pressing the tabulation key. The ¡°C-a TAB¡± sequence of commands allows us to move through all the created regions. If you do ¡°C-a TAB¡± again, you will move to the next region.
+
+Creating a new shell
+
+Once the new region has the focus, we create a new shell by typing
+C-a c
+That is, typing a while holding the control key, then typing c.
+Now you should see the shell prompt in the new region.
+
+Killing a region
+
+If we want to kill a region, we just need to move to the region then type
+C-a X
+That is, typing a while holding the control key, then typing a capital x.

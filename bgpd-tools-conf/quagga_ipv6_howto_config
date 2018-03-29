@@ -1,0 +1,120 @@
+
+
+Quagga IPv6 configuration set
+=============================
+
+
+1. get an information about ipv6 address on the desired interface
+
+    node1,
+          eth37     Link encap:Ethernet  HWaddr 90:B1:1C:5A:4F:E9
+                    inet addr:10.1.1.2  Bcast:10.1.1.255  Mask:255.255.255.0
+                    inet6 addr: fe80::92b1:1cff:fe5a:4fe9/64 Scope:Link
+
+    node2,
+          eth36     Link encap:Ethernet  HWaddr D4:BE:D9:F4:FD:DA  
+                    inet addr:10.1.1.3  Bcast:10.1.1.255  Mask:255.255.255.0
+                    inet6 addr: fe80::d6be:d9ff:fef4:fdda/64 Scope:Link
+
+
+2. configuration(bgpd.conf) on node1
+
+ A. basic setting
+
+  router bgp 60002
+  bgp router-id 10.1.1.2
+  neighbor fe80::d6be:d9ff:fef4:fdda remote-as 60003
+  neighbor fe80::d6be:d9ff:fef4:fdda interface eth37  <-- here, it should be node1's ipv6 interface(eth37), NOT node2's
+
+
+
+ B. address family setting
+
+  address-family ipv6
+  network 1001:db8:2:3::/64
+  neighbor fe80::d6be:d9ff:fef4:fdda activate
+  neighbor fe80::d6be:d9ff:fef4:fdda next-hop-self
+  neighbor fe80::d6be:d9ff:fef4:fdda route-map set-nexthop out
+  exit-address-family
+
+
+ C. additional setting
+  route-map set-nexthop permit 10
+   match ipv6 address all
+   set ipv6 next-hop global 3ffe:1cfa:0:2:2c0:4fff:fe68:a225
+   set ipv6 next-hop local fe80::92b1:1cff:fe5a:4fe9
+
+
+3. Quagga Result
+
+  node2> sh ipv6 bgp
+  BGP table version is 0, local router ID is 10.1.1.3
+  Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+                r RIB-failure, S Stale, R Removed
+  Validation:    v - valid, n - notfound, i - invalid, ? - undefined
+  SRx Status:    I - route ignored, D - SRx evaluation deactivated
+  SRxVal Format: validation result (origin validation, path validation)
+  Origin codes: i - IGP, e - EGP, ? - incomplete
+
+     Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+  *> 70781FE7 i(n,v)              1001:db8:2:3::/64
+                      3ffe:1cfa:0:2:2c0:4fff:fe68:a225
+                                               0              0 60002 i
+  *> -------- v(v,v)              2002:db8:1:3::/64
+                      ::                       0          32768 i
+
+  Total number of prefixes 2
+
+
+
+4. connection test using ping6
+
+  $ ping6 fe80::d6be:d9ff:fef4:fdda%eth37           
+  PING fe80::d6be:d9ff:fef4:fdda%eth37(fe80::d6be:d9ff:fef4:fdda) 56 data bytes
+  64 bytes from fe80::d6be:d9ff:fef4:fdda: icmp_seq=1 ttl=64 time=0.385 ms
+  64 bytes from fe80::d6be:d9ff:fef4:fdda: icmp_seq=2 ttl=64 time=0.201 ms
+  --- fe80::d6be:d9ff:fef4:fdda%eth37 ping statistics ---
+  2 packets transmitted, 2 received, 0% packet loss, time 999ms
+  rtt min/avg/max/mdev = 0.201/0.293/0.385/0.092 ms
+
+
+
+5. other command to use
+
+  $ ip -6 route                    
+  unreachable ::/96 dev lo  metric 1024  error -101
+  unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101
+  unreachable 2002:a00::/24 dev lo  metric 1024  error -101
+  unreachable 2002:7f00::/24 dev lo  metric 1024  error -101
+  unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101
+  unreachable 2002:ac10::/28 dev lo  metric 1024  error -101
+  unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101
+  unreachable 2002:e000::/19 dev lo  metric 1024  error -101
+  unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101
+  fe80::d6be:d9ff:fef4:fdda dev eth37  metric 1024 
+  unreachable fe80::/64 dev lo  proto kernel  metric 256  error -101
+  fe80::/64 dev eth31  proto kernel  metric 256 
+  fe80::/64 dev eth37  proto kernel  metric 256 
+
+
+  $ sudo ip -6 route add fe80::d6be:d9ff:fef4:fdda dev eth37
+
+
+
+  $ route -A inet6
+  Kernel IPv6 routing table
+  Destination                                 Next Hop                                Flags Metric Ref    Use Iface
+  ::1/128                                     *                                       U     256    0        0 lo      
+  fe80::d6be:d9ff:fef4:fdda/128               *                                       U     1024   0        0 eth37   
+  fe80::/64                                   *                                       U     256    0        0 eth31   
+  fe80::/64                                   *                                       U     256    0        0 eth37   
+  ::1/128                                     *                                       U     0      1128       1 lo      
+  fe80::92b1:1cff:fe5a:4fe8/128               *                                       U     0      0        1 lo      
+  fe80::92b1:1cff:fe5a:4fe9/128               *                                       U     0      129       1 lo      
+  ff00::/8                                    *                                       U     256    0        0 eth31   
+  ff00::/8                
+
+
+
+(REFERENCE)
+http://wp.mindless.gr/2011/07/dual_stack_bgp_configuration_quagga/

@@ -1,0 +1,130 @@
+
+GDB 
+
+(1) TUI mode
+============
+0. C-x, a or A: toggle between TUI mode and gdb standard mode
+    + press '-' on gdb running (tui enable|disable)
+    + C-x 1 : TUI layout with only 1 window
+    + C-x 2 : layout at least 2 windows
+
+1. layout|focus <src|asm|cmd|split|regs|prev|next>
+2. winheight <name> <[+|-]count>
+3. update: current win & execution point, 
+4. refresh(Ctrl-L)
+5. info win
+6. enable to scroll up
+        - set trace-commands on (: enable to log a command itself)
+          set logging on
+        - Then, in another shell, tail -f /where/gdb/run/gdb.txt
+
+   * if you activate GDB logging (via set logging on) before switching to TUI mode, you may find that 
+     the logging stops upon entering TUI (this is a bug in GDB). You can toggle it back on:
+        - set logging off / set logging on
+
+   ** STRONGLY RECOMMEND WHEN TUI MODE --> disable first, and then enable once get TUI in 
+
+
+
+(2) TUI configuration variables
+===============================
+The TUI has several configuration variables that control the appearance of windows on the terminal.
+
+1. set tui border-kind kind
+    Select the border appearance for the source, assembly and register windows. The possible values are the following:
+    space: Use a space character to draw the border.
+    ascii: Use ascii characters + - and | to draw the border.
+    acs  : Use the Alternate Character Set to draw the border.
+
+2. set tui active-border-mode mode
+    Select the attributes to display the border of the active window. 
+    mode:  normal, standout, reverse, half, half-standout, bold and bold-standout.
+
+3. set tui border-mode mode
+    Select the attributes to display the border of other windows. 
+    mode: normal standout reverse half half-standout bold bold-standout
+
+
+
+
+(3) redirect output from a running process
+==========================================
+1. using gdb -- redirect output to a file --> later use with "tail -f <file>"
+    'ctrl-z' and 'bg' and 'touch /tmp/stdout'
+    gdb -p $! ($!: background process)
+    p dup2(open("/tmp/stdout", 1), 1)  [or creat("/tmp/stdout", 0600) instead of open()]
+    detach and quit from gdb
+    'disown' and 'logout' back in the shell [disown: avoiding SIGHUP from shell logout]
+
+2. using gdb -- redirect output to a different terminal 
+    get running pts# with 'ps aux' and yours with 'ps -t'
+    gdb -p <pid> then, 'p dup2(open("/dev/pts/<yours>", 1), 1)' 
+    detach and quit from gdb
+
+    * in case of bgpd, need to use the pid that belongs to 'lt-bgpd' process, not 'bgpd'
+
+
+
+
+
+(4) bash shell and gdb batch-mode calculation
+=============================================
+   $((10+1))
+   $gdb -q --batch -ex "p 0xaa - 52" -ex 'p 0x82' (-q: quiet mode, -ex: execute given command)
+
+
+
+(5) gdb general
+===============
+set arg <arg1> <arg2> ... <arg n>
+set directories <source directory>
+set step-mode on : setep command enter a certain function  even though the function was not built with -g(no debug information)
+set stop-on-solib-event 1 : stop execution when the controlled program loads a new shared library
+graph display 'x/48wx$esp'
+
+
+
+
+(6) Debugging macros
+====================
+in fact, by default, gdb doesn't know anything at all about macros, even when your project was built with debug symbols:
+  (gdb) p GFP_ATOMIC
+  No symbol "GFP_ATOMIC" in current context.
+  (gdb) p task_is_stopped(&init_task)
+  No symbol "task_is_stopped" in current context.
+
+
+However, if you're willing to tell GCC to generate debug symbols specifically optimized for gdb, using -ggdb3, it can preserve this information:
+  $ make KCFLAGS=-ggdb3
+  ...
+  (gdb) break schedule
+  (gdb) continue
+  (gdb) p/x GFP_ATOMIC
+  $1 = 0x20
+  (gdb) p task_is_stopped_or_traced(init_task)
+  $2 = 0
+
+
+You can also use the macro and info macro commands to work with macros from inside your gdb session:
+  (gdb) macro expand task_is_stopped_or_traced(init_task)
+  expands to: ((init_task->state & (4 | 8)) != 0)
+  (gdb) info macro task_is_stopped_or_traced
+  Defined at include/linux/sched.h:218
+    included at include/linux/nmi.h:7
+    included at kernel/sched.c:31
+  #define task_is_stopped_or_traced(task) ((task->state & (__TASK_STOPPED | __TASK_TRACED)) != 0)
+
+
+
+
+(7) ignore counter
+==================
+ first set a breakpoint, then set an 'ignore count' for that breakpoint number, e.g. ignore 23 1000
+
+  ignore 23 1000000   # set ignore count very high.
+
+  run                 # the program will SIGSEGV before reaching the ignore count.
+                      # Once it stops with SIGSEGV:
+
+  info break 23       # tells you how many times the breakpoint has been hit, 
+                      # which is exactly the count you want

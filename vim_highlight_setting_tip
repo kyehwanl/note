@@ -1,0 +1,8 @@
+
+1. fg bg color
+(1) :set backgound=dark or light
+
+(2)     :highlight Normal ctermfg=grey ctermbg=darkblue 
+        :hi CursorLine ctermbg=235 guibg=Grey40
+        :hi SpecialKey term=bold cterm=bold ctermfg=240 ctermbg=235 guifg=Blue
+

@@ -1,0 +1,5 @@
+
+
+ If vim doesn't show color except only black and white,
+ then, 
+        :set filetype=c (or python or conf ...)

@@ -1,0 +1,400 @@
+
+
+OpenvSwitch QoS with Multiple Queue
+===================================
+
+
+>>> Purpose
+This document continues to understand how QoS works in OpenVSwitch. 
+You may want to see This Document first before you go on. 
+ 
+>>> Reference
+- How to create QoS Service Module
+- man ovs-vsctl (Quality of Service (QoS) section)
+
+>>> Outline
+We create a qos with two queues: one is fast-speed queue and the other is low-speed queue. 
+In default, the fast-speed queue is used, but in some cases, packets go to low-speed queue. 
+
+We use two cases. 
+First case is where all packets go to low-speed queue (after adding a flow). 
+Second case is where packets with a specific TOS field go to low-speed queue. 
+
+>>> Steps
+- IPerf test (check speed)
+- Create a qos with two queues (fast-speed and low-speed queues)
+- First case (all packets)
+- First case: Test
+- Second case (packets with TOS field)
+- Second case: Test
+- Second case: send packets without TOS field value
+
+>>> Environment
+- SDN network (I do not use mininet)
+  host1 - OVS - ... - OVS - host2
+- OS: Ubuntu 12.04
+- In our network, the maximum speed is around 100 Mbps. 
+- At prompt, [root@host1], [root@host2] are in a sender and a receiver of data
+             [root@switch] is in a OVS switch. 
+             [root@controller] is in a floodlight controller. 
+
+>>> IPerf test 
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49038
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-10.3 sec   116 MBytes  94.1 Mbits/sec         // <-- current maximum speed
+
+*** To open 5001 port, use following commands in Receiver 
+(if you see "no connection..." message)
+[root@host2 ~]# iptables -I INPUT -p tcp -j ACCEPT --dport=5001
+[root@host2 ~]# iptables -L INPUT
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:commplex-link  // <-- 5001 port
+:
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49038 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec   116 MBytes  96.5 Mbits/sec       // <-- current maxium speed
+
+>>> Create a qos with two queues (fast-speed and low-speed queues)
+Following command does ..
+1) create two queues(q0,q1)
+q0 (1000 Mbps): --id=@q0 create queue other-config:min-rate=1000000000 other-config:max-rate=100000000
+q1 (2 Mbps): --id=@q1 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+
+2) create a qos (newqos) and connect a queue into the qos
+--id=@newqos create qos type=linux-htb queues=0=@q0,1=@q1
+
+3) connect a created qos (newqos) to a existing port (eth1)
+set port eth1 qos=@newqos
+
+Thus, port(eth1) -- qos(newqos) -- queues(q0,q1)
+
+root@switch:~# ovs-vsctl set port eth1 qos=@newqos -- --id=@newqos create qos type=linux-htb queues=0=@q0,1=@q1 -- --id=@q0 create queue other-config:min-rate=1000000000 other-config:max-rate=100000000 -- --id=@q1 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+da909a59-f1fb-4429-a8f2-b36fd8dce3d4
+d9a04a05-4965-4211-94d6-d6426389ac6a
+cf8eeb4b-555d-4f2d-aeed-2627b6d27b7a
+root@switch:~# ovs-vsctl list port eth1
+_uuid               : 0fb256d5-df68-4d1a-8b56-74bdd0b4482a
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [737c5011-97cc-4c11-9370-07b845e94294]
+lacp                : []
+mac                 : []
+name                : "eth1"
+other_config        : {}
+qos                 : da909a59-f1fb-4429-a8f2-b36fd8dce3d4      // added qos
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+
+root@switch:~# ovs-vsctl list qos
+_uuid               : da909a59-f1fb-4429-a8f2-b36fd8dce3d4
+external_ids        : {}
+other_config        : {}
+queues              : {0=d9a04a05-4965-4211-94d6-d6426389ac6a, 1=cf8eeb4b-555d-4f2d-aeed-2627b6d27b7a} 
+                           // added queues
+type                : linux-htb
+
+root@switch:~# ovs-vsctl list queue
+_uuid               : d9a04a05-4965-4211-94d6-d6426389ac6a
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="100000000", min-rate="1000000000"}
+
+_uuid               : cf8eeb4b-555d-4f2d-aeed-2627b6d27b7a
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="2000000", min-rate="2000000"}
+
+- OpenVSwitch information
+*** Here, eth1 is an egree port that we are using to add a qos. 
+
+root@switch:~# ovs-vsctl show
+b03d92f0-bd5d-4a32-bc37-3542873b2e79
+    Bridge "br0"
+        Controller "tcp:192.168.1.1:6633"
+            is_connected: true
+        fail_mode: secure
+        Port "eth1"
+            Interface "eth1"
+        Port "vnet1"
+            Interface "vnet1"
+        Port "br0"
+            Interface "br0"
+                type: internal
+
+root@switch:~# ovs-ofctl show br0
+OFPT_FEATURES_REPLY (xid=0x2): dpid:0000f8b1569ccfe8
+n_tables:254, n_buffers:256
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: OUTPUT SET_VLAN_VID SET_VLAN_PCP STRIP_VLAN SET_DL_SRC SET_DL_DST SET_NW_SRC SET_NW_DST SET_NW_TOS SET_TP_SRC SET_TP_DST ENQUEUE
+ 1(eth1): addr:f8:b1:56:9c:cf:e8
+     config:     0
+     state:      0
+     current:    1GB-FD COPPER AUTO_NEG
+     advertised: 10MB-HD 10MB-FD 100MB-HD 100MB-FD 1GB-FD COPPER AUTO_NEG
+     supported:  10MB-HD 10MB-FD 100MB-HD 100MB-FD 1GB-FD COPPER AUTO_NEG
+     speed: 1000 Mbps now, 1000 Mbps max
+ 2(vnet1): addr:0a:11:85:e9:e0:9c
+     config:     0
+     state:      0
+     current:    10MB-FD COPPER
+     speed: 10 Mbps now, 0 Mbps max
+ LOCAL(br0): addr:f8:b1:56:9c:cf:e8
+     config:     0
+     state:      0
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+
+>>> First case (all packets)
+Here, we reduce speed of all TCP packets from host1 to host2 by puting all packets
+into low-speed queue(q1).
+
+- add a flow (with curl)
+*** enqueue=<egress port>:<queue number>. That is, enqueued port is 1(eth1) which is egress port of data (from host1 to host2). Also, low-speed queue number is 1 (high-speed queue number is 0).
+
+root@controller:~# curl -s -d '{"switch":"00:00:f8:b1:56:9c:cf:e8","name":"tos-1","ether-type":"0x0800","src-ip":"192.168.2.11","dst-ip":"192.168.2.15","actions":"enqueue=1:1"}' http://192.168.1.1:8080/wm/staticflowentrypusher/json
+{"status" : "Entry pushed"}
+
+- check flow (with curl)
+root@controller:~# curl -s http://192.168.1.1:8080/wm/core/switch/00:00:f8:b1:56:9c:cf:e8/flow/json | python -mjson.tool
+{
+    "00:00:f8:b1:56:9c:cf:e8": [
+        {
+            "actions": [
+                {
+                    "length": 16, 
+                    "lengthU": 16, 
+                    "port": 1, 
+                    "queueId": 1, 
+                    "type": "OPAQUE_ENQUEUE"
+                }
+            ], 
+            "byteCount": 0, 
+            "cookie": -151005823, 
+            "durationNanoseconds": 505000000, 
+            "durationSeconds": 47, 
+            "hardTimeout": 0, 
+            "idleTimeout": 0, 
+            "match": {
+                "dataLayerDestination": "00:00:00:00:00:00", 
+                "dataLayerSource": "00:00:00:00:00:00", 
+                "dataLayerType": "0x0800", 
+                "dataLayerVirtualLan": 0, 
+                "dataLayerVirtualLanPriorityCodePoint": 0, 
+                "inputPort": 0, 
+                "networkDestination": "192.168.2.15", 
+                "networkDestinationMaskLen": 32, 
+                "networkProtocol": 0, 
+                "networkSource": "192.168.2.11", 
+                "networkSourceMaskLen": 32, 
+                "networkTypeOfService": 0, 
+                "transportDestination": 0, 
+                "transportSource": 0, 
+                "wildcards": 3145967
+            }, 
+            "packetCount": 0, 
+            "priority": 32767, 
+            "tableId": 0
+        }
+    ]
+}
+
+- check flow (at switch)
+root@switch:~# ovs-ofctl dump-flows br0
+NXST_FLOW reply (xid=0x4):
+ cookie=0xfffffffff6ffd581, duration=116.402s, table=0, n_packets=0, n_bytes=0, idle_age=116, priority=32767,ip,nw_src=192.168.2.11,nw_dst=192.168.2.15 actions=enqueue:1:1
+
+>>> First case: Test
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49043
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-14.2 sec  3.25 MBytes  1.91 Mbits/sec   // <-- reduced to 2 Mbps
+
+*** To open 5001 port, use following commands (when you see "no route ..." error)
+[root@host2 ~]# iptables -I INPUT -p tcp -j ACCEPT --dport=5001
+[root@host2 ~]# iptables -L INPUT
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:commplex-link  // <-- 5001 port
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49043 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec  3.25 MBytes  2.72 Mbits/sec  // <-- reduced to 2 Mbps
+
+*** Now, we remove the added flow for the next test. 
+root@controller:~# curl -X DELETE -d '{"name":"tos-1"}' http://192.168.1.1:8080/wm/staticflowentrypusher/json
+{"status" : "Entry tos-1 deleted"}
+
+root@controller:~# curl -s http://192.168.1.1:8080/wm/core/switch/00:00:f8:b1:56:9c:cf:e8/flow/json | python -mjson.tool
+{
+    "00:00:f8:b1:56:9c:cf:e8": []
+}
+
+>>> Second case (packets with TOS field)
+Here, we reduce speed of TCP packets(with a specific TOS field value, 20) 
+from host1 to host2 by puting all packets into low-speed queue(q1). 
+
+- Set TOS field value at host1
+[root@host1 ~]# iptables -t mangle -I OUTPUT -p tcp -j DSCP --set-dscp 24
+[root@host1 ~]# iptables -t mangle -L OUTPUT
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+DSCP       tcp  --  anywhere             anywhere             DSCP set 0x18    // <-- 0x18 = 24
+OUTPUT_direct  all  --  anywhere             anywhere  
+
+*** when packets go out of host1, tos(24) value is set to TOS field. 
+
+- add a flow
+root@controller:~# curl -s -d '{"switch":"00:00:f8:b1:56:9c:cf:e8","name":"tos-1","ether-type":"0x0800","src-ip":"192.168.2.11","dst-ip":"192.168.2.15","tos-bits":"24","actions":"enqueue=1:1"}' http://192.168.1.1:8080/wm/staticflowentrypusher/json
+{"status" : "Entry pushed"}
+
+- check (with curl)
+root@controller:~# curl -s http://192.168.1.1:8080/wm/core/switch/00:00:f8:b1:56:9c:cf:e8/flow/json | python -mjson.tool
+{
+    "00:00:f8:b1:56:9c:cf:e8": [
+        {
+            "actions": [
+                {
+                    "length": 16, 
+                    "lengthU": 16, 
+                    "port": 1, 
+                    "queueId": 1, 
+                    "type": "OPAQUE_ENQUEUE"
+                }
+            ], 
+            "byteCount": 0, 
+            "cookie": -151005823, 
+            "durationNanoseconds": 391000000, 
+            "durationSeconds": 30, 
+            "hardTimeout": 0, 
+            "idleTimeout": 0, 
+            "match": {
+                "dataLayerDestination": "00:00:00:00:00:00", 
+                "dataLayerSource": "00:00:00:00:00:00", 
+                "dataLayerType": "0x0800", 
+                "dataLayerVirtualLan": 0, 
+                "dataLayerVirtualLanPriorityCodePoint": 0, 
+                "inputPort": 0, 
+                "networkDestination": "192.168.2.15", 
+                "networkDestinationMaskLen": 32, 
+                "networkProtocol": 0, 
+                "networkSource": "192.168.2.11", 
+                "networkSourceMaskLen": 32, 
+                "networkTypeOfService": 24,   // <-- TOS
+                "transportDestination": 0, 
+                "transportSource": 0, 
+                "wildcards": 1048815
+            }, 
+            "packetCount": 0, 
+            "priority": 32767, 
+            "tableId": 0
+        }
+    ]
+}
+
+- check (at switch)
+root@switch:~# ovs-ofctl dump-flows br0
+NXST_FLOW reply (xid=0x4):
+ cookie=0xfffffffff6ffd581, duration=11.297s, table=0, n_packets=0, n_bytes=0, idle_age=11, priority=32767,ip,nw_src=192.168.2.11,nw_dst=192.168.2.15,nw_tos=96 actions=enqueue:1:1
+
+*** nw_tos is 96 because nw_tos use left 6 bits among all 8 bits. So we multply 4 with 24. 
+    Among 8 bits, 2 least-significant bits are used for ECN.
+
+- check (at floodlight Web UI) http://192.168.1.1:8080/ui/index.html
+img1.jpg 
+
+>>> Second case: Test
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49048
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-14.2 sec  3.25 MBytes  1.91 Mbits/sec  // <-- reduced to 2 Mbps
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49048 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.3 sec  3.25 MBytes  2.66 Mbits/sec   // <-- reduced to 2 Mbps
+
+>>> Second case: send packets without TOS field value
+Now, we send without TOS value while keeping previous flow table (queue) at switch. 
+
+- remove an filter at iptables (host1)
+[root@host1 ~]# iptables -t mangle -L OUTPUT --line-number
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    DSCP       tcp  --  anywhere             anywhere             DSCP set 0x18  // <-- we will remove this line
+2    OUTPUT_direct  all  --  anywhere             anywhere            
+
+[root@host1 ~]# iptables -t mangle -D OUTPUT 1    // <-- remove the first line
+
+[root@host1 ~]# iptables -t mangle -L OUTPUT
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+OUTPUT_direct  all  --  anywhere             anywhere  
+
+- From now on, packets going out of host1 does not have TOS(24). 
+** You may want to check TOS file at host2(receiver) using wireshark. 
+** For more information to check with wireshark, see here
+
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49049
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-10.3 sec   112 MBytes  91.0 Mbits/sec  // <-- maximum speed
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49049 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.1 sec   112 MBytes  93.2 Mbits/sec   // <-- maximum speed   
+
+*** Now, we see that packets (without TOS(24)) do not pass through slow-speed queue. 
+Thus, it shows the maximum speed.

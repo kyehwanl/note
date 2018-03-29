@@ -1,0 +1,45 @@
+
+Openvswitch installation
+========================
+
+(1) src unpack and install
+$ tar xvfz openvswitch-2.5.0.tar.gz
+
+(2) configure and build
+
+$ cd openvswitch-2.5.0/
+$ ./configure --with-linux=/lib/modules/`uname -r`/build
+$ make
+
+(3) kernel module and implementation files install 
+$ sudo make modules_install install
+
+
+
+(4) create directory 
+$ sudo mkdir -p /usr/local/etc/openvswitch
+
+(5) init db and launch db server
+$ sudo ovsdb-tool create /usr/local/etc/openvswitch/conf.db vswitchd/vswitch.ovsschema
+
+$ sudo ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock \
+                      --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
+                      --private-key=db:Open_vSwitch,SSL,private_key \
+                      --certificate=db:Open_vSwitch,SSL,certificate \
+                      --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert \
+                      --pidfile --detach
+
+
+(6) init ovs-tool 
+$ sudo ovs-vsctl --no-wait init
+
+(7) main daemon start
+$ sudo ovs-vswitchd --pidfile --detach
+2016-08-26T21:30:21Z|00001|ovs_numa|INFO|Discovered 16 CPU cores on NUMA node 0
+2016-08-26T21:30:21Z|00002|ovs_numa|INFO|Discovered 1 NUMA nodes and 16 CPU cores
+2016-08-26T21:30:21Z|00003|reconnect|INFO|unix:/usr/local/var/run/openvswitch/db.sock: connecting...
+2016-08-26T21:30:21Z|00004|reconnect|INFO|unix:/usr/local/var/run/openvswitch/db.sock: connected
+
+
+        
+(8) later, it may need to load modules by "modprobe openvswitch"

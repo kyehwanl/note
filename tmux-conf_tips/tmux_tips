@@ -1,0 +1,89 @@
+
+tmux tips
+=========
+
+1.[tmux]  tmux session lost in unknown pts, how to survive ?
+------------------------------------------------------------
+
+<문제점> 
+  tmux를 오랜동안 동작시키다가 혹은 갑작스런 cut-off로 인해 socket을 잃어버려서 다시 접속하려고 하니 
+  아래와 같은 메시지가 나올때
+
+  $ tmux ls
+  failed to connect to server: No such file or directory
+
+  이때, 분명 ps aux 를 통해서 확인해 보면 tmux process는 있지만 socket은 ?로 나온다
+  $ ps aux | grep tmux
+  kyehwanl  2491  0.0  0.2  35464 31424 ?        Ss   Jan23   8:40 tmux
+
+<solution>
+
+  Solution courtesy of the Webfaction-support:
+  As the process was still running, the issue was a deleted socket, possibly caused by a purged tmp-directory.
+  According to the tmux mapage:
+  If the socket is accidentally removed, the SIGUSR1 signal may be sent to the tmux server process to recreate it.
+  So sending the signal and attaching works:
+    killall -s SIGUSR1 tmux 
+    tmux attach
+
+
+
+    <case 1> 아래는 전체 script
+
+    [kyehwanl@node4 ~]$ tmux ls
+    failed to connect to server: No such file or directory
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmux
+    kyehwanl  2491  0.0  0.2  35464 31424 ?        Ss   Jan23   8:40 tmux
+
+    [kyehwanl@node4 ~]$ killall -s SIGUSR1 tmux
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmux
+    kyehwanl  2491  0.0  0.2  35464 31432 ?        Ss   Jan23   8:40 tmux
+
+    [kyehwanl@node4 ~]$ tmux a
+    Attach 되어 실행됨!!!
+
+    [kyehwanl@node4 api]$ tmux ls
+    0: 2 windows (created Tue Jan 23 12:41:50 2018) [134x79] (attached)
+
+    $ ps aux | grep tmu[x]
+    kyehwanl  2491  0.0  0.2  35468 31440 ?        Ss   Jan23   8:40 tmux
+    kyehwanl 29448  0.0  0.0   5368   856 pts/0    S+   13:59   0:00 tmux a
+
+    -------- Detached후에 상황을 봄----------------
+    [detached (from session 0)]
+    [kyehwanl@node4 ~]$ tmux ls             
+    0: 2 windows (created Tue Jan 23 12:41:50 2018) [134x79]
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmu[x]
+    kyehwanl  2491  0.0  0.2  35468 31440 ?        Ss   Jan23   8:40 tmux
+
+
+    → pid 2491은 여전히 ?로 남아있는걸로 봐선 tmux가 새로이 socket을 할당하고 pid 29448로 session 0을 열었는것이 확인가능
+
+
+
+    <case 2>
+
+    Node1에 동작하고 있었던 tmux session이 socket loss로 인해 connection자체가 가능하게 되지 않게 되었을때,
+    SIGUSR1을 tmux process에게 보낸후 다시 tmux ls를 해보면
+    모든 세션이 제대로 동작하고 있는것이 보인다
+
+    [kyehwanl@node1 ~]$ tmux ls
+    failed to connect to server: Connection refused
+
+    [kyehwanl@node1 ~]$ ps aux | grep tmu[x]
+    kyehwanl  1956  0.1  0.0  11348  7384 ?        Ss   Jan23  21:22 tmux
+    kyehwanl  6607  0.0  0.0   5368   856 pts/0    S+   Jan25   0:00 tmux a
+
+    [kyehwanl@node1 ~]$ killall -s SIGUSR1 tmux
+
+    [kyehwanl@node1 ~]$ ps aux | grep tmu[x]   
+    kyehwanl  1956  0.1  0.0  11348  7384 ?        Ss   Jan23  21:22 tmux
+    kyehwanl  6607  0.0  0.0   5368   856 pts/0    S+   Jan25   0:00 tmux a
+
+    [kyehwanl@node1 ~]$ tmux ls
+    0: 1 windows (created Tue Jan 23 11:55:28 2018) [272x79] (attached)
+    1: 1 windows (created Tue Jan 23 12:05:39 2018) [134x79]
+ 

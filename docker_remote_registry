@@ -1,0 +1,196 @@
+
+
+ Local Registry with self-signed Certificate
+ ===========================================
+
+
+ (0) pre-requisite 
+
+    "Failed to tls handshake with <IP addr>"
+    "x509: cannot validate certificate for <IP addr> because it doesn't contain any IP SANs"
+
+     --> (Solution)
+        - Edit your /etc/ssl/openssl.cnf on the host 
+        - on Centos /etc/pki/tls/openssl.cnf
+          add subjectAltName = IP:192.168.2.107 in [v3_ca] section
+
+ (1) Create a Self Signed Certificate 
+
+   @vmware-011:# mkdir registry_certs
+   @vmware-011:$ openssl req -newkey rsa:4096 -nodes -sha256 \
+                -keyout registry_certs/domain.key -x509 -days 356 \
+                -out registry_certs/domain.cert
+
+    Here I created a x509 certificate and a private RSA key. 
+    The Common Name here is important as this is the server host name
+
+          [root@vmware-011 registry_certs]# openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.cert
+          Generating a 4096 bit RSA private key
+          ................................................................................++
+          .................................................................................++
+          writing new private key to 'domain.key'
+          -----
+          You are about to be asked to enter information that will be incorporated
+          into your certificate request.
+          What you are about to enter is what is called a Distinguished Name or a DN.
+          There are quite a few fields but you can leave some blank
+          For some fields there will be a default value,
+          If you enter '.', the field will be left blank.
+          -----
+          Country Name (2 letter code) [XX]:US
+          State or Province Name (full name) []:
+          Locality Name (eg, city) [Default City]:
+          Organization Name (eg, company) [Default Company Ltd]:
+          Organizational Unit Name (eg, section) []:
+          Common Name (eg, your name or your server's hostname) []:10.0.50.11
+          Email Address []:
+
+
+ (2) Run the Private Docker Registry with TLS
+     (using "--restart=always" for continuously running )
+
+    @vmware-011:$ docker run -d -p 5000:5000 \
+               -v $(pwd)/registry_certs:/certs \
+               -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.cert \
+               -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+               --restart=always --name registry registry:2
+
+      [root@vmware-011 registry_certs]# docker run -d -p 5000:5000  -v $(pwd):/certs  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.cert  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key --restart=always --name registry registry:2
+      989a2dfaa42c80e3b2a413f83d8ad6f160e0e43d06e906933fee589ffb89b8f9
+
+ (3) Try to upload to the local repository
+
+
+      [root@vmware-011 registry_certs]# docker push 10.0.50.11:5000/quagga
+      The push refers to repository [10.0.50.11:5000/quagga]
+      Get https://10.0.50.11:5000/v2/: x509: certificate signed by unknown authority
+
+    --> error: unknown authority
+
+    --> solution: 
+        [root@vmware-011 registry_certs]# cp domain.cert /etc/docker/certs.d/10.0.50.11\:5000/ca.crt 
+        [root@vmware-011 registry_certs]# service docker reload (or restart)
+        Redirecting to /bin/systemctl reload docker.service
+
+        [root@vmware-011 registry_certs]# docker push 10.0.50.11:5000/quagga
+        The push refers to repository [10.0.50.11:5000/quagga]
+        199520a594e2: Pushed
+        c81bda8711cc: Pushed
+        8568818b1f7f: Pushed
+        latest: digest: sha256:ca6e4c44046dfb74244e2801667a10fe1a70547f7773820192bede1e974497a9 size: 947
+
+    --> Success !!
+
+
+
+ (3) push / pull from Remote host to the Local Registry 
+    using vmware-005 to access vmware-011's docker registry
+
+    * copy vmware011's certificate to vmware005
+          [root@vmware-011 registry_certs]# scp domain.cert kyehwanl@vmware-005:/tmp
+          kyehwanl@vmware-005's password:
+          domain.cert                       100% 1992     2.0MB/s   00:00
+
+    * place the certificate into the docker's certs directory
+
+          [root@vmware-005 registry_certs]# cp /tmp/domain.cert /etc/docker/certs.d/10.0.50.11\:5000/ca.crt
+          [root@vmware-005 registry_certs]# ll /etc/docker/certs.d/10.0.50.11\:5000/
+          total 4
+          -rw-r----- 1 root root 1968 Mar  9 14:35 ca.crt
+
+    * docker service reload
+          [root@vmware-005 10.0.50.11:5000]# service docker reload
+          Redirecting to /bin/systemctl reload docker.service]
+
+
+    * push / pull test
+
+     A.
+          [root@vmware-005 10.0.50.11:5000]# docker images
+          REPOSITORY                          TAG                 IMAGE ID            CREATED             SIZE
+          10.0.50.11:5000/centos              latest              2d194b392dd1        3 days ago          195.4 MB
+          docker.io/centos                    latest              2d194b392dd1        3 days ago          195.4 MB
+          docker.io/kyehwanl/quagga-centos    latest              0fbd2a6d1dcd        4 days ago          386.6 MB
+          10.0.50.11:5000/registry-kyehwanl   latest              d1fd7d86a825        8 weeks ago         33.26 MB
+          docker.io/registry                  latest              d1fd7d86a825        8 weeks ago         33.26 MB
+
+          [root@vmware-005 10.0.50.11:5000]# docker tag docker.io/registry 10.0.50.11:5000/registry-kyehwanl
+
+          [root@vmware-005 10.0.50.11:5000]# docker push 10.0.50.11:5000/registry-kyehwanl
+          The push refers to a repository [10.0.50.11:5000/registry-kyehwanl]
+          9113493eaae1: Pushed 
+          621c2399d41a: Pushed 
+          59e80739ed3f: Pushed 
+          febf19f93653: Pushed 
+          e53f74215d12: Pushed 
+          latest: digest: sha256:feb40d14cd33e646b9985e2d6754ed66616fedb840226c4d917ef53d616dcd6c size: 1364
+
+     B. 
+          [root@vmware-005 10.0.50.11:5000]# docker pull pierky/bird
+          Using default tag: latest
+          Trying to pull repository docker.io/pierky/bird ... 
+          latest: Pulling from docker.io/pierky/bird
+          38e0dd992b37: Pull complete 
+          c19aa64b5b0b: Pull complete 
+          85088e1be286: Pull complete 
+          0f9d17c756a5: Pull complete 
+          35697d055961: Pull complete 
+          7e87772c442b: Pull complete 
+          Digest: sha256:a9105e5ecd228ce9039d725dd18956b1736bd89a386b6efb271150969a7a57c8
+
+          [root@vmware-005 10.0.50.11:5000]# docker images
+          REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
+          docker.io/pierky/bird    latest              ee9cda8dcf7d        12 months ago       356 MB
+
+          [root@vmware-005 10.0.50.11:5000]# docker tag docker.io/pierky/bird 10.0.50.11:5000/bird
+          [root@vmware-005 10.0.50.11:5000]# docker images
+          REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
+          10.0.50.11:5000/quagga   latest              246c2494b102        8 days ago          104.4 MB
+          docker.io/registry       latest              d1fd7d86a825        8 weeks ago         33.26 MB
+          10.0.50.11:5000/bird     latest              ee9cda8dcf7d        12 months ago       356 MB
+          docker.io/pierky/bird    latest              ee9cda8dcf7d        12 months ago       356 MB
+
+          [root@vmware-005 10.0.50.11:5000]# docker push 10.0.50.11:5000/bird
+          The push refers to a repository [10.0.50.11:5000/bird]
+          4225f6627ecf: Pushed 
+          54aef48884a7: Pushed 
+          6686dd0a1482: Pushed 
+          031d51debde8: Pushed 
+          1c33be632441: Pushed 
+          a5a5bc81d739: Pushed 
+          latest: digest: sha256:e2b34f7e8169f9a9c9bdc692fbf3b39e3fac1c8884952102c73965fc48923a96 size: 1579
+
+
+    You can verify you remote registry also via web browser:
+    https://yourserver.com:5000/v2/_catalog
+
+            [root@vmware-005 10.0.50.11:5000]# curl -k https://10.0.50.11:5000/v2/_catalog
+            {"repositories":["bird","centos","quagga","registry-kyehwanl"]}
+
+    
+     C. Only a new layered image can be uploaded. Otherwise it would say, "already exist"
+
+          [root@vmware-011 registry_certs]# curl -k https://10.0.50.11:5000/v2/_catalog
+          {"repositories":["bird","centos","quagga","registry-kyehwanl"]}
+
+          [root@vmware-011 registry_certs]# docker push localhost:5000/quagga-test
+          The push refers to repository [localhost:5000/quagga-test]
+          72976bf77c4a: Pushed
+          e15afa4858b6: Pushed
+          latest: digest: sha256:887fc244608f9c90c4225eea5f398c0517d47210c89010409984f23fad7eb96e size: 741
+
+          [root@vmware-011 registry_certs]# docker push 10.0.50.11:5000/quagga-test
+          The push refers to repository [10.0.50.11:5000/quagga-test]
+          72976bf77c4a: Layer already exists
+          e15afa4858b6: Layer already exists
+          latest: digest: sha256:887fc244608f9c90c4225eea5f398c0517d47210c89010409984f23fad7eb96e size: 741
+
+          [root@vmware-011 registry_certs]# curl -k https://10.0.50.11:5000/v2/_catalog
+          {"repositories":["bird","centos","quagga","quagga-test","registry-kyehwanl"]}
+
+
+
+    * Then, where is the registry server's storage location ??
+      --> TODO: solve the Question
+    
+

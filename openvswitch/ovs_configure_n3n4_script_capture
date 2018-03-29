@@ -1,0 +1,2294 @@
+ls1.vm05-antd [62]{~}-> ping n4.ovs1.bgp-srx.emulab2.antd.nist.gov
+PING pc80.emulab2.antd.nist.gov (10.0.31.80) 56(84) bytes of data.
+^C
+--- pc80.emulab2.antd.nist.gov ping statistics ---
+6 packets transmitted, 0 received, 100% packet loss, time 5981ms
+
+ls1.vm05-antd [63]{~}-> ^C
+ls1.vm05-antd [63]{~}-> ssh -Y n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 24 11:22:02 2016 from ls1-vm05.antd.nist.gov
+kyehwanl@n2:~$
+kyehwanl@n2:~$
+kyehwanl@n2:~$ ranger
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kyehwanl@n2.ovs1.bgp-srx.emulab2.antd.nist.gov:/users/kyehwanl/Bird_test
+ kyehwanl                    Bird_test                                                                      10   bird-1.3.8                                                                                      
+                             config_and_diff_patch                                                          72   bird-1.3.9-bgpsecv2
+                             Download                                                                       77   bird-1.3.9-bgpsec3
+                             old                                                                            84   doc-1.3.8
+                             Programming                                                                    16   repo-bird
+                             proj-bgp                                                                       13   temp
+                             repository_bkup                                                                 4   callgrind.out.13692
+                             RPKI_test                                                                      16   callgrind.out.18687
+                             rpmbuild                                                                        7   cap_bgp_bird_quagga
+                             SDN_test                                                                        6   cap_comparison_open_quagga
+                             Shell_Script                                                                   44
+                             srx_test1                                                                      69
+                             test_git                                                                        3
+                             ubuntu_test                                                                    26
+                             VirtualBox VMs                                                                  1
+                             website_yi                                                                      9
+                             avior-1.3_linux_x64.jar                                                      10 M
+                             colortest.pl                                                               1.74 K
+                             colortest.py                                                                835 B
+                             kernel-2.6.43.8-1.fc15.src.rpm                                             63.5 M
+                             make_cscope.sh                                                              937 B
+                             rootpwd_emulab                                                               97 B
+                             run_bgpd.sh                                                                 625 B
+                             script_make_screen.sh                                                       119 B
+                             spf13-vim.sh                                                               1.29 K
+                             vf                                                                          219 B
+                             website_viptailor.tar.gz                                                   9.05 M
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kyehwanl@n2:~$
+kyehwanl@n2:~$ ll
+total 83M
+-rw-r--r--  1 kyehwanl bgp-srx  64M Jun  6  2012 kernel-2.6.43.8-1.fc15.src.rpm
+-rw-r--r--  1 kyehwanl bgp-srx 9.1M Jul 27  2012 website_viptailor.tar.gz
+drwxr-xr-x  6 kyehwanl bgp-srx  512 Jul 27  2012 website_yi/
+-rw-r--r--  1 kyehwanl bgp-srx 1.3K Jan 31  2013 spf13-vim.sh
+-rwxr--r--  1 kyehwanl bgp-srx  835 Feb  2  2013 colortest.py*
+-rw-r--r--  1 kyehwanl bgp-srx 1.8K Feb  2  2013 colortest.pl
+-rwxr--r--  1 kyehwanl bgp-srx  119 Feb 12  2013 script_make_screen.sh*
+-rw-r--r--  1 root     bgp-srx  11M Jun 27  2013 avior-1.3_linux_x64.jar
+drwxr-xr-x  9 kyehwanl bgp-srx  512 Aug 20  2013 rpmbuild/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 Aug 22  2014 repository_bkup/
+drwxr-xr-x  8 kyehwanl bgp-srx  512 Mar 19  2015 Bird_test/
+-rwxr-xr-x  1 kyehwanl bgp-srx  219 Mar 20  2015 vf*
+-rw-r--r--  1 kyehwanl bgp-srx   97 Apr  9  2015 rootpwd_emulab
+-rwxr--r--  1 kyehwanl bgp-srx  937 Apr 29  2015 make_cscope.sh*
+drwxr-xr-x 10 kyehwanl bgp-srx  512 Nov 24 11:07 RPKI_test/
+drwxr-xr-x  5 kyehwanl bgp-srx  512 Feb 29 13:50 test_git/
+drwxr-xr-x 39 kyehwanl bgp-srx 2.0K Mar  2 16:55 old/
+drwxr-xr-x  7 kyehwanl bgp-srx  512 Mar 11 01:38 proj-bgp/
+drwxr-xr-x 12 kyehwanl bgp-srx 1.0K Mar 23 13:24 ubuntu_test/
+drwxr-x---  4 kyehwanl bgp-srx 1.5K Mar 25 12:40 Shell_Script/
+drwxr-xr-x 36 kyehwanl bgp-srx 2.0K Apr 26 18:38 srx_test1/
+drwxr-xr-x 15 kyehwanl bgp-srx 1.0K Apr 28 00:24 Programming/
+drwxr-xr-x  5 kyehwanl bgp-srx 2.0K Apr 29 17:03 config_and_diff_patch/
+-rwxr-xr-x  1 kyehwanl bgp-srx  625 May  1 03:09 run_bgpd.sh*
+drwxr-xr-x 42 kyehwanl bgp-srx 2.5K May  3 13:07 Download/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 13 02:30 VirtualBox VMs/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 23 19:30 SDN_test/
+kyehwanl@n2:~$ ssh n3
+Last login: Mon May 23 18:45:13 2016 from n1-link12
+[kyehwanl@n3 ~]$ ll
+total 83M
+-rw-r--r--  1 kyehwanl bgp-srx  64M Jun  6  2012 kernel-2.6.43.8-1.fc15.src.rpm
+-rw-r--r--  1 kyehwanl bgp-srx 9.1M Jul 27  2012 website_viptailor.tar.gz
+drwxr-xr-x  6 kyehwanl bgp-srx  512 Jul 27  2012 website_yi/
+-rw-r--r--  1 kyehwanl bgp-srx 1.3K Jan 31  2013 spf13-vim.sh
+-rwxr--r--  1 kyehwanl bgp-srx  835 Feb  2  2013 colortest.py*
+-rw-r--r--  1 kyehwanl bgp-srx 1.8K Feb  2  2013 colortest.pl
+-rwxr--r--  1 kyehwanl bgp-srx  119 Feb 12  2013 script_make_screen.sh*
+-rw-r--r--  1 root     bgp-srx  11M Jun 27  2013 avior-1.3_linux_x64.jar
+drwxr-xr-x  9 kyehwanl bgp-srx  512 Aug 20  2013 rpmbuild/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 Aug 22  2014 repository_bkup/
+drwxr-xr-x  8 kyehwanl bgp-srx  512 Mar 19  2015 Bird_test/
+-rwxr-xr-x  1 kyehwanl bgp-srx  219 Mar 20  2015 vf*
+-rw-r--r--  1 kyehwanl bgp-srx   97 Apr  9  2015 rootpwd_emulab
+-rwxr--r--  1 kyehwanl bgp-srx  937 Apr 29  2015 make_cscope.sh*
+drwxr-xr-x 10 kyehwanl bgp-srx  512 Nov 24 11:07 RPKI_test/
+drwxr-xr-x  5 kyehwanl bgp-srx  512 Feb 29 13:50 test_git/
+drwxr-xr-x 39 kyehwanl bgp-srx 2.0K Mar  2 16:55 old/
+drwxr-xr-x  7 kyehwanl bgp-srx  512 Mar 11 01:38 proj-bgp/
+drwxr-xr-x 12 kyehwanl bgp-srx 1.0K Mar 23 13:24 ubuntu_test/
+drwxr-x---  4 kyehwanl bgp-srx 1.5K Mar 25 12:40 Shell_Script/
+drwxr-xr-x 36 kyehwanl bgp-srx 2.0K Apr 26 18:38 srx_test1/
+drwxr-xr-x 15 kyehwanl bgp-srx 1.0K Apr 28 00:24 Programming/
+drwxr-xr-x  5 kyehwanl bgp-srx 2.0K Apr 29 17:03 config_and_diff_patch/
+-rwxr-xr-x  1 kyehwanl bgp-srx  625 May  1 03:09 run_bgpd.sh*
+drwxr-xr-x 42 kyehwanl bgp-srx 2.5K May  3 13:07 Download/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 13 02:30 VirtualBox VMs/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 23 19:30 SDN_test/
+[kyehwanl@n3 ~]$ ifconfig
+em1       Link encap:Ethernet  HWaddr 00:21:9B:9D:C7:92
+          inet addr:10.0.31.43  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c792/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1869231 errors:0 dropped:177245 overruns:0 frame:0
+          TX packets:12929 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1762971287 (1.6 GiB)  TX bytes:1134295 (1.0 MiB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:118 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:118 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:26638 (26.0 KiB)  TX bytes:26638 (26.0 KiB)
+
+p1p1      Link encap:Ethernet  HWaddr 00:10:18:69:A0:80
+          inet addr:10.1.23.3  Bcast:10.1.23.255  Mask:255.255.255.0
+          inet6 addr: fe80::210:18ff:fe69:a080/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:5926 errors:0 dropped:4018 overruns:0 frame:0
+          TX packets:1662 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:509022 (497.0 KiB)  TX bytes:226132 (220.8 KiB)
+
+[kyehwanl@n3 ~]$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.0.31.201     0.0.0.0         UG    0      0        0 em1
+10.0.0.0        10.1.23.2       255.0.0.0       UG    0      0        0 p1p1
+10.0.31.0       0.0.0.0         255.255.255.0   U     0      0        0 em1
+10.1.23.0       0.0.0.0         255.255.255.0   U     0      0        0 p1p1
+[kyehwanl@n3 ~]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=36 time=15.7 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=36 time=14.4 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1511ms
+rtt min/avg/max/mdev = 14.433/15.105/15.777/0.672 ms
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$ ssh n1
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 24 11:22:18 2016 from n2-link12
+kyehwanl@n1:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:15
+          inet addr:10.0.31.70  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c915/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:245906 errors:0 dropped:177321 overruns:0 frame:0
+          TX packets:107197 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:144264659 (144.2 MB)  TX bytes:66337957 (66.3 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:17
+          inet addr:10.1.12.1  Bcast:10.1.12.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c917/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:55942 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:57841 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:6119715 (6.1 MB)  TX bytes:6349155 (6.3 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:92439 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:92439 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:64522098 (64.5 MB)  TX bytes:64522098 (64.5 MB)
+
+kyehwanl@n1:~$ exit
+logout
+Connection to n1 closed.
+[kyehwanl@n3 ~]$ ping n4
+PING N4-link24 (10.1.24.4) 56(84) bytes of data.
+From N2-link23 (10.1.23.2): icmp_seq=1 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=1 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=1 ttl=63 time=2.69 ms
+From N2-link23 (10.1.23.2): icmp_seq=2 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=2 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=2 ttl=63 time=1.03 ms
+From N2-link23 (10.1.23.2): icmp_seq=3 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=3 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=3 ttl=63 time=0.466 ms
+From N2-link23 (10.1.23.2): icmp_seq=4 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=4 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=4 ttl=63 time=0.474 ms
+From N2-link23 (10.1.23.2): icmp_seq=5 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=5 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=5 ttl=63 time=0.463 ms
+From N2-link23 (10.1.23.2): icmp_seq=6 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=6 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=6 ttl=63 time=0.470 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=7 ttl=63 time=0.369 ms
+From N2-link23 (10.1.23.2): icmp_seq=8 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=8 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=8 ttl=63 time=0.473 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=9 ttl=63 time=0.368 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=10 ttl=63 time=0.374 ms
+From N2-link23 (10.1.23.2): icmp_seq=11 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=11 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=11 ttl=63 time=0.469 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=12 ttl=63 time=0.377 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=13 ttl=63 time=1.03 ms
+^C
+--- N4-link24 ping statistics ---
+13 packets transmitted, 13 received, +8 errors, 0% packet loss, time 12370ms
+rtt min/avg/max/mdev = 0.368/0.697/2.696/0.618 ms
+[kyehwanl@n3 ~]$ ping n4
+PING N4-link24 (10.1.24.4) 56(84) bytes of data.
+From N2-link23 (10.1.23.2): icmp_seq=1 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=1 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=1 ttl=63 time=2.69 ms
+From N2-link23 (10.1.23.2): icmp_seq=2 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=2 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=2 ttl=63 time=1.06 ms
+From N2-link23 (10.1.23.2): icmp_seq=3 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=3 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=3 ttl=63 time=0.390 ms
+From N2-link23 (10.1.23.2): icmp_seq=4 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=4 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=4 ttl=63 time=0.462 ms
+From N2-link23 (10.1.23.2): icmp_seq=5 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=5 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=5 ttl=63 time=0.470 ms
+From N2-link23 (10.1.23.2): icmp_seq=6 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=6 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=6 ttl=63 time=0.429 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=7 ttl=63 time=0.388 ms
+From N2-link23 (10.1.23.2): icmp_seq=8 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=8 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=8 ttl=63 time=0.472 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=9 ttl=63 time=0.379 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=10 ttl=63 time=0.384 ms
+From N2-link23 (10.1.23.2): icmp_seq=11 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=11 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=11 ttl=63 time=0.473 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=12 ttl=63 time=0.384 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=13 ttl=63 time=0.366 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=14 ttl=63 time=0.380 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=15 ttl=63 time=0.369 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=16 ttl=63 time=0.395 ms
+From N2-link23 (10.1.23.2): icmp_seq=17 Redirect Host(New nexthop: N4-link24 (10.1.24.4))
+From N2-link23 (10.1.23.2) icmp_seq=17 Redirect Host64 bytes from N4-link24 (10.1.24.4): icmp_seq=17 ttl=63 time=0.424 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=18 ttl=63 time=0.370 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=19 ttl=63 time=0.363 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=595 ttl=63 time=0.404 ms
+^C
+--- N4-link24 ping statistics ---
+595 packets transmitted, 595 received, +9 errors, 0% packet loss, time 594428ms
+rtt min/avg/max/mdev = 0.312/0.402/2.696/0.105 ms
+[kyehwanl@n3 ~]$ ping n4 &
+[1] 10335
+[kyehwanl@n3 ~]$ PING N4-link24 (10.1.24.4) 56(84) bytes of data.
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=1 ttl=63 time=0.348 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=2 ttl=63 time=0.371 ms
+^C
+[kyehwanl@n3 ~]$ 64 bytes from N4-link24 (10.1.24.4): icmp_seq=3 ttl=63 time=0.396 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=4 ttl=63 time=0.387 ms
+^C
+[kyehwanl@n3 ~]$ 64 bytes from N4-link24 (10.1.24.4): icmp_seq=5 ttl=63 time=0.390 ms
+64 bytes from N4-link24 (10.1.24.4): icmp_seq=6 ttl=63 time=0.408 ms
+ki64 bytes from N4-link24 (10.1.24.4): icmp_seq=7 ttl=63 time=0.386 ms
+ll 64 bytes from N4-link24 (10.1.24.4): icmp_seq=8 ttl=63 time=0.374 ms
+%1
+[1]+  Terminated              ping n4
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$ ping n4 > /dev/null
+^C[kyehwanl@n3 ~]$ ssh n1
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 24 11:46:12 2016 from 32-141.antd.nist.gov
+kyehwanl@n1:~$ sudo /etc/init.d/floodlight stop
+ * Stopping floodlight floodlight                                                                                                                     [ OK ]
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59550         ESTABLISHED -
+kyehwanl@n1:~$ ps aux | grep daylight
+kyehwanl  9496  0.0  0.0  11744   924 pts/5    S+   13:48   0:00 grep --color=auto daylight
+kyehwanl@n1:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:15
+          inet addr:10.0.31.70  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c915/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:470708 errors:0 dropped:181587 overruns:0 frame:0
+          TX packets:617627 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:271193399 (271.1 MB)  TX bytes:723659568 (723.6 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:17
+          inet addr:10.1.12.1  Bcast:10.1.12.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c917/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:129881 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:199645 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:29418939 (29.4 MB)  TX bytes:19607157 (19.6 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:488513 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:488513 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:729897331 (729.8 MB)  TX bytes:729897331 (729.8 MB)
+
+kyehwanl@n1:~$ netstat -tapn
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:16505           0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:39329           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:16534           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp       33      0 127.0.0.1:34918         127.0.0.1:6010          CLOSE_WAIT  -
+tcp        0      0 127.0.0.1:51878         127.0.0.1:16505         ESTABLISHED -
+tcp        0    368 10.1.12.1:22            10.1.23.3:52204         ESTABLISHED -
+tcp        0      0 127.0.0.1:6010          127.0.0.1:34918         FIN_WAIT2   -
+tcp        0      0 127.0.0.1:51880         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 127.0.0.1:6010          127.0.0.1:34958         ESTABLISHED -
+tcp        0      0 127.0.0.1:34958         127.0.0.1:6010          ESTABLISHED 8583/java
+tcp        0      0 127.0.0.1:16505         127.0.0.1:51874         ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:51880         ESTABLISHED -
+tcp        0      0 127.0.0.1:51874         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 10.1.12.1:22            10.1.12.2:47571         ESTABLISHED -
+tcp        0      0 10.0.31.70:22           129.6.141.32:53803      ESTABLISHED -
+tcp        0      0 10.0.31.70:22           129.6.141.32:53793      ESTABLISHED -
+tcp        0      0 10.0.31.70:41272        10.0.31.202:16505       ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:51878         ESTABLISHED -
+tcp6       0      0 :::8185                 :::*                    LISTEN      8837/java
+tcp6       0      0 ::1:6010                :::*                    LISTEN      -
+tcp6       0      0 :::44444                :::*                    LISTEN      8837/java
+tcp6       0      0 :::6653                 :::*                    LISTEN      8837/java
+tcp6       0      0 :::6655                 :::*                    LISTEN      -
+tcp6       0      0 :::33953                :::*                    LISTEN      8837/java
+tcp6       0      0 :::8101                 :::*                    LISTEN      8837/java
+tcp6       0      0 :::48583                :::*                    LISTEN      -
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+tcp6       0      0 :::1099                 :::*                    LISTEN      8837/java
+tcp6       0      0 :::111                  :::*                    LISTEN      -
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 127.0.0.1:52338         :::*                    LISTEN      8837/java
+tcp6       0      0 :::8181                 :::*                    LISTEN      8837/java
+tcp6       0      0 127.0.0.1:2550          :::*                    LISTEN      8837/java
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53132        ESTABLISHED -
+tcp6       1      0 10.0.31.70:53120        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53125        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53122        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53126        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53111        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53132        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53110        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53124        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:8181         129.6.140.144:62195     ESTABLISHED 8837/java
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62172     ESTABLISHED -
+tcp6       1      0 10.0.31.70:53118        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53136        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53139        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53135        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53107        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53117        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59550         ESTABLISHED -
+tcp6       1      0 10.0.31.70:53121        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53114        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53140        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53131        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53119        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:8181         129.6.140.144:62196     ESTABLISHED 8837/java
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53138        ESTABLISHED -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53139        ESTABLISHED -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53140        ESTABLISHED -
+tcp6       0      0 10.0.31.70:53138        10.0.31.70:8080         ESTABLISHED 8583/java
+kyehwanl@n1:~$ netstat -tapn | grep java
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp        0      0 127.0.0.1:34958         127.0.0.1:6010          ESTABLISHED 8583/java
+tcp6       0      0 :::8185                 :::*                    LISTEN      11049/java
+tcp6       0      0 :::44444                :::*                    LISTEN      11049/java
+tcp6       0      0 :::6653                 :::*                    LISTEN      11049/java
+tcp6       0      0 127.0.0.1:49602         :::*                    LISTEN      11049/java
+tcp6       0      0 :::8101                 :::*                    LISTEN      11049/java
+tcp6       0      0 :::36038                :::*                    LISTEN      11049/java
+tcp6       0      0 :::1099                 :::*                    LISTEN      11049/java
+tcp6       0      0 :::8181                 :::*                    LISTEN      11049/java
+tcp6       0      0 127.0.0.1:2550          :::*                    LISTEN      11049/java
+tcp6       1      0 10.0.31.70:53120        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53125        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53122        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53126        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53111        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53132        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53110        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53124        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53118        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53136        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53139        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53135        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53107        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53117        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53121        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53114        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53140        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53131        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53119        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53138        10.0.31.70:8080         ESTABLISHED 8583/java
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53132        ESTABLISHED -
+tcp6       1      0 10.0.31.70:53120        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53125        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53122        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53126        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53111        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53132        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53110        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53124        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53118        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53136        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53139        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53135        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53107        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53117        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53121        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53114        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:53140        10.0.31.70:8080         ESTABLISHED 8583/java
+tcp6       1      0 10.0.31.70:53131        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       1      0 10.0.31.70:53119        10.0.31.70:8080         CLOSE_WAIT  8583/java
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53138        ESTABLISHED -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62739     ESTABLISHED -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53139        ESTABLISHED -
+tcp6       0      0 10.0.31.70:8080         10.0.31.70:53140        ESTABLISHED -
+tcp6       0      0 10.0.31.70:53138        10.0.31.70:8080         ESTABLISHED 8583/java
+kyehwanl@n1:~$ ps aux | grep 8583
+kyehwanl  8583  3.2  1.4 7385904 174176 pts/1  Sl   11:46   4:23 java -jar avior-1.3_linux_x64.jar
+kyehwanl 11447  0.0  0.0  11748   916 pts/5    S+   14:03   0:00 grep --color=auto 8583
+kyehwanl@n1:~$ kill -9 8583
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ ps aux | grep 8583
+kyehwanl 11451  0.0  0.0  11744   920 pts/5    S+   14:03   0:00 grep --color=auto 8583
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:53132        10.0.31.70:8080         TIME_WAIT   -
+tcp6       0      0 10.0.31.70:53139        10.0.31.70:8080         TIME_WAIT   -
+tcp6       0      0 10.0.31.70:53140        10.0.31.70:8080         TIME_WAIT   -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62739     ESTABLISHED -
+tcp6       0      0 10.0.31.70:53138        10.0.31.70:8080         TIME_WAIT   -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62804     ESTABLISHED -
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62804     ESTABLISHED -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62804     ESTABLISHED -
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+tcp6       0      0 10.0.31.70:8080         129.6.140.144:62804     TIME_WAIT   -
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59550         ESTABLISHED -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59553         ESTABLISHED -
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59550         TIME_WAIT   -
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+tcp6       0      0 10.1.12.1:6633          10.1.12.2:59550         TIME_WAIT   -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::6633                 :::*                    LISTEN      -
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp6       0      0 :::8080                 :::*                    LISTEN      -
+kyehwanl@n1:~$
+Broadcast message from kyehwanl@n1.ovs1.bgp-srx.emulab2.antd.nist.gov
+        (/dev/pts/4) at 14:16 ...
+
+The system is going down for reboot NOW!
+Connection to n1 closed by remote host.
+Connection to n1 closed.
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$ ssh n1
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 24 14:21:52 2016 from n2-link12
+kyehwanl@n1:~$ netstat -tapn | grep 8080
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN      -
+kyehwanl@n1:~$ netstat -tapn | grep 6633
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+tcp        0      0 0.0.0.0:6633            0.0.0.0:*               LISTEN      -
+kyehwanl@n1:~$ netstat -tapn
+(No info could be read for "-p": geteuid()=10006 but you should be root.)
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:16505           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:6655            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:6633            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:50539           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:16534           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:41408         ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:41414         ESTABLISHED -
+tcp        0      0 10.0.31.70:43993        10.0.31.202:16505       ESTABLISHED -
+tcp        0    272 10.1.12.1:22            10.1.23.3:52206         ESTABLISHED -
+tcp        0      0 127.0.0.1:41408         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 10.1.12.1:22            10.1.12.2:47581         ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:41412         ESTABLISHED -
+tcp        0      0 10.0.31.70:55586        91.189.91.26:80         TIME_WAIT   -
+tcp        0      0 127.0.0.1:41414         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 127.0.0.1:41412         127.0.0.1:16505         ESTABLISHED -
+tcp6       0      0 :::58428                :::*                    LISTEN      -
+tcp6       0      0 :::111                  :::*                    LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ exit
+logout
+Connection to n1 closed.
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$
+[kyehwanl@n3 ~]$ sudo -s
+[root@n3 kyehwanl]# apt-get install openjdk-7-jdk
+bash: apt-get: command not found
+[root@n3 kyehwanl]# uname -a
+Linux n3.ovs1.bgp-srx.emulab2.antd.nist.gov 3.10.40-1.el6.elrepo.x86_64 #1 SMP Tue May 13 15:23:08 EDT 2014 x86_64 x86_64 x86_64 GNU/Linux
+[root@n3 kyehwanl]# exit
+exit
+[kyehwanl@n3 ~]$ ssh n4
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Mon May 23 18:26:16 2016 from n3-link23
+kyehwanl@n4:~$
+kyehwanl@n4:~$
+kyehwanl@n4:~$ sudo -s
+root@n4:~# apt-get install openjdk-7-jdk
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following extra packages will be installed:
+  ca-certificates-java dbus-x11 desktop-file-utils fonts-dejavu-extra gconf2
+  gdisk gvfs gvfs-common gvfs-daemons gvfs-libs icedtea-7-jre-jamvm
+  java-common libasyncns0 libatasmart4 libatk-wrapper-java
+  libatk-wrapper-java-jni libavahi-glib1 libbonobo2-0 libbonobo2-common
+  libcanberra0 libflac8 libgconf2-4 libgnome2-0 libgnome2-bin libgnome2-common
+  libgnomevfs2-0 libgnomevfs2-common libgtk2.0-0 libgtk2.0-bin
+  libgtk2.0-common libice-dev libicu52 libidl-common libidl0 libnspr4 libnss3
+  libnss3-1d libnss3-nssdb libogg0 liborbit-2-0 liborbit2 libpcsclite1
+  libpthread-stubs0-dev libpulse0 libsecret-1-0 libsecret-common libsm-dev
+  libsndfile1 libtdb1 libudisks2-0 libvorbis0a libvorbisenc2 libvorbisfile3
+  libx11-dev libx11-doc libxau-dev libxcb1-dev libxdmcp-dev libxt-dev
+  openjdk-7-jre openjdk-7-jre-headless policykit-1-gnome
+  sound-theme-freedesktop tzdata-java udisks2 x11proto-core-dev
+  x11proto-input-dev x11proto-kb-dev xorg-sgml-doctools xtrans-dev
+Suggested packages:
+  gconf-defaults-service gvfs-backends gvfs-backends-goa default-jre equivs
+  libbonobo2-bin libcanberra-gtk0 libcanberra-pulse desktop-base
+  libgnomevfs2-bin libgnomevfs2-extra gamin fam gnome-mime-data libice-doc
+  pcscd pulseaudio libsm-doc libxcb-doc libxt-doc openjdk-7-demo
+  openjdk-7-source visualvm icedtea-7-plugin libnss-mdns sun-java6-fonts
+  fonts-ipafont-gothic fonts-ipafont-mincho ttf-wqy-microhei ttf-wqy-zenhei
+  ttf-indic-fonts-core ttf-telugu-fonts ttf-oriya-fonts ttf-kannada-fonts
+  ttf-bengali-fonts xfsprogs reiserfsprogs exfat-utils btrfs-tools mdadm
+  cryptsetup-bin
+The following NEW packages will be installed:
+  ca-certificates-java dbus-x11 desktop-file-utils fonts-dejavu-extra gconf2
+  gdisk gvfs gvfs-common gvfs-daemons gvfs-libs icedtea-7-jre-jamvm
+  java-common libasyncns0 libatasmart4 libatk-wrapper-java
+  libatk-wrapper-java-jni libavahi-glib1 libbonobo2-0 libbonobo2-common
+  libcanberra0 libflac8 libgconf2-4 libgnome2-0 libgnome2-bin libgnome2-common
+  libgnomevfs2-0 libgnomevfs2-common libgtk2.0-0 libgtk2.0-bin
+  libgtk2.0-common libice-dev libicu52 libidl-common libidl0 libnspr4 libnss3
+  libnss3-1d libnss3-nssdb libogg0 liborbit-2-0 liborbit2 libpcsclite1
+  libpthread-stubs0-dev libpulse0 libsecret-1-0 libsecret-common libsm-dev
+  libsndfile1 libtdb1 libudisks2-0 libvorbis0a libvorbisenc2 libvorbisfile3
+  libx11-dev libx11-doc libxau-dev libxcb1-dev libxdmcp-dev libxt-dev
+  openjdk-7-jdk openjdk-7-jre openjdk-7-jre-headless policykit-1-gnome
+  sound-theme-freedesktop tzdata-java udisks2 x11proto-core-dev
+  x11proto-input-dev x11proto-kb-dev xorg-sgml-doctools xtrans-dev
+0 upgraded, 71 newly installed, 0 to remove and 3 not upgraded.
+Need to get 75.0 MB of archives.
+After this operation, 165 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://us.archive.ubuntu.com/ubuntu/ trusty/main libasyncns0 amd64 0.8-4ubuntu2 [11.9 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu/ trusty/main libatasmart4 amd64 0.19-3 [27.1 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-common all 2.24.23-0ubuntu1.1
+  404  Not Found [IP: 91.189.91.26 80]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-0 amd64 2.24.23-0ubuntu1.1
+  404  Not Found [IP: 91.189.91.26 80]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libnspr4 amd64 2:4.10.2-1ubuntu1.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:3 http://us.archive.ubuntu.com/ubuntu/ trusty/main libnss3-nssdb all 2:3.15.4-1ubuntu7 [10.6 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu/ trusty/main libnss3 amd64 2:3.15.4-1ubuntu7 [1,081 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu/ trusty/main ca-certificates-java all 20130815ubuntu1 [13.4 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main tzdata-java all 2014e-0ubuntu0.14.04
+  404  Not Found [IP: 91.189.91.26 80]
+Get:6 http://us.archive.ubuntu.com/ubuntu/ trusty/main java-common all 0.51 [130 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu/ trusty/main libnss3-1d amd64 2:3.15.4-1ubuntu7 [9,298 B]
+Get:8 http://us.archive.ubuntu.com/ubuntu/ trusty/main libpcsclite1 amd64 1.8.10-1ubuntu1 [20.9 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jre-headless amd64 7u65-2.5.1-4ubuntu1~0.14.04.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:9 http://us.archive.ubuntu.com/ubuntu/ trusty/main libogg0 amd64 1.3.1-1ubuntu1 [17.0 kB]
+Get:10 http://us.archive.ubuntu.com/ubuntu/ trusty/main libflac8 amd64 1.3.0-2 [94.5 kB]
+Get:11 http://us.archive.ubuntu.com/ubuntu/ trusty/main libvorbis0a amd64 1.3.2-1.3ubuntu1 [87.2 kB]
+Get:12 http://us.archive.ubuntu.com/ubuntu/ trusty/main libvorbisenc2 amd64 1.3.2-1.3ubuntu1 [84.5 kB]
+Get:13 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsndfile1 amd64 1.0.25-7ubuntu2 [136 kB]
+Get:14 http://us.archive.ubuntu.com/ubuntu/ trusty/main libpulse0 amd64 1:4.0-0ubuntu11 [225 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jre amd64 7u65-2.5.1-4ubuntu1~0.14.04.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:15 http://us.archive.ubuntu.com/ubuntu/ trusty/main libatk-wrapper-java all 0.30.4-4 [30.2 kB]
+Get:16 http://us.archive.ubuntu.com/ubuntu/ trusty/main libatk-wrapper-java-jni amd64 0.30.4-4 [25.2 kB]
+Get:17 http://us.archive.ubuntu.com/ubuntu/ trusty/main libavahi-glib1 amd64 0.6.31-4ubuntu1 [7,756 B]
+Get:18 http://us.archive.ubuntu.com/ubuntu/ trusty/main libbonobo2-common all 2.32.1-0ubuntu5 [34.2 kB]
+Get:19 http://us.archive.ubuntu.com/ubuntu/ trusty/main libidl-common all 0.8.14-0.2ubuntu4 [8,196 B]
+Get:20 http://us.archive.ubuntu.com/ubuntu/ trusty/main libidl0 amd64 0.8.14-0.2ubuntu4 [65.9 kB]
+Get:21 http://us.archive.ubuntu.com/ubuntu/ trusty/main liborbit-2-0 amd64 1:2.14.19-0.3 [138 kB]
+Get:22 http://us.archive.ubuntu.com/ubuntu/ trusty/main liborbit2 amd64 1:2.14.19-0.3 [14.7 kB]
+Get:23 http://us.archive.ubuntu.com/ubuntu/ trusty/main libbonobo2-0 amd64 2.32.1-0ubuntu5 [214 kB]
+Get:24 http://us.archive.ubuntu.com/ubuntu/ trusty/main libtdb1 amd64 1.2.12-1 [37.8 kB]
+Get:25 http://us.archive.ubuntu.com/ubuntu/ trusty/main libvorbisfile3 amd64 1.3.2-1.3ubuntu1 [15.8 kB]
+Get:26 http://us.archive.ubuntu.com/ubuntu/ trusty/main sound-theme-freedesktop all 0.8-1 [385 kB]
+Get:27 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcanberra0 amd64 0.30-0ubuntu3 [36.5 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main dbus-x11 amd64 1.6.18-0ubuntu4.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:28 http://us.archive.ubuntu.com/ubuntu/ trusty/main gconf2 amd64 3.2.6-0ubuntu2 [65.5 kB]
+Get:29 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgnomevfs2-common amd64 1:2.24.4-1ubuntu6 [22.8 kB]
+Get:30 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgnomevfs2-0 amd64 1:2.24.4-1ubuntu6 [210 kB]
+Get:31 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgnome2-common all 2.32.1-4ubuntu1 [33.3 kB]
+Get:32 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgnome2-bin amd64 2.32.1-4ubuntu1 [15.0 kB]
+Get:33 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgnome2-0 amd64 2.32.1-4ubuntu1 [43.2 kB]
+Get:34 http://us.archive.ubuntu.com/ubuntu/ trusty/main libicu52 amd64 52.1-3 [6,770 kB]
+Get:35 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsecret-common all 0.16-0ubuntu1 [4,166 B]
+Get:36 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsecret-1-0 amd64 0.16-0ubuntu1 [90.7 kB]
+Get:37 http://us.archive.ubuntu.com/ubuntu/ trusty/main libudisks2-0 amd64 2.1.3-1 [90.7 kB]
+Get:38 http://us.archive.ubuntu.com/ubuntu/ trusty/main desktop-file-utils amd64 0.22-1ubuntu1 [43.2 kB]
+Get:39 http://us.archive.ubuntu.com/ubuntu/ trusty/main fonts-dejavu-extra all 2.34-1ubuntu1 [1,736 kB]
+Get:40 http://us.archive.ubuntu.com/ubuntu/ trusty/main udisks2 amd64 2.1.3-1 [170 kB]
+Get:41 http://us.archive.ubuntu.com/ubuntu/ trusty/main gvfs-common all 1.20.1-1ubuntu1 [42.0 kB]
+Get:42 http://us.archive.ubuntu.com/ubuntu/ trusty/main gvfs-libs amd64 1.20.1-1ubuntu1 [104 kB]
+Get:43 http://us.archive.ubuntu.com/ubuntu/ trusty/main gvfs-daemons amd64 1.20.1-1ubuntu1 [108 kB]
+Get:44 http://us.archive.ubuntu.com/ubuntu/ trusty/main gvfs amd64 1.20.1-1ubuntu1 [89.7 kB]
+Get:45 http://us.archive.ubuntu.com/ubuntu/ trusty/main libgconf2-4 amd64 3.2.6-0ubuntu2 [2,042 B]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-bin amd64 2.24.23-0ubuntu1.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:46 http://us.archive.ubuntu.com/ubuntu/ trusty/main xorg-sgml-doctools all 1:1.11-1 [12.9 kB]
+Get:47 http://us.archive.ubuntu.com/ubuntu/ trusty/main x11proto-core-dev all 7.0.24-1 [748 kB]
+Get:48 http://us.archive.ubuntu.com/ubuntu/ trusty/main libice-dev amd64 2:1.0.8-2 [57.6 kB]
+Get:49 http://us.archive.ubuntu.com/ubuntu/ trusty/main libpthread-stubs0-dev amd64 0.3-4 [4,068 B]
+Get:50 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsm-dev amd64 2:1.2.1-2 [19.9 kB]
+Get:51 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxau-dev amd64 1:1.0.8-1 [11.1 kB]
+Get:52 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxdmcp-dev amd64 1:1.1.1-1 [26.9 kB]
+Get:53 http://us.archive.ubuntu.com/ubuntu/ trusty/main x11proto-input-dev all 2.3-1 [139 kB]
+Get:54 http://us.archive.ubuntu.com/ubuntu/ trusty/main x11proto-kb-dev all 1.0.6-2 [269 kB]
+Get:55 http://us.archive.ubuntu.com/ubuntu/ trusty/main xtrans-dev all 1.3.2-1 [69.9 kB]
+Get:56 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxcb1-dev amd64 1.10-2ubuntu1 [76.6 kB]
+Get:57 http://us.archive.ubuntu.com/ubuntu/ trusty/main libx11-dev amd64 2:1.6.2-1ubuntu2 [629 kB]
+Get:58 http://us.archive.ubuntu.com/ubuntu/ trusty/main libx11-doc all 2:1.6.2-1ubuntu2 [1,448 kB]
+Get:59 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxt-dev amd64 1:1.1.4-1 [455 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jdk amd64 7u65-2.5.1-4ubuntu1~0.14.04.1
+  404  Not Found [IP: 91.189.91.26 80]
+Get:60 http://us.archive.ubuntu.com/ubuntu/ trusty/main policykit-1-gnome amd64 0.105-1ubuntu4 [27.8 kB]
+Get:61 http://us.archive.ubuntu.com/ubuntu/ trusty/main gdisk amd64 0.8.8-1build1 [186 kB]
+Err http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main icedtea-7-jre-jamvm amd64 7u65-2.5.1-4ubuntu1~0.14.04.1
+  404  Not Found [IP: 91.189.91.26 80]
+Fetched 16.8 MB in 10s (1,591 kB/s)
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/g/gtk+2.0/libgtk2.0-common_2.24.23-0ubuntu1.1_all.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/g/gtk+2.0/libgtk2.0-0_2.24.23-0ubuntu1.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/n/nspr/libnspr4_4.10.2-1ubuntu1.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/t/tzdata/tzdata-java_2014e-0ubuntu0.14.04_all.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/o/openjdk-7/openjdk-7-jre-headless_7u65-2.5.1-4ubuntu1~0.14.04.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/o/openjdk-7/openjdk-7-jre_7u65-2.5.1-4ubuntu1~0.14.04.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/d/dbus/dbus-x11_1.6.18-0ubuntu4.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/g/gtk+2.0/libgtk2.0-bin_2.24.23-0ubuntu1.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/o/openjdk-7/openjdk-7-jdk_7u65-2.5.1-4ubuntu1~0.14.04.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Failed to fetch http://us.archive.ubuntu.com/ubuntu/pool/main/o/openjdk-7/icedtea-7-jre-jamvm_7u65-2.5.1-4ubuntu1~0.14.04.1_amd64.deb  404  Not Found [IP: 91.189.91.26 80]
+
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+root@n4:~# apt-get update
+Ign http://us.archive.ubuntu.com trusty InRelease
+Get:1 http://us.archive.ubuntu.com trusty-updates InRelease [65.9 kB]
+Hit http://us.archive.ubuntu.com trusty Release.gpg
+Hit http://us.archive.ubuntu.com trusty Release
+Get:2 http://us.archive.ubuntu.com trusty-updates/main Sources [275 kB]
+Get:3 http://us.archive.ubuntu.com trusty-updates/restricted Sources [5,352 B]
+Get:4 http://us.archive.ubuntu.com trusty-updates/universe Sources [155 kB]
+Get:5 http://us.archive.ubuntu.com trusty-updates/main amd64 Packages [768 kB]
+Get:6 http://us.archive.ubuntu.com trusty-updates/restricted amd64 Packages [15.9 kB]
+Get:7 http://us.archive.ubuntu.com trusty-updates/universe amd64 Packages [360 kB]
+Get:8 http://us.archive.ubuntu.com trusty-updates/main i386 Packages [736 kB]
+Get:9 http://us.archive.ubuntu.com trusty-updates/restricted i386 Packages [15.6 kB]
+Get:10 http://us.archive.ubuntu.com trusty-updates/universe i386 Packages [361 kB]
+Get:11 http://us.archive.ubuntu.com trusty-updates/main Translation-en [384 kB]
+Get:12 http://us.archive.ubuntu.com trusty-updates/restricted Translation-en [3,699 B]
+Get:13 http://us.archive.ubuntu.com trusty-updates/universe Translation-en [188 kB]
+Hit http://us.archive.ubuntu.com trusty/main Sources
+Hit http://us.archive.ubuntu.com trusty/restricted Sources
+Hit http://us.archive.ubuntu.com trusty/universe Sources
+Hit http://us.archive.ubuntu.com trusty/main amd64 Packages
+Hit http://us.archive.ubuntu.com trusty/restricted amd64 Packages
+Hit http://us.archive.ubuntu.com trusty/universe amd64 Packages
+Hit http://us.archive.ubuntu.com trusty/main i386 Packages
+Hit http://us.archive.ubuntu.com trusty/restricted i386 Packages
+Hit http://us.archive.ubuntu.com trusty/universe i386 Packages
+Hit http://us.archive.ubuntu.com trusty/main Translation-en
+Hit http://us.archive.ubuntu.com trusty/restricted Translation-en
+Hit http://us.archive.ubuntu.com trusty/universe Translation-en
+Ign http://us.archive.ubuntu.com trusty/main Translation-en_US
+Ign http://us.archive.ubuntu.com trusty/restricted Translation-en_US
+Ign http://us.archive.ubuntu.com trusty/universe Translation-en_US
+Fetched 3,334 kB in 2s (1,660 kB/s)
+Reading package lists... Done
+root@n4:~# apt-get install openjdk-7-jdk
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following extra packages will be installed:
+  ca-certificates-java dbus-x11 desktop-file-utils fonts-dejavu-extra gconf2
+  gdisk gvfs gvfs-common gvfs-daemons gvfs-libs java-common libasyncns0
+  libatasmart4 libatk-wrapper-java libatk-wrapper-java-jni libavahi-glib1
+  libbonobo2-0 libbonobo2-common libcanberra0 libflac8 libgconf2-4 libgnome2-0
+  libgnome2-bin libgnome2-common libgnomevfs2-0 libgnomevfs2-common
+  libgtk2.0-0 libgtk2.0-bin libgtk2.0-common libice-dev libicu52 libidl-common
+  libidl0 libnspr4 libnss3 libnss3-nssdb libogg0 liborbit-2-0 liborbit2
+  libpcsclite1 libpthread-stubs0-dev libpulse0 libsctp1 libsecret-1-0
+  libsecret-common libsm-dev libsndfile1 libtdb1 libudisks2-0 libvorbis0a
+  libvorbisenc2 libvorbisfile3 libx11-dev libx11-doc libxau-dev libxcb1-dev
+  libxdmcp-dev libxt-dev lksctp-tools openjdk-7-jre openjdk-7-jre-headless
+  policykit-1-gnome sound-theme-freedesktop tzdata tzdata-java udisks2
+  x11proto-core-dev x11proto-input-dev x11proto-kb-dev xorg-sgml-doctools
+  xtrans-dev
+Suggested packages:
+  gconf-defaults-service gvfs-backends gvfs-backends-goa default-jre equivs
+  libbonobo2-bin libcanberra-gtk0 libcanberra-pulse desktop-base
+  libgnomevfs2-bin libgnomevfs2-extra gamin fam gnome-mime-data libice-doc
+  pcscd pulseaudio libsm-doc libxcb-doc libxt-doc openjdk-7-demo
+  openjdk-7-source visualvm icedtea-7-plugin icedtea-7-jre-jamvm libnss-mdns
+  sun-java6-fonts fonts-ipafont-gothic fonts-ipafont-mincho ttf-wqy-microhei
+  ttf-wqy-zenhei ttf-indic-fonts-core ttf-telugu-fonts ttf-oriya-fonts
+  ttf-kannada-fonts ttf-bengali-fonts xfsprogs reiserfsprogs exfat-utils
+  btrfs-tools mdadm cryptsetup-bin
+The following NEW packages will be installed:
+  ca-certificates-java dbus-x11 desktop-file-utils fonts-dejavu-extra gconf2
+  gdisk gvfs gvfs-common gvfs-daemons gvfs-libs java-common libasyncns0
+  libatasmart4 libatk-wrapper-java libatk-wrapper-java-jni libavahi-glib1
+  libbonobo2-0 libbonobo2-common libcanberra0 libflac8 libgconf2-4 libgnome2-0
+  libgnome2-bin libgnome2-common libgnomevfs2-0 libgnomevfs2-common
+  libgtk2.0-0 libgtk2.0-bin libgtk2.0-common libice-dev libicu52 libidl-common
+  libidl0 libnspr4 libnss3 libnss3-nssdb libogg0 liborbit-2-0 liborbit2
+  libpcsclite1 libpthread-stubs0-dev libpulse0 libsctp1 libsecret-1-0
+  libsecret-common libsm-dev libsndfile1 libtdb1 libudisks2-0 libvorbis0a
+  libvorbisenc2 libvorbisfile3 libx11-dev libx11-doc libxau-dev libxcb1-dev
+  libxdmcp-dev libxt-dev lksctp-tools openjdk-7-jdk openjdk-7-jre
+  openjdk-7-jre-headless policykit-1-gnome sound-theme-freedesktop tzdata-java
+  udisks2 x11proto-core-dev x11proto-input-dev x11proto-kb-dev
+  xorg-sgml-doctools xtrans-dev
+The following packages will be upgraded:
+  tzdata
+1 upgraded, 71 newly installed, 0 to remove and 255 not upgraded.
+Need to get 67.7 MB/74.5 MB of archives.
+After this operation, 161 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-common all 2.24.23-0ubuntu1.4 [121 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-0 amd64 2.24.23-0ubuntu1.4 [1,739 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libnspr4 amd64 2:4.10.10-0ubuntu0.14.04.1 [111 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libnss3-nssdb all 2:3.21-0ubuntu0.14.04.2 [10.6 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libnss3 amd64 2:3.21-0ubuntu0.14.04.2 [1,103 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main tzdata all 2016d-0ubuntu0.14.04 [167 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main tzdata-java all 2016d-0ubuntu0.14.04 [69.6 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libflac8 amd64 1.3.0-2ubuntu0.14.04.1 [80.2 kB]
+Get:9 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libsndfile1 amd64 1.0.25-7ubuntu2.1 [136 kB]
+Get:10 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libpulse0 amd64 1:4.0-0ubuntu11.1 [225 kB]
+Get:11 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsctp1 amd64 1.0.15+dfsg-1 [9,226 B]
+Get:12 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jre-headless amd64 7u101-2.6.6-0ubuntu0.14.04.1 [39.2 MB]
+Get:13 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jre amd64 7u101-2.6.6-0ubuntu0.14.04.1 [172 kB]
+Get:14 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libtdb1 amd64 1.3.8-0ubuntu0.14.04.1 [38.3 kB]
+Get:15 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main dbus-x11 amd64 1.6.18-0ubuntu4.3 [19.2 kB]
+Get:16 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libicu52 amd64 52.1-3ubuntu0.4 [6,752 kB]
+Get:17 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libudisks2-0 amd64 2.1.3-1ubuntu0.1 [90.5 kB]
+Get:18 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main udisks2 amd64 2.1.3-1ubuntu0.1 [170 kB]
+Get:19 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main gvfs-common all 1.20.3-0ubuntu1.2 [42.3 kB]
+Get:20 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main gvfs-libs amd64 1.20.3-0ubuntu1.2 [105 kB]
+Get:21 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main gvfs-daemons amd64 1.20.3-0ubuntu1.2 [108 kB]
+Get:22 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main gvfs amd64 1.20.3-0ubuntu1.2 [89.5 kB]
+Get:23 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libgtk2.0-bin amd64 2.24.23-0ubuntu1.4 [9,774 B]
+Get:24 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main x11proto-core-dev all 7.0.26-1~ubuntu2 [700 kB]
+Get:25 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main xtrans-dev all 1.3.5-1~ubuntu14.04.1 [70.3 kB]
+Get:26 http://us.archive.ubuntu.com/ubuntu/ trusty/main lksctp-tools amd64 1.0.15+dfsg-1 [51.3 kB]
+Get:27 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main openjdk-7-jdk amd64 7u101-2.6.6-0ubuntu0.14.04.1 [16.1 MB]
+Get:28 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main gdisk amd64 0.8.8-1ubuntu0.1 [185 kB]
+Fetched 67.7 MB in 24s (2,816 kB/s)
+Extracting templates from packages: 100%
+Preconfiguring packages ...
+Selecting previously unselected package libasyncns0:amd64.
+(Reading database ... 80587 files and directories currently installed.)
+Preparing to unpack .../libasyncns0_0.8-4ubuntu2_amd64.deb ...
+Unpacking libasyncns0:amd64 (0.8-4ubuntu2) ...
+Selecting previously unselected package libatasmart4:amd64.
+Preparing to unpack .../libatasmart4_0.19-3_amd64.deb ...
+Unpacking libatasmart4:amd64 (0.19-3) ...
+Selecting previously unselected package libgtk2.0-common.
+Preparing to unpack .../libgtk2.0-common_2.24.23-0ubuntu1.4_all.deb ...
+Unpacking libgtk2.0-common (2.24.23-0ubuntu1.4) ...
+Selecting previously unselected package libgtk2.0-0:amd64.
+Preparing to unpack .../libgtk2.0-0_2.24.23-0ubuntu1.4_amd64.deb ...
+Unpacking libgtk2.0-0:amd64 (2.24.23-0ubuntu1.4) ...
+Selecting previously unselected package libnspr4:amd64.
+Preparing to unpack .../libnspr4_2%3a4.10.10-0ubuntu0.14.04.1_amd64.deb ...
+Unpacking libnspr4:amd64 (2:4.10.10-0ubuntu0.14.04.1) ...
+Selecting previously unselected package libnss3-nssdb.
+Preparing to unpack .../libnss3-nssdb_2%3a3.21-0ubuntu0.14.04.2_all.deb ...
+Unpacking libnss3-nssdb (2:3.21-0ubuntu0.14.04.2) ...
+Selecting previously unselected package libnss3:amd64.
+Preparing to unpack .../libnss3_2%3a3.21-0ubuntu0.14.04.2_amd64.deb ...
+Unpacking libnss3:amd64 (2:3.21-0ubuntu0.14.04.2) ...
+Selecting previously unselected package ca-certificates-java.
+Preparing to unpack .../ca-certificates-java_20130815ubuntu1_all.deb ...
+Unpacking ca-certificates-java (20130815ubuntu1) ...
+Preparing to unpack .../tzdata_2016d-0ubuntu0.14.04_all.deb ...
+Unpacking tzdata (2016d-0ubuntu0.14.04) over (2014e-0ubuntu0.14.04) ...
+Processing triggers for ca-certificates (20130906ubuntu2) ...
+Updating certificates in /etc/ssl/certs... 0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d....done.
+Setting up tzdata (2016d-0ubuntu0.14.04) ...
+
+User defined time zone, leaving /etc/localtime unchanged.
+Local time is now:      Tue May 24 14:26:38 EDT 2016.
+Universal Time is now:  Tue May 24 18:26:38 UTC 2016.
+Run 'dpkg-reconfigure tzdata' if you wish to change it.
+
+Selecting previously unselected package tzdata-java.
+(Reading database ... 80720 files and directories currently installed.)
+Preparing to unpack .../tzdata-java_2016d-0ubuntu0.14.04_all.deb ...
+Unpacking tzdata-java (2016d-0ubuntu0.14.04) ...
+Selecting previously unselected package java-common.
+Preparing to unpack .../java-common_0.51_all.deb ...
+Unpacking java-common (0.51) ...
+Selecting previously unselected package libpcsclite1:amd64.
+Preparing to unpack .../libpcsclite1_1.8.10-1ubuntu1_amd64.deb ...
+Unpacking libpcsclite1:amd64 (1.8.10-1ubuntu1) ...
+Selecting previously unselected package libogg0:amd64.
+Preparing to unpack .../libogg0_1.3.1-1ubuntu1_amd64.deb ...
+Unpacking libogg0:amd64 (1.3.1-1ubuntu1) ...
+Selecting previously unselected package libflac8:amd64.
+Preparing to unpack .../libflac8_1.3.0-2ubuntu0.14.04.1_amd64.deb ...
+Unpacking libflac8:amd64 (1.3.0-2ubuntu0.14.04.1) ...
+Selecting previously unselected package libvorbis0a:amd64.
+Preparing to unpack .../libvorbis0a_1.3.2-1.3ubuntu1_amd64.deb ...
+Unpacking libvorbis0a:amd64 (1.3.2-1.3ubuntu1) ...
+Selecting previously unselected package libvorbisenc2:amd64.
+Preparing to unpack .../libvorbisenc2_1.3.2-1.3ubuntu1_amd64.deb ...
+Unpacking libvorbisenc2:amd64 (1.3.2-1.3ubuntu1) ...
+Selecting previously unselected package libsndfile1:amd64.
+Preparing to unpack .../libsndfile1_1.0.25-7ubuntu2.1_amd64.deb ...
+Unpacking libsndfile1:amd64 (1.0.25-7ubuntu2.1) ...
+Selecting previously unselected package libpulse0:amd64.
+Preparing to unpack .../libpulse0_1%3a4.0-0ubuntu11.1_amd64.deb ...
+Unpacking libpulse0:amd64 (1:4.0-0ubuntu11.1) ...
+Selecting previously unselected package libsctp1:amd64.
+Preparing to unpack .../libsctp1_1.0.15+dfsg-1_amd64.deb ...
+Unpacking libsctp1:amd64 (1.0.15+dfsg-1) ...
+Selecting previously unselected package openjdk-7-jre-headless:amd64.
+Preparing to unpack .../openjdk-7-jre-headless_7u101-2.6.6-0ubuntu0.14.04.1_amd64.deb ...
+Unpacking openjdk-7-jre-headless:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+Selecting previously unselected package openjdk-7-jre:amd64.
+Preparing to unpack .../openjdk-7-jre_7u101-2.6.6-0ubuntu0.14.04.1_amd64.deb ...
+Unpacking openjdk-7-jre:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+Selecting previously unselected package libatk-wrapper-java.
+Preparing to unpack .../libatk-wrapper-java_0.30.4-4_all.deb ...
+Unpacking libatk-wrapper-java (0.30.4-4) ...
+Selecting previously unselected package libatk-wrapper-java-jni:amd64.
+Preparing to unpack .../libatk-wrapper-java-jni_0.30.4-4_amd64.deb ...
+Unpacking libatk-wrapper-java-jni:amd64 (0.30.4-4) ...
+Selecting previously unselected package libavahi-glib1:amd64.
+Preparing to unpack .../libavahi-glib1_0.6.31-4ubuntu1_amd64.deb ...
+Unpacking libavahi-glib1:amd64 (0.6.31-4ubuntu1) ...
+Selecting previously unselected package libbonobo2-common.
+Preparing to unpack .../libbonobo2-common_2.32.1-0ubuntu5_all.deb ...
+Unpacking libbonobo2-common (2.32.1-0ubuntu5) ...
+Selecting previously unselected package libidl-common.
+Preparing to unpack .../libidl-common_0.8.14-0.2ubuntu4_all.deb ...
+Unpacking libidl-common (0.8.14-0.2ubuntu4) ...
+Selecting previously unselected package libidl0:amd64.
+Preparing to unpack .../libidl0_0.8.14-0.2ubuntu4_amd64.deb ...
+Unpacking libidl0:amd64 (0.8.14-0.2ubuntu4) ...
+Selecting previously unselected package liborbit-2-0:amd64.
+Preparing to unpack .../liborbit-2-0_1%3a2.14.19-0.3_amd64.deb ...
+Unpacking liborbit-2-0:amd64 (1:2.14.19-0.3) ...
+Selecting previously unselected package liborbit2:amd64.
+Preparing to unpack .../liborbit2_1%3a2.14.19-0.3_amd64.deb ...
+Unpacking liborbit2:amd64 (1:2.14.19-0.3) ...
+Selecting previously unselected package libbonobo2-0:amd64.
+Preparing to unpack .../libbonobo2-0_2.32.1-0ubuntu5_amd64.deb ...
+Unpacking libbonobo2-0:amd64 (2.32.1-0ubuntu5) ...
+Selecting previously unselected package libtdb1:amd64.
+Preparing to unpack .../libtdb1_1.3.8-0ubuntu0.14.04.1_amd64.deb ...
+Unpacking libtdb1:amd64 (1.3.8-0ubuntu0.14.04.1) ...
+Selecting previously unselected package libvorbisfile3:amd64.
+Preparing to unpack .../libvorbisfile3_1.3.2-1.3ubuntu1_amd64.deb ...
+Unpacking libvorbisfile3:amd64 (1.3.2-1.3ubuntu1) ...
+Selecting previously unselected package sound-theme-freedesktop.
+Preparing to unpack .../sound-theme-freedesktop_0.8-1_all.deb ...
+Unpacking sound-theme-freedesktop (0.8-1) ...
+Selecting previously unselected package libcanberra0:amd64.
+Preparing to unpack .../libcanberra0_0.30-0ubuntu3_amd64.deb ...
+Unpacking libcanberra0:amd64 (0.30-0ubuntu3) ...
+Selecting previously unselected package dbus-x11.
+Preparing to unpack .../dbus-x11_1.6.18-0ubuntu4.3_amd64.deb ...
+Unpacking dbus-x11 (1.6.18-0ubuntu4.3) ...
+Selecting previously unselected package gconf2.
+Preparing to unpack .../gconf2_3.2.6-0ubuntu2_amd64.deb ...
+Unpacking gconf2 (3.2.6-0ubuntu2) ...
+Selecting previously unselected package libgnomevfs2-common.
+Preparing to unpack .../libgnomevfs2-common_1%3a2.24.4-1ubuntu6_amd64.deb ...
+Unpacking libgnomevfs2-common (1:2.24.4-1ubuntu6) ...
+Selecting previously unselected package libgnomevfs2-0:amd64.
+Preparing to unpack .../libgnomevfs2-0_1%3a2.24.4-1ubuntu6_amd64.deb ...
+Unpacking libgnomevfs2-0:amd64 (1:2.24.4-1ubuntu6) ...
+Selecting previously unselected package libgnome2-common.
+Preparing to unpack .../libgnome2-common_2.32.1-4ubuntu1_all.deb ...
+Unpacking libgnome2-common (2.32.1-4ubuntu1) ...
+Selecting previously unselected package libgnome2-bin.
+Preparing to unpack .../libgnome2-bin_2.32.1-4ubuntu1_amd64.deb ...
+Unpacking libgnome2-bin (2.32.1-4ubuntu1) ...
+Selecting previously unselected package libgnome2-0:amd64.
+Preparing to unpack .../libgnome2-0_2.32.1-4ubuntu1_amd64.deb ...
+Unpacking libgnome2-0:amd64 (2.32.1-4ubuntu1) ...
+Selecting previously unselected package libicu52:amd64.
+Preparing to unpack .../libicu52_52.1-3ubuntu0.4_amd64.deb ...
+Unpacking libicu52:amd64 (52.1-3ubuntu0.4) ...
+Selecting previously unselected package libsecret-common.
+Preparing to unpack .../libsecret-common_0.16-0ubuntu1_all.deb ...
+Unpacking libsecret-common (0.16-0ubuntu1) ...
+Selecting previously unselected package libsecret-1-0:amd64.
+Preparing to unpack .../libsecret-1-0_0.16-0ubuntu1_amd64.deb ...
+Unpacking libsecret-1-0:amd64 (0.16-0ubuntu1) ...
+Selecting previously unselected package libudisks2-0:amd64.
+Preparing to unpack .../libudisks2-0_2.1.3-1ubuntu0.1_amd64.deb ...
+Unpacking libudisks2-0:amd64 (2.1.3-1ubuntu0.1) ...
+Selecting previously unselected package desktop-file-utils.
+Preparing to unpack .../desktop-file-utils_0.22-1ubuntu1_amd64.deb ...
+Unpacking desktop-file-utils (0.22-1ubuntu1) ...
+Selecting previously unselected package fonts-dejavu-extra.
+Preparing to unpack .../fonts-dejavu-extra_2.34-1ubuntu1_all.deb ...
+Unpacking fonts-dejavu-extra (2.34-1ubuntu1) ...
+Selecting previously unselected package udisks2.
+Preparing to unpack .../udisks2_2.1.3-1ubuntu0.1_amd64.deb ...
+Unpacking udisks2 (2.1.3-1ubuntu0.1) ...
+Selecting previously unselected package gvfs-common.
+Preparing to unpack .../gvfs-common_1.20.3-0ubuntu1.2_all.deb ...
+Unpacking gvfs-common (1.20.3-0ubuntu1.2) ...
+Selecting previously unselected package gvfs-libs:amd64.
+Preparing to unpack .../gvfs-libs_1.20.3-0ubuntu1.2_amd64.deb ...
+Unpacking gvfs-libs:amd64 (1.20.3-0ubuntu1.2) ...
+Selecting previously unselected package gvfs-daemons.
+Preparing to unpack .../gvfs-daemons_1.20.3-0ubuntu1.2_amd64.deb ...
+Unpacking gvfs-daemons (1.20.3-0ubuntu1.2) ...
+Selecting previously unselected package gvfs:amd64.
+Preparing to unpack .../gvfs_1.20.3-0ubuntu1.2_amd64.deb ...
+Unpacking gvfs:amd64 (1.20.3-0ubuntu1.2) ...
+Selecting previously unselected package libgconf2-4:amd64.
+Preparing to unpack .../libgconf2-4_3.2.6-0ubuntu2_amd64.deb ...
+Unpacking libgconf2-4:amd64 (3.2.6-0ubuntu2) ...
+Selecting previously unselected package libgtk2.0-bin.
+Preparing to unpack .../libgtk2.0-bin_2.24.23-0ubuntu1.4_amd64.deb ...
+Unpacking libgtk2.0-bin (2.24.23-0ubuntu1.4) ...
+Selecting previously unselected package xorg-sgml-doctools.
+Preparing to unpack .../xorg-sgml-doctools_1%3a1.11-1_all.deb ...
+Unpacking xorg-sgml-doctools (1:1.11-1) ...
+Selecting previously unselected package x11proto-core-dev.
+Preparing to unpack .../x11proto-core-dev_7.0.26-1~ubuntu2_all.deb ...
+Unpacking x11proto-core-dev (7.0.26-1~ubuntu2) ...
+Selecting previously unselected package libice-dev:amd64.
+Preparing to unpack .../libice-dev_2%3a1.0.8-2_amd64.deb ...
+Unpacking libice-dev:amd64 (2:1.0.8-2) ...
+Selecting previously unselected package libpthread-stubs0-dev:amd64.
+Preparing to unpack .../libpthread-stubs0-dev_0.3-4_amd64.deb ...
+Unpacking libpthread-stubs0-dev:amd64 (0.3-4) ...
+Selecting previously unselected package libsm-dev:amd64.
+Preparing to unpack .../libsm-dev_2%3a1.2.1-2_amd64.deb ...
+Unpacking libsm-dev:amd64 (2:1.2.1-2) ...
+Selecting previously unselected package libxau-dev:amd64.
+Preparing to unpack .../libxau-dev_1%3a1.0.8-1_amd64.deb ...
+Unpacking libxau-dev:amd64 (1:1.0.8-1) ...
+Selecting previously unselected package libxdmcp-dev:amd64.
+Preparing to unpack .../libxdmcp-dev_1%3a1.1.1-1_amd64.deb ...
+Unpacking libxdmcp-dev:amd64 (1:1.1.1-1) ...
+Selecting previously unselected package x11proto-input-dev.
+Preparing to unpack .../x11proto-input-dev_2.3-1_all.deb ...
+Unpacking x11proto-input-dev (2.3-1) ...
+Selecting previously unselected package x11proto-kb-dev.
+Preparing to unpack .../x11proto-kb-dev_1.0.6-2_all.deb ...
+Unpacking x11proto-kb-dev (1.0.6-2) ...
+Selecting previously unselected package xtrans-dev.
+Preparing to unpack .../xtrans-dev_1.3.5-1~ubuntu14.04.1_all.deb ...
+Unpacking xtrans-dev (1.3.5-1~ubuntu14.04.1) ...
+Selecting previously unselected package libxcb1-dev:amd64.
+Preparing to unpack .../libxcb1-dev_1.10-2ubuntu1_amd64.deb ...
+Unpacking libxcb1-dev:amd64 (1.10-2ubuntu1) ...
+Selecting previously unselected package libx11-dev:amd64.
+Preparing to unpack .../libx11-dev_2%3a1.6.2-1ubuntu2_amd64.deb ...
+Unpacking libx11-dev:amd64 (2:1.6.2-1ubuntu2) ...
+Selecting previously unselected package libx11-doc.
+Preparing to unpack .../libx11-doc_2%3a1.6.2-1ubuntu2_all.deb ...
+Unpacking libx11-doc (2:1.6.2-1ubuntu2) ...
+Selecting previously unselected package libxt-dev:amd64.
+Preparing to unpack .../libxt-dev_1%3a1.1.4-1_amd64.deb ...
+Unpacking libxt-dev:amd64 (1:1.1.4-1) ...
+Selecting previously unselected package lksctp-tools.
+Preparing to unpack .../lksctp-tools_1.0.15+dfsg-1_amd64.deb ...
+Unpacking lksctp-tools (1.0.15+dfsg-1) ...
+Selecting previously unselected package openjdk-7-jdk:amd64.
+Preparing to unpack .../openjdk-7-jdk_7u101-2.6.6-0ubuntu0.14.04.1_amd64.deb ...
+Unpacking openjdk-7-jdk:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+Selecting previously unselected package policykit-1-gnome.
+Preparing to unpack .../policykit-1-gnome_0.105-1ubuntu4_amd64.deb ...
+Unpacking policykit-1-gnome (0.105-1ubuntu4) ...
+Selecting previously unselected package gdisk.
+Preparing to unpack .../gdisk_0.8.8-1ubuntu0.1_amd64.deb ...
+Unpacking gdisk (0.8.8-1ubuntu0.1) ...
+Processing triggers for man-db (2.6.7.1-1) ...
+Processing triggers for mime-support (3.54ubuntu1) ...
+Processing triggers for hicolor-icon-theme (0.13-1) ...
+Processing triggers for fontconfig (2.11.0-0ubuntu4.1) ...
+Processing triggers for libglib2.0-0:amd64 (2.40.0-2) ...
+Setting up libasyncns0:amd64 (0.8-4ubuntu2) ...
+Setting up libatasmart4:amd64 (0.19-3) ...
+Setting up libgtk2.0-common (2.24.23-0ubuntu1.4) ...
+Setting up libgtk2.0-0:amd64 (2.24.23-0ubuntu1.4) ...
+Setting up libnspr4:amd64 (2:4.10.10-0ubuntu0.14.04.1) ...
+Setting up tzdata-java (2016d-0ubuntu0.14.04) ...
+Setting up java-common (0.51) ...
+Setting up libpcsclite1:amd64 (1.8.10-1ubuntu1) ...
+Setting up libogg0:amd64 (1.3.1-1ubuntu1) ...
+Setting up libflac8:amd64 (1.3.0-2ubuntu0.14.04.1) ...
+Setting up libvorbis0a:amd64 (1.3.2-1.3ubuntu1) ...
+Setting up libvorbisenc2:amd64 (1.3.2-1.3ubuntu1) ...
+Setting up libsndfile1:amd64 (1.0.25-7ubuntu2.1) ...
+Setting up libpulse0:amd64 (1:4.0-0ubuntu11.1) ...
+Setting up libsctp1:amd64 (1.0.15+dfsg-1) ...
+Setting up libavahi-glib1:amd64 (0.6.31-4ubuntu1) ...
+Setting up libbonobo2-common (2.32.1-0ubuntu5) ...
+Setting up libidl-common (0.8.14-0.2ubuntu4) ...
+Setting up libidl0:amd64 (0.8.14-0.2ubuntu4) ...
+Setting up liborbit-2-0:amd64 (1:2.14.19-0.3) ...
+Setting up liborbit2:amd64 (1:2.14.19-0.3) ...
+Setting up libbonobo2-0:amd64 (2.32.1-0ubuntu5) ...
+Setting up libtdb1:amd64 (1.3.8-0ubuntu0.14.04.1) ...
+Setting up libvorbisfile3:amd64 (1.3.2-1.3ubuntu1) ...
+Setting up sound-theme-freedesktop (0.8-1) ...
+Setting up libcanberra0:amd64 (0.30-0ubuntu3) ...
+Setting up dbus-x11 (1.6.18-0ubuntu4.3) ...
+Setting up gconf2 (3.2.6-0ubuntu2) ...
+update-alternatives: using /usr/bin/gconftool-2 to provide /usr/bin/gconftool (gconftool) in auto mode
+
+(gconftool-2:18106): GConf-WARNING **: Client failed to connect to the D-BUS daemon:
+Unable to autolaunch a dbus-daemon without a $DISPLAY for X11
+Setting up libgnomevfs2-common (1:2.24.4-1ubuntu6) ...
+Setting up libgnomevfs2-0:amd64 (1:2.24.4-1ubuntu6) ...
+Setting up libgnome2-common (2.32.1-4ubuntu1) ...
+Setting up libicu52:amd64 (52.1-3ubuntu0.4) ...
+Setting up libsecret-common (0.16-0ubuntu1) ...
+Setting up libsecret-1-0:amd64 (0.16-0ubuntu1) ...
+Setting up libudisks2-0:amd64 (2.1.3-1ubuntu0.1) ...
+Setting up desktop-file-utils (0.22-1ubuntu1) ...
+Setting up fonts-dejavu-extra (2.34-1ubuntu1) ...
+Setting up udisks2 (2.1.3-1ubuntu0.1) ...
+Setting up gvfs-common (1.20.3-0ubuntu1.2) ...
+Setting up gvfs-libs:amd64 (1.20.3-0ubuntu1.2) ...
+Setting up gvfs-daemons (1.20.3-0ubuntu1.2) ...
+Setting up gvfs:amd64 (1.20.3-0ubuntu1.2) ...
+Setting up libgconf2-4:amd64 (3.2.6-0ubuntu2) ...
+Setting up libgtk2.0-bin (2.24.23-0ubuntu1.4) ...
+Setting up xorg-sgml-doctools (1:1.11-1) ...
+Setting up x11proto-core-dev (7.0.26-1~ubuntu2) ...
+Setting up libice-dev:amd64 (2:1.0.8-2) ...
+Setting up libpthread-stubs0-dev:amd64 (0.3-4) ...
+Setting up libsm-dev:amd64 (2:1.2.1-2) ...
+Setting up libxau-dev:amd64 (1:1.0.8-1) ...
+Setting up libxdmcp-dev:amd64 (1:1.1.1-1) ...
+Setting up x11proto-input-dev (2.3-1) ...
+Setting up x11proto-kb-dev (1.0.6-2) ...
+Setting up xtrans-dev (1.3.5-1~ubuntu14.04.1) ...
+Setting up libxcb1-dev:amd64 (1.10-2ubuntu1) ...
+Setting up libx11-dev:amd64 (2:1.6.2-1ubuntu2) ...
+Setting up libx11-doc (2:1.6.2-1ubuntu2) ...
+Setting up libxt-dev:amd64 (1:1.1.4-1) ...
+Setting up lksctp-tools (1.0.15+dfsg-1) ...
+Setting up policykit-1-gnome (0.105-1ubuntu4) ...
+Setting up gdisk (0.8.8-1ubuntu0.1) ...
+Setting up libnss3-nssdb (2:3.21-0ubuntu0.14.04.2) ...
+Setting up libnss3:amd64 (2:3.21-0ubuntu0.14.04.2) ...
+Setting up openjdk-7-jre-headless:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java to provide /usr/bin/java (java) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool to provide /usr/bin/keytool (keytool) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/pack200 to provide /usr/bin/pack200 (pack200) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/rmid to provide /usr/bin/rmid (rmid) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/rmiregistry to provide /usr/bin/rmiregistry (rmiregistry) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/unpack200 to provide /usr/bin/unpack200 (unpack200) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/orbd to provide /usr/bin/orbd (orbd) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/servertool to provide /usr/bin/servertool (servertool) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/tnameserv to provide /usr/bin/tnameserv (tnameserv) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jexec to provide /usr/bin/jexec (jexec) in auto mode
+Setting up libatk-wrapper-java (0.30.4-4) ...
+Setting up libgnome2-bin (2.32.1-4ubuntu1) ...
+Setting up libgnome2-0:amd64 (2.32.1-4ubuntu1) ...
+Setting up ca-certificates-java (20130815ubuntu1) ...
+Adding debian:Verisign_Class_1_Public_Primary_Certification_Authority_-_G2.pem
+Adding debian:TC_TrustCenter_Class_3_CA_II.pem
+Adding debian:ACEDICOM_Root.pem
+Adding debian:thawte_Primary_Root_CA_-_G3.pem
+Adding debian:Trustis_FPS_Root_CA.pem
+Adding debian:Entrust.net_Premium_2048_Secure_Server_CA.pem
+Adding debian:S-TRUST_Authentication_and_Encryption_Root_CA_2005_PN.pem
+Adding debian:TURKTRUST_Certificate_Services_Provider_Root_1.pem
+Adding debian:Visa_eCommerce_Root.pem
+Adding debian:COMODO_Certification_Authority.pem
+Adding debian:DST_ACES_CA_X6.pem
+Adding debian:Comodo_AAA_Services_root.pem
+Adding debian:thawte_Primary_Root_CA.pem
+Adding debian:UTN_DATACorp_SGC_Root_CA.pem
+Adding debian:DigiCert_Assured_ID_Root_CA.pem
+Adding debian:Swisscom_Root_EV_CA_2.pem
+Adding debian:Firmaprofesional_Root_CA.pem
+Adding debian:Taiwan_GRCA.pem
+Adding debian:Deutsche_Telekom_Root_CA_2.pem
+Adding debian:Actalis_Authentication_Root_CA.pem
+Adding debian:Hongkong_Post_Root_CA_1.pem
+Adding debian:RSA_Root_Certificate_1.pem
+Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+Adding debian:TURKTRUST_Certificate_Services_Provider_Root_2.pem
+Adding debian:AffirmTrust_Commercial.pem
+Adding debian:thawte_Primary_Root_CA_-_G2.pem
+Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+Adding debian:ssl-cert-snakeoil.pem
+Adding debian:SecureTrust_CA.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+Adding debian:StartCom_Certification_Authority_G2.pem
+Adding debian:ePKI_Root_Certification_Authority.pem
+Adding debian:China_Internet_Network_Information_Center_EV_Certificates_Root.pem
+Adding debian:EBG_Elektronik_Sertifika_Hizmet_Sağlayıcısı.pem
+Adding debian:GlobalSign_Root_CA_-_R2.pem
+Adding debian:Microsec_e-Szigno_Root_CA.pem
+Adding debian:Wells_Fargo_Root_CA.pem
+Adding debian:TC_TrustCenter_Class_2_CA_II.pem
+Adding debian:Digital_Signature_Trust_Co._Global_CA_1.pem
+Adding debian:SwissSign_Silver_CA_-_G2.pem
+Adding debian:Thawte_Server_CA.pem
+Adding debian:NetLock_Arany_=Class_Gold=_Főtanúsítvány.pem
+Adding debian:NetLock_Express_=Class_C=_Root.pem
+Adding debian:Certinomis_-_Autorité_Racine.pem
+Adding debian:NetLock_Business_=Class_B=_Root.pem
+Adding debian:Chambers_of_Commerce_Root_-_2008.pem
+Adding debian:Starfield_Class_2_CA.pem
+Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+Adding debian:ApplicationCA_-_Japanese_Government.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem
+Adding debian:E-Guven_Kok_Elektronik_Sertifika_Hizmet_Saglayicisi.pem
+Adding debian:Swisscom_Root_CA_2.pem
+Adding debian:GeoTrust_Universal_CA.pem
+Adding debian:certSIGN_ROOT_CA.pem
+Adding debian:Root_CA_Generalitat_Valenciana.pem
+Adding debian:GeoTrust_Global_CA_2.pem
+Adding debian:StartCom_Certification_Authority_2.pem
+Adding debian:Go_Daddy_Class_2_CA.pem
+Adding debian:Entrust_Root_Certification_Authority.pem
+Adding debian:Buypass_Class_2_CA_1.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority_2.pem
+Adding debian:NetLock_Qualified_=Class_QA=_Root.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2011.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority.pem
+Adding debian:TC_TrustCenter_Universal_CA_I.pem
+Adding debian:DigiCert_Global_Root_CA.pem
+Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+Adding debian:AddTrust_Qualified_Certificates_Root.pem
+Adding debian:Camerfirma_Chambers_of_Commerce_Root.pem
+Adding debian:Thawte_Premium_Server_CA.pem
+Adding debian:Digital_Signature_Trust_Co._Global_CA_3.pem
+Adding debian:ComSign_CA.pem
+Adding debian:CA_Disig.pem
+Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:GeoTrust_Primary_Certification_Authority.pem
+Adding debian:AddTrust_Public_Services_Root.pem
+Adding debian:Equifax_Secure_eBusiness_CA_1.pem
+Adding debian:RSA_Security_2048_v3.pem
+Adding debian:AffirmTrust_Networking.pem
+Adding debian:Camerfirma_Global_Chambersign_Root.pem
+Adding debian:COMODO_ECC_Certification_Authority.pem
+Adding debian:ValiCert_Class_2_VA.pem
+Adding debian:Verisign_Class_1_Public_Primary_Certification_Authority.pem
+Adding debian:IGC_A.pem
+Adding debian:Verisign_Class_4_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:TDC_Internet_Root_CA.pem
+Adding debian:Certplus_Class_2_Primary_CA.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G2.pem
+Adding debian:SwissSign_Gold_CA_-_G2.pem
+Adding debian:GlobalSign_Root_CA.pem
+Adding debian:SwissSign_Platinum_CA_-_G2.pem
+Adding debian:WellsSecure_Public_Root_Certificate_Authority.pem
+Adding debian:AddTrust_Low-Value_Services_Root.pem
+Adding debian:AC_Raíz_Certicámara_S.A..pem
+Adding debian:EE_Certification_Centre_Root_CA.pem
+Adding debian:GeoTrust_Universal_CA_2.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G3.pem
+Adding debian:GlobalSign_Root_CA_-_R3.pem
+Adding debian:DST_Root_CA_X3.pem
+Adding debian:A-Trust-nQual-03.pem
+Adding debian:Comodo_Trusted_Services_root.pem
+Adding debian:UTN_USERFirst_Email_Root_CA.pem
+Adding debian:Security_Communication_RootCA2.pem
+Adding debian:NetLock_Notary_=Class_A=_Root.pem
+Adding debian:TDC_OCES_Root_CA.pem
+Adding debian:ValiCert_Class_1_VA.pem
+Adding debian:DigiCert_High_Assurance_EV_Root_CA.pem
+Adding debian:XRamp_Global_CA_Root.pem
+Adding debian:AffirmTrust_Premium.pem
+Adding debian:VeriSign_Universal_Root_Certification_Authority.pem
+Adding debian:Izenpe.com.pem
+Adding debian:Swisscom_Root_CA_1.pem
+Adding debian:QuoVadis_Root_CA_3.pem
+Adding debian:Equifax_Secure_CA.pem
+Adding debian:Comodo_Secure_Services_root.pem
+Adding debian:GTE_CyberTrust_Global_Root.pem
+Adding debian:Sonera_Class_2_Root_CA.pem
+Adding debian:TURKTRUST_Certificate_Services_Provider_Root_2007.pem
+Adding debian:QuoVadis_Root_CA_2.pem
+Adding debian:StartCom_Certification_Authority.pem
+Adding debian:Equifax_Secure_Global_eBusiness_CA.pem
+Adding debian:Juur-SK.pem
+Adding debian:CNNIC_ROOT.pem
+Adding debian:GeoTrust_Global_CA.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority_-_G2.pem
+Adding debian:Verisign_Class_2_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:Staat_der_Nederlanden_Root_CA.pem
+Adding debian:PSCProcert.pem
+Adding debian:AddTrust_External_Root.pem
+Adding debian:CA_Disig_Root_R2.pem
+Adding debian:Buypass_Class_2_Root_CA.pem
+Adding debian:OISTE_WISeKey_Global_Root_GA_CA.pem
+Adding debian:ComSign_Secured_CA.pem
+Adding debian:Buypass_Class_3_CA_1.pem
+Adding debian:Global_Chambersign_Root_-_2008.pem
+Adding debian:Network_Solutions_Certificate_Authority.pem
+Adding debian:America_Online_Root_Certification_Authority_2.pem
+Adding debian:Verisign_Class_2_Public_Primary_Certification_Authority_-_G2.pem
+Adding debian:EC-ACC.pem
+Adding debian:Certigna.pem
+Adding debian:Baltimore_CyberTrust_Root.pem
+Adding debian:Staat_der_Nederlanden_Root_CA_-_G2.pem
+Adding debian:Certum_Root_CA.pem
+Adding debian:Security_Communication_Root_CA.pem
+Adding debian:CA_Disig_Root_R1.pem
+Adding debian:Entrust.net_Secure_Server_CA.pem
+Adding debian:Secure_Global_CA.pem
+Adding debian:UTN_USERFirst_Hardware_Root_CA.pem
+Adding debian:spi-cacert-2008.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G4.pem
+Adding debian:America_Online_Root_Certification_Authority_1.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+Adding debian:TWCA_Root_Certification_Authority.pem
+Adding debian:QuoVadis_Root_CA.pem
+Adding debian:TÜBİTAK_UEKAE_Kök_Sertifika_Hizmet_Sağlayıcısı_-_Sürüm_3.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+Adding debian:Cybertrust_Global_Root.pem
+Adding debian:Buypass_Class_3_Root_CA.pem
+Adding debian:Certum_Trusted_Network_CA.pem
+Adding debian:Verisign_Class_1_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:Sonera_Class_1_Root_CA.pem
+Adding debian:Security_Communication_EV_RootCA1.pem
+Adding debian:AffirmTrust_Premium_ECC.pem
+Adding debian:SecureSign_RootCA11.pem
+done.
+Setting up libatk-wrapper-java-jni:amd64 (0.30.4-4) ...
+Setting up openjdk-7-jre:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/policytool to provide /usr/bin/policytool (policytool) in auto mode
+Setting up openjdk-7-jdk:amd64 (7u101-2.6.6-0ubuntu0.14.04.1) ...
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/appletviewer to provide /usr/bin/appletviewer (appletviewer) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/extcheck to provide /usr/bin/extcheck (extcheck) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/idlj to provide /usr/bin/idlj (idlj) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jar to provide /usr/bin/jar (jar) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jarsigner to provide /usr/bin/jarsigner (jarsigner) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/javac to provide /usr/bin/javac (javac) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/javadoc to provide /usr/bin/javadoc (javadoc) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/javah to provide /usr/bin/javah (javah) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/javap to provide /usr/bin/javap (javap) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jcmd to provide /usr/bin/jcmd (jcmd) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jconsole to provide /usr/bin/jconsole (jconsole) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jdb to provide /usr/bin/jdb (jdb) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jhat to provide /usr/bin/jhat (jhat) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jinfo to provide /usr/bin/jinfo (jinfo) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jmap to provide /usr/bin/jmap (jmap) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jps to provide /usr/bin/jps (jps) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jrunscript to provide /usr/bin/jrunscript (jrunscript) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jsadebugd to provide /usr/bin/jsadebugd (jsadebugd) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jstack to provide /usr/bin/jstack (jstack) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jstat to provide /usr/bin/jstat (jstat) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/jstatd to provide /usr/bin/jstatd (jstatd) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/native2ascii to provide /usr/bin/native2ascii (native2ascii) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/rmic to provide /usr/bin/rmic (rmic) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/schemagen to provide /usr/bin/schemagen (schemagen) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/serialver to provide /usr/bin/serialver (serialver) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/wsgen to provide /usr/bin/wsgen (wsgen) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/wsimport to provide /usr/bin/wsimport (wsimport) in auto mode
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/bin/xjc to provide /usr/bin/xjc (xjc) in auto mode
+Processing triggers for libc-bin (2.19-0ubuntu6.1) ...
+Processing triggers for ca-certificates (20130906ubuntu2) ...
+Updating certificates in /etc/ssl/certs... 0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d....
+done.
+done.
+root@n4:~# apt-get install maven
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following extra packages will be installed:
+  ant ant-optional aspectj bsh fop java-wrappers junit junit4 libaether-java
+  libaopalliance-java libapache-pom-java libasm3-java libaspectj-java
+  libasync-http-client-java libatinject-jsr330-api-java
+  libavalon-framework-java libbatik-java libbsf-java libbsh-java
+  libcdi-api-java libcglib-java libclassworlds-java libcommons-beanutils-java
+  libcommons-cli-java libcommons-codec-java libcommons-collections3-java
+  libcommons-configuration-java libcommons-digester-java
+  libcommons-httpclient-java libcommons-io-java libcommons-jexl2-java
+  libcommons-jxpath-java libcommons-lang-java libcommons-logging-java
+  libcommons-net2-java libcommons-parent-java libcommons-vfs-java
+  libdom4j-java libdoxia-java libeasymock-java libfop-java
+  libganymed-ssh2-java libgeronimo-interceptor-3.0-spec-java
+  libgeronimo-jpa-2.0-spec-java libgeronimo-osgi-support-java libguava-java
+  libguice-java libhamcrest-java libhttpclient-java libhttpcore-java
+  libitext1-java libjackrabbit-java libjaxen-java libjaxp1.3-java
+  libjcommander-java libjdom1-java libjetty-java libjline-java libjsch-java
+  libjsoup-java libjsr305-java liblog4j1.2-java libmaven-parent-java
+  libmaven-scm-java libmaven2-core-java libmodello-java
+  libnetbeans-cvsclient-java libnetty-java libosgi-compendium-java
+  libosgi-core-java libosgi-foundation-ee-java libplexus-ant-factory-java
+  libplexus-archiver-java libplexus-bsh-factory-java libplexus-build-api-java
+  libplexus-cipher-java libplexus-classworlds-java libplexus-classworlds2-java
+  libplexus-cli-java libplexus-container-default-java
+  libplexus-containers-java libplexus-containers1.5-java libplexus-i18n-java
+  libplexus-interactivity-api-java libplexus-interpolation-java
+  libplexus-io-java libplexus-sec-dispatcher-java libplexus-utils-java
+  libplexus-utils2-java libqdox-java libregexp-java librhino-java
+  libsaxon-java libservlet2.5-java libservlet3.0-java libsisu-guice-java
+  libsisu-ioc-java libslf4j-java libwagon-java libwagon2-java libxalan2-java
+  libxbean-java libxerces2-java libxml-commons-external-java
+  libxml-commons-resolver1.1-java libxmlgraphics-commons-java libxom-java
+  libxpp2-java libxpp3-java libyaml-snake-java rhino testng unzip
+Suggested packages:
+  ant-doc ant-gcj ant-optional-gcj antlr javacc jython libbcel-java
+  libcommons-net-java libgnumail-java libjdepend-java liboro-java bsh-doc
+  fop-doc junit-doc libaopalliance-java-doc libasync-http-client-java-doc
+  libatinject-jsr330-api-java-doc libavalon-framework-java-doc
+  libclassworlds-java-doc libcommons-beanutils-java-doc
+  libcommons-collections3-java-doc libcommons-digester-java-doc
+  libcommons-httpclient-java-doc libcommons-io-java-doc
+  libcommons-jexl2-java-doc libcommons-jxpath-java-doc
+  libcommons-logging-java-doc libexcalibur-logkit-java
+  libcommons-net2-java-doc libcommons-vfs-java-doc libdom4j-java-doc
+  libdoxia-java-doc libeasymock-java-doc libgeronimo-jpa-2.0-spec-java-doc
+  libgeronimo-osgi-support-java-doc libjaxp1.3-java-gcj libjcommander-java-doc
+  libjdom1-java-doc jetty libjetty-java-doc libjline-java-doc
+  libjsoup-java-doc libjsr305-java-doc liblog4j1.2-java-doc
+  libmaven-scm-java-doc libmodello-java-doc maven2 libosgi-compendium-java-doc
+  libosgi-core-java-doc libosgi-foundation-ee-java-doc
+  libplexus-build-api-java-doc libplexus-cipher-java-doc
+  libplexus-classworlds-java-doc libplexus-classworlds2-java-doc
+  libplexus-cli-java-doc libplexus-container-default-java-doc
+  libplexus-i18n-java-doc libplexus-interactivity-api-java-doc
+  libplexus-interpolation-java-doc libplexus-sec-dispatcher-java-doc
+  libplexus-utils-java-doc libplexus-utils2-java-doc libqdox-java-doc
+  libsaxon-java-doc libwagon-java-doc libxalan2-java-doc libxsltc-java groovy
+  libspring-core-java libspring-beans-java libspring-context-java
+  libspring-web-java libxerces2-java-doc libxerces2-java-gcj
+  libxml-commons-resolver1.1-java-doc libxmlgraphics-commons-java-doc
+  libxom-java-doc librhino-java-doc zip
+The following NEW packages will be installed:
+  ant ant-optional aspectj bsh fop java-wrappers junit junit4 libaether-java
+  libaopalliance-java libapache-pom-java libasm3-java libaspectj-java
+  libasync-http-client-java libatinject-jsr330-api-java
+  libavalon-framework-java libbatik-java libbsf-java libbsh-java
+  libcdi-api-java libcglib-java libclassworlds-java libcommons-beanutils-java
+  libcommons-cli-java libcommons-codec-java libcommons-collections3-java
+  libcommons-configuration-java libcommons-digester-java
+  libcommons-httpclient-java libcommons-io-java libcommons-jexl2-java
+  libcommons-jxpath-java libcommons-lang-java libcommons-logging-java
+  libcommons-net2-java libcommons-parent-java libcommons-vfs-java
+  libdom4j-java libdoxia-java libeasymock-java libfop-java
+  libganymed-ssh2-java libgeronimo-interceptor-3.0-spec-java
+  libgeronimo-jpa-2.0-spec-java libgeronimo-osgi-support-java libguava-java
+  libguice-java libhamcrest-java libhttpclient-java libhttpcore-java
+  libitext1-java libjackrabbit-java libjaxen-java libjaxp1.3-java
+  libjcommander-java libjdom1-java libjetty-java libjline-java libjsch-java
+  libjsoup-java libjsr305-java liblog4j1.2-java libmaven-parent-java
+  libmaven-scm-java libmaven2-core-java libmodello-java
+  libnetbeans-cvsclient-java libnetty-java libosgi-compendium-java
+  libosgi-core-java libosgi-foundation-ee-java libplexus-ant-factory-java
+  libplexus-archiver-java libplexus-bsh-factory-java libplexus-build-api-java
+  libplexus-cipher-java libplexus-classworlds-java libplexus-classworlds2-java
+  libplexus-cli-java libplexus-container-default-java
+  libplexus-containers-java libplexus-containers1.5-java libplexus-i18n-java
+  libplexus-interactivity-api-java libplexus-interpolation-java
+  libplexus-io-java libplexus-sec-dispatcher-java libplexus-utils-java
+  libplexus-utils2-java libqdox-java libregexp-java librhino-java
+  libsaxon-java libservlet2.5-java libservlet3.0-java libsisu-guice-java
+  libsisu-ioc-java libslf4j-java libwagon-java libwagon2-java libxalan2-java
+  libxbean-java libxerces2-java libxml-commons-external-java
+  libxml-commons-resolver1.1-java libxmlgraphics-commons-java libxom-java
+  libxpp2-java libxpp3-java libyaml-snake-java maven rhino testng unzip
+0 upgraded, 114 newly installed, 0 to remove and 255 not upgraded.
+Need to get 62.2 MB of archives.
+After this operation, 93.9 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libyaml-snake-java all 1.12-2 [244 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxml-commons-resolver1.1-java all 1.2-7build1 [91.6 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxml-commons-external-java all 1.4.01-2build1 [245 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxerces2-java all 2.11.0-7 [1,362 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu/ trusty/main ant all 1.9.3-2build1 [1,869 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu/ trusty/main ant-optional all 1.9.3-2build1 [302 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libaspectj-java all 1.6.12+dfsg-3 [11.1 MB]
+Get:8 http://us.archive.ubuntu.com/ubuntu/ trusty/universe aspectj all 1.6.12+dfsg-3 [19.3 kB]
+Get:9 http://us.archive.ubuntu.com/ubuntu/ trusty/main libjline-java all 1.0-2 [69.4 kB]
+Get:10 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libbsh-java all 2.0b4-15ubuntu0.14.04.1 [265 kB]
+Get:11 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main bsh all 2.0b4-15ubuntu0.14.04.1 [4,416 B]
+Get:12 http://us.archive.ubuntu.com/ubuntu/ trusty/main libjaxp1.3-java all 1.3.05-2ubuntu3 [450 kB]
+Get:13 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxalan2-java all 2.7.1-9 [3,166 kB]
+Get:14 http://us.archive.ubuntu.com/ubuntu/ trusty/main libapache-pom-java all 10-2build1 [4,022 B]
+Get:15 http://us.archive.ubuntu.com/ubuntu/ trusty/main libbsf-java all 1:2.4.0-5build1 [71.2 kB]
+Get:16 http://us.archive.ubuntu.com/ubuntu/ trusty/main libavalon-framework-java all 4.2.0-9 [70.3 kB]
+Get:17 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-io-java all 2.4-2 [176 kB]
+Get:18 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-parent-java all 22-2build1 [6,968 B]
+Get:19 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-logging-java all 1.1.3-1 [120 kB]
+Get:20 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main unzip amd64 6.0-9ubuntu1.5 [157 kB]
+Get:21 http://us.archive.ubuntu.com/ubuntu/ trusty/main java-wrappers all 0.1.27 [9,908 B]
+Get:22 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libbatik-java all 1.7.ubuntu-8ubuntu2.14.04.1 [3,299 kB]
+Get:23 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxmlgraphics-commons-java all 1.5-4ubuntu1 [548 kB]
+Get:24 http://us.archive.ubuntu.com/ubuntu/ trusty/main libfop-java all 1:1.1.dfsg-2ubuntu1 [9,587 kB]
+Get:25 http://us.archive.ubuntu.com/ubuntu/ trusty/main fop all 1:1.1.dfsg-2ubuntu1 [13.5 kB]
+Get:26 http://us.archive.ubuntu.com/ubuntu/ trusty/main junit all 3.8.2-8build1 [106 kB]
+Get:27 http://us.archive.ubuntu.com/ubuntu/ trusty/main libhamcrest-java all 1.3-4 [385 kB]
+Get:28 http://us.archive.ubuntu.com/ubuntu/ trusty/main junit4 all 4.11-2 [227 kB]
+Get:29 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libnetty-java all 1:3.2.6.Final-2 [671 kB]
+Get:30 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libslf4j-java all 1.7.5-2 [110 kB]
+Get:31 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libasync-http-client-java all 1.6.5-2 [311 kB]
+Get:32 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-classworlds2-java all 2.5.1-2 [46.6 kB]
+Get:33 http://us.archive.ubuntu.com/ubuntu/ trusty/main libasm3-java all 3.3.2-2 [669 kB]
+Get:34 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-lang-java all 2.6-3ubuntu2 [270 kB]
+Get:35 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-cli-java all 1.2-3ubuntu1 [39.0 kB]
+Get:36 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libatinject-jsr330-api-java all 1.0+ds1-1 [23.1 kB]
+Get:37 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libjsr305-java all 0.1~+svn49-4 [28.1 kB]
+Get:38 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libguava-java all 15.0-2ubuntu1 [1,907 kB]
+Get:39 http://us.archive.ubuntu.com/ubuntu/ trusty/main libjaxen-java all 1.1.6-1ubuntu1 [206 kB]
+Get:40 http://us.archive.ubuntu.com/ubuntu/ trusty/main libjdom1-java all 1.1.3-1 [150 kB]
+Get:41 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libclassworlds-java all 1.1-final-5 [39.3 kB]
+Get:42 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libservlet3.0-java all 7.0.52-1ubuntu0.3 [294 kB]
+Get:43 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcommons-configuration-java all 1.10-1 [332 kB]
+Get:44 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-codec-java all 1.9-1 [214 kB]
+Get:45 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libhttpcore-java all 4.3.2-2 [523 kB]
+Get:46 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libhttpclient-java all 4.3.3-1 [528 kB]
+Get:47 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libitext1-java all 1.4-5 [1,206 kB]
+Get:48 http://us.archive.ubuntu.com/ubuntu/ trusty/main liblog4j1.2-java all 1.2.17-4ubuntu3 [383 kB]
+Get:49 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-interpolation-java all 1.19-1 [61.3 kB]
+Get:50 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-utils-java all 1:1.5.15-4 [210 kB]
+Get:51 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-container-default-java all 1.0-alpha-9-stable-1-7 [153 kB]
+Get:52 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-classworlds-java all 1.5.0-5 [49.2 kB]
+Get:53 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libxbean-java all 3.7-5 [640 kB]
+Get:54 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-containers-java all 1.0~beta3.0.7-7 [187 kB]
+Get:55 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-i18n-java all 1.0-beta-10-3 [13.6 kB]
+Get:56 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libdoxia-java all 1.1.4-1ubuntu4 [708 kB]
+Get:57 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-build-api-java all 0.0.4-5 [8,420 B]
+Get:58 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libmodello-java all 1.1-3 [239 kB]
+Get:59 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-ant-factory-java all 1.0~alpha2.1-3 [11.2 kB]
+Get:60 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-io-java all 1.0~alpha5-2 [44.7 kB]
+Get:61 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-archiver-java all 1.2-1 [167 kB]
+Get:62 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-bsh-factory-java all 1.0~alpha7-3 [7,932 B]
+Get:63 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-interactivity-api-java all 1.0-alpha-6-7 [14.2 kB]
+Get:64 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-cipher-java all 1.5-4 [14.9 kB]
+Get:65 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-sec-dispatcher-java all 1.3.1-6 [27.1 kB]
+Get:66 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/main libcommons-httpclient-java all 3.1-10.2ubuntu0.14.04.1 [279 kB]
+Get:67 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-net2-java all 2.2-2 [194 kB]
+Get:68 http://us.archive.ubuntu.com/ubuntu/ trusty/main libeasymock-java all 2.5.2+ds-1 [66.6 kB]
+Get:69 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libservlet2.5-java all 6.0.39-1 [209 kB]
+Get:70 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/universe libjetty-java all 6.1.26-1ubuntu1.1 [721 kB]
+Get:71 http://us.archive.ubuntu.com/ubuntu/ trusty/main libjsch-java all 0.1.50-1ubuntu1 [321 kB]
+Get:72 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libjsoup-java all 1.7.3-1 [279 kB]
+Get:73 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libganymed-ssh2-java all 250-2 [378 kB]
+Get:74 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libnetbeans-cvsclient-java all 6.5-2 [349 kB]
+Get:75 http://us.archive.ubuntu.com/ubuntu/ trusty/main libregexp-java all 1.5-3build1 [35.1 kB]
+Get:76 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libmaven-scm-java all 1.3-5 [894 kB]
+Get:77 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libwagon-java all 1.0.0-2ubuntu2 [213 kB]
+Get:78 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libmaven2-core-java all 2.2.1-14 [696 kB]
+Get:79 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-cli-java all 1.2-5 [9,700 B]
+Get:80 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-utils2-java all 2.0.5-1 [214 kB]
+Get:81 http://us.archive.ubuntu.com/ubuntu/ trusty/main libqdox-java all 1.12-1build1 [167 kB]
+Get:82 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libplexus-containers1.5-java all 1.5.5-6 [293 kB]
+Get:83 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libaopalliance-java all 20070526-5 [9,214 B]
+Get:84 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libgeronimo-interceptor-3.0-spec-java all 1.0.1-1fakesync1 [5,132 B]
+Get:85 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcdi-api-java all 1.0-1 [32.7 kB]
+Get:86 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libsisu-guice-java all 3.1.1+dfsg-1 [550 kB]
+Get:87 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libsisu-ioc-java all 2.3.0-5 [458 kB]
+Get:88 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libaether-java all 1.13.1-2 [496 kB]
+Get:89 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcglib-java all 2.2.2+dfsg-5 [710 kB]
+Get:90 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-collections3-java all 3.2.1-6 [602 kB]
+Get:91 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcommons-beanutils-java all 1.9.1-1 [210 kB]
+Get:92 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcommons-digester-java all 1.8.1-4 [169 kB]
+Get:93 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcommons-jexl2-java all 2.1.1-2 [240 kB]
+Get:94 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libcommons-jxpath-java all 1.3-6 [270 kB]
+Get:95 http://us.archive.ubuntu.com/ubuntu/ trusty/main libcommons-vfs-java all 2.0-3ubuntu1 [373 kB]
+Get:96 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxpp2-java all 2.1.10-7build1 [162 kB]
+Get:97 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxpp3-java all 1.1.4c-2build1 [364 kB]
+Get:98 http://us.archive.ubuntu.com/ubuntu/ trusty/main libdom4j-java all 1.6.1+dfsg.3-2ubuntu1 [323 kB]
+Get:99 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libosgi-core-java all 4.3.0-4 [93.1 kB]
+Get:100 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libosgi-foundation-ee-java all 4.2.0-1 [336 kB]
+Get:101 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libosgi-compendium-java all 4.3.0-1 [383 kB]
+Get:102 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libgeronimo-osgi-support-java all 1.0-2 [17.9 kB]
+Get:103 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libgeronimo-jpa-2.0-spec-java all 1.1-2 [81.8 kB]
+Get:104 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libguice-java all 3.0-3 [488 kB]
+Get:105 http://us.archive.ubuntu.com/ubuntu/ trusty-updates/universe libjackrabbit-java all 2.3.6-1+deb8u1build0.14.04.1 [275 kB]
+Get:106 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libjcommander-java all 1.32-1 [55.5 kB]
+Get:107 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libmaven-parent-java all 21-2 [5,786 B]
+Get:108 http://us.archive.ubuntu.com/ubuntu/ trusty/main librhino-java all 1.7R4-2 [1,096 kB]
+Get:109 http://us.archive.ubuntu.com/ubuntu/ trusty/main libsaxon-java all 1:6.5.5-10 [1,075 kB]
+Get:110 http://us.archive.ubuntu.com/ubuntu/ trusty/universe libwagon2-java all 2.5-1 [1,278 kB]
+Get:111 http://us.archive.ubuntu.com/ubuntu/ trusty/main libxom-java all 1.2.10-1 [170 kB]
+Get:112 http://us.archive.ubuntu.com/ubuntu/ trusty/universe maven all 3.0.5-1 [1,303 kB]
+Get:113 http://us.archive.ubuntu.com/ubuntu/ trusty/main rhino all 1.7R4-2 [14.4 kB]
+Get:114 http://us.archive.ubuntu.com/ubuntu/ trusty/universe testng all 6.8.7-2 [767 kB]
+Fetched 62.2 MB in 23s (2,648 kB/s)
+Extracting templates from packages: 100%
+Selecting previously unselected package libyaml-snake-java.
+(Reading database ... 83566 files and directories currently installed.)
+Preparing to unpack .../libyaml-snake-java_1.12-2_all.deb ...
+Unpacking libyaml-snake-java (1.12-2) ...
+Selecting previously unselected package libxml-commons-resolver1.1-java.
+Preparing to unpack .../libxml-commons-resolver1.1-java_1.2-7build1_all.deb ...
+Unpacking libxml-commons-resolver1.1-java (1.2-7build1) ...
+Selecting previously unselected package libxml-commons-external-java.
+Preparing to unpack .../libxml-commons-external-java_1.4.01-2build1_all.deb ...
+Unpacking libxml-commons-external-java (1.4.01-2build1) ...
+Selecting previously unselected package libxerces2-java.
+Preparing to unpack .../libxerces2-java_2.11.0-7_all.deb ...
+Unpacking libxerces2-java (2.11.0-7) ...
+Selecting previously unselected package ant.
+Preparing to unpack .../ant_1.9.3-2build1_all.deb ...
+Unpacking ant (1.9.3-2build1) ...
+Selecting previously unselected package ant-optional.
+Preparing to unpack .../ant-optional_1.9.3-2build1_all.deb ...
+Unpacking ant-optional (1.9.3-2build1) ...
+Selecting previously unselected package libaspectj-java.
+Preparing to unpack .../libaspectj-java_1.6.12+dfsg-3_all.deb ...
+Unpacking libaspectj-java (1.6.12+dfsg-3) ...
+Selecting previously unselected package aspectj.
+Preparing to unpack .../aspectj_1.6.12+dfsg-3_all.deb ...
+Unpacking aspectj (1.6.12+dfsg-3) ...
+Selecting previously unselected package libjline-java.
+Preparing to unpack .../libjline-java_1.0-2_all.deb ...
+Unpacking libjline-java (1.0-2) ...
+Selecting previously unselected package libbsh-java.
+Preparing to unpack .../libbsh-java_2.0b4-15ubuntu0.14.04.1_all.deb ...
+Unpacking libbsh-java (2.0b4-15ubuntu0.14.04.1) ...
+Selecting previously unselected package bsh.
+Preparing to unpack .../bsh_2.0b4-15ubuntu0.14.04.1_all.deb ...
+Unpacking bsh (2.0b4-15ubuntu0.14.04.1) ...
+Selecting previously unselected package libjaxp1.3-java.
+Preparing to unpack .../libjaxp1.3-java_1.3.05-2ubuntu3_all.deb ...
+Unpacking libjaxp1.3-java (1.3.05-2ubuntu3) ...
+Selecting previously unselected package libxalan2-java.
+Preparing to unpack .../libxalan2-java_2.7.1-9_all.deb ...
+Unpacking libxalan2-java (2.7.1-9) ...
+Selecting previously unselected package libapache-pom-java.
+Preparing to unpack .../libapache-pom-java_10-2build1_all.deb ...
+Unpacking libapache-pom-java (10-2build1) ...
+Selecting previously unselected package libbsf-java.
+Preparing to unpack .../libbsf-java_1%3a2.4.0-5build1_all.deb ...
+Unpacking libbsf-java (1:2.4.0-5build1) ...
+Selecting previously unselected package libavalon-framework-java.
+Preparing to unpack .../libavalon-framework-java_4.2.0-9_all.deb ...
+Unpacking libavalon-framework-java (4.2.0-9) ...
+Selecting previously unselected package libcommons-io-java.
+Preparing to unpack .../libcommons-io-java_2.4-2_all.deb ...
+Unpacking libcommons-io-java (2.4-2) ...
+Selecting previously unselected package libcommons-parent-java.
+Preparing to unpack .../libcommons-parent-java_22-2build1_all.deb ...
+Unpacking libcommons-parent-java (22-2build1) ...
+Selecting previously unselected package libcommons-logging-java.
+Preparing to unpack .../libcommons-logging-java_1.1.3-1_all.deb ...
+Unpacking libcommons-logging-java (1.1.3-1) ...
+Selecting previously unselected package unzip.
+Preparing to unpack .../unzip_6.0-9ubuntu1.5_amd64.deb ...
+Unpacking unzip (6.0-9ubuntu1.5) ...
+Selecting previously unselected package java-wrappers.
+Preparing to unpack .../java-wrappers_0.1.27_all.deb ...
+Unpacking java-wrappers (0.1.27) ...
+Selecting previously unselected package libbatik-java.
+Preparing to unpack .../libbatik-java_1.7.ubuntu-8ubuntu2.14.04.1_all.deb ...
+Unpacking libbatik-java (1.7.ubuntu-8ubuntu2.14.04.1) ...
+Selecting previously unselected package libxmlgraphics-commons-java.
+Preparing to unpack .../libxmlgraphics-commons-java_1.5-4ubuntu1_all.deb ...
+Unpacking libxmlgraphics-commons-java (1.5-4ubuntu1) ...
+Selecting previously unselected package libfop-java.
+Preparing to unpack .../libfop-java_1%3a1.1.dfsg-2ubuntu1_all.deb ...
+Unpacking libfop-java (1:1.1.dfsg-2ubuntu1) ...
+Selecting previously unselected package fop.
+Preparing to unpack .../fop_1%3a1.1.dfsg-2ubuntu1_all.deb ...
+Unpacking fop (1:1.1.dfsg-2ubuntu1) ...
+Selecting previously unselected package junit.
+Preparing to unpack .../junit_3.8.2-8build1_all.deb ...
+Unpacking junit (3.8.2-8build1) ...
+Selecting previously unselected package libhamcrest-java.
+Preparing to unpack .../libhamcrest-java_1.3-4_all.deb ...
+Unpacking libhamcrest-java (1.3-4) ...
+Selecting previously unselected package junit4.
+Preparing to unpack .../archives/junit4_4.11-2_all.deb ...
+Unpacking junit4 (4.11-2) ...
+Selecting previously unselected package libnetty-java.
+Preparing to unpack .../libnetty-java_1%3a3.2.6.Final-2_all.deb ...
+Unpacking libnetty-java (1:3.2.6.Final-2) ...
+Selecting previously unselected package libslf4j-java.
+Preparing to unpack .../libslf4j-java_1.7.5-2_all.deb ...
+Unpacking libslf4j-java (1.7.5-2) ...
+Selecting previously unselected package libasync-http-client-java.
+Preparing to unpack .../libasync-http-client-java_1.6.5-2_all.deb ...
+Unpacking libasync-http-client-java (1.6.5-2) ...
+Selecting previously unselected package libplexus-classworlds2-java.
+Preparing to unpack .../libplexus-classworlds2-java_2.5.1-2_all.deb ...
+Unpacking libplexus-classworlds2-java (2.5.1-2) ...
+Selecting previously unselected package libasm3-java.
+Preparing to unpack .../libasm3-java_3.3.2-2_all.deb ...
+Unpacking libasm3-java (3.3.2-2) ...
+Selecting previously unselected package libcommons-lang-java.
+Preparing to unpack .../libcommons-lang-java_2.6-3ubuntu2_all.deb ...
+Unpacking libcommons-lang-java (2.6-3ubuntu2) ...
+Selecting previously unselected package libcommons-cli-java.
+Preparing to unpack .../libcommons-cli-java_1.2-3ubuntu1_all.deb ...
+Unpacking libcommons-cli-java (1.2-3ubuntu1) ...
+Selecting previously unselected package libatinject-jsr330-api-java.
+Preparing to unpack .../libatinject-jsr330-api-java_1.0+ds1-1_all.deb ...
+Unpacking libatinject-jsr330-api-java (1.0+ds1-1) ...
+Selecting previously unselected package libjsr305-java.
+Preparing to unpack .../libjsr305-java_0.1~+svn49-4_all.deb ...
+Unpacking libjsr305-java (0.1~+svn49-4) ...
+Selecting previously unselected package libguava-java.
+Preparing to unpack .../libguava-java_15.0-2ubuntu1_all.deb ...
+Unpacking libguava-java (15.0-2ubuntu1) ...
+Selecting previously unselected package libjaxen-java.
+Preparing to unpack .../libjaxen-java_1.1.6-1ubuntu1_all.deb ...
+Unpacking libjaxen-java (1.1.6-1ubuntu1) ...
+Selecting previously unselected package libjdom1-java.
+Preparing to unpack .../libjdom1-java_1.1.3-1_all.deb ...
+Unpacking libjdom1-java (1.1.3-1) ...
+Selecting previously unselected package libclassworlds-java.
+Preparing to unpack .../libclassworlds-java_1.1-final-5_all.deb ...
+Unpacking libclassworlds-java (1.1-final-5) ...
+Selecting previously unselected package libservlet3.0-java.
+Preparing to unpack .../libservlet3.0-java_7.0.52-1ubuntu0.3_all.deb ...
+Unpacking libservlet3.0-java (7.0.52-1ubuntu0.3) ...
+Selecting previously unselected package libcommons-configuration-java.
+Preparing to unpack .../libcommons-configuration-java_1.10-1_all.deb ...
+Unpacking libcommons-configuration-java (1.10-1) ...
+Selecting previously unselected package libcommons-codec-java.
+Preparing to unpack .../libcommons-codec-java_1.9-1_all.deb ...
+Unpacking libcommons-codec-java (1.9-1) ...
+Selecting previously unselected package libhttpcore-java.
+Preparing to unpack .../libhttpcore-java_4.3.2-2_all.deb ...
+Unpacking libhttpcore-java (4.3.2-2) ...
+Selecting previously unselected package libhttpclient-java.
+Preparing to unpack .../libhttpclient-java_4.3.3-1_all.deb ...
+Unpacking libhttpclient-java (4.3.3-1) ...
+Selecting previously unselected package libitext1-java.
+Preparing to unpack .../libitext1-java_1.4-5_all.deb ...
+Unpacking libitext1-java (1.4-5) ...
+Selecting previously unselected package liblog4j1.2-java.
+Preparing to unpack .../liblog4j1.2-java_1.2.17-4ubuntu3_all.deb ...
+Unpacking liblog4j1.2-java (1.2.17-4ubuntu3) ...
+Selecting previously unselected package libplexus-interpolation-java.
+Preparing to unpack .../libplexus-interpolation-java_1.19-1_all.deb ...
+Unpacking libplexus-interpolation-java (1.19-1) ...
+Selecting previously unselected package libplexus-utils-java.
+Preparing to unpack .../libplexus-utils-java_1%3a1.5.15-4_all.deb ...
+Unpacking libplexus-utils-java (1:1.5.15-4) ...
+Selecting previously unselected package libplexus-container-default-java.
+Preparing to unpack .../libplexus-container-default-java_1.0-alpha-9-stable-1-7_all.deb ...
+Unpacking libplexus-container-default-java (1.0-alpha-9-stable-1-7) ...
+Selecting previously unselected package libplexus-classworlds-java.
+Preparing to unpack .../libplexus-classworlds-java_1.5.0-5_all.deb ...
+Unpacking libplexus-classworlds-java (1.5.0-5) ...
+Selecting previously unselected package libxbean-java.
+Preparing to unpack .../libxbean-java_3.7-5_all.deb ...
+Unpacking libxbean-java (3.7-5) ...
+Selecting previously unselected package libplexus-containers-java.
+Preparing to unpack .../libplexus-containers-java_1.0~beta3.0.7-7_all.deb ...
+Unpacking libplexus-containers-java (1.0~beta3.0.7-7) ...
+Selecting previously unselected package libplexus-i18n-java.
+Preparing to unpack .../libplexus-i18n-java_1.0-beta-10-3_all.deb ...
+Unpacking libplexus-i18n-java (1.0-beta-10-3) ...
+Selecting previously unselected package libdoxia-java.
+Preparing to unpack .../libdoxia-java_1.1.4-1ubuntu4_all.deb ...
+Unpacking libdoxia-java (1.1.4-1ubuntu4) ...
+Selecting previously unselected package libplexus-build-api-java.
+Preparing to unpack .../libplexus-build-api-java_0.0.4-5_all.deb ...
+Unpacking libplexus-build-api-java (0.0.4-5) ...
+Selecting previously unselected package libmodello-java.
+Preparing to unpack .../libmodello-java_1.1-3_all.deb ...
+Unpacking libmodello-java (1.1-3) ...
+Selecting previously unselected package libplexus-ant-factory-java.
+Preparing to unpack .../libplexus-ant-factory-java_1.0~alpha2.1-3_all.deb ...
+Unpacking libplexus-ant-factory-java (1.0~alpha2.1-3) ...
+Selecting previously unselected package libplexus-io-java.
+Preparing to unpack .../libplexus-io-java_1.0~alpha5-2_all.deb ...
+Unpacking libplexus-io-java (1.0~alpha5-2) ...
+Selecting previously unselected package libplexus-archiver-java.
+Preparing to unpack .../libplexus-archiver-java_1.2-1_all.deb ...
+Unpacking libplexus-archiver-java (1.2-1) ...
+Selecting previously unselected package libplexus-bsh-factory-java.
+Preparing to unpack .../libplexus-bsh-factory-java_1.0~alpha7-3_all.deb ...
+Unpacking libplexus-bsh-factory-java (1.0~alpha7-3) ...
+Selecting previously unselected package libplexus-interactivity-api-java.
+Preparing to unpack .../libplexus-interactivity-api-java_1.0-alpha-6-7_all.deb ...
+Unpacking libplexus-interactivity-api-java (1.0-alpha-6-7) ...
+Selecting previously unselected package libplexus-cipher-java.
+Preparing to unpack .../libplexus-cipher-java_1.5-4_all.deb ...
+Unpacking libplexus-cipher-java (1.5-4) ...
+Selecting previously unselected package libplexus-sec-dispatcher-java.
+Preparing to unpack .../libplexus-sec-dispatcher-java_1.3.1-6_all.deb ...
+Unpacking libplexus-sec-dispatcher-java (1.3.1-6) ...
+Selecting previously unselected package libcommons-httpclient-java.
+Preparing to unpack .../libcommons-httpclient-java_3.1-10.2ubuntu0.14.04.1_all.deb ...
+Unpacking libcommons-httpclient-java (3.1-10.2ubuntu0.14.04.1) ...
+Selecting previously unselected package libcommons-net2-java.
+Preparing to unpack .../libcommons-net2-java_2.2-2_all.deb ...
+Unpacking libcommons-net2-java (2.2-2) ...
+Selecting previously unselected package libeasymock-java.
+Preparing to unpack .../libeasymock-java_2.5.2+ds-1_all.deb ...
+Unpacking libeasymock-java (2.5.2+ds-1) ...
+Selecting previously unselected package libservlet2.5-java.
+Preparing to unpack .../libservlet2.5-java_6.0.39-1_all.deb ...
+Unpacking libservlet2.5-java (6.0.39-1) ...
+Selecting previously unselected package libjetty-java.
+Preparing to unpack .../libjetty-java_6.1.26-1ubuntu1.1_all.deb ...
+Unpacking libjetty-java (6.1.26-1ubuntu1.1) ...
+Selecting previously unselected package libjsch-java.
+Preparing to unpack .../libjsch-java_0.1.50-1ubuntu1_all.deb ...
+Unpacking libjsch-java (0.1.50-1ubuntu1) ...
+Selecting previously unselected package libjsoup-java.
+Preparing to unpack .../libjsoup-java_1.7.3-1_all.deb ...
+Unpacking libjsoup-java (1.7.3-1) ...
+Selecting previously unselected package libganymed-ssh2-java.
+Preparing to unpack .../libganymed-ssh2-java_250-2_all.deb ...
+Unpacking libganymed-ssh2-java (250-2) ...
+Selecting previously unselected package libnetbeans-cvsclient-java.
+Preparing to unpack .../libnetbeans-cvsclient-java_6.5-2_all.deb ...
+Unpacking libnetbeans-cvsclient-java (6.5-2) ...
+Selecting previously unselected package libregexp-java.
+Preparing to unpack .../libregexp-java_1.5-3build1_all.deb ...
+Unpacking libregexp-java (1.5-3build1) ...
+Selecting previously unselected package libmaven-scm-java.
+Preparing to unpack .../libmaven-scm-java_1.3-5_all.deb ...
+Unpacking libmaven-scm-java (1.3-5) ...
+Selecting previously unselected package libwagon-java.
+Preparing to unpack .../libwagon-java_1.0.0-2ubuntu2_all.deb ...
+Unpacking libwagon-java (1.0.0-2ubuntu2) ...
+Selecting previously unselected package libmaven2-core-java.
+Preparing to unpack .../libmaven2-core-java_2.2.1-14_all.deb ...
+Unpacking libmaven2-core-java (2.2.1-14) ...
+Selecting previously unselected package libplexus-cli-java.
+Preparing to unpack .../libplexus-cli-java_1.2-5_all.deb ...
+Unpacking libplexus-cli-java (1.2-5) ...
+Selecting previously unselected package libplexus-utils2-java.
+Preparing to unpack .../libplexus-utils2-java_2.0.5-1_all.deb ...
+Unpacking libplexus-utils2-java (2.0.5-1) ...
+Selecting previously unselected package libqdox-java.
+Preparing to unpack .../libqdox-java_1.12-1build1_all.deb ...
+Unpacking libqdox-java (1.12-1build1) ...
+Selecting previously unselected package libplexus-containers1.5-java.
+Preparing to unpack .../libplexus-containers1.5-java_1.5.5-6_all.deb ...
+Unpacking libplexus-containers1.5-java (1.5.5-6) ...
+Selecting previously unselected package libaopalliance-java.
+Preparing to unpack .../libaopalliance-java_20070526-5_all.deb ...
+Unpacking libaopalliance-java (20070526-5) ...
+Selecting previously unselected package libgeronimo-interceptor-3.0-spec-java.
+Preparing to unpack .../libgeronimo-interceptor-3.0-spec-java_1.0.1-1fakesync1_all.deb ...
+Unpacking libgeronimo-interceptor-3.0-spec-java (1.0.1-1fakesync1) ...
+Selecting previously unselected package libcdi-api-java.
+Preparing to unpack .../libcdi-api-java_1.0-1_all.deb ...
+Unpacking libcdi-api-java (1.0-1) ...
+Selecting previously unselected package libsisu-guice-java.
+Preparing to unpack .../libsisu-guice-java_3.1.1+dfsg-1_all.deb ...
+Unpacking libsisu-guice-java (3.1.1+dfsg-1) ...
+Selecting previously unselected package libsisu-ioc-java.
+Preparing to unpack .../libsisu-ioc-java_2.3.0-5_all.deb ...
+Unpacking libsisu-ioc-java (2.3.0-5) ...
+Selecting previously unselected package libaether-java.
+Preparing to unpack .../libaether-java_1.13.1-2_all.deb ...
+Unpacking libaether-java (1.13.1-2) ...
+Selecting previously unselected package libcglib-java.
+Preparing to unpack .../libcglib-java_2.2.2+dfsg-5_all.deb ...
+Unpacking libcglib-java (2.2.2+dfsg-5) ...
+Selecting previously unselected package libcommons-collections3-java.
+Preparing to unpack .../libcommons-collections3-java_3.2.1-6_all.deb ...
+Unpacking libcommons-collections3-java (3.2.1-6) ...
+Selecting previously unselected package libcommons-beanutils-java.
+Preparing to unpack .../libcommons-beanutils-java_1.9.1-1_all.deb ...
+Unpacking libcommons-beanutils-java (1.9.1-1) ...
+Selecting previously unselected package libcommons-digester-java.
+Preparing to unpack .../libcommons-digester-java_1.8.1-4_all.deb ...
+Unpacking libcommons-digester-java (1.8.1-4) ...
+Selecting previously unselected package libcommons-jexl2-java.
+Preparing to unpack .../libcommons-jexl2-java_2.1.1-2_all.deb ...
+Unpacking libcommons-jexl2-java (2.1.1-2) ...
+Selecting previously unselected package libcommons-jxpath-java.
+Preparing to unpack .../libcommons-jxpath-java_1.3-6_all.deb ...
+Unpacking libcommons-jxpath-java (1.3-6) ...
+Selecting previously unselected package libcommons-vfs-java.
+Preparing to unpack .../libcommons-vfs-java_2.0-3ubuntu1_all.deb ...
+Unpacking libcommons-vfs-java (2.0-3ubuntu1) ...
+Selecting previously unselected package libxpp2-java.
+Preparing to unpack .../libxpp2-java_2.1.10-7build1_all.deb ...
+Unpacking libxpp2-java (2.1.10-7build1) ...
+Selecting previously unselected package libxpp3-java.
+Preparing to unpack .../libxpp3-java_1.1.4c-2build1_all.deb ...
+Unpacking libxpp3-java (1.1.4c-2build1) ...
+Selecting previously unselected package libdom4j-java.
+Preparing to unpack .../libdom4j-java_1.6.1+dfsg.3-2ubuntu1_all.deb ...
+Unpacking libdom4j-java (1.6.1+dfsg.3-2ubuntu1) ...
+Selecting previously unselected package libosgi-core-java.
+Preparing to unpack .../libosgi-core-java_4.3.0-4_all.deb ...
+Unpacking libosgi-core-java (4.3.0-4) ...
+Selecting previously unselected package libosgi-foundation-ee-java.
+Preparing to unpack .../libosgi-foundation-ee-java_4.2.0-1_all.deb ...
+Unpacking libosgi-foundation-ee-java (4.2.0-1) ...
+Selecting previously unselected package libosgi-compendium-java.
+Preparing to unpack .../libosgi-compendium-java_4.3.0-1_all.deb ...
+Unpacking libosgi-compendium-java (4.3.0-1) ...
+Selecting previously unselected package libgeronimo-osgi-support-java.
+Preparing to unpack .../libgeronimo-osgi-support-java_1.0-2_all.deb ...
+Unpacking libgeronimo-osgi-support-java (1.0-2) ...
+Selecting previously unselected package libgeronimo-jpa-2.0-spec-java.
+Preparing to unpack .../libgeronimo-jpa-2.0-spec-java_1.1-2_all.deb ...
+Unpacking libgeronimo-jpa-2.0-spec-java (1.1-2) ...
+Selecting previously unselected package libguice-java.
+Preparing to unpack .../libguice-java_3.0-3_all.deb ...
+Unpacking libguice-java (3.0-3) ...
+Selecting previously unselected package libjackrabbit-java.
+Preparing to unpack .../libjackrabbit-java_2.3.6-1+deb8u1build0.14.04.1_all.deb ...
+Unpacking libjackrabbit-java (2.3.6-1+deb8u1build0.14.04.1) ...
+Selecting previously unselected package libjcommander-java.
+Preparing to unpack .../libjcommander-java_1.32-1_all.deb ...
+Unpacking libjcommander-java (1.32-1) ...
+Selecting previously unselected package libmaven-parent-java.
+Preparing to unpack .../libmaven-parent-java_21-2_all.deb ...
+Unpacking libmaven-parent-java (21-2) ...
+Selecting previously unselected package librhino-java.
+Preparing to unpack .../librhino-java_1.7R4-2_all.deb ...
+Unpacking librhino-java (1.7R4-2) ...
+Selecting previously unselected package libsaxon-java.
+Preparing to unpack .../libsaxon-java_1%3a6.5.5-10_all.deb ...
+Unpacking libsaxon-java (1:6.5.5-10) ...
+Selecting previously unselected package libwagon2-java.
+Preparing to unpack .../libwagon2-java_2.5-1_all.deb ...
+Unpacking libwagon2-java (2.5-1) ...
+Selecting previously unselected package libxom-java.
+Preparing to unpack .../libxom-java_1.2.10-1_all.deb ...
+Unpacking libxom-java (1.2.10-1) ...
+Selecting previously unselected package maven.
+Preparing to unpack .../archives/maven_3.0.5-1_all.deb ...
+Unpacking maven (3.0.5-1) ...
+Selecting previously unselected package rhino.
+Preparing to unpack .../archives/rhino_1.7R4-2_all.deb ...
+Unpacking rhino (1.7R4-2) ...
+Selecting previously unselected package testng.
+Preparing to unpack .../testng_6.8.7-2_all.deb ...
+Unpacking testng (6.8.7-2) ...
+Processing triggers for man-db (2.6.7.1-1) ...
+Processing triggers for mime-support (3.54ubuntu1) ...
+Setting up libyaml-snake-java (1.12-2) ...
+Setting up libxml-commons-resolver1.1-java (1.2-7build1) ...
+Setting up libxml-commons-external-java (1.4.01-2build1) ...
+Setting up libxerces2-java (2.11.0-7) ...
+Setting up ant (1.9.3-2build1) ...
+Setting up ant-optional (1.9.3-2build1) ...
+Setting up libaspectj-java (1.6.12+dfsg-3) ...
+Setting up aspectj (1.6.12+dfsg-3) ...
+Setting up libjline-java (1.0-2) ...
+Setting up libbsh-java (2.0b4-15ubuntu0.14.04.1) ...
+Setting up bsh (2.0b4-15ubuntu0.14.04.1) ...
+Setting up libjaxp1.3-java (1.3.05-2ubuntu3) ...
+Setting up libxalan2-java (2.7.1-9) ...
+Setting up libapache-pom-java (10-2build1) ...
+Setting up libbsf-java (1:2.4.0-5build1) ...
+Setting up libavalon-framework-java (4.2.0-9) ...
+Setting up libcommons-io-java (2.4-2) ...
+Setting up libcommons-parent-java (22-2build1) ...
+Setting up libcommons-logging-java (1.1.3-1) ...
+Setting up unzip (6.0-9ubuntu1.5) ...
+Setting up java-wrappers (0.1.27) ...
+Setting up libbatik-java (1.7.ubuntu-8ubuntu2.14.04.1) ...
+Setting up libxmlgraphics-commons-java (1.5-4ubuntu1) ...
+Setting up libfop-java (1:1.1.dfsg-2ubuntu1) ...
+Setting up fop (1:1.1.dfsg-2ubuntu1) ...
+Setting up junit (3.8.2-8build1) ...
+Setting up libhamcrest-java (1.3-4) ...
+Setting up junit4 (4.11-2) ...
+Setting up libnetty-java (1:3.2.6.Final-2) ...
+Setting up libslf4j-java (1.7.5-2) ...
+Setting up libasync-http-client-java (1.6.5-2) ...
+Setting up libplexus-classworlds2-java (2.5.1-2) ...
+Setting up libasm3-java (3.3.2-2) ...
+Setting up libcommons-lang-java (2.6-3ubuntu2) ...
+Setting up libcommons-cli-java (1.2-3ubuntu1) ...
+Setting up libatinject-jsr330-api-java (1.0+ds1-1) ...
+Setting up libjsr305-java (0.1~+svn49-4) ...
+Setting up libguava-java (15.0-2ubuntu1) ...
+Setting up libjaxen-java (1.1.6-1ubuntu1) ...
+Setting up libjdom1-java (1.1.3-1) ...
+Setting up libclassworlds-java (1.1-final-5) ...
+Setting up libservlet3.0-java (7.0.52-1ubuntu0.3) ...
+Setting up libcommons-configuration-java (1.10-1) ...
+Setting up libcommons-codec-java (1.9-1) ...
+Setting up libhttpcore-java (4.3.2-2) ...
+Setting up libhttpclient-java (4.3.3-1) ...
+Setting up libitext1-java (1.4-5) ...
+Setting up liblog4j1.2-java (1.2.17-4ubuntu3) ...
+Setting up libplexus-interpolation-java (1.19-1) ...
+Setting up libplexus-utils-java (1:1.5.15-4) ...
+Setting up libplexus-container-default-java (1.0-alpha-9-stable-1-7) ...
+Setting up libplexus-classworlds-java (1.5.0-5) ...
+Setting up libxbean-java (3.7-5) ...
+Setting up libplexus-containers-java (1.0~beta3.0.7-7) ...
+Setting up libplexus-i18n-java (1.0-beta-10-3) ...
+Setting up libdoxia-java (1.1.4-1ubuntu4) ...
+Setting up libplexus-build-api-java (0.0.4-5) ...
+Setting up libmodello-java (1.1-3) ...
+Setting up libplexus-ant-factory-java (1.0~alpha2.1-3) ...
+Setting up libplexus-io-java (1.0~alpha5-2) ...
+Setting up libplexus-archiver-java (1.2-1) ...
+Setting up libplexus-bsh-factory-java (1.0~alpha7-3) ...
+Setting up libplexus-interactivity-api-java (1.0-alpha-6-7) ...
+Setting up libplexus-cipher-java (1.5-4) ...
+Setting up libplexus-sec-dispatcher-java (1.3.1-6) ...
+Setting up libcommons-httpclient-java (3.1-10.2ubuntu0.14.04.1) ...
+Setting up libcommons-net2-java (2.2-2) ...
+Setting up libeasymock-java (2.5.2+ds-1) ...
+Setting up libservlet2.5-java (6.0.39-1) ...
+Setting up libjetty-java (6.1.26-1ubuntu1.1) ...
+Setting up libjsch-java (0.1.50-1ubuntu1) ...
+Setting up libjsoup-java (1.7.3-1) ...
+Setting up libganymed-ssh2-java (250-2) ...
+Setting up libnetbeans-cvsclient-java (6.5-2) ...
+Setting up libregexp-java (1.5-3build1) ...
+Setting up libplexus-cli-java (1.2-5) ...
+Setting up libplexus-utils2-java (2.0.5-1) ...
+Setting up libqdox-java (1.12-1build1) ...
+Setting up libaopalliance-java (20070526-5) ...
+Setting up libgeronimo-interceptor-3.0-spec-java (1.0.1-1fakesync1) ...
+Setting up libcdi-api-java (1.0-1) ...
+Setting up libsisu-guice-java (3.1.1+dfsg-1) ...
+Setting up libcglib-java (2.2.2+dfsg-5) ...
+Setting up libcommons-collections3-java (3.2.1-6) ...
+Setting up libcommons-beanutils-java (1.9.1-1) ...
+Setting up libcommons-digester-java (1.8.1-4) ...
+Setting up libcommons-jexl2-java (2.1.1-2) ...
+Setting up libcommons-jxpath-java (1.3-6) ...
+Setting up libcommons-vfs-java (2.0-3ubuntu1) ...
+Setting up libxpp2-java (2.1.10-7build1) ...
+Setting up libxpp3-java (1.1.4c-2build1) ...
+Setting up libdom4j-java (1.6.1+dfsg.3-2ubuntu1) ...
+Setting up libosgi-core-java (4.3.0-4) ...
+Setting up libosgi-foundation-ee-java (4.2.0-1) ...
+Setting up libguice-java (3.0-3) ...
+Setting up libjackrabbit-java (2.3.6-1+deb8u1build0.14.04.1) ...
+Setting up libjcommander-java (1.32-1) ...
+Setting up libmaven-parent-java (21-2) ...
+Setting up librhino-java (1.7R4-2) ...
+Setting up libsaxon-java (1:6.5.5-10) ...
+Setting up libxom-java (1.2.10-1) ...
+Setting up rhino (1.7R4-2) ...
+update-alternatives: using /usr/bin/rhino to provide /usr/bin/js (js) in auto mode
+Setting up testng (6.8.7-2) ...
+Setting up libosgi-compendium-java (4.3.0-1) ...
+Setting up libgeronimo-osgi-support-java (1.0-2) ...
+Setting up libmaven-scm-java (1.3-5) ...
+Setting up libwagon-java (1.0.0-2ubuntu2) ...
+Setting up libgeronimo-jpa-2.0-spec-java (1.1-2) ...
+Setting up libwagon2-java (2.5-1) ...
+Setting up libmaven2-core-java (2.2.1-14) ...
+Setting up libplexus-containers1.5-java (1.5.5-6) ...
+Setting up libsisu-ioc-java (2.3.0-5) ...
+Setting up libaether-java (1.13.1-2) ...
+Setting up maven (3.0.5-1) ...
+update-alternatives: using /usr/share/maven/bin/mvn to provide /usr/bin/mvn (mvn) in auto mode
+root@n4:~# exit
+exit
+kyehwanl@n4:~$ cd SDN_test/distribution-karaf-0.4.0-Beryllium/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ./bin/karaf
+karaf: JAVA_HOME is not valid: /usr/lib/jvm/default-java
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ source ~/.bashrc
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ./bin/karaf
+karaf: JAVA_HOME is not valid: /usr/lib/jvm/default-java
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ll /usr/lib/j
+java-wrappers/ jove/          jvm/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ll /usr/lib/j
+java-wrappers/ jove/          jvm/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ll /usr/lib/jvm/
+total 4.0K
+lrwxrwxrwx 1 root root   20 Apr 24 23:09 java-1.7.0-openjdk-amd64 -> java-7-openjdk-amd64/
+drwxr-xr-x 7 root root 4.0K May 24 14:26 java-7-openjdk-amd64/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ll /usr/lib/jvm/
+java-1.7.0-openjdk-amd64/        .java-1.7.0-openjdk-amd64.jinfo  java-7-openjdk-amd64/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ cd /usr//lib/jvm/
+kyehwanl@n4:/usr/lib/jvm$ ln -s java-1.7.0-openjdk-amd64 default-java
+ln: failed to create symbolic link ‘default-java’: Permission denied
+kyehwanl@n4:/usr/lib/jvm$ sudo ln -s java-1.7.0-openjdk-amd64 default-java
+kyehwanl@n4:/usr/lib/jvm$ cd -
+/users/kyehwanl/SDN_test/distribution-karaf-0.4.0-Beryllium
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ cd bin/
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$ ./karaf
+
+    ________                       ________                .__  .__       .__     __
+    \_____  \ ______   ____   ____ \______ \ _____  ___.__.|  | |__| ____ |  |___/  |_
+     /   |   \\____ \_/ __ \ /    \ |    |  \\__  \<   |  ||  | |  |/ ___\|  |  \   __\
+    /    |    \  |_> >  ___/|   |  \|    `   \/ __ \\___  ||  |_|  / /_/  >   Y  \  |
+    \_______  /   __/ \___  >___|  /_______  (____  / ____||____/__\___  /|___|  /__|
+            \/|__|        \/     \/        \/     \/\/            /_____/      \/
+
+
+Hit '<tab>' for a list of available commands
+and '[cmd] --help' for help on a specific command.
+Hit '<ctrl-d>' or type 'system:shutdown' or 'logout' to shutdown OpenDaylight.
+
+opendaylight-user@root>
+opendaylight-user@root>
+opendaylight-user@root>feature
+feature                 feature:info            feature:install         feature:list            feature:repo-add        feature:repo-list       feature:repo-refresh    feature:repo-remove
+feature:uninstall       feature:version-list
+opendaylight-user@root>feature:list --installed
+Name                                 | Version          | Installed | Repository                           | Description
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+odl-config-netty                     | 0.4.0-Beryllium  | x         | odl-config-persister-0.4.0-Beryllium | OpenDaylight :: Config-Netty
+odl-openflowjava-protocol            | 0.7.0-Beryllium  | x         | odl-openflowjava-0.7.0-Beryllium     | OpenDaylight :: Openflow Java :: Protocol
+odl-mdsal-binding-base               | 2.0.0-Beryllium  | x         | odl-yangtools-2.0.0-Beryllium        | OpenDaylight :: MD-SAL :: Binding Base Concepts
+odl-mdsal-binding-runtime            | 2.0.0-Beryllium  | x         | odl-yangtools-2.0.0-Beryllium        | OpenDaylight :: MD-SAL :: Binding Generator
+odl-mdsal-models                     | 0.8.0-Beryllium  | x         | odl-mdsal-models-0.8.0-Beryllium     | OpenDaylight :: MD-SAL :: Models
+odl-aaa-api                          | 0.3.0-Beryllium  | x         | odl-aaa-0.3.0-Beryllium              | OpenDaylight :: AAA :: APIs
+odl-yangtools-yang-data              | 0.8.0-Beryllium  | x         | odl-yangtools-0.8.0-Beryllium        | OpenDaylight :: Yangtools :: Data Binding
+odl-yangtools-common                 | 0.8.0-Beryllium  | x         | odl-yangtools-0.8.0-Beryllium        | OpenDaylight :: Yangtools :: Common
+odl-yangtools-yang-parser            | 0.8.0-Beryllium  | x         | odl-yangtools-0.8.0-Beryllium        | OpenDaylight :: Yangtools :: YANG Parser
+odl-restconf                         | 1.3.0-Beryllium  | x         | odl-controller-1.3.0-Beryllium       | OpenDaylight :: Restconf
+odl-restconf-noauth                  | 1.3.0-Beryllium  | x         | odl-controller-1.3.0-Beryllium       | OpenDaylight :: Restconf
+odl-mdsal-apidocs                    | 1.3.0-Beryllium  | x         | odl-controller-1.3.0-Beryllium       | OpenDaylight :: MDSAL :: APIDOCS
+pax-jetty                            | 8.1.15.v20140411 | x         | org.ops4j.pax.web-3.1.4              | Provide Jetty engine support
+pax-http                             | 3.1.4            | x         | org.ops4j.pax.web-3.1.4              | Implementation of the OSGI HTTP Service
+pax-http-whiteboard                  | 3.1.4            | x         | org.ops4j.pax.web-3.1.4              | Provide HTTP Whiteboard pattern support
+pax-war                              | 3.1.4            | x         | org.ops4j.pax.web-3.1.4              | Provide support of a full WebContainer
+standard                             | 3.0.3            | x         | standard-3.0.3                       | Karaf standard feature
+config                               | 3.0.3            | x         | standard-3.0.3                       | Provide OSGi ConfigAdmin support
+region                               | 3.0.3            | x         | standard-3.0.3                       | Provide Region Support
+package                              | 3.0.3            | x         | standard-3.0.3                       | Package commands and mbeans
+http                                 | 3.0.3            | x         | standard-3.0.3                       | Implementation of the OSGI HTTP Service
+war                                  | 3.0.3            | x         | standard-3.0.3                       | Turn Karaf as a full WebContainer
+kar                                  | 3.0.3            | x         | standard-3.0.3                       | Provide KAR (KARaf archive) support
+ssh                                  | 3.0.3            | x         | standard-3.0.3                       | Provide a SSHd server on Karaf
+management                           | 3.0.3            | x         | standard-3.0.3                       | Provide a JMX MBeanServer and a set of MBeans in K
+odl-mdsal-common                     | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            | OpenDaylight :: Config :: All
+odl-mdsal-broker-local               | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            | OpenDaylight :: MDSAL :: Broker
+odl-mdsal-clustering-commons         | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            |
+odl-mdsal-distributed-datastore      | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            |
+odl-mdsal-remoterpc-connector        | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            |
+odl-mdsal-broker                     | 1.3.0-Beryllium  | x         | odl-mdsal-1.3.0-Beryllium            |
+odl-netty                            | 4.0.33.Final     | x         | odlparent-1.6.0-Beryllium            | OpenDaylight :: Netty
+odl-lmax                             | 3.3.2            | x         | odlparent-1.6.0-Beryllium            | OpenDaylight :: LMAX Disruptor
+odl-config-api                       | 0.4.0-Beryllium  | x         | odl-config-0.4.0-Beryllium           | OpenDaylight :: Config :: API
+odl-config-netty-config-api          | 0.4.0-Beryllium  | x         | odl-config-0.4.0-Beryllium           | OpenDaylight :: Config :: Netty Config API
+odl-config-core                      | 0.4.0-Beryllium  | x         | odl-config-0.4.0-Beryllium           | OpenDaylight :: Config :: Core
+odl-config-manager                   | 0.4.0-Beryllium  | x         | odl-config-0.4.0-Beryllium           | OpenDaylight :: Config :: Manager
+odl-aaa-authn                        | 0.3.0-Beryllium  | x         | odl-aaa-0.3.0-Beryllium              | OpenDaylight :: AAA :: Authentication - NO CLUSTER
+odl-akka-scala                       | 2.11             | x         | odl-controller-1.6.0-Beryllium       | Scala Runtime for OpenDaylight
+odl-akka-system                      | 2.3.14           | x         | odl-controller-1.6.0-Beryllium       | Akka Actor Framework System Bundles
+odl-akka-clustering                  | 2.3.14           | x         | odl-controller-1.6.0-Beryllium       | Akka Clustering
+odl-akka-leveldb                     | 0.7              | x         | odl-controller-1.6.0-Beryllium       | LevelDB
+odl-akka-persistence                 | 2.3.14           | x         | odl-controller-1.6.0-Beryllium       | Akka Persistence
+odl-openflowplugin-southbound        | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: Openflow Plugin :: SouthBound
+odl-openflowplugin-flow-services     | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: Openflow Plugin :: Flow Services
+odl-openflowplugin-nsf-services      | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: OpenflowPlugin :: NSF :: Services
+odl-openflowplugin-nsf-model         | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: OpenflowPlugin :: NSF :: Model
+odl-openflowplugin-app-config-pusher | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: Openflow Plugin :: app - default c
+odl-openflowplugin-app-lldp-speaker  | 0.2.0-Beryllium  | x         | openflowplugin-0.2.0-Beryllium       | OpenDaylight :: Openflow Plugin :: app lldp-speake
+odl-config-persister                 | 0.4.0-Beryllium  | x         | odl-config-persister-0.4.0-Beryllium | OpenDaylight :: Config Persister
+odl-config-startup                   | 0.4.0-Beryllium  | x         | odl-config-persister-0.4.0-Beryllium | OpenDaylight :: Config Persister:: Config Startup
+odl-aaa-shiro                        | 0.3.0-Beryllium  | x         | odl-aaa-0.3.0-Beryllium              | OpenDaylight :: AAA :: Shiro
+odl-l2switch-switch                  | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: Switch
+odl-l2switch-hosttracker             | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: HostTracker
+odl-l2switch-addresstracker          | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: AddressTracker
+odl-l2switch-arphandler              | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: ArpHandler
+odl-l2switch-loopremover             | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: LoopRemover
+odl-l2switch-packethandler           | 0.3.0-Beryllium  | x         | l2switch-0.3.0-Beryllium             | OpenDaylight :: L2Switch :: PacketHandler
+odl-dlux-all                         | 0.3.0-Beryllium  | x         | odl-dlux-0.3.0-Beryllium             | Opendaylight dlux all features
+odl-dlux-core                        | 0.3.0-Beryllium  | x         | odl-dlux-0.3.0-Beryllium             | Opendaylight dlux minimal feature
+odl-dlux-node                        | 0.3.0-Beryllium  | x         | odl-dlux-0.3.0-Beryllium             | Enable nodes in Opendaylight dlux
+odl-dlux-yangui                      | 0.3.0-Beryllium  | x         | odl-dlux-0.3.0-Beryllium             | Enable Yang UI in Opendaylight dlux
+odl-dlux-yangvisualizer              | 0.3.0-Beryllium  | x         | odl-dlux-0.3.0-Beryllium             | Enable Yang visualizer in Opendaylight dlux
+opendaylight-user@root>feature:install odl-restconf odl-l2switch-switch odl-mdsal-apidocs odl-dlux-all
+opendaylight-user@root>
+opendaylight-user@root>
+opendaylight-user@root>^D
+
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$ a
+a: command not found
+kyehwanl@n4:~/SDN_test/distribution-karaf-0.4.0-Beryllium/bin$ Write failed: Broken pipe
+kyehwanl@n2:~$
+Broadcast message from kyehwanl@n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+        (/dev/pts/9) at 13:08 ...
+
+The system is going down for reboot NOW!
+Connection to n2.ovs1.bgp-srx.emulab2.antd.nist.gov closed by remote host.
+Connection to n2.ovs1.bgp-srx.emulab2.antd.nist.gov closed.
+ls1.vm05-antd [64]{~}->
+ls1.vm05-antd [64]{~}->
+ls1.vm05-antd [64]{~}-> xterm
+^Cls1.vm05-antd [65]{~}-> ssh -Y n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Fri May 27 13:50:58 2016 from 32-141.antd.nist.gov
+kyehwanl@n2:~$
+kyehwanl@n2:~$ ssn n1
+No command 'ssn' found, did you mean:
+ Command 'ssh' from package 'openssh-client' (main)
+ Command 'svn' from package 'subversion' (main)
+ Command 'sn' from package 'mono-devel' (main)
+ Command 'ssc' from package 'simon' (universe)
+ Command 'msn' from package 'python-msnlib' (universe)
+ Command 'ss' from package 'iproute2' (main)
+ Command 'ssm' from package 'system-storage-manager' (universe)
+ssn: command not found
+kyehwanl@n2:~$ ssh n1
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Thu May 26 11:51:04 2016 from n2-link12
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$
+kyehwanl@n1:~$ exit
+logout
+Connection to n1 closed.
+kyehwanl@n2:~$ ssh n3
+ssh: connect to host n3 port 22: No route to host
+kyehwanl@n2:~$ Write failed: Broken pipe
+ls1.vm05-antd [66]{~}->

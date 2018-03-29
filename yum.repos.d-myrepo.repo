@@ -1,0 +1,5 @@
+[myrepo]
+name = This is test for srx-0.3.0
+#baseurl = file:///tmp/srv/my/repo/
+baseurl = http://10.1.1.6/
+gpgcheck=0

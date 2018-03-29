@@ -1,0 +1,697 @@
+
+(1) Debugging Window
+====================
+
+kyehwanl@n1:~/ubuntu_test/download/mininet/bin$ sudo pdb mn
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(12)<module>()
+-> """
+(Pdb) l
+  7     To see options:
+  8       sudo mn -h
+  9
+ 10     Example to pull custom params (topo, switch, etc.) from a file:
+ 11       sudo mn --custom ~/mininet/custom/custom_example.py
+ 12  -> """
+ 13
+ 14     from optparse import OptionParser
+ 15     import os
+ 16     import sys
+ 17     import time
+(Pdb) b 167
+Breakpoint 1 at /users/kyehwanl/ubuntu_test/download/mininet/bin/mn:167
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(167)__init__()
+-> self.begin()
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(312)begin()
+-> def begin( self ):
+(Pdb) b 346
+Breakpoint 2 at /users/kyehwanl/ubuntu_test/download/mininet/bin/mn:346
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(346)begin()
+-> topo = buildTopo( TOPOS, opts.topo )
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/util.py(576)buildTopo()
+-> def buildTopo( topos, topoStr ):
+(Pdb) l
+571
+572         CustomClass.__name__ = '%s%s' % ( cls.__name__, defaults )
+573         return CustomClass
+574
+575
+576  -> def buildTopo( topos, topoStr ):
+577         """Create topology from string with format (object, arg1, arg2,...).
+578         input topos is a dict of topo names to constructors, possibly w/args.
+579         """
+580         topo, args, kwargs = splitArgs( topoStr )
+581         if topo not in topos:
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/util.py(580)buildTopo()
+-> topo, args, kwargs = splitArgs( topoStr )
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/util.py(581)buildTopo()
+-> if topo not in topos:
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/util.py(583)buildTopo()
+-> return topos[ topo ]( *args, **kwargs )
+(Pdb)
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/util.py(583)buildTopo()-><mininet...c3203e10>
+-> return topos[ topo ]( *args, **kwargs )
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(347)begin()
+-> switch = customClass( SWITCHES, opts.switch )
+(Pdb) b 380
+Breakpoint 3 at /users/kyehwanl/ubuntu_test/download/mininet/bin/mn:380
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(380)begin()
+-> switch=switch, host=host, controller=controller, link=link,
+(Pdb) s
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(381)begin()
+-> ipBase=opts.ipbase, inNamespace=opts.innamespace,
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(382)begin()
+-> xterms=opts.xterms, autoSetMacs=opts.mac,
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(383)begin()
+-> autoStaticArp=opts.arp, autoPinCpus=opts.pin,
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(384)begin()
+-> listenPort=opts.listenport )
+(Pdb)
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/net.py(116)__init__()
+-> def __init__( self, topo=None, switch=OVSKernelSwitch, host=Host,
+(Pdb) l
+111     VERSION = "2.3.0d1"
+112
+113     class Mininet( object ):
+114         "Network emulation with hosts spawned in network namespaces."
+115
+116  ->     def __init__( self, topo=None, switch=OVSKernelSwitch, host=Host,
+117                       controller=DefaultController, link=Link, intf=Intf,
+118                       build=True, xterms=False, cleanup=False, ipBase='10.0.0.0/8',
+119                       inNamespace=False,
+120                       autoSetMacs=False, autoStaticArp=False, autoPinCpus=False,
+121                       listenPort=None, waitConnected=False ):
+(Pdb) b /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py:286
+Breakpoint 4 at /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py:286
+(Pdb) c
+*** Creating network
+*** Adding controller
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) l
+281             if not isinstance( cmd, str ):
+282                 cmd = ' '.join( [ str( c ) for c in cmd ] )
+283             if not re.search( r'\w', cmd ):
+284                 # Replace empty commands with something harmless
+285                 cmd = 'echo -n'
+286 B->         self.lastCmd = cmd
+287             # if a builtin command is backgrounded, it still yields a PID
+288             if len( cmd ) > 0 and cmd[ -1 ] == '&':
+289                 # print ^A{pid}\n so monitor() can set lastPid
+290                 cmd += ' printf "\\001%d\\012" $! '
+291             elif printPid and not isShellBuiltin( cmd ):
+(Pdb) pp self, self.lastCmd, cmd
+(<Controller c0: 127.0.0.1:6653 pid=23554> ,
+ None,
+ 'unset HISTFILE; stty -echo; set +m')
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Controller c0: 127.0.0.1:6653 pid=23554> ,
+ 'unset HISTFILE; stty -echo; set +m',
+ 'echo A | telnet -e A 127.0.0.1 6653')
+(Pdb) d
+*** Newest frame
+(Pdb) pp self, self.lastCmd, cmd
+(<Controller c0: 127.0.0.1:6653 pid=23554> ,
+ 'unset HISTFILE; stty -echo; set +m',
+ 'echo A | telnet -e A 127.0.0.1 6653')
+(Pdb) c
+*** Adding hosts:
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Host h1:  pid=23561> , None, 'unset HISTFILE; stty -echo; set +m')
+(Pdb) b /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py:715
+Breakpoint 5 at /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py:715
+(Pdb) c
+h1 > /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Host h2:  pid=23565> , None, 'unset HISTFILE; stty -echo; set +m')
+(Pdb) c
+h2
+*** Adding switches:
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<OVSSwitch s1:  pid=23572> , None, 'unset HISTFILE; stty -echo; set +m')
+(Pdb) p self, self.lastCmd, cmd
+(<OVSSwitch s1:  pid=23572> , None, 'unset HISTFILE; stty -echo; set +m')
+(Pdb) pp self, self.lastCmd, cmd
+(<OVSSwitch s1:  pid=23572> , None, 'unset HISTFILE; stty -echo; set +m')
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<OVSSwitch s1: lo:127.0.0.1 pid=23572> ,
+ 'unset HISTFILE; stty -echo; set +m',
+ 'ifconfig lo up')
+(Pdb) c
+s1
+*** Adding links:
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Host h1:  pid=23561> ,
+ 'unset HISTFILE; stty -echo; set +m',
+ 'ip link add name h1-eth0 address 8e:9c:23:6f:f1:64 type veth peer name s1-eth1 address 52:a5:d2:85:69:ba netns 23572')
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+(h1, s1) > /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Host h2:  pid=23565> ,
+ 'unset HISTFILE; stty -echo; set +m',
+ 'ip link add name h2-eth0 address f2:2f:59:4f:0a:44 type veth peer name s1-eth2 address fe:09:c7:42:55:42 netns 23572')
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) pp self, self.lastCmd, cmd
+(<Host h2: h2-eth0:None pid=23565> ,
+ 'ip link add name h2-eth0 address f2:2f:59:4f:0a:44 type veth peer name s1-eth2 address fe:09:c7:42:55:42 netns 23572',
+ 'ifconfig h2-eth0 up')
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+(h2, s1)
+*** Configuring hosts
+h1 > /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+h2 > /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) c
+
+*** Starting controller
+c0 > /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(286)sendCmd()
+-> self.controllers.append( controller_new )
+(Pdb) b /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py:80
+Breakpoint 6 at /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py:80
+(Pdb) c
+
+*** Starting 1 switches
+s1 ...
+*** Starting CLI:
+mininet> xterm h1
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(80)makeTerms()
+-> privateDirs: list of private directory strings or tuples
+(Pdb) l
+ 75            nodes: list of Node objects
+ 76            title: base title for each
+ 77            returns: list of created tunnel/terminal processes"""
+ 78         terms = []
+ 79         for node in nodes:
+ 80 B->         terms += makeTerm( node, title, term )
+ 81         return terms
+[EOF]
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(38)makeTerm()
+->
+(Pdb) l
+ 33             connection = r'TCP\:%s\:%s' % ( host, port )
+ 34             cmd = [ "socat", "TCP-LISTEN:%d,fork,reuseaddr" % port,
+ 35                     "EXEC:'mnexec -a 1 socat STDIO %s'" % connection ]
+ 36         return 'localhost:' + screen, node.popen( cmd )
+ 37
+ 38  -> def makeTerm( node, title='Node', term='xterm', display=None, cmd='bash'):
+ 39         """Create an X11 tunnel to the node and start up a terminal.
+ 40            node: Node object
+ 41            title: base title
+ 42            term: 'xterm' or 'gterm'
+ 43            returns: two Popen objects, tunnel and terminal"""
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(44)makeTerm()
+-> arbitrary OpenFlow-compatible controller, and which is not
+(Pdb) pp title, node.name
+('Node', 'h1')
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(45)makeTerm()
+-> created or managed by Mininet.
+(Pdb) pp node.inNamespace
+True
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(47)makeTerm()
+-> Future enhancements:
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(48)makeTerm()
+->
+(Pdb) pp term
+'xterm'
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(49)makeTerm()
+-> - Possibly make Node, Switch and Controller more abstract so that
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(51)makeTerm()
+->
+(Pdb) pp cmds
+{'gterm': ['gnome-terminal', '--title', '"Node: h1"', '--display'],
+ 'xterm': ['xterm', '-title', '"Node: h1"', '-display']}
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(54)makeTerm()
+->
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(14)tunnelX11()
+-> functionality are provided in the examples/ directory. By default,
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(18)tunnelX11()
+-> CPULimitedHost: a virtual host whose CPU bandwidth is limited by
+(Pdb) pp environ
+{'LANG': 'en_US.UTF-8', 'USERNAME': 'root', 'TERM': 'screen-256color', 'SHELL': '/bin/bash', 'MAIL': '/var/mail/root', 'SUDO_UID': '10006', 'SUDO_GID': '6005', 'SUDO_COMMAND': '/usr/bin/pdb mn', 'LOGNAME': 'root', 'USER': 'root', 'HOME': '/users/kyehwanl', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'SUDO_USER': 'kyehwanl', 'DISPLAY': 'localhost:10.0'}
+(Pdb) p display
+None
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(19)tunnelX11()
+-> RT or CFS bandwidth limiting.
+(Pdb) p display
+None
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(20)tunnelX11()
+->
+(Pdb) p display
+'localhost:10.0'
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(23)tunnelX11()
+-> UserSwitch: a switch using the user-space switch from the OpenFlow
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(25)tunnelX11()
+->
+(Pdb) pp host, screen
+('localhost', '10.0')
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(32)tunnelX11()
+-> IVSSwitch: OpenFlow switch using the Indigo Virtual Switch.
+(Pdb) p port
+*** NameError: NameError("name 'port' is not defined",)
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(33)tunnelX11()
+->
+(Pdb) p port
+6010
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(34)tunnelX11()
+-> Controller: superclass for OpenFlow controllers. The default controller
+(Pdb) pp connection
+'TCP\\:localhost\\:6010'
+(Pdb) p cmd
+*** NameError: NameError("name 'cmd' is not defined",)
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(35)tunnelX11()
+-> is controller(8) from the reference implementation.
+(Pdb) pp cmd
+*** NameError: NameError("name 'cmd' is not defined",)
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(36)tunnelX11()
+->
+(Pdb) pp cmd
+['socat',
+ 'TCP-LISTEN:6010,fork,reuseaddr',
+ "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"]
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(365)popen()
+-> return zip( self.keys(), self.values() )
+(Pdb) l
+360         def cmdPrint( self, *args):
+361             """Call cmd and printing its output
+362                cmd: string"""
+363             return self.cmd( *args, **{ 'verbose': True } )
+364
+365  ->     def popen( self, *args, **kwargs ):
+366             """Return a Popen() object in our namespace
+367                args: Popen() args, single list, or string
+368                kwargs: Popen() keyword args"""
+369             defaults = { 'stdout': PIPE, 'stderr': PIPE,
+370                          'mncmd':
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(369)popen()
+-> "Return a random, non-multicast MAC address"
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(371)popen()
+-> 0x020000000000 )
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(372)popen()
+->
+(Pdb) pp default
+*** NameError: NameError("name 'default' is not defined",)
+(Pdb) pp defaults
+{'mncmd': ['mnexec', '-da', '23561'], 'stderr': -1, 'stdout': -1}
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(373)popen()
+-> def addLink( self, node1, node2, port1=None, port2=None,
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(374)popen()
+-> cls=None, **params ):
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(376)popen()
+-> node1: source node (or name)
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(386)popen()
+-> options = dict( params )
+(Pdb) pp cmd
+['socat',
+ 'TCP-LISTEN:6010,fork,reuseaddr',
+ "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"]
+(Pdb) pp args
+(['socat',
+  'TCP-LISTEN:6010,fork,reuseaddr',
+  "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"],)
+(Pdb) pp args[0]
+['socat',
+ 'TCP-LISTEN:6010,fork,reuseaddr',
+ "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"]
+(Pdb) p len(args)
+1
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(388)popen()
+-> if port1 is not None:
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(390)popen()
+-> if port2 is not None:
+(Pdb) pp cmd
+['mnexec',
+ '-da',
+ '23561',
+ 'socat',
+ 'TCP-LISTEN:6010,fork,reuseaddr',
+ "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"]
+(Pdb) pp defaults
+{'stderr': -1, 'stdout': -1}
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(391)popen()
+-> options.setdefault( 'port2', port2 )
+(Pdb) pp popen
+<subprocess.Popen object at 0x7f78c31b42d0>
+(Pdb) n
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(391)popen()-><subproc...c31b42d0>
+-> options.setdefault( 'port2', port2 )
+(Pdb) n
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(36)tunnelX11()->('localhost:10.0', <subproc...c31b42d0>)
+->
+(Pdb) pp cmd
+['socat',
+ 'TCP-LISTEN:6010,fork,reuseaddr',
+ "EXEC:'mnexec -a 1 socat STDIO TCP\\:localhost\\:6010'"]
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(55)makeTerm()
+-> import os
+(Pdb) pp display, tunnel
+('localhost:10.0', <subprocess.Popen object at 0x7f78c31b42d0>)
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(57)makeTerm()
+-> import re
+(Pdb) s
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(58)makeTerm()
+-> import signal
+(Pdb) s
+--Call--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(365)popen()
+-> return zip( self.keys(), self.values() )
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(369)popen()
+-> "Return a random, non-multicast MAC address"
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(371)popen()
+-> 0x020000000000 )
+(Pdb) pp defaults
+*** NameError: NameError("name 'defaults' is not defined",)
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(372)popen()
+->
+(Pdb) pp defaults
+{'mncmd': ['mnexec', '-da', '23561'], 'stderr': -1, 'stdout': -1}
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(400)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(410)<module>()
+-> MininetRunner()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(167)__init__()
+-> self.begin()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(397)begin()
+-> CLI( mn )
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(68)__init__()
+-> self.run()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(103)run()
+-> self.cmdloop()
+  /usr/lib/python2.7/cmd.py(142)cmdloop()
+-> stop = self.onecmd(line)
+  /usr/lib/python2.7/cmd.py(221)onecmd()
+-> return func(arg)
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(289)do_xterm()
+-> self.mn.terms += makeTerms( [ node ], term = term )
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(80)makeTerms()
+-> privateDirs: list of private directory strings or tuples
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(58)makeTerm()
+-> import signal
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(372)popen()
+->
+(Pdb) pp sefl
+*** NameError: NameError("name 'sefl' is not defined",)
+(Pdb) pp self
+<Host h1: h1-eth0:10.0.0.1 pid=23561>
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(373)popen()
+-> def addLink( self, node1, node2, port1=None, port2=None,
+(Pdb) pp args
+(['xterm',
+  '-title',
+  '"Node: h1"',
+  '-display',
+  'localhost:10.0',
+  '-e',
+  'env TERM=ansi bash'],)
+(Pdb) p len(args)
+1
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(374)popen()
+-> cls=None, **params ):
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(376)popen()
+-> node1: source node (or name)
+(Pdb)
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(386)popen()
+-> options = dict( params )
+(Pdb) pp cmd
+['xterm',
+ '-title',
+ '"Node: h1"',
+ '-display',
+ 'localhost:10.0',
+ '-e',
+ 'env TERM=ansi bash']
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(388)popen()
+-> if port1 is not None:
+(Pdb) pp cmd
+['mnexec',
+ '-da',
+ '23561',
+ 'xterm',
+ '-title',
+ '"Node: h1"',
+ '-display',
+ 'localhost:10.0',
+ '-e',
+ 'env TERM=ansi bash']
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(390)popen()
+-> if port2 is not None:
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(391)popen()
+-> options.setdefault( 'port2', port2 )
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(400)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(410)<module>()
+-> MininetRunner()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(167)__init__()
+-> self.begin()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/mn(397)begin()
+-> CLI( mn )
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(68)__init__()
+-> self.run()
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(103)run()
+-> self.cmdloop()
+  /usr/lib/python2.7/cmd.py(142)cmdloop()
+-> stop = self.onecmd(line)
+  /usr/lib/python2.7/cmd.py(221)onecmd()
+-> return func(arg)
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/cli.py(289)do_xterm()
+-> self.mn.terms += makeTerms( [ node ], term = term )
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(80)makeTerms()
+-> privateDirs: list of private directory strings or tuples
+  /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(58)makeTerm()
+-> import signal
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(391)popen()
+-> options.setdefault( 'port2', port2 )
+(Pdb) n
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/node.py(391)popen()-><subproc...c31b4290>
+-> options.setdefault( 'port2', port2 )
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(59)makeTerm()
+-> import select
+(Pdb) pp tunnel, term
+(<subprocess.Popen object at 0x7f78c31b42d0>,
+ <subprocess.Popen object at 0x7f78c31b4290>)
+(Pdb) n
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(59)makeTerm()->[<subproc...c31b42d0>, <subproc...c31b4290>]
+-> import select
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(79)makeTerms()
+-> inNamespace: in network namespace?
+(Pdb) n
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(81)makeTerms()
+-> params: Node parameters (see config() for details)"""
+(Pdb)
+--Return--
+> /users/kyehwanl/ubuntu_test/download/mininet/bin/build/bdist.linux-x86_64/egg/mininet/term.py(81)makeTerms()->[<subproc...c31b42d0>, <subproc...c31b4290>]
+-> params: Node parameters (see config() for details)"""
+(Pdb)
+--Call--
+> /usr/lib/python2.7/cmd.py(161)postcmd()
+-> def postcmd(self, stop, line):
+(Pdb) c
+mininet>
+
+
+
+
+
+
+
+
+(2) console window
+===================
+
+
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ xhost
+access control enabled, only authorized clients can connect
+INET:97-140.antd.nist.gov
+LOCAL:
+INET:localhost
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ netstat -tapn
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:16505           0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:41241           0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:6011          0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:6653            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:6654            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:16534           0.0.0.0:*               LISTEN      -
+tcp        0      0 127.0.0.1:51529         127.0.0.1:6011          TIME_WAIT   -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:32777         ESTABLISHED -
+tcp        0      0 127.0.0.1:32780         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 10.0.31.39:36793        10.0.31.202:16505       ESTABLISHED -
+tcp        0      0 127.0.0.1:6653          127.0.0.1:57503         ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:32780         ESTABLISHED -
+tcp        0      0 127.0.0.1:32777         127.0.0.1:16505         ESTABLISHED -
+tcp        0    224 10.0.31.39:22           129.6.141.32:35750      ESTABLISHED -
+tcp        0      0 127.0.0.1:57503         127.0.0.1:6653          ESTABLISHED -
+tcp        0      0 127.0.0.1:32782         127.0.0.1:16505         ESTABLISHED -
+tcp        0      0 127.0.0.1:16505         127.0.0.1:32782         ESTABLISHED -
+tcp        0      0 10.0.31.39:22           129.6.140.225:55520     ESTABLISHED -
+tcp6       0      0 ::1:6010                :::*                    LISTEN      -
+tcp6       0      0 ::1:6011                :::*                    LISTEN      -
+tcp6       0      0 :::50018                :::*                    LISTEN      -
+tcp6       0      0 :::111                  :::*                    LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ netstat -tapn | grep 6010
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      -
+tcp6       0      0 ::1:6010                :::*                    LISTEN      -
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ sudo netstat -tapn | grep 6010
+tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      16796/0
+tcp6       0      0 ::1:6010                :::*                    LISTEN      16796/0
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep 1679[6]
+kyehwanl 16796  0.0  0.0 106116  2372 ?        S    10:28   0:02 sshd: kyehwanl@pts/0
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps
+  PID TTY          TIME CMD
+23986 pts/10   00:00:00 bash
+24009 pts/10   00:00:00 ps
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps -a
+  PID TTY          TIME CMD
+16813 pts/0    00:00:00 tmux
+16829 pts/2    00:00:03 vifm
+16842 pts/3    00:00:08 vifm
+23063 pts/2    00:00:00 bash
+23467 pts/2    00:00:00 sudo
+23468 pts/2    00:00:00 pdb
+23584 pts/4    00:00:00 tmux
+23600 pts/9    00:00:02 vifm
+23621 pts/3    00:00:01 vim
+23850 pts/9    00:00:05 vim
+23857 pts/5    00:00:00 controller
+24010 pts/10   00:00:00 ps
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep 16813
+kyehwanl 16813  0.0  0.0  15800  1160 pts/0    S+   10:28   0:00 tmux
+kyehwanl 24012  0.0  0.0  11740   928 pts/10   S+   13:19   0:00 grep --color=auto 16813
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ tmux ls
+0: 1 windows (created Thu Jan  5 10:28:45 2017) [238x77] (attached)
+1: 1 windows (created Thu Jan  5 12:53:23 2017) [117x77] (attached)
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ sudo ps aux | grep 23561
+root     23561  0.0  0.0  21148  2144 pts/6    Ss+  12:50   0:00 bash --norc -is mininet:h1
+kyehwanl 24032  0.0  0.0  11740   932 pts/10   S+   13:29   0:00 grep --color=auto 23561
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep soca[t]
+root     24037  0.0  0.0  19596  1324 ?        Ss   13:33   0:00 socat TCP-LISTEN:6010,fork,reuseaddr EXEC:'mnexec -a 1 socat STDIO TCP\:localhost\:6010'
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep xterm
+kyehwanl 24053  0.0  0.0  11740   928 pts/10   S+   13:41   0:00 grep --color=auto xterm
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep xter[m]
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep xter[m]
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep xter[m]
+root     24060  0.7  0.0 103824  7100 ?        Ss   13:43   0:00 xterm -title "Node: h1" -display localhost:10.0 -e env TERM=ansi bash
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$ ps aux | grep soca[t]
+root     24037  0.0  0.0  19596  1324 ?        Ss   13:33   0:00 socat TCP-LISTEN:6010,fork,reuseaddr EXEC:'mnexec -a 1 socat STDIO TCP\:localhost\:6010'
+root     24061  0.1  0.0  19596   772 ?        S    13:43   0:00 socat TCP-LISTEN:6010,fork,reuseaddr EXEC:'mnexec -a 1 socat STDIO TCP\:localhost\:6010'
+root     24062  0.1  0.0  21688  1612 ?        S    13:43   0:00 socat STDIO TCP:localhost:6010
+kyehwanl@n1:~/ubuntu_test/download/mininet/mininet$
+
+

@@ -1,0 +1,159 @@
+
+(rpm & yum tips)
+
+
+(1) rpm query options
+=======================
+    -qilp  ( i:info, l:list, p: package)
+    --provides      : list capabilities that this package provides
+    -R, --requires  : list capabilities on which package depends
+
+
+(2) dependency list and what package provides
+==============================================
+    yum deplist <package>
+
+
+(3) list of configured repositories
+===================================
+    yum repolist <package>
+
+
+(4) list all installed packages or search
+=========================================
+  1.  first, need 'yum-utils' (yum install yum-utils)
+      repoquery -q -l {package}
+      repoquery -l {package}      
+      ex) repoquery -l time, repoquery -q -l --plugins htop
+
+  2.  yum list | grep installed
+      yum list <package> : search a package from the repolist repositories
+
+  3. rpm -qilp
+
+
+  4. yum search <keyword>
+          This command is used to find any packages containing the specified keyword in the description, 
+          summary, packager and package name fields of RPMs in all repositories.
+
+
+(5) Requires
+=============
+    rpm -q --requires <package> or using -R
+
+
+
+(6) File belong to which RPM
+=============================
+  1.  rpm -qf <library file>
+      rpm -qf /usr/lib/srx/libsrx.so.0
+
+
+  2. yum provides <file name>:  Used to determine which packages provide a specific file or feature.
+     yum provides libsrx.so.0
+     yum provides */net-patricia
+
+
+  3.  yum whatprovides '*/ltdl.h' <-- find the package which provides a file
+
+
+
+(7) rpm post- or pre- script
+=============================
+    rpm -qp --scripts <package.rpm>
+
+
+
+(8) delete yum cache and renew
+===============================
+  1. yum clean metadata
+  2. yum repolist
+  3. yum install <package>
+
+
+
+(9) download source 
+====================
+ yumdownloader --source <package_name>
+
+
+
+(10) file extract from rpm
+===========================
+    rpm2cpio <package> | cpio -idmv 
+    cpio -t : only view text list
+
+
+
+(11) find a list from the specified repo
+==========================================
+    yum --disablerepo="*" --enablerepo="google" list available
+
+
+
+(12) etc
+=========
+  yum localinstall <absolute path to package name/s>
+  Used when using yum to install a package located locally in the machine.
+
+
+
+
+<making yum repository>
+A. at server side,
+  1. createrepo /tmp/srv/myrepo or 
+      createrepo --update /tmp/srv/myrepo (for updating the existed repo)
+
+      (if createrepo doesn't exist, yum install createrepo)
+
+  2. /etc/httpd/conf.d/repo.conf
+   put "DocumentRoot /tmp/srv/myrepo/" into
+
+    <VirtualHost *:80>
+     ServerName repo.example.com
+     ServerAlias repo
+     ServerAdmin ops@example.com
+     DocumentRoot /tmp/srv/myrepo/
+     ErrorLog logs/repo.example.com-error_log
+     CustomLog logs/repo.example.com-access_log common
+    <Directory "/tmp/srv/myrepo/*">
+     Options Indexes FollowSymLinks
+     Order allow,deny
+     Allow from all
+    </Directory>
+    </VirtualHost>
+
+
+
+B. at client side, /etc/yum.repos.d/myrepo.repo
+  [myrepo]
+  name = test
+  baseurl = http://10.1.1.6/
+  gpgcheck=0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

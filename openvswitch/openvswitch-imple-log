@@ -1,0 +1,67 @@
+<basic configuration and compile>
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ ./configure --with-linux=/lib/modules/`uname -r`/build
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ make 
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ sudo make install
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ sudo make modules_install
+
+< module loading >
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ sudo modprobe openvswitch
+
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ lsmod | grep openvswitch
+openvswitch           233449  0
+nf_defrag_ipv6         34768  1 openvswitch
+gre                    13796  1 openvswitch
+ip_tunnel              23768  1 openvswitch
+libcrc32c              12644  1 openvswitch
+nf_defrag_ipv4         12758  2 openvswitch,nf_conntrack_ipv4
+nf_conntrack           96976  7 ipt_MASQUERADE,openvswitch,nf_nat,nf_nat_ipv4,xt_conntrack,iptable_nat,nf_conntrack_ipv4
+
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ dmesg | tail
+[3015097.041636] nfs: server ops2.emulab2.antd.nist.gov OK
+[5974211.990826] cgroup: systemd-logind (796) created nested cgroup for controller "memory" which has incomplete hierarchy support. Nested cgroups may change behavior in the future.
+[5974211.990832] cgroup: "memory" requires setting use_hierarchy to 1 on the root.
+[6303351.352223] gre: GRE over IPv4 demultiplexor driver
+[6303351.366309] openvswitch: Open vSwitch switching datapath 2.5.0
+[6303351.366419] openvswitch: LISP tunneling driver
+[6303351.366421] openvswitch: GRE over IPv4 tunneling driver
+[6303351.366422] openvswitch: Geneve tunneling driver
+[6303351.366672] openvswitch: VxLAN tunneling driver
+[6303351.366674] openvswitch: STT tunneling driver
+
+
+Startup
+=======
+
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ sudo ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate  --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --pidfile --detach
+
+
+Then initialize the database using ovs-vsctl.  This is only
+necessary the first time after you create the database with
+ovsdb-tool (but running it at any time is harmless):
+
+      % ovs-vsctl --no-wait init
+
+
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ ll /usr/local/var/run/openvswitch/
+total 4.0K
+-rw-r--r-- 1 root root 5 Aug  8 15:51 ovsdb-server.pid
+srwxr-x--- 1 root root 0 Aug  8 15:51 db.sock=
+srwxr-x--- 1 root root 0 Aug  8 15:51 ovsdb-server.7555.ctl=
+
+kyehwanl@n4:~/SDN_test/openvswitch-2.5.0$ sudo ovs-vswitchd --pidfile --detach
+2016-08-08T19:52:57Z|00001|ovs_numa|INFO|Discovered 8 CPU cores on NUMA node 0
+2016-08-08T19:52:57Z|00002|ovs_numa|INFO|Discovered 8 CPU cores on NUMA node 1
+2016-08-08T19:52:57Z|00003|ovs_numa|INFO|Discovered 2 NUMA nodes and 16 CPU cores
+2016-08-08T19:52:57Z|00004|reconnect|INFO|unix:/usr/local/var/run/openvswitch/db.sock: connecting...
+2016-08-08T19:52:57Z|00005|reconnect|INFO|unix:/usr/local/var/run/openvswitch/db.sock: connected
+2016-08-08T19:52:57Z|00006|ofproto_dpif|INFO|system@ovs-system: Datapath supports recirculation
+2016-08-08T19:52:57Z|00007|ofproto_dpif|INFO|system@ovs-system: MPLS label stack length probed as 1
+2016-08-08T19:52:57Z|00008|ofproto_dpif|INFO|system@ovs-system: Datapath supports unique flow ids
+2016-08-08T19:52:57Z|00009|ofproto_dpif|INFO|system@ovs-system: Datapath supports ct_state
+2016-08-08T19:52:57Z|00010|ofproto_dpif|INFO|system@ovs-system: Datapath supports ct_zone
+2016-08-08T19:52:57Z|00011|ofproto_dpif|INFO|system@ovs-system: Datapath supports ct_mark
+2016-08-08T19:52:57Z|00012|ofproto_dpif|INFO|system@ovs-system: Datapath supports ct_label
+2016-08-08T19:52:57Z|00001|ofproto_dpif_upcall(handler2)|INFO|received packet on unassociated datapath port 0
+2016-08-08T19:52:57Z|00013|bridge|INFO|bridge br0: added interface br0 on port 65534
+2016-08-08T19:52:57Z|00014|bridge|INFO|bridge br0: using datapath ID 0000f20d3a60ea40
+2016-08-08T19:52:57Z|00015|connmgr|INFO|br0: added service controller "punix:/usr/local/var/run/openvswitch/br0.mgmt"

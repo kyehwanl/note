@@ -1,0 +1,56 @@
+
+String Manipulation
+====================
+
+ 1) curl -s -I http://bgp2.antd.nist.gov | head -n 1 | cut -f 2 -d ' '
+
+ 2) ps -ef > /tmp/tmp0; cat /tmp/tmp0 | tr -s " " | cut -d " " -f 2 | grep -v PID
+
+ 3) cat /etc/passwd | awk -F ":" '{print $1}'
+
+ 4) yes "kill" | head -$(cat /tmp/tmp0 | wc -l) | paste -d " " - /tmp/tmp0 > /tmp/tmp1
+(in paste command, there 's '-', it means using a standard input instead of a file input)
+
+ 5) sudo kill -9 $(ps aux | grep bgp[d] | awk '{print $2}' | paste -s -d ' ')
+
+ 6) remove brackets([ ]) 
+        tr -d '[]'
+        ./backtrace_test | sed 's/\[//g; s/\]//g'
+
+ 7) paste in parallel
+        echo 1 > /tmp/tmp0; echo 2 >> /tmp/tmp0; cat /tmp/tmp0 | paste -s -d ' '
+
+
+ 8) backtrace_test program uses gcc backtrace to print out stack address. 
+    Here want to pick address only and need to print out a source line instead of address.
+
+    $ for i in $(./backtrace_test | tr -d '[]' | awk '{print $2}' | grep "0x"
+      ); do addr2line -e ./backtrace_test $i; done
+      /users/kyehwanl/Programming/backtrace/backtrace_test.c:14
+      /users/kyehwanl/Programming/backtrace/backtrace_test.c:30
+      /users/kyehwanl/Programming/backtrace/backtrace_test.c:36
+      ??:0
+      ??:0
+
+
+ 9) sed 
+        ( -e script, add the script to the commands to be executed)
+   A. for i in $(ls *.xml); do newfile=$(echo $i | sed -e s/\:/\./g); mv $i $newfile; done
+   B. svn status | egrep '^M.*\.[ch]$' | sed -e 's/^. *//' > tmp.txt && svn ci --targets tmp.txt
+
+
+
+ 10) awk
+   A. killing all bgpd processes
+      for i in $(ps aux | grep bgpd | grep -v grep | awk '{print $2}'); do echo $i; sudo kill -9 $i; done
+   B. echo "(" $(cat /proc/vmallocinfo | grep -v "ioremap" | awk '{print $2}' | paste -s -d "+") ")/ 1024" | bc 
+   C. cat /etc/passwd | awk -F ":" '{print $1}'
+   D. sudo kill -9 $(ps aux | grep bgp[d] | awk '{print $2}' | paste -s -d ' ')
+
+
+ 11) var2=`mpls nhlfe add key 0 instructions push gen 500 nexthop eth2 ipv4 10.0.3.2 |grep key |cut -c 17-26`
+
+
+ 12) filename extraction: git diff -w -- util/mutex.c |grep '^+++' |cut -c7-
+
+
