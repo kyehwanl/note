@@ -1,0 +1,393 @@
+
+Docker Tips
+===========
+
+1. container id
+    alias dl='docker ps -l -q'
+
+
+2. docker image layers
+    docker history ubuntu
+
+
+3. quagga error message : privs_init: initial cap_set_proc failed 
+    then  run the container with following switches
+    docker run --privileged
+
+
+4. bash into the running container 
+    docker exec -it `dl` /bin/bash
+
+
+5. log file location on each container
+
+    directory: /var/lib/docker/containers/
+    log file: less /var/lib/docker/containers/<ID>/<ID>-json.log
+
+    --> docker logs <ID> can show the logs only
+        docker logs -f
+
+
+6. naming docker container 
+    docker run --name <NAME>
+
+
+7. docker run --net=<mode>  
+
+    --network="bridge": Set the Network mode for the container
+          'bridge'  :   create a network stack on the default Docker bridge 
+          'host'    :   use the Docker host network stack. Note: the host mode gives the container full access 
+                        to local system services such as D-bus and is therefore considered insecure. 
+
+
+8. container command
+    - To create a Container
+        docker run -d ubuntu /bin/sh -c "while true; do echo hello world; sleep 1; done"
+
+    - start stop restart attach 
+
+    - copy file in a container to the host 
+        cp: docker cp `dl`:/etc/passwd .
+
+    - mount the directory in host to a container
+        docker run -v /home/vagrant/test:/root/test ubuntu echo yo
+
+    - delete
+        docker rm `dl`
+
+    - info of containers
+        docker ps [-a]
+        docker top `dl`
+        docker inspect `dl`
+        docker logs `dl`
+
+
+9. docker image command
+
+    - Pull a base image
+        docker pull ubuntu
+
+    - To create a image from a Container. For tag name, <username>/<imagename> is recommended
+        docker run -d ubuntu /bin/sh -c "apt-get install -y hello"
+        docker commit -m "My first container" `dl` tcnksm/hello
+
+    - To create a image with Dockerfile.
+        echo -e "FROM base\nRUN apt-get install hello\nCMD hello" > Dockerfile
+        docker build -t tcnksm/hello . <-- Don't forget the last dot !!
+        or 
+        docker build -f ./Dockerfile-devel -t srx-devel .
+
+    - To login to a image.
+        docker run -rm -t -i tcnksm/hello /bin/bash
+        To push a imges to remote repository. You need to sign up to Docker index in advance. Exmple uploaded image.
+
+    - docker login
+        docker push tcnksm/hello
+
+    - To delete a image
+        docker rmi tcnkms/hello
+
+    - info of image
+        To show all images
+            docker images
+        To show image information like IP adress.
+            docker inspect tcnksm/hello
+        To show command history of a image.
+            docker history tcnksm/hello
+
+ 
+
+10. set IP address to a docker container
+
+    docker run --cap-add=NET_ADMIN -dit imagename /bin/sh -c "/sbin/ip addr add 172.17.0.12 dev eth0; bash"
+
+    For interacting with the network stack, instead of using --privileged they should use --cap-add=NET_ADMIN 
+    to modify the network interfaces
+
+      $ docker run -it --rm  ubuntu:14.04 ip link add dummy0 type dummy
+      RTNETLINK answers: Operation not permitted
+      $ docker run -it --rm --cap-add=NET_ADMIN ubuntu:14.04 ip link add dummy0 type dummy
+
+    
+
+10-2. Run a Docker with a specific IP address
+    * You first need to create a network:
+        docker network create --subnet=172.18.0.0/16 network_name
+
+    * Then, when running a container, you can specify an IP address for it with the flags:
+        --net network_name --ip 172.18.0.XX
+
+    * (example)
+
+        [root@idac-server11 ]# docker network create --subnet=172.19.0.0/16 srx-net
+        58bdb6ba650c84e0ea460e18f1d407d5f3de22e74d6ca505e86c63c096da44a7
+
+        [root@idac-server11 ]# ifconfig 
+        br-58bdb6ba650c: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+                inet 172.19.0.1  netmask 255.255.0.0  broadcast 172.19.255.255
+
+        [root@idac-server11 ]# docker network ls
+        NETWORK ID          NAME                DRIVER              SCOPE
+        8ad012a58c90        bridge              bridge              local
+        674e3dcfaf34        docker_gwbridge     bridge              local
+        58bdb6ba650c        srx-net             bridge              local
+
+        [root@idac-server11 ]# docker run --rm -v /opt/project/docker_test/bgpd.conf.idac11.v2:/etc/quagga/bgpd.conf \
+                                             -it --net srx-net --ip 172.19.0.11  10.0.50.11:5000/srx /bin/bash
+
+        [root@856e8f0422f7 /]# ip addr
+        69: eth0@if70: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+            link/ether 02:42:ac:13:00:0b brd ff:ff:ff:ff:ff:ff link-netnsid 0
+            inet 172.19.0.11/16 brd 172.19.255.255 scope global eth0
+               valid_lft forever preferred_lft forever
+
+
+        <Caution> this doesn't work with 'docker_gwbridge' net
+
+
+
+
+11. Local Registry with self-signed Certificate
+ --> refer to the file, docker_remote_registry
+
+
+
+
+12. (QUESTION)
+    Is it possible to use for granting quagga user (uid: 100) and quagga group(uid: 101) 
+    to write into that directory in the situation of conflict of writing due to permission ??
+
+    $ sudo setfacl -R -m u:100:rwx ~/volumes/quagga
+    $ sudo setfacl -R -m g:101:rwx ~/volumes/quagga
+
+
+
+
+
+13. pipework : Network between containers
+    * download pipework:
+        $ bash -c "curl https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework" > pipework
+
+    * to connect two routers using their containers names (R1 and R2):
+
+        $ sudo ./pipework br0 R1 192.168.255.1/30                                                                                  
+        $ sudo ./pipework br0 R2 192.168.255.2/30                                                                                  
+
+    This command creates br0 bridge interface on host machine and 
+    another network interface on each container which are connected to that br0 bridge.
+
+
+14. Disconnect or Detach from the shell without exiting 
+    Ctrl-p + Ctrl-q
+
+
+
+
+15. Overriding & Combining ENTRYPOINT and CMD in Dockerfile, 
+
+
+
+    (1) default CMD can be overriden by specifying 'docker run <image> <desired-cmd>'
+        The desired cmd can override "CMD <default-command>" in Dockerfile with the user-desired command.
+
+    (2) ENTRYPOINT command 
+        --entrypoint <new-command> can override "ENTRYPOINT <default-command>" 
+
+
+    ** ENTRYPOINT vs. CMD
+        * when you don't want or expect the user to override the executable you've specified.
+        * Of course you can achieve this same thing with CMD, 
+          but the use of ENTRYPOINT sends a strong message that this container is only intended to run this one command.
+        * The utility of ENTRYPOINT will become clearer when we show how it can combine ENTRYPOINT and CMD together below
+
+
+    (3) Combining ENTRYPOINT and CMD 
+        : CMD command will be appended to the ENTRYPOINT to generate the containter's command string
+
+        *(example)  in Dockerfile,
+            FROM ubuntu:trusty
+            ENTRYPOINT ["/bin/ping","-c","3"]
+            CMD ["localhost"] 
+    
+        $ docker build -t ping
+        $ docker ps -l 
+            CONTAINER ID IMAGE COMMAND CREATED 
+            82df66a2a9f1 ping:latest "/bin/ping -c 3 localhost" 6 seconds ago
+
+
+        <Caution> command string MUST use exec form, not shell form
+              exec form : ["/bin/ping", "-c", "3"]  --> result in /bin/ping -c 3
+              shell form: /bin/ping -c 3            --> result in /bin/sh -c '/bin/ping -c 3'
+
+          - If for some reason you really want to use the shell form, 
+            a workaround is to use 'exec' to replace the shell process with the ping process.
+            for example, 
+            CMD exec ping -c 3 localhost
+
+
+
+
+16. Clean Up 
+    - If you have a bunch of stopped containers left on your host, Clean them up:
+    $ docker system prune
+
+      [root@vmware-011 srx]# docker images
+      REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE
+      <none>                        <none>              f544c870cc24        32 minutes ago      466MB
+      srx                           latest              9d6bbfb1aea7        33 minutes ago      466MB
+      srx-devel                     latest              05d9b4fb99ec        3 days ago          548MB
+      <none>                        <none>              ddf98d1be2f6        4 days ago          466MB
+      dravetech/gobgp_2             latest              6527cc7ac969        13 days ago         951MB
+      ...
+
+
+      [root@vmware-011 srx]# docker system prune
+      WARNING! This will remove:
+              - all stopped containers
+              - all networks not used by at least one container
+              - all dangling images
+              - all build cache
+      Are you sure you want to continue? [y/N] y
+      Deleted Images:
+      deleted: sha256:ddf98d1be2f6080751f36f72c7e8e6f1fd1426d8345ed35c1b696564e0eb6842
+      deleted: sha256:f544c870cc24ba3066d41b713cb23aa59ae7547bb88a84e5356e9d1a3f1748a8
+
+      Total reclaimed space: 0B
+
+
+      [root@vmware-011 srx]# docker images
+      REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE
+      srx                           latest              9d6bbfb1aea7        33 minutes ago      466MB
+      srx-devel                     latest              05d9b4fb99ec        3 days ago          548MB
+      dravetech/gobgp_1             latest              6527cc7ac969        13 days ago         951MB
+      dravetech/gobgp_2             latest              6527cc7ac969        13 days ago         951MB
+
+
+
+
+17. IP address of the running docker container
+
+    $ docker inspect <container ID> 
+        - there will be 'NetworkSettings' 
+
+
+    ** check ip address of docker container
+    $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' <CONTAINER_ID>
+
+    $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+
+
+
+18. Docker Network
+
+    (1) status
+        $ docker network ls
+
+    (2) create user defined network
+        + First you need to create you own docker network (mynet123)
+            $ docker network create --subnet=172.18.0.0/16 mynet123
+
+        + then simply run the image (I'll take ubuntu as example)
+            $ docker run --net mynet123 --ip 172.18.0.22 -it ubuntu bash
+
+        + then in ubuntu shell
+            $ ip addr
+
+    (3) Additionally you could use
+        --hostname to specify a hostname
+        --add-host to add more entries to /etc/hosts 
+
+    (4) net host mode
+        $ docker run --net=host -i -t <image>
+            which picked up the static IP and assigned it to docker0 in the container
+
+
+
+    (5) with network namespace (from the official Docker documentation)
+
+        # At one shell, start a container and
+        # leave its shell idle and running
+
+        $ sudo docker run -i -t --rm --net=none base /bin/bash
+        root@63f36fc01b5f:/#
+
+        # At another shell, learn the container process ID
+        # and create its namespace entry in /var/run/netns/
+        # for the "ip netns" command we will be using below
+
+        $ sudo docker inspect -f '{{.State.Pid}}' 63f36fc01b5f
+        2778
+        $ pid=2778
+        $ sudo mkdir -p /var/run/netns
+        $ sudo ln -s /proc/$pid/ns/net /var/run/netns/$pid
+
+        # Check the bridge's IP address and netmask
+
+        $ ip addr show docker0
+        21: docker0: ...
+        inet 172.17.42.1/16 scope global docker0
+        ...
+
+        # Create a pair of "peer" interfaces A and B,
+        # bind the A end to the bridge, and bring it up
+
+        $ sudo ip link add A type veth peer name B
+        $ sudo brctl addif docker0 A
+        $ sudo ip link set A up
+
+        # Place B inside the container's network namespace,
+        # rename to eth0, and activate it with a free IP
+
+        $ sudo ip link set B netns $pid
+        $ sudo ip netns exec $pid ip link set dev B name eth0
+        $ sudo ip netns exec $pid ip link set eth0 up
+        $ sudo ip netns exec $pid ip addr add 172.17.42.99/16 dev eth0
+        $ sudo ip netns exec $pid ip route add default via 172.17.42.1
+
+
+19. logging
+    (1) showing all the stdout, stderr logs
+          docker logs [options] CONTAINER_ID 
+          options:  -f      : follow, realtime refresh 
+                    --tail  : number of lines from the end, default 10
+        
+
+
+
+20. Run /bin/bash in docker service, but it won't allow it
+
+    (Solution) CMD in Dockerfile, use 'sleep infinity'
+                and access 'docker exec -it <ID>'
+
+
+
+
+21. Image History 
+    : able to look into Dockerfile's command history
+
+    # docker image history --no-trunc 10.0.50.11:5000/srx
+
+    IMAGE               CREATED             CREATED BY                                                                                                 SIZE                COMMENT
+    sha256:9d6bbfb1...  7 days ago          /bin/sh -c #(nop)  CMD ["bgpd" "-u" "root"]                                                                0B
+    <missing>           11 days ago         /bin/sh -c #(nop)  EXPOSE 179 2605                                                                         0B
+    <missing>           11 days ago         /bin/sh -c rpm -ivh quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm                                             25.6MB
+    <missing>           11 days ago         /bin/sh -c rpm -ivh srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm                                              20.5MB
+    <missing>           11 days ago         /bin/sh -c rpm -ivh srx-0.5.1.0-1.el7.centos.x86_64.rpm                                                    21.2MB
+    <missing>           11 days ago         /bin/sh -c rpm -ivh srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm                                           20.3MB
+    <missing>           11 days ago         /bin/sh -c wget http://129.6.140.211/temp/proj-bgp/srx-repo/quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm     1.18MB
+    <missing>           11 days ago         /bin/sh -c wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-0.5.1.0-1.el7.centos.x86_64.rpm            318kB
+    <missing>           11 days ago         /bin/sh -c wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm      140kB
+    <missing>           11 days ago         /bin/sh -c wget http://129.6.140.211/temp/proj-bgp/srx-repo/srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm   67.1kB
+    <missing>           12 days ago         /bin/sh -c yum -y install wget libconfig openssl net-snmp                                                  182MB
+    <missing>           12 days ago         /bin/sh -c #(nop)  ENV container=docker                                                                    0B
+    <missing>           12 days ago         /bin/sh -c #(nop)  MAINTAINER "Kyehwan Lee"                                                                0B
+    <missing>           2 months ago        /bin/sh -c #(nop)  CMD ["/bin/bash"]                                                                       0B
+    <missing>           2 months ago        /bin/sh -c #(nop)  LABEL name=CentOS Base Image vendor=CentOS license=GPLv2 build-date=20180302            0B
+    <missing>           2 months ago        /bin/sh -c #(nop) ADD file:8d83f3e2c14f39e7f7b281117a45e245c1941668f2d560e9f7ac23da89d667a9 in /           195MB
+
+
+
+
+
+
+

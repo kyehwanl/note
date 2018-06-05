@@ -1,0 +1,170 @@
+
+tmux tips
+=========
+
+1.[tmux]  tmux session lost in unknown pts, how to survive ?
+------------------------------------------------------------
+
+<문제점> 
+  tmux를 오랜동안 동작시키다가 혹은 갑작스런 cut-off로 인해 socket을 잃어버려서 다시 접속하려고 하니 
+  아래와 같은 메시지가 나올때
+
+  $ tmux ls
+  failed to connect to server: No such file or directory
+
+  이때, 분명 ps aux 를 통해서 확인해 보면 tmux process는 있지만 socket은 ?로 나온다
+  $ ps aux | grep tmux
+  kyehwanl  2491  0.0  0.2  35464 31424 ?        Ss   Jan23   8:40 tmux
+
+<solution>
+
+  Solution courtesy of the Webfaction-support:
+  As the process was still running, the issue was a deleted socket, possibly caused by a purged tmp-directory.
+  According to the tmux mapage:
+  If the socket is accidentally removed, the SIGUSR1 signal may be sent to the tmux server process to recreate it.
+  So sending the signal and attaching works:
+    killall -s SIGUSR1 tmux 
+    tmux attach
+
+
+
+    <case 1> 아래는 전체 script
+
+    [kyehwanl@node4 ~]$ tmux ls
+    failed to connect to server: No such file or directory
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmux
+    kyehwanl  2491  0.0  0.2  35464 31424 ?        Ss   Jan23   8:40 tmux
+
+    [kyehwanl@node4 ~]$ killall -s SIGUSR1 tmux
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmux
+    kyehwanl  2491  0.0  0.2  35464 31432 ?        Ss   Jan23   8:40 tmux
+
+    [kyehwanl@node4 ~]$ tmux a
+    Attach 되어 실행됨!!!
+
+    [kyehwanl@node4 api]$ tmux ls
+    0: 2 windows (created Tue Jan 23 12:41:50 2018) [134x79] (attached)
+
+    $ ps aux | grep tmu[x]
+    kyehwanl  2491  0.0  0.2  35468 31440 ?        Ss   Jan23   8:40 tmux
+    kyehwanl 29448  0.0  0.0   5368   856 pts/0    S+   13:59   0:00 tmux a
+
+    -------- Detached후에 상황을 봄----------------
+    [detached (from session 0)]
+    [kyehwanl@node4 ~]$ tmux ls             
+    0: 2 windows (created Tue Jan 23 12:41:50 2018) [134x79]
+
+    [kyehwanl@node4 ~]$ ps aux | grep tmu[x]
+    kyehwanl  2491  0.0  0.2  35468 31440 ?        Ss   Jan23   8:40 tmux
+
+
+    → pid 2491은 여전히 ?로 남아있는걸로 봐선 tmux가 새로이 socket을 할당하고 pid 29448로 session 0을 열었는것이 확인가능
+
+
+
+    <case 2>
+
+    Node1에 동작하고 있었던 tmux session이 socket loss로 인해 connection자체가 가능하게 되지 않게 되었을때,
+    SIGUSR1을 tmux process에게 보낸후 다시 tmux ls를 해보면
+    모든 세션이 제대로 동작하고 있는것이 보인다
+
+    [kyehwanl@node1 ~]$ tmux ls
+    failed to connect to server: Connection refused
+
+    [kyehwanl@node1 ~]$ ps aux | grep tmu[x]
+    kyehwanl  1956  0.1  0.0  11348  7384 ?        Ss   Jan23  21:22 tmux
+    kyehwanl  6607  0.0  0.0   5368   856 pts/0    S+   Jan25   0:00 tmux a
+
+    [kyehwanl@node1 ~]$ killall -s SIGUSR1 tmux
+
+    [kyehwanl@node1 ~]$ ps aux | grep tmu[x]   
+    kyehwanl  1956  0.1  0.0  11348  7384 ?        Ss   Jan23  21:22 tmux
+    kyehwanl  6607  0.0  0.0   5368   856 pts/0    S+   Jan25   0:00 tmux a
+
+    [kyehwanl@node1 ~]$ tmux ls
+    0: 1 windows (created Tue Jan 23 11:55:28 2018) [272x79] (attached)
+    1: 1 windows (created Tue Jan 23 12:05:39 2018) [134x79]
+ 
+
+
+2. split panes into windows or move a pane 
+-------------------------------------------
+
+  (1) break the pane out via break-pane. This is bound to <prefix> ! by default 
+        if "Can't break with only one pane", then make another pane and then break
+    
+    
+  (2) :join-pane -t <int> (int: index of the session number you want to move it into)
+        optionally, -h or -v  as a horizontal-split or a vertical-split on the target window, respectively
+
+  
+  (3) example
+    Here's an example. Let's say you're in session 0, window 4 and in session 2 that you want window 3's pane 1. 
+    In the tmux prompt (ctrl+b : by default)
+
+    : join-pane -s 2:3.1
+
+    This will move pane 1 from window 3, session 2 (-s is the source window and takes the format session:window.pane) 
+    to your current session (session 0).
+
+    Below are the full docs for join-pane, which you can get from the tmux man page. The most confusing part for me 
+    reading the docs was figuring out the format that was expected for src-pane specifying session, 
+    window and pane numbers (session:window.pane per the example above). You can also name your sessions 
+    and windows and use those names instead of the index numbers.
+
+
+     join-pane [-dhv] [-l size | -p percentage] [-s src-pane] [-t dst-pane]
+       (alias: joinp)
+       Like split-window, but instead of splitting dst-pane and 
+       creating a new pane, split it and move src-pane into the 
+       space.  This can be used to reverse break-pane.
+
+
+  (4) my example
+    :join-pane -s 6:1.1 -t 4:0 
+
+
+
+
+3. get and move to a number of windows and panes
+-------------------------------------------------
+
+  (1) get a number 
+    <prefix> q : show pane numbers
+    <prefix> w : get current windows list
+
+
+  (2) move to 
+    window - <C-B> <number>
+    pane - hit the pane number while displaying the pane number
+
+
+    *** <change display time> ***
+    You can jump directly to a pane by typing pane's index while it is showed by display-panes command (c-b q)
+    If the pane number's show too quick for you to select a pane, use the following in your .tmux.conf file to 
+    change the amount of time the pane #'s are displayed. 
+
+    set display-panes-time 4000 
+
+    Note that you can hit the esc key to cancel the operation if you want 
+
+
+
+4. rename session and window
+-----------------------------
+    <prefix> , : rename window
+    <prefix> $ : rename session
+
+
+
+
+
+5. select buffer
+-----------------
+    <prefix> = : list all buffers to paste, then choose a number with cursor or cancel with Ctrl-c
+
+
+
+

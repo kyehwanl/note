@@ -1,0 +1,65 @@
+
+
+1. running
+===========
+ (1) sudo ./sbin/exabgp ./bgpd.exa.conf ( 'sudo' not necessarily needed )
+
+
+ (2) env exabgp.daemon.user=root exabgp.daemon.daemonize=true exabgp.daemon.pid=/var/run/exabgp.pid exabgp.log.destination=/var/log/exabgp.log exabgp /etc/exabgp_blackhole.conf
+
+
+ (3) env exabgp.daemon.user=root exabgp.daemon.daemonize=true exabgp.daemon.pid=/var/run/exabgp.pid exabgp.log.destination=/var/log/exabgp.log ./sbin/exabgp ./bgpd.exa.conf
+
+
+
+
+2. configuration
+================
+[kyehwanl@node2 exabgp-3.4.13]$ cat ./bgpd.exa.conf
+####################################################
+
+group Core_v4 {
+    hold-time 180;
+    local-as 60003;
+    peer-as 60004;
+    router-id 10.1.1.3;
+    graceful-restart 1200;
+
+    static {
+      # Example - Announcing a /32 with one community
+      route 10.10.10.1/32 next-hop 192.0.2.1 community 65001:666;
+      #Example - Two communities
+      route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+    }
+
+    neighbor 10.1.1.4 {
+      local-address 10.1.1.3;
+      description "IOS";
+    }
+
+    process add-routes {
+      run /usr/bin/python /users/kyehwanl/Download/exabgp-3.4.13/example.py;
+      #'announce route 100.10.0.0/24 next-hop self'
+      #'announce route 200.20.0.0/24 next-hop self'
+    }
+}
+
+   #neighbor 192.168.1.253 {
+   #     local-address 192.168.1.2;
+   #     description "IOS_XR";
+   #     md5 S00pers3kretz;
+   #}
+
+
+
+3. Debugging
+============
+
+3.1. running script including configuration
+
+    $ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib
+    $ python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py --folder /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
+
+
+    (command connected with &&)
+    $ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf

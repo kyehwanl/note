@@ -1,0 +1,45 @@
+
+
+(1) disassemble taraRegisterPrivateKey function
+
+   │0x7ffff7bc8a3e <taraRegisterPrivateKey>         push   %rbx                                                       │
+   │0x7ffff7bc8a3f <taraRegisterPrivateKey+1>       sub    $0x20,%rsp                                                 │
+   │0x7ffff7bc8a43 <taraRegisterPrivateKey+5>       movq   $0x0,(%rsp)                                                │
+   │0x7ffff7bc8a4b <taraRegisterPrivateKey+13>      movq   $0x0,0x8(%rsp)                                             │
+   │0x7ffff7bc8a54 <taraRegisterPrivateKey+22>      movq   $0x0,0x10(%rsp)                                            │
+   │0x7ffff7bc8a5d <taraRegisterPrivateKey+31>      movq   $0x0,0x18(%rsp)                                            │
+   │0x7ffff7bc8a66 <taraRegisterPrivateKey+40>      mov    0x20(%rdi),%rsi                                            │
+  >│0x7ffff7bc8a6a <taraRegisterPrivateKey+44>      test   %rsi,%rsi                                                  │
+   │0x7ffff7bc8a6d <taraRegisterPrivateKey+47>      jne    0x7ffff7bc8a96 <taraRegisterPrivateKey+88>                 │
+   │0x7ffff7bc8a6f <taraRegisterPrivateKey+49>      lea    0x1262(%rip),%rdx        # 0x7ffff7bc9cd8                  │
+
+
+(gdb) si
+0x00007ffff7bc8a54 in taraRegisterPrivateKey ()
+   from /users/kyehwanl/srx_test1/deploy_test2/_inst/lib64/srx/libtaraBGPsec.so
+(gdb) si
+0x00007ffff7bc8a5d in taraRegisterPrivateKey ()
+   from /users/kyehwanl/srx_test1/deploy_test2/_inst/lib64/srx/libtaraBGPsec.so
+(gdb) p/x $rsi
+$25 = 0x7ffff7df5000
+(gdb) si
+0x00007ffff7bc8a66 in taraRegisterPrivateKey ()
+   from /users/kyehwanl/srx_test1/deploy_test2/_inst/lib64/srx/libtaraBGPsec.so
+(gdb) p/x $rsi
+$26 = 0x7ffff7df5000
+(gdb) si
+0x00007ffff7bc8a6a in taraRegisterPrivateKey ()
+   from /users/kyehwanl/srx_test1/deploy_test2/_inst/lib64/srx/libtaraBGPsec.so
+(gdb) p/x $rsi
+$27 = 0x0
+(gdb) p/x $rdi
+$28 = 0x608030
+
+
+
+
+CAUSE of this error
+--------------------
+
+BGPSecKey structure uses __attribute__(packed) in a newly updated version whereas taralibrary didn't use this attribute.
+It caused keyLength pointer mismatch.

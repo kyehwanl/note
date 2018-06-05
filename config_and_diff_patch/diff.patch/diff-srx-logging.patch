@@ -1,0 +1,170 @@
+--- src/util/log.c	2015-04-23 14:47:09.000000000 -0400
++++ src/util/log.c	2015-12-30 16:31:44.000000000 -0500
+@@ -89,6 +89,7 @@ static void _writeToFile (LogLevel level
+   fprintf(_stream, "%s ", LOG_LEVEL_TEXT[level]);
+   vfprintf(_stream, fmt, args);
+   fputc('\n', _stream);
++  fflush(_stream);
+ }
+ 
+ /**
+--- src/server/main.c	2015-04-21 12:58:49.000000000 -0400
++++ src/server/main.c	2015-12-31 13:33:15.000000000 -0500
+@@ -218,6 +218,11 @@ static int setupConfiguration (int argc,
+     setLogLevel(config.loglevel);    
+   }
+ 
++  if (config.msgDest == MSG_DEST_SYSLOG)
++  {
++    setLogMethodToSyslog();
++  }
++
+   LOG(LEVEL_INFO, "- Configuration processed");
+   return 1;
+ }
+@@ -525,6 +530,7 @@ int main(int argc, const char* argv[])
+   int exitCode = 0;
+   int passedConfig;
+   bool printGoodbye = true;
++  FILE* fp=NULL;
+   
+   // By default all messages go to standard error
+   setLogMethodToFile(stderr);
+@@ -533,6 +539,16 @@ int main(int argc, const char* argv[])
+   printf ("Start %s Version%s (%s)\n", SRX_SERVER_NAME, SRX_SERVER_VERSION, 
+           __TIME__);
+   passedConfig = setupConfiguration(argc, argv);
++
++  if(config.msgDestFilename)
++  {
++    fp = fopen(config.msgDestFilename, "wt");
++    if(fp)
++      setLogMethodToFile(fp);
++    else
++      LOG(LEVEL_ERROR, "Could not set log file.");
++  }
++
+   LOG(LEVEL_DEBUG, "([0x%08X]) > Start Main SRx server thread.", pthread_self());
+     
+   if ( passedConfig != 1)
+@@ -603,5 +619,7 @@ int main(int argc, const char* argv[])
+   }
+   
+   LOG(LEVEL_DEBUG, "([0x%08X]) < Stop Main SRx server thread.", pthread_self());
++  if(fp)
++    fclose(fp);
+   return exitCode;
+ }
+--- src/server/configuration.c	2015-04-23 17:58:37.000000000 -0400
++++ src/server/configuration.c	2015-12-31 13:33:17.000000000 -0500
+@@ -561,9 +561,9 @@ bool readConfigFile(Configuration* self,
+   static config_t cfg; // BZ647 changed to static.
+   config_setting_t* sett = NULL;
+   const char* strtmp = NULL;
+-  bool useSyslog;
+-  int boolVal;
+-  int intVal;
++  bool useSyslog=0;
++  int boolVal =0;
++  int intVal=0;
+ 
+   // Added intVal to not have the libconfig library modify the configuration
+   // structure. This caused all kinds of memory mess-up. The new procedure is 
+@@ -583,21 +583,31 @@ bool readConfigFile(Configuration* self,
+   }
+ 
+   // Global & server settings
+-  (void)config_lookup_bool(&cfg, "verbose", (int*)&boolVal);
+-        self->verbose = (bool)boolVal;
+-  (void)config_lookup_int(&cfg, "port", (int*)&intVal);
+-        self->server_port = intVal;
+-  (void)config_lookup_bool(&cfg, "sync", (int*)&boolVal);
+-        self->syncAfterConnEstablished = (bool)boolVal;
+-
+-  (void)config_lookup_int(&cfg, "keep-window", (int*)&intVal);
+-        self->defaultKeepWindow = intVal;
++  config_lookup_bool(&cfg, "verbose", (int*)&boolVal) == CONFIG_TRUE ?
++    (self->verbose = (bool)boolVal):
++    (boolVal = 0);
++
++  config_lookup_int(&cfg, "port", (int*)&intVal) == CONFIG_TRUE ?
++    (self->server_port = intVal):
++    (intVal = 0);
++
++  config_lookup_bool(&cfg, "sync", (int*)&boolVal) == CONFIG_TRUE ?
++    (self->syncAfterConnEstablished = (bool)boolVal):
++    (boolVal = 0);
++
++  config_lookup_int(&cfg, "keep-window", (int*)&intVal) == CONFIG_TRUE ?
++    (self->defaultKeepWindow = intVal):
++    (intVal = 0);
+ 
+   // Global - message destination
+-  (void)config_lookup_bool(&cfg, "syslog", (int*)&boolVal);
+-        useSyslog = (bool)boolVal;
+-  (void)config_lookup_int(&cfg, "loglevel", (int*)&intVal);
+-        self->loglevel = intVal;
++  config_lookup_bool(&cfg, "syslog", (int*)&boolVal) == CONFIG_TRUE ?
++    (useSyslog = (bool)boolVal):
++    (boolVal = 0);
++
++  config_lookup_int(&cfg, "loglevel", (int*)&intVal) == CONFIG_TRUE ?
++    (self->loglevel = intVal):
++    (intVal = 0);
++
+   if (config_lookup_string(&cfg, "log", &strtmp) == CONFIG_TRUE)
+   {
+     if (useSyslog)
+@@ -638,8 +648,9 @@ bool readConfigFile(Configuration* self,
+         goto free_config;
+       }
+     }
+-    (void)config_setting_lookup_int(sett, "port", (int*)&intVal);
+-       self->console_port = intVal;
++    config_setting_lookup_int(sett, "port", (int*)&intVal) == CONFIG_TRUE ?
++      (self->console_port = intVal):
++      (intVal = 0);
+   }
+ 
+ 
+@@ -659,8 +670,9 @@ bool readConfigFile(Configuration* self,
+         goto free_config;
+       }
+     }
+-    (void)config_setting_lookup_int(sett, "port", (int*)&intVal);
+-      self->rpki_port = intVal;
++    config_setting_lookup_int(sett, "port", (int*)&intVal) == CONFIG_TRUE ?
++      (self->rpki_port = intVal):
++      (intVal = 0);
+   }
+ 
+   // BGPSec
+@@ -679,18 +691,22 @@ bool readConfigFile(Configuration* self,
+         goto free_config;
+       }
+     }
+-    (void)config_setting_lookup_int(sett, "port", (int*)&intVal);
+-       self->bgpsec_port = intVal;
++    config_setting_lookup_int(sett, "port", (int*)&intVal) == CONFIG_TRUE ?
++      (self->bgpsec_port = intVal):
++      (intVal = 0);
+   }
+ 
+   // Experimental
+   sett = config_lookup(&cfg, "mode");
+   if (sett != NULL)
+   {
+-    (void)config_setting_lookup_bool(sett, "no-sendqueue", (int*)&boolVal);
+-          self->mode_no_sendqueue = (bool)boolVal;
+-    (void)config_setting_lookup_bool(sett, "no-receivequeue", (int*)&boolVal);
+-          self->mode_no_receivequeue - (bool)boolVal;
++    config_setting_lookup_bool(sett, "no-sendqueue", (int*)&boolVal) == CONFIG_TRUE ?
++      (self->mode_no_sendqueue = (bool)boolVal):
++      (boolVal = 0);
++
++    config_setting_lookup_bool(sett, "no-receivequeue", (int*)&boolVal) == CONFIG_TRUE ?
++      (self->mode_no_receivequeue = (bool)boolVal):
++      (boolVal = 0);
+   }
+ 
+   // mapping configuration

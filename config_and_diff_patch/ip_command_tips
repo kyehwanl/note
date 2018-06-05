@@ -1,0 +1,14 @@
+
+ip command
+==========
+
+1. ip link
+
+    ip link set br-test0 addr c0:ff:ee:ee:ff:0c
+    ip link show br-test0
+    
+
+2. ip address
+
+    ip address add 2001:db8:1::1/64 dev s1
+    ip address del 2001:db8:1::1/64 dev s1

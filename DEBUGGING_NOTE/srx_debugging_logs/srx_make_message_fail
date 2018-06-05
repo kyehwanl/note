@@ -1,0 +1,926 @@
+ts1.antd [295]{.../srx/src}-> make
+make -C util
+make[1]: Entering directory `/srx/AS50/srx/src/util'
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT client_socket.lo -MD -MP -MF .deps/client_socket.Tpo -c -o client_socket.lo client_socket.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT client_socket.lo -MD -MP -MF .deps/client_socket.Tpo -c client_socket.c  -fPIC -DPIC -o .libs/client_socket.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT client_socket.lo -MD -MP -MF .deps/client_socket.Tpo -c client_socket.c -o client_socket.o >/dev/null 2>&1
+mv -f .deps/client_socket.Tpo .deps/client_socket.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT debug.lo -MD -MP -MF .deps/debug.Tpo -c -o debug.lo debug.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT debug.lo -MD -MP -MF .deps/debug.Tpo -c debug.c  -fPIC -DPIC -o .libs/debug.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT debug.lo -MD -MP -MF .deps/debug.Tpo -c debug.c -o debug.o >/dev/null 2>&1
+mv -f .deps/debug.Tpo .deps/debug.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT directory.lo -MD -MP -MF .deps/directory.Tpo -c -o directory.lo directory.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT directory.lo -MD -MP -MF .deps/directory.Tpo -c directory.c  -fPIC -DPIC -o .libs/directory.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT directory.lo -MD -MP -MF .deps/directory.Tpo -c directory.c -o directory.o >/dev/null 2>&1
+mv -f .deps/directory.Tpo .deps/directory.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT log.lo -MD -MP -MF .deps/log.Tpo -c -o log.lo log.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT log.lo -MD -MP -MF .deps/log.Tpo -c log.c  -fPIC -DPIC -o .libs/log.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT log.lo -MD -MP -MF .deps/log.Tpo -c log.c -o log.o >/dev/null 2>&1
+mv -f .deps/log.Tpo .deps/log.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT multi_client_socket.lo -MD -MP -MF .deps/multi_client_socket.Tpo -c -o multi_client_socket.lo multi_client_socket.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT multi_client_socket.lo -MD -MP -MF .deps/multi_client_socket.Tpo -c multi_client_socket.c  -fPIC -DPIC -o .libs/multi_client_socket.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT multi_client_socket.lo -MD -MP -MF .deps/multi_client_socket.Tpo -c multi_client_socket.c -o multi_client_socket.o >/dev/null 2>&1
+mv -f .deps/multi_client_socket.Tpo .deps/multi_client_socket.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT mutex.lo -MD -MP -MF .deps/mutex.Tpo -c -o mutex.lo mutex.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT mutex.lo -MD -MP -MF .deps/mutex.Tpo -c mutex.c  -fPIC -DPIC -o .libs/mutex.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT mutex.lo -MD -MP -MF .deps/mutex.Tpo -c mutex.c -o mutex.o >/dev/null 2>&1
+mv -f .deps/mutex.Tpo .deps/mutex.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT packet.lo -MD -MP -MF .deps/packet.Tpo -c -o packet.lo packet.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT packet.lo -MD -MP -MF .deps/packet.Tpo -c packet.c  -fPIC -DPIC -o .libs/packet.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT packet.lo -MD -MP -MF .deps/packet.Tpo -c packet.c -o packet.o >/dev/null 2>&1
+mv -f .deps/packet.Tpo .deps/packet.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT plugin.lo -MD -MP -MF .deps/plugin.Tpo -c -o plugin.lo plugin.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT plugin.lo -MD -MP -MF .deps/plugin.Tpo -c plugin.c  -fPIC -DPIC -o .libs/plugin.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT plugin.lo -MD -MP -MF .deps/plugin.Tpo -c plugin.c -o plugin.o >/dev/null 2>&1
+mv -f .deps/plugin.Tpo .deps/plugin.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT prefix.lo -MD -MP -MF .deps/prefix.Tpo -c -o prefix.lo prefix.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT prefix.lo -MD -MP -MF .deps/prefix.Tpo -c prefix.c  -fPIC -DPIC -o .libs/prefix.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT prefix.lo -MD -MP -MF .deps/prefix.Tpo -c prefix.c -o prefix.o >/dev/null 2>&1
+mv -f .deps/prefix.Tpo .deps/prefix.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT rwlock.lo -MD -MP -MF .deps/rwlock.Tpo -c -o rwlock.lo rwlock.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT rwlock.lo -MD -MP -MF .deps/rwlock.Tpo -c rwlock.c  -fPIC -DPIC -o .libs/rwlock.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT rwlock.lo -MD -MP -MF .deps/rwlock.Tpo -c rwlock.c -o rwlock.o >/dev/null 2>&1
+mv -f .deps/rwlock.Tpo .deps/rwlock.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT server_socket.lo -MD -MP -MF .deps/server_socket.Tpo -c -o server_socket.lo server_socket.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT server_socket.lo -MD -MP -MF .deps/server_socket.Tpo -c server_socket.c  -fPIC -DPIC -o .libs/server_socket.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT server_socket.lo -MD -MP -MF .deps/server_socket.Tpo -c server_socket.c -o server_socket.o >/dev/null 2>&1
+mv -f .deps/server_socket.Tpo .deps/server_socket.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT slist.lo -MD -MP -MF .deps/slist.Tpo -c -o slist.lo slist.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT slist.lo -MD -MP -MF .deps/slist.Tpo -c slist.c  -fPIC -DPIC -o .libs/slist.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT slist.lo -MD -MP -MF .deps/slist.Tpo -c slist.c -o slist.o >/dev/null 2>&1
+mv -f .deps/slist.Tpo .deps/slist.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT socket.lo -MD -MP -MF .deps/socket.Tpo -c -o socket.lo socket.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT socket.lo -MD -MP -MF .deps/socket.Tpo -c socket.c  -fPIC -DPIC -o .libs/socket.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT socket.lo -MD -MP -MF .deps/socket.Tpo -c socket.c -o socket.o >/dev/null 2>&1
+mv -f .deps/socket.Tpo .deps/socket.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT str.lo -MD -MP -MF .deps/str.Tpo -c -o str.lo str.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT str.lo -MD -MP -MF .deps/str.Tpo -c str.c  -fPIC -DPIC -o .libs/str.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT str.lo -MD -MP -MF .deps/str.Tpo -c str.c -o str.o >/dev/null 2>&1
+mv -f .deps/str.Tpo .deps/str.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT timer.lo -MD -MP -MF .deps/timer.Tpo -c -o timer.lo timer.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT timer.lo -MD -MP -MF .deps/timer.Tpo -c timer.c  -fPIC -DPIC -o .libs/timer.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT timer.lo -MD -MP -MF .deps/timer.Tpo -c timer.c -o timer.o >/dev/null 2>&1
+mv -f .deps/timer.Tpo .deps/timer.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT xml_out.lo -MD -MP -MF .deps/xml_out.Tpo -c -o xml_out.lo xml_out.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT xml_out.lo -MD -MP -MF .deps/xml_out.Tpo -c xml_out.c  -fPIC -DPIC -o .libs/xml_out.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT xml_out.lo -MD -MP -MF .deps/xml_out.Tpo -c xml_out.c -o xml_out.o >/dev/null 2>&1
+mv -f .deps/xml_out.Tpo .deps/xml_out.Plo
+/bin/sh ../libtool --tag=CC   --mode=link gcc -I ../../extras/local/include  -g -O2   -o libutil.la -rpath /usr/local/lib client_socket.lo debug.lo directory.lo log.lo multi_client_socket.lo mutex.lo packet.lo plugin.lo prefix.lo rwlock.lo server_socket.lo slist.lo socket.lo str.lo timer.lo xml_out.lo  -lreadline -lpthread -lncurses -ldl 
+libtool: link: gcc -shared  .libs/client_socket.o .libs/debug.o .libs/directory.o .libs/log.o .libs/multi_client_socket.o .libs/mutex.o .libs/packet.o .libs/plugin.o .libs/prefix.o .libs/rwlock.o .libs/server_socket.o .libs/slist.o .libs/socket.o .libs/str.o .libs/timer.o .libs/xml_out.o   -lreadline -lpthread -lncurses -ldl    -Wl,-soname -Wl,libutil.so.0 -o .libs/libutil.so.0.0.0
+libtool: link: (cd ".libs" && rm -f "libutil.so.0" && ln -s "libutil.so.0.0.0" "libutil.so.0")
+libtool: link: (cd ".libs" && rm -f "libutil.so" && ln -s "libutil.so.0.0.0" "libutil.so")
+libtool: link: ar cru .libs/libutil.a  client_socket.o debug.o directory.o log.o multi_client_socket.o mutex.o packet.o plugin.o prefix.o rwlock.o server_socket.o slist.o socket.o str.o timer.o xml_out.o
+libtool: link: ranlib .libs/libutil.a
+libtool: link: ( cd ".libs" && rm -f "libutil.la" && ln -s "../libutil.la" "libutil.la" )
+make[1]: Leaving directory `/srx/AS50/srx/src/util'
+make -C client
+make[1]: Entering directory `/srx/AS50/srx/src/client'
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT client_connection_handler.lo -MD -MP -MF .deps/client_connection_handler.Tpo -c -o client_connection_handler.lo client_connection_handler.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT client_connection_handler.lo -MD -MP -MF .deps/client_connection_handler.Tpo -c client_connection_handler.c  -fPIC -DPIC -o .libs/client_connection_handler.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT client_connection_handler.lo -MD -MP -MF .deps/client_connection_handler.Tpo -c client_connection_handler.c -o client_connection_handler.o >/dev/null 2>&1
+mv -f .deps/client_connection_handler.Tpo .deps/client_connection_handler.Plo
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT srx_api.lo -MD -MP -MF .deps/srx_api.Tpo -c -o srx_api.lo srx_api.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT srx_api.lo -MD -MP -MF .deps/srx_api.Tpo -c srx_api.c  -fPIC -DPIC -o .libs/srx_api.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT srx_api.lo -MD -MP -MF .deps/srx_api.Tpo -c srx_api.c -o srx_api.o >/dev/null 2>&1
+mv -f .deps/srx_api.Tpo .deps/srx_api.Plo
+/bin/sh ../libtool --tag=CC   --mode=link gcc -I ../../extras/local/include  -g -O2   -o libsrx.la -rpath /usr/local/lib client_connection_handler.lo srx_api.lo  -lreadline -lpthread -lncurses -ldl 
+libtool: link: gcc -shared  .libs/client_connection_handler.o .libs/srx_api.o   -lreadline -lpthread -lncurses -ldl    -Wl,-soname -Wl,libsrx.so.0 -o .libs/libsrx.so.0.0.0
+libtool: link: (cd ".libs" && rm -f "libsrx.so.0" && ln -s "libsrx.so.0.0.0" "libsrx.so.0")
+libtool: link: (cd ".libs" && rm -f "libsrx.so" && ln -s "libsrx.so.0.0.0" "libsrx.so")
+libtool: link: ar cru .libs/libsrx.a  client_connection_handler.o srx_api.o
+libtool: link: ranlib .libs/libsrx.a
+libtool: link: ( cd ".libs" && rm -f "libsrx.la" && ln -s "../libsrx.la" "libsrx.la" )
+make[1]: Leaving directory `/srx/AS50/srx/src/client'
+make -C shared
+make[1]: Entering directory `/srx/AS50/srx/src/shared'
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT srx_packets.lo -MD -MP -MF .deps/srx_packets.Tpo -c -o srx_packets.lo srx_packets.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT srx_packets.lo -MD -MP -MF .deps/srx_packets.Tpo -c srx_packets.c  -fPIC -DPIC -o .libs/srx_packets.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I ../../extras/local/include -g -O2 -MT srx_packets.lo -MD -MP -MF .deps/srx_packets.Tpo -c srx_packets.c -o srx_packets.o >/dev/null 2>&1
+mv -f .deps/srx_packets.Tpo .deps/srx_packets.Plo
+/bin/sh ../libtool --tag=CC   --mode=link gcc -I ../../extras/local/include  -g -O2   -o libsrx_packets.la  srx_packets.lo  -lreadline -lpthread -lncurses -ldl 
+libtool: link: ar cru .libs/libsrx_packets.a .libs/srx_packets.o 
+libtool: link: ranlib .libs/libsrx_packets.a
+libtool: link: ( cd ".libs" && rm -f "libsrx_packets.la" && ln -s "../libsrx_packets.la" "libsrx_packets.la" )
+make[1]: Leaving directory `/srx/AS50/srx/src/shared'
+make -C server
+make[1]: Entering directory `/srx/AS50/srx/src/server'
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT bgpsec_handler.o -MD -MP -MF .deps/bgpsec_handler.Tpo -c -o bgpsec_handler.o bgpsec_handler.c
+mv -f .deps/bgpsec_handler.Tpo .deps/bgpsec_handler.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT command_handler.o -MD -MP -MF .deps/command_handler.Tpo -c -o command_handler.o command_handler.c
+mv -f .deps/command_handler.Tpo .deps/command_handler.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT command_queue.o -MD -MP -MF .deps/command_queue.Tpo -c -o command_queue.o command_queue.c
+mv -f .deps/command_queue.Tpo .deps/command_queue.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT configuration.o -MD -MP -MF .deps/configuration.Tpo -c -o configuration.o configuration.c
+mv -f .deps/configuration.Tpo .deps/configuration.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT key_cache.o -MD -MP -MF .deps/key_cache.Tpo -c -o key_cache.o key_cache.c
+mv -f .deps/key_cache.Tpo .deps/key_cache.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT main.o -MD -MP -MF .deps/main.Tpo -c -o main.o main.c
+mv -f .deps/main.Tpo .deps/main.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT prefix_cache.o -MD -MP -MF .deps/prefix_cache.Tpo -c -o prefix_cache.o prefix_cache.c
+mv -f .deps/prefix_cache.Tpo .deps/prefix_cache.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT rpki_handler.o -MD -MP -MF .deps/rpki_handler.Tpo -c -o rpki_handler.o rpki_handler.c
+mv -f .deps/rpki_handler.Tpo .deps/rpki_handler.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT rpki_router_client.o -MD -MP -MF .deps/rpki_router_client.Tpo -c -o rpki_router_client.o rpki_router_client.c
+mv -f .deps/rpki_router_client.Tpo .deps/rpki_router_client.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT server_connection_handler.o -MD -MP -MF .deps/server_connection_handler.Tpo -c -o server_connection_handler.o server_connection_handler.c
+mv -f .deps/server_connection_handler.Tpo .deps/server_connection_handler.Po
+gcc -DHAVE_CONFIG_H -I. -I..    -I ../../extras/local/include  -g -O2 -MT update_cache.o -MD -MP -MF .deps/update_cache.Tpo -c -o update_cache.o update_cache.c
+mv -f .deps/update_cache.Tpo .deps/update_cache.Po
+/bin/sh ../libtool --tag=CC   --mode=link gcc -I ../../extras/local/include  -g -O2 -L../../extras/local/lib  -lpthread -lconfig -lpatricia  -o srx_server bgpsec_handler.o command_handler.o command_queue.o configuration.o key_cache.o main.o prefix_cache.o rpki_handler.o rpki_router_client.o server_connection_handler.o update_cache.o ../shared/srx_packets.lo   -lpthread -lconfig -lpatricia
+libtool: link: gcc -I ../../extras/local/include -g -O2 -o srx_server bgpsec_handler.o command_handler.o command_queue.o configuration.o key_cache.o main.o prefix_cache.o rpki_handler.o rpki_router_client.o server_connection_handler.o update_cache.o ../shared/.libs/srx_packets.o  -L/srx/AS50/srx/extras/local/lib -lpthread -lconfig /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so  -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+bgpsec_handler.o: In function `createBGPSecHandler':
+/srx/AS50/srx/src/server/bgpsec_handler.c:12: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/bgpsec_handler.c:12: undefined reference to `writeLog'
+bgpsec_handler.o: In function `releaseBGPSecHandler':
+/srx/AS50/srx/src/server/bgpsec_handler.c:19: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/bgpsec_handler.c:19: undefined reference to `writeLog'
+bgpsec_handler.o: In function `loadPrivateKey':
+/srx/AS50/srx/src/server/bgpsec_handler.c:24: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/bgpsec_handler.c:24: undefined reference to `writeLog'
+bgpsec_handler.o: In function `validateSignature':
+/srx/AS50/srx/src/server/bgpsec_handler.c:30: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/bgpsec_handler.c:30: undefined reference to `writeLog'
+bgpsec_handler.o: In function `createSignature':
+/srx/AS50/srx/src/server/bgpsec_handler.c:36: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/bgpsec_handler.c:36: undefined reference to `writeLog'
+command_handler.o: In function `handleCommands':
+/srx/AS50/srx/src/server/command_handler.c:637: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:637: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:666: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:666: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:703: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:704: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/command_handler.c:705: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:705: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:707: undefined reference to `sendError'
+/srx/AS50/srx/src/server/command_handler.c:709: undefined reference to `sendGoodbye'
+/srx/AS50/srx/src/server/command_handler.c:678: undefined reference to `closeClientConnection'
+/srx/AS50/srx/src/server/command_handler.c:723: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:723: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:724: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:725: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/command_handler.c:745: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:746: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/command_handler.c:641: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:641: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:643: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:643: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:716: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:716: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:652: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:652: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:653: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:653: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:752: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:752: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:754: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:754: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:732: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:732: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:733: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:733: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:736: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:737: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/command_handler.c:745: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:746: undefined reference to `signalCond'
+command_handler.o: In function `processPeerChange':
+/srx/AS50/srx/src/server/command_handler.c:616: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:616: undefined reference to `writeLog'
+command_handler.o: In function `processDeleteUpdate':
+/srx/AS50/srx/src/server/command_handler.c:603: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:603: undefined reference to `writeLog'
+command_handler.o: In function `processUpdateSigning':
+/srx/AS50/srx/src/server/command_handler.c:590: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:590: undefined reference to `writeLog'
+command_handler.o: In function `getUpdateID':
+/srx/AS50/srx/src/server/command_handler.c:323: undefined reference to `generateIdentifier'
+/srx/AS50/srx/src/server/command_handler.c:324: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:324: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:337: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:337: undefined reference to `writeLog'
+command_handler.o: In function `processUpdateValidation':
+/srx/AS50/srx/src/server/command_handler.c:540: undefined reference to `cpyIPv6Address'
+/srx/AS50/srx/src/server/command_handler.c:559: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:559: undefined reference to `writeLog'
+command_handler.o: In function `handleCommands':
+/srx/AS50/srx/src/server/command_handler.c:690: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_handler.c:691: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/command_handler.c:692: undefined reference to `closeClientConnection'
+command_handler.o: In function `processHandshake':
+/srx/AS50/srx/src/server/command_handler.c:178: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:178: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:194: undefined reference to `sendGoodbye'
+/srx/AS50/srx/src/server/command_handler.c:213: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:213: undefined reference to `writeLog'
+command_handler.o: In function `handleCommands':
+/srx/AS50/srx/src/server/command_handler.c:675: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:675: undefined reference to `writeLog'
+command_handler.o: In function `processHandshake':
+/srx/AS50/srx/src/server/command_handler.c:189: undefined reference to `setServerClientID'
+/srx/AS50/srx/src/server/command_handler.c:199: undefined reference to `sendHelloResponse'
+/srx/AS50/srx/src/server/command_handler.c:213: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:213: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:192: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:192: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:193: undefined reference to `sendError'
+command_handler.o: In function `processUpdateValidation':
+/srx/AS50/srx/src/server/command_handler.c:303: undefined reference to `generateIdentifier'
+/srx/AS50/srx/src/server/command_handler.c:304: undefined reference to `logTimeStamp'
+command_handler.o: In function `handleCommands':
+/srx/AS50/srx/src/server/command_handler.c:659: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:659: undefined reference to `writeLog'
+command_handler.o: In function `verifyViaBGPSEC':
+/srx/AS50/srx/src/server/command_handler.c:254: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:254: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:258: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:258: undefined reference to `writeLog'
+command_handler.o: In function `processUpdateValidation':
+/srx/AS50/srx/src/server/command_handler.c:471: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:471: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:443: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:443: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:447: undefined reference to `sendVerifyNotification'
+/srx/AS50/srx/src/server/command_handler.c:451: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:451: undefined reference to `writeLog'
+command_handler.o: In function `getUpdateID':
+/srx/AS50/srx/src/server/command_handler.c:330: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:330: undefined reference to `writeLog'
+command_handler.o: In function `processUpdateValidation':
+/srx/AS50/srx/src/server/command_handler.c:532: undefined reference to `cpyIPv4Address'
+/srx/AS50/srx/src/server/command_handler.c:512: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:512: undefined reference to `writeLog'
+command_handler.o: In function `processHandshake':
+/srx/AS50/srx/src/server/command_handler.c:203: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:203: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:206: undefined reference to `sendSynchRequest'
+/srx/AS50/srx/src/server/command_handler.c:208: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:208: undefined reference to `writeLog'
+command_handler.o: In function `releaseCommandHandler':
+/srx/AS50/srx/src/server/command_handler.c:69: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:69: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:71: undefined reference to `sizeOfSList'
+/srx/AS50/srx/src/server/command_handler.c:79: undefined reference to `getDataOfSListNode'
+/srx/AS50/srx/src/server/command_handler.c:82: undefined reference to `sendGoodbye'
+/srx/AS50/srx/src/server/command_handler.c:84: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:84: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:91: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:91: undefined reference to `writeLog'
+command_handler.o: In function `startProcessingCommands':
+/srx/AS50/srx/src/server/command_handler.c:100: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:100: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:104: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:104: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_handler.c:120: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_handler.c:120: undefined reference to `writeLog'
+command_queue.o: In function `initializeCommandQueue':
+/srx/AS50/srx/src/server/command_queue.c:24: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/command_queue.c:28: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/command_queue.c:33: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/command_queue.c:40: undefined reference to `initCond'
+/srx/AS50/srx/src/server/command_queue.c:49: undefined reference to `initSList'
+/srx/AS50/srx/src/server/command_queue.c:53: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:35: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/command_queue.c:36: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/command_queue.c:30: undefined reference to `releaseMutex'
+command_queue.o: In function `queueCommand':
+/srx/AS50/srx/src/server/command_queue.c:91: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:91: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:97: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:98: undefined reference to `appendToSList'
+/srx/AS50/srx/src/server/command_queue.c:109: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_queue.c:136: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:136: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:137: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/command_queue.c:155: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:155: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:156: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_queue.c:157: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:160: undefined reference to `waitCond'
+/srx/AS50/srx/src/server/command_queue.c:163: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:163: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:164: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/command_queue.c:106: undefined reference to `getLastNodeOfSList'
+/srx/AS50/srx/src/server/command_queue.c:128: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:128: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:129: undefined reference to `deleteFromSList'
+command_queue.o: In function `fetchNextCommand':
+/srx/AS50/srx/src/server/command_queue.c:184: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:184: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:186: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:187: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:187: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:189: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:194: undefined reference to `getNextNodeOfSListNode'
+/srx/AS50/srx/src/server/command_queue.c:199: undefined reference to `unlockMutex'
+command_queue.o: In function `deleteCommand':
+/srx/AS50/srx/src/server/command_queue.c:214: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:214: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:215: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:221: undefined reference to `deleteFromSList'
+command_queue.o: In function `removeAllCommands':
+/srx/AS50/srx/src/server/command_queue.c:232: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:232: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/command_queue.c:237: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/command_queue.c:242: undefined reference to `getDataOfSListNode'
+/srx/AS50/srx/src/server/command_queue.c:249: undefined reference to `emptySList'
+/srx/AS50/srx/src/server/command_queue.c:253: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/command_queue.c:253: undefined reference to `writeLog'
+command_queue.o: In function `releaseCommandQueue':
+/srx/AS50/srx/src/server/command_queue.c:65: undefined reference to `releaseSList'
+/srx/AS50/srx/src/server/command_queue.c:66: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/command_queue.c:67: undefined reference to `releaseMutex'
+command_queue.o: In function `deleteCommand':
+/srx/AS50/srx/src/server/command_queue.c:222: undefined reference to `unlockMutex'
+command_queue.o: In function `removeAllCommands':
+/srx/AS50/srx/src/server/command_queue.c:261: undefined reference to `unlockMutex'
+command_queue.o: In function `releaseCommandQueue':
+/srx/AS50/srx/src/server/command_queue.c:68: undefined reference to `releaseMutex'
+configuration.o: In function `_copyString':
+/srx/AS50/srx/src/server/configuration.c:113: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:113: undefined reference to `writeLog'
+configuration.o: In function `releaseConfiguration':
+/srx/AS50/srx/src/server/configuration.c:85: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:85: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:101: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:101: undefined reference to `writeLog'
+configuration.o: In function `parseProgramArgs':
+/srx/AS50/srx/src/server/configuration.c:241: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:241: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:235: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:235: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:172: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:172: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:159: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:159: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:209: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:209: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:153: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:153: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:166: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:166: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:203: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:203: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:139: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:139: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:229: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:229: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:179: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:179: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:191: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:191: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:217: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:217: undefined reference to `writeLog'
+configuration.o: In function `readConfigFile':
+/srx/AS50/srx/src/server/configuration.c:263: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:263: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:280: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:280: undefined reference to `writeLog'
+configuration.o: In function `isCompleteConfiguration':
+/srx/AS50/srx/src/server/configuration.c:358: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:358: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:373: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:373: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:361: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:361: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:365: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:365: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:369: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:369: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:363: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:363: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:367: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:367: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/configuration.c:371: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/configuration.c:371: undefined reference to `writeLog'
+key_cache.o: In function `createKeyCache':
+/srx/AS50/srx/src/server/key_cache.c:12: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/key_cache.c:12: undefined reference to `writeLog'
+main.o: In function `signalReceived':
+/srx/AS50/srx/src/server/main.c:310: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:310: undefined reference to `writeLog'
+main.o: In function `doCleanup':
+/srx/AS50/srx/src/server/main.c:397: undefined reference to `releaseConsole'
+main.o: In function `shutDown':
+/srx/AS50/srx/src/server/main.c:416: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:416: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/main.c:436: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:436: undefined reference to `writeLog'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:453: undefined reference to `setLogMethodToFile'
+/srx/AS50/srx/src/server/main.c:454: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:454: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/main.c:456: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:456: undefined reference to `writeLog'
+main.o: In function `setupConfiguration':
+/srx/AS50/srx/src/server/main.c:147: undefined reference to `fileIsReadable'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:462: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:462: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/main.c:514: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:514: undefined reference to `writeLog'
+main.o: In function `setupConfiguration':
+/srx/AS50/srx/src/server/main.c:179: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:179: undefined reference to `writeLog'
+main.o: In function `setupCaches':
+/srx/AS50/srx/src/server/main.c:195: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:195: undefined reference to `writeLog'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:467: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:467: undefined reference to `writeLog'
+main.o: In function `setupConfiguration':
+/srx/AS50/srx/src/server/main.c:169: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:169: undefined reference to `writeLog'
+main.o: In function `setupCaches':
+/srx/AS50/srx/src/server/main.c:199: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:199: undefined reference to `writeLog'
+main.o: In function `setupHandlers':
+/srx/AS50/srx/src/server/main.c:216: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:216: undefined reference to `writeLog'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:474: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:474: undefined reference to `writeLog'
+main.o: In function `setupHandlers':
+/srx/AS50/srx/src/server/main.c:224: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:224: undefined reference to `writeLog'
+main.o: In function `setupConfiguration':
+/srx/AS50/srx/src/server/main.c:176: undefined reference to `setLogLevel'
+main.o: In function `setupHandlers':
+/srx/AS50/srx/src/server/main.c:232: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:232: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/main.c:252: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:252: undefined reference to `writeLog'
+main.o: In function `setupQueues':
+/srx/AS50/srx/src/server/main.c:274: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:274: undefined reference to `writeLog'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:482: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:482: undefined reference to `writeLog'
+main.o: In function `setupQueues':
+/srx/AS50/srx/src/server/main.c:279: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:279: undefined reference to `writeLog'
+main.o: In function `main':
+/srx/AS50/srx/src/server/main.c:489: undefined reference to `createConsole'
+/srx/AS50/srx/src/server/main.c:492: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:492: undefined reference to `writeLog'
+main.o: In function `setupHandlers':
+/srx/AS50/srx/src/server/main.c:240: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:240: undefined reference to `writeLog'
+main.o: In function `run':
+/srx/AS50/srx/src/server/main.c:337: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:337: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/main.c:340: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/main.c:340: undefined reference to `writeLog'
+main.o: In function `signalReceived':
+/srx/AS50/srx/src/server/main.c:319: undefined reference to `releaseConsole'
+prefix_cache.o: In function `ipOfPrefix_tToStr':
+/srx/AS50/srx/src/server/prefix_cache.c:1640: undefined reference to `ipV6AddressToStr'
+/srx/AS50/srx/src/server/prefix_cache.c:1640: undefined reference to `ipV4AddressToStr'
+prefix_cache.o: In function `notifyUpdateCacheForROAChange':
+/srx/AS50/srx/src/server/prefix_cache.c:1694: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1694: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1698: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1698: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1704: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1704: undefined reference to `writeLog'
+prefix_cache.o: In function `getASFromPrefix':
+/srx/AS50/srx/src/server/prefix_cache.c:352: undefined reference to `getFromSList'
+/srx/AS50/srx/src/server/prefix_cache.c:367: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:371: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:375: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:375: undefined reference to `writeLog'
+prefix_cache.o: In function `getChildren':
+/srx/AS50/srx/src/server/prefix_cache.c:428: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:444: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:446: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:446: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:448: undefined reference to `emptySList'
+/srx/AS50/srx/src/server/prefix_cache.c:430: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:430: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:432: undefined reference to `emptySList'
+prefix_cache.o: In function `outputPrefix':
+/srx/AS50/srx/src/server/prefix_cache.c:1724: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1734: undefined reference to `addStrAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1735: undefined reference to `addIntAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1736: undefined reference to `addIntAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1737: undefined reference to `addIntAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1738: undefined reference to `addIntAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1739: undefined reference to `addStrAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1746: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1747: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1748: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1752: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1753: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1754: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1755: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1756: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1757: undefined reference to `addU32Attrib'
+prefix_cache.o:/srx/AS50/srx/src/server/prefix_cache.c:1758: more undefined references to `addU32Attrib' follow
+prefix_cache.o: In function `outputPrefix':
+/srx/AS50/srx/src/server/prefix_cache.c:1759: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1761: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1763: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1764: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1768: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1769: undefined reference to `addH32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1770: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1771: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1772: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1774: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1776: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1777: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1778: undefined reference to `addStrAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1784: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1785: undefined reference to `addH32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1786: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1787: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1788: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1790: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1797: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1805: undefined reference to `releaseSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1807: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1727: undefined reference to `addBoolAttrib'
+prefix_cache.o: In function `_delROAwl_validateUpdates':
+/srx/AS50/srx/src/server/prefix_cache.c:1448: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1458: undefined reference to `releaseSList'
+prefix_cache.o: In function `_addROAwl_verifyUpdates':
+/srx/AS50/srx/src/server/prefix_cache.c:1088: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1097: undefined reference to `releaseSList'
+prefix_cache.o: In function `_performUpdateValidation_PrefixNotCovered':
+/srx/AS50/srx/src/server/prefix_cache.c:663: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:678: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:685: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:685: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:670: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:670: undefined reference to `writeLog'
+prefix_cache.o: In function `initializePrefixCache':
+/srx/AS50/srx/src/server/prefix_cache.c:214: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/prefix_cache.c:221: undefined reference to `createRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:216: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:216: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:224: undefined reference to `createRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:244: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:209: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:209: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:227: undefined reference to `createRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:243: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:230: undefined reference to `createRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:252: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:239: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:242: undefined reference to `releaseRWLock'
+prefix_cache.o: In function `releasePrefix':
+/srx/AS50/srx/src/server/prefix_cache.c:272: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:272: undefined reference to `writeLog'
+prefix_cache.o: In function `releasePrefixCache':
+/srx/AS50/srx/src/server/prefix_cache.c:299: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:299: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:306: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:307: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:308: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:309: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/prefix_cache.c:315: undefined reference to `getDataOfSListNode'
+/srx/AS50/srx/src/server/prefix_cache.c:318: undefined reference to `releaseSList'
+prefix_cache.o: In function `removeUpdate':
+/srx/AS50/srx/src/server/prefix_cache.c:854: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:854: undefined reference to `writeLog'
+prefix_cache.o: In function `cleanAllROAwl':
+/srx/AS50/srx/src/server/prefix_cache.c:1566: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1566: undefined reference to `writeLog'
+prefix_cache.o: In function `flagAllROAwl':
+/srx/AS50/srx/src/server/prefix_cache.c:1586: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1586: undefined reference to `writeLog'
+prefix_cache.o: In function `outputPrefixCacheAsXML':
+/srx/AS50/srx/src/server/prefix_cache.c:1817: undefined reference to `initXMLOut'
+/srx/AS50/srx/src/server/prefix_cache.c:1818: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1827: undefined reference to `sizeOfSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1862: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1863: undefined reference to `releaseXMLOut'
+/srx/AS50/srx/src/server/prefix_cache.c:1829: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1854: undefined reference to `addStrAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1857: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1832: undefined reference to `getDataOfSListNode'
+/srx/AS50/srx/src/server/prefix_cache.c:1833: undefined reference to `openTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1835: undefined reference to `addH32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1836: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1837: undefined reference to `addAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1840: undefined reference to `addU32Attrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1843: undefined reference to `addStrAttrib'
+/srx/AS50/srx/src/server/prefix_cache.c:1857: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1859: undefined reference to `closeTag'
+/srx/AS50/srx/src/server/prefix_cache.c:1850: undefined reference to `addStrAttrib'
+prefix_cache.o: In function `delROAwl':
+/srx/AS50/srx/src/server/prefix_cache.c:1367: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1367: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1368: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1375: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1375: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1376: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1254: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1254: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1270: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1270: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1310: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1310: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:1339: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:1339: undefined reference to `writeLog'
+prefix_cache.o: In function `addROAwl':
+/srx/AS50/srx/src/server/prefix_cache.c:930: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:931: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:932: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:976: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:977: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:1008: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:912: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:912: undefined reference to `writeLog'
+prefix_cache.o: In function `requestUpdateValidation':
+/srx/AS50/srx/src/server/prefix_cache.c:504: undefined reference to `appendDataToSList'
+prefix_cache.o: In function `_performUpdateValidationNew':
+/srx/AS50/srx/src/server/prefix_cache.c:618: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:618: undefined reference to `writeLog'
+prefix_cache.o: In function `requestUpdateValidation':
+/srx/AS50/srx/src/server/prefix_cache.c:568: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/prefix_cache.c:506: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:506: undefined reference to `writeLog'
+prefix_cache.o: In function `_performUpdateValidationNew':
+/srx/AS50/srx/src/server/prefix_cache.c:627: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:628: undefined reference to `initSList'
+/srx/AS50/srx/src/server/prefix_cache.c:629: undefined reference to `initSList'
+prefix_cache.o: In function `requestUpdateValidation':
+/srx/AS50/srx/src/server/prefix_cache.c:570: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:570: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:587: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/prefix_cache.c:522: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:522: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:523: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/prefix_cache.c:583: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/prefix_cache.c:583: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/prefix_cache.c:586: undefined reference to `deleteFromSList'
+prefix_cache.o: In function `releasePrefixCache':
+/srx/AS50/srx/src/server/prefix_cache.c:319: undefined reference to `releaseMutex'
+rpki_handler.o: In function `handleConnection':
+/srx/AS50/srx/src/server/rpki_handler.c:174: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:174: undefined reference to `writeLog'
+rpki_handler.o: In function `handleError':
+/srx/AS50/srx/src/server/rpki_handler.c:161: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:161: undefined reference to `writeLog'
+rpki_handler.o: In function `handleReset':
+/srx/AS50/srx/src/server/rpki_handler.c:145: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:145: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_handler.c:147: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:147: undefined reference to `writeLog'
+rpki_handler.o: In function `handlePrefix':
+/srx/AS50/srx/src/server/rpki_handler.c:119: undefined reference to `ipPrefixToStr'
+/srx/AS50/srx/src/server/rpki_handler.c:119: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:119: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_handler.c:119: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_handler.c:119: undefined reference to `writeLog'
+rpki_router_client.o: In function `checkNonce':
+/srx/AS50/srx/src/server/rpki_router_client.c:172: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:172: undefined reference to `writeLog'
+rpki_router_client.o: In function `sigusr_general_pipe_handler':
+/srx/AS50/srx/src/server/rpki_router_client.c:637: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:637: undefined reference to `writeLog'
+rpki_router_client.o: In function `sigusr_rpki_pipe_handler':
+/srx/AS50/srx/src/server/rpki_router_client.c:354: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:354: undefined reference to `writeLog'
+rpki_router_client.o: In function `handleErrorReport':
+/srx/AS50/srx/src/server/rpki_router_client.c:136: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:136: undefined reference to `writeLog'
+rpki_router_client.o: In function `createRPKIRouterClient':
+/srx/AS50/srx/src/server/rpki_router_client.c:497: undefined reference to `createClientSocket'
+/srx/AS50/srx/src/server/rpki_router_client.c:507: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:531: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:531: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:532: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:533: undefined reference to `closeClientSocket'
+/srx/AS50/srx/src/server/rpki_router_client.c:501: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:501: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:492: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:492: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:509: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:509: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:510: undefined reference to `closeClientSocket'
+rpki_router_client.o: In function `releaseRPKIRouterClient':
+/srx/AS50/srx/src/server/rpki_router_client.c:544: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:545: undefined reference to `closeClientSocket'
+rpki_router_client.o: In function `sendResetQuery':
+/srx/AS50/srx/src/server/rpki_router_client.c:566: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:566: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:573: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:576: undefined reference to `getClientFDPtr'
+/srx/AS50/srx/src/server/rpki_router_client.c:576: undefined reference to `sendNum'
+/srx/AS50/srx/src/server/rpki_router_client.c:583: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:585: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:585: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:583: undefined reference to `unlockMutex'
+rpki_router_client.o: In function `sendSerialQuery':
+/srx/AS50/srx/src/server/rpki_router_client.c:610: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/rpki_router_client.c:611: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:611: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:613: undefined reference to `getClientFDPtr'
+/srx/AS50/srx/src/server/rpki_router_client.c:613: undefined reference to `sendNum'
+/srx/AS50/srx/src/server/rpki_router_client.c:618: undefined reference to `unlockMutex'
+rpki_router_client.o: In function `receivePDUs':
+/srx/AS50/srx/src/server/rpki_router_client.c:221: undefined reference to `getClientFDPtr'
+/srx/AS50/srx/src/server/rpki_router_client.c:221: undefined reference to `recvNum'
+/srx/AS50/srx/src/server/rpki_router_client.c:237: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:237: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:274: undefined reference to `getClientFDPtr'
+/srx/AS50/srx/src/server/rpki_router_client.c:274: undefined reference to `recvNum'
+/srx/AS50/srx/src/server/rpki_router_client.c:282: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:282: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:344: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:344: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:337: undefined reference to `getClientFDPtr'
+/srx/AS50/srx/src/server/rpki_router_client.c:224: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:224: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:234: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:234: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:262: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:262: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:266: undefined reference to `skipBytes'
+/srx/AS50/srx/src/server/rpki_router_client.c:211: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:211: undefined reference to `writeLog'
+rpki_router_client.o: In function `manageConnection':
+/srx/AS50/srx/src/server/rpki_router_client.c:383: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:383: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:417: undefined reference to `reconnectToServer'
+/srx/AS50/srx/src/server/rpki_router_client.c:397: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:397: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:454: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:454: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:420: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:420: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:435: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:435: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:444: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:444: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:450: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:450: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/rpki_router_client.c:441: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/rpki_router_client.c:441: undefined reference to `writeLog'
+server_connection_handler.o: In function `handleStatusChange':
+/srx/AS50/srx/src/server/server_connection_handler.c:347: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:347: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:356: undefined reference to `appendDataToSList'
+/srx/AS50/srx/src/server/server_connection_handler.c:398: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:398: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:364: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:364: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:366: undefined reference to `deleteFromSList'
+/srx/AS50/srx/src/server/server_connection_handler.c:367: undefined reference to `signalCond'
+/srx/AS50/srx/src/server/server_connection_handler.c:358: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:358: undefined reference to `writeLog'
+server_connection_handler.o: In function `handlePacket':
+/srx/AS50/srx/src/server/server_connection_handler.c:259: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:259: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:297: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:297: undefined reference to `writeLog'
+server_connection_handler.o: In function `processSignatureRequest':
+/srx/AS50/srx/src/server/server_connection_handler.c:188: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:188: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:212: undefined reference to `sendSignatureNotification'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `writeLog'
+server_connection_handler.o: In function `handlePacket':
+/srx/AS50/srx/src/server/server_connection_handler.c:302: undefined reference to `sendError'
+/srx/AS50/srx/src/server/server_connection_handler.c:303: undefined reference to `sendGoodbye'
+/srx/AS50/srx/src/server/server_connection_handler.c:280: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:280: undefined reference to `writeLog'
+server_connection_handler.o: In function `processValidationRequest':
+/srx/AS50/srx/src/server/server_connection_handler.c:85: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:85: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:125: undefined reference to `generateIdentifier'
+/srx/AS50/srx/src/server/server_connection_handler.c:148: undefined reference to `sendVerifyNotification'
+/srx/AS50/srx/src/server/server_connection_handler.c:165: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:165: undefined reference to `writeLog'
+server_connection_handler.o: In function `handlePacket':
+/srx/AS50/srx/src/server/server_connection_handler.c:269: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:269: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:327: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:327: undefined reference to `writeLog'
+server_connection_handler.o: In function `processValidationRequest':
+/srx/AS50/srx/src/server/server_connection_handler.c:160: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:160: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:165: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:165: undefined reference to `writeLog'
+server_connection_handler.o: In function `handlePacket':
+/srx/AS50/srx/src/server/server_connection_handler.c:289: undefined reference to `sendError'
+/srx/AS50/srx/src/server/server_connection_handler.c:290: undefined reference to `sendGoodbye'
+/srx/AS50/srx/src/server/server_connection_handler.c:314: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:314: undefined reference to `writeLog'
+server_connection_handler.o: In function `processSignatureRequest':
+/srx/AS50/srx/src/server/server_connection_handler.c:201: undefined reference to `sendError'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:226: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:226: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:206: undefined reference to `sendSynchRequest'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:232: undefined reference to `writeLog'
+server_connection_handler.o: In function `createServerConnectionHandler':
+/srx/AS50/srx/src/server/server_connection_handler.c:43: undefined reference to `initSList'
+/srx/AS50/srx/src/server/server_connection_handler.c:44: undefined reference to `createServerSocket'
+/srx/AS50/srx/src/server/server_connection_handler.c:51: undefined reference to `releaseSList'
+/srx/AS50/srx/src/server/server_connection_handler.c:39: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:39: undefined reference to `writeLog'
+server_connection_handler.o: In function `startProcessingRequests':
+/srx/AS50/srx/src/server/server_connection_handler.c:406: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:406: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:408: undefined reference to `runServerLoop'
+/srx/AS50/srx/src/server/server_connection_handler.c:410: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:410: undefined reference to `writeLog'
+server_connection_handler.o: In function `stopProcessingRequests':
+/srx/AS50/srx/src/server/server_connection_handler.c:415: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:415: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:416: undefined reference to `stopServerLoop'
+/srx/AS50/srx/src/server/server_connection_handler.c:417: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:417: undefined reference to `writeLog'
+server_connection_handler.o: In function `broadcastPacket':
+/srx/AS50/srx/src/server/server_connection_handler.c:423: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:423: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:425: undefined reference to `sizeOfSList'
+/srx/AS50/srx/src/server/server_connection_handler.c:432: undefined reference to `getDataOfSListNode'
+/srx/AS50/srx/src/server/server_connection_handler.c:435: undefined reference to `sendPacketToClient'
+/srx/AS50/srx/src/server/server_connection_handler.c:446: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:446: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/server_connection_handler.c:438: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/server_connection_handler.c:438: undefined reference to `writeLog'
+server_connection_handler.o: In function `releaseServerConnectionHandler':
+/srx/AS50/srx/src/server/server_connection_handler.c:64: undefined reference to `releaseSList'
+update_cache.o: In function `tableFind':
+/srx/AS50/srx/src/server/update_cache.c:61: undefined reference to `acquireReadLock'
+/srx/AS50/srx/src/server/update_cache.c:64: undefined reference to `unlockReadLock'
+update_cache.o: In function `createUpdateCache':
+/srx/AS50/srx/src/server/update_cache.c:114: undefined reference to `initMutex'
+/srx/AS50/srx/src/server/update_cache.c:119: undefined reference to `createRWLock'
+/srx/AS50/srx/src/server/update_cache.c:131: undefined reference to `initSList'
+/srx/AS50/srx/src/server/update_cache.c:121: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:121: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:122: undefined reference to `releaseMutex'
+/srx/AS50/srx/src/server/update_cache.c:116: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:116: undefined reference to `writeLog'
+update_cache.o: In function `storeUpdate':
+/srx/AS50/srx/src/server/update_cache.c:260: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:260: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:273: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/update_cache.c:294: undefined reference to `cpyPrefix'
+update_cache.o: In function `tableAdd':
+/srx/AS50/srx/src/server/update_cache.c:78: undefined reference to `acquireWriteLock'
+/srx/AS50/srx/src/server/update_cache.c:81: undefined reference to `unlockWriteLock'
+update_cache.o: In function `storeUpdate':
+/srx/AS50/srx/src/server/update_cache.c:328: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/update_cache.c:266: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:266: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:277: undefined reference to `appendToSList'
+update_cache.o: In function `modifyUpdateResult':
+/srx/AS50/srx/src/server/update_cache.c:359: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:359: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:370: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/update_cache.c:414: undefined reference to `unlockMutex'
+/srx/AS50/srx/src/server/update_cache.c:365: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:365: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:408: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:408: undefined reference to `writeLog'
+update_cache.o: In function `_deleteUpdate':
+/srx/AS50/srx/src/server/update_cache.c:455: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:455: undefined reference to `writeLog'
+update_cache.o: In function `tableDel':
+/srx/AS50/srx/src/server/update_cache.c:94: undefined reference to `acquireWriteLock'
+/srx/AS50/srx/src/server/update_cache.c:96: undefined reference to `unlockWriteLock'
+update_cache.o: In function `getUpdateSignature':
+/srx/AS50/srx/src/server/update_cache.c:490: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:490: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:503: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:503: undefined reference to `writeLog'
+update_cache.o: In function `getUpdateData':
+/srx/AS50/srx/src/server/update_cache.c:538: undefined reference to `cpyPrefix'
+/srx/AS50/srx/src/server/update_cache.c:531: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:531: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:527: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:527: undefined reference to `writeLog'
+update_cache.o: In function `emptyUpdateCache':
+/srx/AS50/srx/src/server/update_cache.c:560: undefined reference to `acquireWriteLock'
+/srx/AS50/srx/src/server/update_cache.c:561: undefined reference to `lockMutex'
+/srx/AS50/srx/src/server/update_cache.c:563: undefined reference to `emptySList'
+/srx/AS50/srx/src/server/update_cache.c:564: undefined reference to `unlockMutex'
+update_cache.o: In function `releaseUpdateCache':
+/srx/AS50/srx/src/server/update_cache.c:138: undefined reference to `logTimeStamp'
+/srx/AS50/srx/src/server/update_cache.c:138: undefined reference to `writeLog'
+/srx/AS50/srx/src/server/update_cache.c:141: undefined reference to `releaseRWLock'
+/srx/AS50/srx/src/server/update_cache.c:142: undefined reference to `releaseMutex'
+update_cache.o: In function `emptyUpdateCache':
+/srx/AS50/srx/src/server/update_cache.c:569: undefined reference to `unlockWriteLock'
+update_cache.o: In function `releaseUpdateCache':
+/srx/AS50/srx/src/server/update_cache.c:147: undefined reference to `releaseSList'
+collect2: ld returned 1 exit status
+make[1]: *** [srx_server] Error 1
+make[1]: Leaving directory `/srx/AS50/srx/src/server'
+make: *** [server] Error 2
+ts1.antd [296]{.../srx/src}-> 

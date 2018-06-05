@@ -1,0 +1,24 @@
+ts1.antd [1119]{/srx}-> git merge test/srx_autotools2
+fatal: 'test/srx_autotools2' does not point to a commit
+ts1.antd [1120]{/srx}-> git merge tests/srx_autotools2
+warning: Cannot merge binary files: AS50/srx/extras/local/lib/libpatricia.a (HEAD vs. tests/srx_autotools2)
+
+warning: Cannot merge binary files: AS50/srx/extras/local/lib/libpatricia.so.0.0.0 (HEAD vs. tests/srx_autotools2)
+
+Auto-merging AS50/srx/extras/local/lib/libpatricia.a
+CONFLICT (content): Merge conflict in AS50/srx/extras/local/lib/libpatricia.a
+Auto-merging AS50/srx/extras/local/lib/libpatricia.so.0.0.0
+CONFLICT (content): Merge conflict in AS50/srx/extras/local/lib/libpatricia.so.0.0.0
+CONFLICT (delete/modify): AS50/srx/src/tests/client/user_client_connection_handler deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/client/user_client_connection_handler left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/client/user_srx_api deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/client/user_srx_api left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/extras/test_patricia deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/extras/test_patricia left in tree.
+Auto-merging AS50/srx/src/tests/rpki_router_example.c
+CONFLICT (delete/modify): AS50/srx/src/tests/server/test_command_queue deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/test_command_queue left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/server/test_configuration deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/test_configuration left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/server/test_prefix_cache deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/test_prefix_cache left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/server/test_rpki_handler deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/test_rpki_handler left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/server/test_update_cache deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/test_update_cache left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/server/user_prefix_cache deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/server/user_prefix_cache left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/util/user_server_socket deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/util/user_server_socket left in tree.
+CONFLICT (delete/modify): AS50/srx/src/tests/util/user_server_socket-multi deleted in HEAD and modified in tests/srx_autotools2. Version tests/srx_autotools2 of AS50/srx/src/tests/util/user_server_socket-multi left in tree.
+Automatic merge failed; fix conflicts and then commit the result.

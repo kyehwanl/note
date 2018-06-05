@@ -1,0 +1,645 @@
+(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   keep no    at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py:218
+        breakpoint already hit 34 times
+2   breakpoint   keep no    at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py:228
+        breakpoint already hit 15 times
+3   breakpoint   keep no    at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py:468
+        breakpoint already hit 2 times
+4   breakpoint   keep yes   at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/rib/store.py:190
+5   breakpoint   keep yes   at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/rib/store.py:168
+        breakpoint already hit 22 times
+
+
+#########################################################################
+After meeting first bp.2(loop.py:387-send_new()), update including nlri was not sent.
+After continuing after bp.2, fire update
+#########################################################################
+
+(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   keep yes   at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/api/command.py:196
+        breakpoint already hit 1 time
+2   breakpoint   keep yes   at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py:387
+        breakpoint already hit 1 time
+
+
+
+
+
+--------------------
+Origin bp
+--------------------
+
+(Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/origin.py:27
+Breakpoint 3 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/origin.py:27
+
+
+Then, here are the result.
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/origin.py(27)__init__()
+-> self.packed = self._attribute(packed if packed else chr(origin))
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(537)_main()
+-> new_routes.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(269)new_update()
+-> for message in update.messages(self.negotiated):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(128)messages()
+-> attr = self.attributes.pack(negotiated,True)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(196)pack()
+-> message += default[code](local_asn,peer_asn).pack(negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(173)<lambda
+-> Attribute.CODE.ORIGIN: lambda l,r: Origin(Origin.IGP),
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/origin.py(27)__init__()
+-> self.packed = self._attribute(packed if packed else chr(origin))
+
+
+
+
+-----------------
+0. updates 
+-----------------
+
+* it's a generator object
+* comming from 'protocol.py:266'
+
+        updates = self.neighbor.rib.outgoing.updates(self.neighbor.group_updates)  
+
+* calling 'updates' in store.py:188 
+
+
+
+---------------
+1. OPEN message
+---------------
+ * start with _connect() in peer.py
+ * new_open()
+ * capability.py::new() --> _protocol(neighbor)
+                        --> _asn4(neighbor)
+                        --> _addpath(neighbor)
+                        --> etc
+
+
+ * break point for generating OPEN message with Open object
+
+    (Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:226
+    Breakpoint 1 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:226
+
+
+
+---------------
+2. Capabilities
+---------------
+(1) capability print out
+
+(Pdb) pp self.capabilities
+{1: [(ipv4, unicast),
+     (ipv4, multicast),
+     (ipv4, nlri-mpls),
+     (ipv4, mpls-vpn),
+     (ipv4, flow),
+     (ipv4, flow-vpn),
+     (ipv6, unicast),
+     (ipv6, mpls-vpn),
+     (ipv6, flow),
+     (ipv6, flow-vpn),
+     (l2vpn, vpls)],
+ 64: {(ipv4, unicast): 128,
+      (ipv4, multicast): 128,
+      (ipv4, nlri-mpls): 128,
+      (ipv4, mpls-vpn): 128,
+      (ipv4, flow): 128,
+      (ipv4, flow-vpn): 128,
+      (ipv6, unicast): 128,
+      (ipv6, mpls-vpn): 128,
+      (ipv6, flow): 128,
+      (ipv6, flow-vpn): 128,
+      (l2vpn, vpls): 128},
+ 65: 60004L}
+
+
+
+
+
+
+
+
+
+
+
+
+(2) 
+
+* self == capabilities
+        MULTIPROTOCOL            = 0x01
+
+  class Capabilities (dict):
+    ...
+    def _protocol (self, neighbor):
+      families = neighbor.families()
+      mp = MultiProtocol()
+      mp.extend(families)
+      self[Capability.CODE.MULTIPROTOCOL] = mp
+    ...
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(117)new()
+-> def new (self, neighbor, restarted):
+(Pdb) list
+112                     if not neighbor.multisession:
+113                             return
+114                     # XXX: FIXME: should it not be the RFC version ?
+115                     self[Capability.CODE.MULTISESSION] = MultiSession().set([Capability.CODE.MULTIPROTOCOL])
+116
+117  ->         def new (self, neighbor, restarted):
+118                     self._protocol(neighbor)
+119                     self._asn4(neighbor)
+120                     self._addpath(neighbor)
+121                     self._graceful(neighbor,restarted)
+122                     self._refresh(neighbor)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(118)new()
+-> def _protocol (self, neighbor):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(63)_protocol()
+-> families = neighbor.families()
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(64)_protocol()
+-> mp = MultiProtocol()
+(Pdb) pp families
+[(ipv4, unicast),
+ (ipv4, multicast),
+ (ipv4, nlri-mpls),
+ (ipv4, mpls-vpn),
+ (ipv4, flow),
+ (ipv4, flow-vpn),
+ (ipv6, unicast),
+ (ipv6, mpls-vpn),
+ (ipv6, flow),
+ (ipv6, flow-vpn),
+ (l2vpn, vpls)]
+
+
+(3) another view
+
+* self[1] == self[Capability.CODE.MULTIPROTOCOL] = mp
+
+(Pdb) pp self[1]
+[(ipv4, unicast),
+ (ipv4, multicast),
+ (ipv4, nlri-mpls),
+ (ipv4, mpls-vpn),
+ (ipv4, flow),
+ (ipv4, flow-vpn),
+ (ipv6, unicast),
+ (ipv6, mpls-vpn),
+ (ipv6, flow),
+ (l2vpn, vpls)]
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/__init__.py(59)message()
+-> def message (self):
+(Pdb) l
+ 54                     self.asn = ASN(asn)
+ 55                     self.hold_time = HoldTime(hold_time)
+ 56                     self.router_id = RouterID(router_id)
+ 57                     self.capabilities = capabilities
+ 58
+ 59  ->         def message (self):
+ 60                     return self._message("%s%s%s%s%s" % (
+ 61                             self.version.pack(),
+ 62                             self.asn.trans(),
+ 63                             self.hold_time.pack(),
+ 64                             self.router_id.pack(),
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/__init__.py(60)message()
+-> return self._message("%s%s%s%s%s" % (
+(Pdb) s
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/__init__.py(61)message()
+-> self.version.pack(),
+(Pdb) pp self.capabilities.pack()
+'\x92\x020@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80\x02\x06\x01\x04\x00\x01\x00\x01\x02\x06\x01\x04\x00\x01\x00\x02\x02\x06\x01\x04\x00\x01\x00\x04\x02\x06\x01\x04\x00\x01\x00\x80\x02\x06\x01\x04\x00\x01\x00\x85\x02\x06\x01\x04\x00\x01\x00\x86\x02\x06\x01\x04\x00\x02\x00\x01\x02\x06\x01\x04\x00\x02\x00\x80\x02\x06\x01\x04\x00\x02\x00\x85\x02\x06\x01\x04\x00\x02\x00\x86\x02\x06\x01\x04\x00\x19\x00A\x02\x06A\x04\x00\x00\xead'
+
+(Pdb) pp self.capabilities
+{1: [(ipv4, unicast),
+     (ipv4, multicast),
+     (ipv4, nlri-mpls),
+     (ipv4, mpls-vpn),
+     (ipv4, flow),
+     (ipv4, flow-vpn),
+     (ipv6, unicast),
+     (ipv6, mpls-vpn),
+     (ipv6, flow),
+     (ipv6, flow-vpn),
+     (l2vpn, vpls)],
+ 64: {(ipv4, unicast): 128,
+      (ipv4, multicast): 128,
+      (ipv4, nlri-mpls): 128,
+      (ipv4, mpls-vpn): 128,
+      (ipv4, flow): 128,
+      (ipv4, flow-vpn): 128,
+      (ipv6, unicast): 128,
+      (ipv6, mpls-vpn): 128,
+      (ipv6, flow): 128, 
+      (ipv6, flow-vpn): 128,
+      (l2vpn, vpls): 128},
+ 65: 60004L}
+
+
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/graceful.py(39)extract()
+-> sfamilies = ''.join(["%s%s%s" % (pafi,psafi,family) for (pafi,psafi,family) in families])
+(Pdb) pp families
+[('\x00\x01', '\x02', '\x80'),
+ ('\x00\x02', '\x86', '\x80'),
+ ('\x00\x02', '\x80', '\x80'),
+ ('\x00\x01', '\x04', '\x80'),
+ ('\x00\x01', '\x85', '\x80'),
+ ('\x00\x01', '\x86', '\x80'),
+ ('\x00\x02', '\x01', '\x80'),
+ ('\x00\x02', '\x85', '\x80'),
+ ('\x00\x01', '\x80', '\x80'),
+ ('\x00\x01', '\x01', '\x80'),
+ ('\x00\x19', 'A', '\x80')]
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/graceful.py(39)extract()
+-> sfamilies = ''.join(["%s%s%s" % (pafi,psafi,family) for (pafi,psafi,family) in families])
+(Pdb) 
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/graceful.py(40)extract()
+-> return ["%s%s" % (restart,sfamilies)]
+(Pdb) pp sfamilies
+'\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80'
+
+
+
+
+
+129             def pack (self):
+130                     rs = []
+131                     for k,capabilities in self.iteritems():
+132                             for capability in capabilities.extract():
+133  ->                                 rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+134                     parameters = "".join(["%s%s%s" % (chr(2),chr(len(r)),r) for r in rs])
+135                     return "%s%s" % (chr(len(parameters)),parameters)
+136  
+137             @staticmethod
+138             def unpack (data):
+(Pdb) pp capability
+'\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80'
+(Pdb) pp chr(k)
+'@'
+(Pdb) pp chr(len(capability))
+'.'
+
+
+
+
+
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(584)_run()
+-> for action in self._[direction]['code']():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(366)_connect()
+-> for message in proto.new_open(self._restarted):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(235)new_open()
+-> msg_send = sent_open.message()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/__init__.py(65)message()
+-> self.capabilities.pack()
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb) l
+128
+129             def pack (self):
+130                     rs = []
+131                     for k,capabilities in self.iteritems():
+132                             for capability in capabilities.extract():
+133  ->                                 rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+134                     parameters = "".join(["%s%s%s" % (chr(2),chr(len(r)),r) for r in rs])
+135                     return "%s%s" % (chr(len(parameters)),parameters)
+136
+137             @staticmethod
+138             def unpack (data):
+(Pdb) pp capability
+'\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80'
+(Pdb) pp chr(k)
+'@'
+(Pdb) pp chr(len(capability))
+'.'
+(Pdb) pp rs
+[]
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(131)pack()
+-> for k,capabilities in self.iteritems():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) p k
+1
+(Pdb) pp capabilities
+[(ipv4, unicast),
+ (ipv4, multicast),
+ (ipv4, nlri-mpls),
+ (ipv4, mpls-vpn),
+ (ipv4, flow),
+ (ipv4, flow-vpn),
+ (ipv6, unicast),
+ (ipv6, mpls-vpn),
+ (ipv6, flow),
+ (ipv6, flow-vpn),
+ (l2vpn, vpls)]
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb) pp capability
+'\x00\x01\x00\x01'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb) p k
+1
+(Pdb) pp capability
+'\x00\x01\x00\x02'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01',
+ '\x01\x04\x00\x01\x00\x02']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb) pp k, capabilities
+(1,
+ [(ipv4, unicast),
+  (ipv4, multicast),
+  (ipv4, nlri-mpls),
+  (ipv4, mpls-vpn),
+  (ipv4, flow),
+  (ipv4, flow-vpn),
+  (ipv6, unicast),
+  (ipv6, mpls-vpn),
+  (ipv6, flow),
+  (ipv6, flow-vpn),
+  (l2vpn, vpls)])
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01',
+ '\x01\x04\x00\x01\x00\x02',
+ '\x01\x04\x00\x01\x00\x04']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb) pp k, capabilities
+(1,
+ [(ipv4, unicast),
+  (ipv4, multicast),
+  (ipv4, nlri-mpls),
+  (ipv4, mpls-vpn),
+  (ipv4, flow),
+  (ipv4, flow-vpn),
+  (ipv6, unicast),
+  (ipv6, mpls-vpn),
+  (ipv6, flow),
+  (ipv6, flow-vpn),
+  (l2vpn, vpls)])
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01',
+ '\x01\x04\x00\x01\x00\x02',
+ '\x01\x04\x00\x01\x00\x04',
+ '\x01\x04\x00\x01\x00\x80']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01',
+ '\x01\x04\x00\x01\x00\x02',
+ '\x01\x04\x00\x01\x00\x04',
+ '\x01\x04\x00\x01\x00\x80',
+ '\x01\x04\x00\x01\x00\x85',
+ '\x01\x04\x00\x01\x00\x86',
+ '\x01\x04\x00\x02\x00\x01',
+ '\x01\x04\x00\x02\x00\x80',
+ '\x01\x04\x00\x02\x00\x85']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(131)pack()
+-> for k,capabilities in self.iteritems():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(133)pack()
+-> rs.append("%s%s%s" % (chr(k),chr(len(capability)),capability))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(132)pack()
+-> for capability in capabilities.extract():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(131)pack()
+-> for k,capabilities in self.iteritems():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(134)pack()
+-> parameters = "".join(["%s%s%s" % (chr(2),chr(len(r)),r) for r in rs])
+(Pdb) pp k, capabilities
+(65, 60004L)
+(Pdb) pp rs
+['@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80',
+ '\x01\x04\x00\x01\x00\x01',
+ '\x01\x04\x00\x01\x00\x02',
+ '\x01\x04\x00\x01\x00\x04',
+ '\x01\x04\x00\x01\x00\x80',
+ '\x01\x04\x00\x01\x00\x85',
+ '\x01\x04\x00\x01\x00\x86',
+ '\x01\x04\x00\x02\x00\x01',
+ '\x01\x04\x00\x02\x00\x80',
+ '\x01\x04\x00\x02\x00\x85',
+ '\x01\x04\x00\x02\x00\x86',
+ '\x01\x04\x00\x19\x00A',
+ 'A\x04\x00\x00\xead']
+
+
+
+*** Completion of capability message ***
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(134)pack()
+-> parameters = "".join(["%s%s%s" % (chr(2),chr(len(r)),r) for r in rs])
+(Pdb) pp parameters
+*** NameError: NameError("name 'parameters' is not defined",)
+(Pdb) pp r
+'\x01\x04\x00\x01\x00\x04'
+(Pdb) "".join(["%s%s%s" % (chr(2),chr(len(r)),r) ])
+'\x02\x06\x01\x04\x00\x01\x00\x04'
+
+
+
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(103)_message()
+-> def _message (self, message):
+(Pdb) l
+ 98                             return 'route refresh'
+ 99                     if code == Message.CODE.OPERATIONAL:
+100                             return 'operational'
+101                     return 'unknown'
+102
+103  ->         def _message (self, message):
+104                     message_len = pack('!H',19+len(message))
+105                     return "%s%s%s%s" % (self.MARKER,message_len,self.TYPE,message)
+106
+107             def message (self):
+108                     raise NotImplementedError('message not implemented in subclasses')
+(Pdb) pp message
+'\x04\xead\x00\xb4\n\x01\x01\x04\x92\x020@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80\x02\x06\x01\x04\x00\x01\x00\x01\x02\x06\x01\x04\x00\x01\x00\x02\x02\x06\x01\x04\x00\x01\x00\x04\x02\x06\x01\x04\x00\x01\x00\x80\x02\x06\x01\x04\x00\x01\x00\x85\x02\x06\x01\x04\x00\x01\x00\x86\x02\x06\x01\x04\x00\x02\x00\x01\x02\x06\x01\x04\x00\x02\x00\x80\x02\x06\x01\x04\x00\x02\x00\x85\x02\x06\x01\x04\x00\x02\x00\x86\x02\x06\x01\x04\x00\x19\x00A\x02\x06A\x04\x00\x00\xead'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(104)_message()
+-> message_len = pack('!H',19+len(message))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(105)_message()
+-> return "%s%s%s%s" % (self.MARKER,message_len,self.TYPE,message)
+(Pdb) pp "%s%s%s%s" % (self.MARKER,message_len,self.TYPE,message)
+'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00\xaf\x01\x04\xead\x00\xb4\n\x01\x01\x04\x92\x020@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80\x02\x06\x01\x04\x00\x01\x00\x01\x02\x06\x01\x04\x00\x01\x00\x02\x02\x06\x01\x04\x00\x01\x00\x04\x02\x06\x01\x04\x00\x01\x00\x80\x02\x06\x01\x04\x00\x01\x00\x85\x02\x06\x01\x04\x00\x01\x00\x86\x02\x06\x01\x04\x00\x02\x00\x01\x02\x06\x01\x04\x00\x02\x00\x80\x02\x06\x01\x04\x00\x02\x00\x85\x02\x06\x01\x04\x00\x02\x00\x86\x02\x06\x01\x04\x00\x19\x00A\x02\x06A\x04\x00\x00\xead'
+-> return "%s%s" % (chr(len(parameters)),parameters)
+(Pdb) pp "%s%s" % (chr(len(parameters)),parameters)
+'\x92\x020@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80\x02\x06\x01\x04\x00\x01\x00\x01\x02\x06\x01\x04\x00\x01\x00\x02\x02\x06\x01\x04\x00\x01\x00\x04\x02\x06\x01\x04\x00\x01\x00\x80\x02\x06\x01\x04\x00\x01\x00\x85\x02\x06\x01\x04\x00\x01\x00\x86\x02\x06\x01\x04\x00\x02\x00\x01\x02\x06\x01\x04\x00\x02\x00\x80\x02\x06\x01\x04\x00\x02\x00\x85\x02\x06\x01\x04\x00\x02\x00\x86\x02\x06\x01\x04\x00\x19\x00A\x02\x06A\x04\x00\x00\xead'
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py(135)pack()->'\x92\x020@.\...\x00\x00\xead'
+-> return "%s%s" % (chr(len(parameters)),parameters)
+(Pdb) n
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(103)_message()
+-> def _message (self, message):
+
+
+
+
+
+
+***********************
+*** break point tip ***
+***********************
+(Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py:136, k == 7
+Breakpoint 2 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py:136
+
+
+
+
+
+
+
+----------
+3. sending
+----------
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(124)write()
+-> for boolean in self.connection.writer(message):
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py(164)writer()
+-> def writer (self, data):
+(Pdb) pp data
+'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00\xaf\x01\x04\xead\x00\xb4\n\x01\x01\x04\x92\x020@.\x84\xb0\x00\x01\x02\x80\x00\x02\x86\x80\x00\x02\x80\x80\x00\x01\x04\x80\x00\x01\x85\x80\x00\x01\x86\x80\x00\x02\x01\x80\x00\x02\x85\x80\x00\x01\x80\x80\x00\x01\x01\x80\x00\x19A\x80\x02\x06\x01\x04\x00\x01\x00\x01\x02\x06\x01\x04\x00\x01\x00\x02\x02\x06\x01\x04\x00\x01\x00\x04\x02\x06\x01\x04\x00\x01\x00\x80\x02\x06\x01\x04\x00\x01\x00\x85\x02\x06\x01\x04\x00\x01\x00\x86\x02\x06\x01\x04\x00\x02\x00\x01\x02\x06\x01\x04\x00\x02\x00\x80\x02\x06\x01\x04\x00\x02\x00\x85\x02\x06\x01\x04\x00\x02\x00\x86\x02\x06\x01\x04\x00\x19\x00A\x02\x06A\x04\x00\x00\xead'
+(Pdb) p self
+<exabgp.reactor.network.outgoing.Outgoing object at 0x9ac5c2c>
+(Pdb) pp self.io
+<socket._socketobject object at 0x9ab7d4c>
+(Pdb) pp self.writing()
+True
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py(165)writer()
+-> if not self.io:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py(169)writer()
+-> while not self.writing():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/network/connection.py(171)writer()
+-> self.logger.wire(LazyFormat("%s %-32s SENDING " % (self.name(),'%s / %s' % (self.local,self.peer)),data))
+(Pdb)
+>
+
+

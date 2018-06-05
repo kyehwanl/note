@@ -1,0 +1,19 @@
+# $Id: Makefile Kyehwan Lee $
+
+SUBDIRS=ForwardingElement/IDLOCd ForwardingElement/procTrie ControlElement/RoutingProc \
+MappingServer MappingServer/procTrieMS \
+modules/ID_LOC_init_module
+
+all clean:
+	@for i in ${SUBDIRS}; do echo "Making $@ in $$i"; (cd $$i && ${MAKE} $@); echo; done
+
+tag:
+	echo "making ctags"
+	find ${PWD} -name '*.[ch]' | ctags -R -L -
+
+cstag:
+	echo "making cscope files and cscope"
+	find ${PWD} -name '*.[ch]' > cscope.files
+	cscope -b
+	mv cscope.files cscope.out ../
+

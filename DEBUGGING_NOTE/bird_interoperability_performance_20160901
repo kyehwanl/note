@@ -1,0 +1,320 @@
+
+QuaggaSRx -- BIRD bgpsec Interoperability Test
+=================================================
+
+
+A. QuaggaSRx on node1
+---------------------
+
+
+1. prefix configuration:
+
+  router bgp 60002
+  bgp router-id 10.1.1.2
+  srx bgpsec ski 0 1 C30433FA1975FF193181458FB902B501EA9789DC
+  srx bgpsec active 0
+
+  neighbor 10.1.1.3 remote-as 60003
+  neighbor 10.1.1.3 bgpsec both
+
+  network 10.0.0.0/8
+  network 10.0.30.0/23
+
+
+2. running
+
+    [kyehwanl@node1 bird-1.6-bgpsec-0.9]$ sudo /users/kyehwanl/srx_test1/test2/qsrx3/bgpd/.libs/bgpd -i /tmp/bgpd.pid -f /users/kyehwanl/srx_test1/node1/bgpd.conf
+    [SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+    [SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+    [SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+    [SRxCryptoAPI - INFO] - debug type: 7
+    [SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+    [SRxCryptoAPI - INFO] - key_ext_private="private"
+    [SRxCryptoAPI - INFO] - key_ext_public="pub"
+    [SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+    [SRxCryptoAPI - INFO] - init_value="NULL"
+    [SRxCryptoAPI - INFO] - method_init="init"
+    [SRxCryptoAPI - INFO] - method_release="release"
+    [SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+    [SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+    [SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - INFO] - method_sign="sign"
+    [SRxCryptoAPI - INFO] - method_validate="validate"
+    [SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+    [SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+    [SRxCryptoAPI - INFO] Linking "init" to "init"!
+    [SRxCryptoAPI - INFO] Linking "release" to "release"!
+    [SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+    [SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+    [SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+    [SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+    [SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+    [SRxCryptoAPI - INFO] Initiate library initialization using '(null)'
+    +--------------------------------------------------------------+
+    | API: libBGPSec_OpenSSL.so                                    |
+    | WARNING: This API provides a reference implementation for    |
+    | BGPSec crypto processing. The key storage provided with this |
+    | API does not provide a 'secure' key storage which protects   |
+    | against malicious side attacks. Also it is not meant to be   |
+    | a FIBS certified key storage.                                |
+    | This API uses open source OpenSSL functions and checks, keys |
+    | for their correctness and once done, uses it repeatedly!     |
+    +--------------------------------------------------------------+
+    Router key: #0, algorithm-id: 1, ski: 'C30433FA1975FF193181458FB902B501EA9789DC' successfully installed!
+    2016/09/01 10:25:47 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+    2016/09/01 10:25:47 BGP: Request to connect to SRx server
+    2016/09/01 10:25:47 BGP: Connect to SRx server node5:17900
+    2016/09/01 10:25:47 BGP: Connection to SRx-server succeeded
+    2016/09/01 10:25:47 BGP: *** Received SRx Synchronization Request! ***
+
+    2016/09/01 10:25:59 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/09/01 10:25:59 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/09/01 10:25:59 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/09/01 10:25:59 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+    2016/09/01 10:25:59 BGP: [BGPSEC] peer Capability SEND set
+    2016/09/01 10:25:59 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/09/01 10:25:59 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+    2016/09/01 10:25:59 BGP: [BGPSEC] peer Capability RECV set
+    2016/09/01 10:25:59 BGP: 10.1.1.3 unrecognized capability code: 70 - ignored
+    2016/09/01 10:25:59 BGP: [BGPSEC] startp:0xb813e882 length:104 total:107
+    2016/09/01 10:25:59 BGP: [IN] 0xb813df80 -  startp: 0xb813e8ed-- getp:0 endp:104 -- endp(startp+length):0xb813e955 length:104
+    2016/09/01 10:25:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+    2016/09/01 10:25:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+    2016/09/01 10:25:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+    2016/09/01 10:25:59 BGP: [IN]    signature --> 1, Length: 71
+    2016/09/01 10:25:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0xb813dff0
+    2016/09/01 10:25:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbfe8bca4]->bgpsecPathAttr:0xb813dff0 seg:0xb813e008 AS:60003
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfe87b50]->bgpsecPathAttr:0xb813dff0 seg:0xb813e008
+    2016/09/01 10:25:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0xb813e1f0]->bgpsecPath_Attr:0xb813dff0 PathSeg:0xb813e008 AS:60003
+    2016/09/01 10:25:59 BGP: 10.1.1.3 rcvd 20.0.1.0/24
+    2016/09/01 10:25:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0xb813e1f0 aspath:0xb813e128 (attr interned) bpgsec:0xb813dff0
+    2016/09/01 10:25:59 BGP: [BGPSEC] [as_segment:0xb813e0e0] as_segment_length:1 aspath_refcnt: 2
+
+    30 45 02 20 61 0a 89 a9 fb 7e 35 ce 92 b7 5b 18
+    81 ba 0a 0b 5f 2b b4 cb cf 02 e1 46 cf b6 a8 3f
+    4c 97 77 6c 02 21 00 8d b7 45 bd ee 01 bd 51 e3
+    ae 29 b4 90 38 ad 4a 54 6e 9e 01 10 70 3a 9f 6f
+    16 17 8a 19 ee 70 a1  - from[print_signature]
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbfe8bca4]->bgpsecPathAttr:0xb813dff0 seg:0xb813e008 AS:60003
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfe87b50]->bgpsecPathAttr:0xb813dff0 seg:0xb813e008
+    2016/09/01 10:25:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0xb813e1f0]->bgpsecPath_Attr:0xb813dff0 PathSeg:0xb813e008 AS:60003
+    2016/09/01 10:25:59 BGP: 10.1.1.3 rcvd 20.0.1.0/24...duplicate ignored
+    2016/09/01 10:25:59 BGP: [BGPSEC] startp:0xb813e882 length:105 total:108
+    2016/09/01 10:25:59 BGP: [IN] 0xb813e828 -  startp: 0xb813e8ee-- getp:0 endp:105 -- endp(startp+length):0xb813e957 length:105
+    2016/09/01 10:25:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+    2016/09/01 10:25:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+    2016/09/01 10:25:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 97
+    2016/09/01 10:25:59 BGP: [IN]    signature --> 1, Length: 72
+    2016/09/01 10:25:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0xb813e500
+    2016/09/01 10:25:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbfe8bca4]->bgpsecPathAttr:0xb813e500 seg:0xb813e320 AS:60003
+    2016/09/01 10:25:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfe87b50]->bgpsecPathAttr:0xb813e500 seg:0xb813e320
+    2016/09/01 10:25:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0xb813e2c0]->bgpsecPath_Attr:0xb813e500 PathSeg:0xb813e320 AS:60003
+    2016/09/01 10:25:59 BGP: 10.1.1.3 rcvd 20.0.2.0/24
+    2016/09/01 10:25:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0xb813e2c0 aspath:0xb813e128 (attr interned) bpgsec:0xb813e500
+    2016/09/01 10:25:59 BGP: [BGPSEC] [as_segment:0xb813e0e0] as_segment_length:1 aspath_refcnt: 3
+
+    30 46 02 21 00 8f 88 89 7a 8a b8 03 07 56 e6 31
+    6d a3 f6 df 4e 8f 10 23 0d 6c 15 4b 2d 12 aa 4e
+    eb 90 68 96 1a 02 21 00 f1 15 fc bc af 39 37 38
+    8d 54 2e b1 4b e3 f8 3d 27 ee e7 7d a2 0c a6 c7
+    85 3b 80 09 b8 69 9e 7c  - from[print_signature]
+    2016/09/01 10:26:00 BGP: [BGPSEC] [bgp_update_packet] stream remain:4096 prefix size: 1 rn->p:0000000a attr:0xb813d668
+    2016/09/01 10:26:00 BGP: 10.1.1.3 send UPDATE 10.0.0.0/8
+    2016/09/01 10:26:00 BGP: [BGPSEC] [bgp_update_packet] (after intern) adj->attr:0xb813d668 bgpsec attr:(nil)
+    2016/09/01 10:26:00 BGP: [BGPSEC] update packet couter: 0
+    2016/09/01 10:26:00 BGP: [BGPSEC] [bgp_update_packet] stream remain:4096 prefix size: 3 rn->p:001e000a attr:0xb813d668
+    2016/09/01 10:26:00 BGP: 10.1.1.3 send UPDATE 10.0.30.0/23
+    2016/09/01 10:26:00 BGP: [BGPSEC] [bgp_update_packet] (after intern) adj->attr:0xb813d668 bgpsec attr:(nil)
+    2016/09/01 10:26:00 BGP: [BGPSEC] update packet couter: 1
+    2016/09/01 10:26:00 BGP: [BGPSEC] update packet couter: 2
+
+
+3. result on the other side (BIRD on node2)
+
+
+  [kyehwanl@node2 bird]$ ./birdc
+  BIRD 1.6.0 ready.
+  bird> show route
+  10.0.0.0/8         via 10.1.1.2 on eth36 [bgp1 10:26:00] * (100) [AS60002i] ASP:1 (BSEC VALID: 60002)
+  10.0.30.0/23       via 10.1.1.2 on eth36 [bgp1 10:26:01] * (100) [AS60002i] ASP:1 (BSEC INVALID: 60002)
+  20.0.1.0/24        dev eth36 [static_bgp 10:25:55] * (200)
+  20.0.2.0/24        dev eth36 [static_bgp 10:25:55] * (200)
+
+
+
+
+
+
+
+B. BIRD on node2
+----------------
+
+
+1. prefix configure
+
+  local as 60003;
+  neighbor 10.1.1.2 as 60002;
+  bgpsec_ski "45CAD0AC44F77EFAA94602E9984305215BF47DCD" ;
+  bgpsec on;
+  bgpsec_origination_prefix 20.0.1.0/24;
+  bgpsec_origination_prefix 20.0.2.0/24;
+
+
+
+2. running output
+
+  [kyehwanl@node2 bird-1.6-bgpsec-0.9]$ sudo ./bird -c node2.conf
+  bird: BPGPSEC: Adding origination prefix: 20.0.1.0/24
+  bird: BPGPSEC: Adding origination prefix: 20.0.2.0/24
+
+
+
+3. result on the other side (QuaggaSRx on node1)
+
+    node1> sh ip bgp
+    BGP table version is 0, local router ID is 10.1.1.2
+    Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+                  r RIB-failure, S Stale, R Removed
+    Validation:    v - valid, n - notfound, i - invalid, ? - undefined
+    SRx Status:    I - route ignored, D - SRx evaluation deactivated
+    SRxVal Format: validation result (origin validation, path validation)
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+
+       Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+    *> -------- v(v,v)              10.0.0.0         0.0.0.0                  0          32768 i
+    *> -------- v(v,v)              10.0.30.0/23     0.0.0.0                  0          32768 i
+    *> 0E84CBF8 i(n,i)              20.0.1.0/24      10.1.1.3                                0 60003 i
+    *> BD03DC43 i(n,i)              20.0.2.0/24      10.1.1.3                                0 60003 i
+
+    Total number of prefixes 4
+    node1> sh ip bgp 20.0.1.0/24
+    BGP routing table entry for 20.0.1.0/24
+    Paths: (1 available, best #1, table Default-IP-Routing-Table)
+      Not advertised to any peer
+      60003
+        SRx Information:
+          Update ID: 0x0E84CBF8
+          Validation:
+            prefix-origin: notfound
+            path:   invalid
+            bgpsec: invalid  (combination of prefix-origin and path validation)
+          PathType: BGPSEC-Path ( 1 signature blocks, each with 1 path segments)
+            signature block #1: algorithm suite id 1
+            path segment 1: as=60003; pcount=1
+              signature segment [1]: block 1, ski=45CAD0AC44F77EFAA94602E9984305215BF47DCD
+        10.1.1.3 from 10.1.1.3 (10.1.1.3)
+          Origin IGP, localpref 100, valid, external, best
+          Last update: Thu Sep  1 10:25:59 2016
+
+    node1> sh ip bgp 20.0.2.0/24
+    BGP routing table entry for 20.0.2.0/24
+    Paths: (1 available, best #1, table Default-IP-Routing-Table)
+      Not advertised to any peer
+      60003
+        SRx Information:
+          Update ID: 0xBD03DC43
+          Validation:
+            prefix-origin: notfound
+            path:   invalid
+            bgpsec: invalid  (combination of prefix-origin and path validation)
+          PathType: BGPSEC-Path ( 1 signature blocks, each with 1 path segments)
+            signature block #1: algorithm suite id 1
+            path segment 1: as=60003; pcount=1
+              signature segment [1]: block 1, ski=45CAD0AC44F77EFAA94602E9984305215BF47DCD
+        10.1.1.3 from 10.1.1.3 (10.1.1.3)
+          Origin IGP, localpref 100, valid, external, best
+          Last update: Thu Sep  1 10:25:59 2016
+
+
+
+
+Issues
+======
+
+1. when looking into a wireshark capture file, pcap_wireshark_interop_test_09012016, 
+        there's some suspicious parts on BIRD update message. it duplicated NLRI information 
+        added into the end of an update msg.
+        Normally, in BGPSec protocol, NLRI should be included into the attribute in forms of MP-NLRI, 
+        but BIRD repeats NLRI info appears again.
+        Need to check.
+
+
+2. limitation for testing prefixes in BIRD
+
+     # bgpsec_origination_prefix sets the route prefixes that this
+     # router will originate with bgpsec.  One configuration line
+     # per prefix.
+
+    [kyehwanl@node1 bird-1.6-bgpsec-0.9]$ sudo ./bird -c node1.conf.1k
+    bird: node1.conf.1k, line 1048: Max number of origination addresses reached: 10
+
+
+    if increasing the limit number 10, in proto/bgp/bgp.h, to 1000, like following line,
+        #define BGPSEC_MAX_ORIG_PX_ARRAY    1000
+
+    it has very high chance to the core dump crash with the following log message.
+
+    Sep 20 17:03:54 bgpsec1 kernel: bird[2862]: segfault at 0 ip (null) sp 00007fff9fb5d668 error 14 in bird[400000+73000]
+    Sep 20 17:03:54 bgpsec1 abrt[2863]: Saved core dump of pid 2862 (/users/kyehwanl/srx_test1/bgpsec-test/bird-1.6-bgpsec
+    -0.9/bird) to /var/spool/abrt/ccpp-2016-09-20-17:03:54-2862 (888832 bytes)
+    Sep 20 17:03:54 bgpsec1 abrtd: Executable '/users/kyehwanl/srx_test1/bgpsec-test/bird-1.6-bgpsec-0.9/bird' doesn't bel
+    ong to any package and ProcessUnpackaged is set to 'no'
+
+
+
+
+Performance Test (verify)
+=========================
+
+A. Emulab ( Xeon(R) CPU E5-2640 2.50GHz)
+
+  1. decode_bgpsec_attr()                       : 2064.53 us
+
+  2. bgpsec_verify_signature_with_bin_ski       : 1992.37 us
+
+  3. bgpsec_verify_signature_with_ascii_ski:    : 1968.75 us 
+
+  4. bgpsec_verify_signature_with_key:          : 1738.75 us
+
+  5. EVP_Digest()                               :    3.01 us
+     EVP_PKEY_CTX_new()                         :    0.90 us
+     EVP_PKEY_verify_init()                     :    0.10 us
+     EVP_PKEY_XTX_set_signature_md()            :    0.23 us
+     EVP_PKEY_verify()                          : 1734.33 us
+
+
+
+B. BGPSEC1 ( Xeon(R) CPU E5-1620 v3 @ 3.50GHz)
+
+  1. decode_bgpsec_attr()                       :  464.79 us
+
+  2. bgpsec_verify_signature_with_bin_ski       :  443.08 us
+
+  3. bgpsec_verify_signature_with_ascii_ski:    :  441.55 us 
+
+  4. bgpsec_verify_signature_with_key:          :  393.13 us
+
+  5. EVP_Digest()                               :    2.03 us
+     EVP_PKEY_CTX_new()                         :    0.77 us
+     EVP_PKEY_verify_init()                     :    0.08 us
+     EVP_PKEY_XTX_set_signature_md()            :    0.23 us
+     EVP_PKEY_verify()                          :  392.03 us
+
+
+  6. 10 received update ,processing time        : 12901.88 us ( 775.13 ops/s)
+
+
+
+
+
+
+
+

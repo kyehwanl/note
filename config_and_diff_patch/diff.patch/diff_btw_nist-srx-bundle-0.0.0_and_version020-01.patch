@@ -1,0 +1,204 @@
+--- ./quagga-0.99.16-srx-0.2/bgpd/bgpd.c	2011-10-07 17:38:36.000000000 -0400
++++ b ./quagga-0.99.16-srx-0.2/bgpd/bgpd.c	2011-10-08 16:57:56.693757055 -0400
+@@ -64,11 +64,11 @@
+ #include "bgpd/bgp_info_hash.h"
+ 
+ // Forward Declaration
+-static void handleSRxValidationResult (SRxValidationResult* result, 
++void handleSRxValidationResult (SRxValidationResult* result, 
+                                        void* bgpRouter);
+-static void handleSRxSignatures(SRxUpdateID* updateID, BGPSecData* data,
++void handleSRxSignatures(SRxUpdateID* updateID, BGPSecData* data,
+                                 void* bgpRouter);
+-static void handleSRxSynchRequest(void* bgpRouter);
++void handleSRxSynchRequest(void* bgpRouter);
+ #endif
+ 
+ /* BGP process wide configuration.  */
+@@ -588,6 +588,18 @@
+     zlog_debug ("Connect to SRx server %s:%d: %s", bgp->srx_host, 
+                 bgp->srx_port, cret ? "OK" : "Failed");
+   }
++  else if (bgp->srxProxy ==NULL)
++  {
++      bgp->srxProxy = createSRxProxy(handleSRxValidationResult, 
++                                     handleSRxSignatures, handleSRxSynchRequest, 
++                                     bgp->srx_proxyID, bgp->as, bgp);        
++      bool cret = connectToSRx (bgp->srxProxy, bgp->srx_host, bgp->srx_port, 
++	      bgp->srx_handshakeTimeout);
++      bgp->srx_proxyID = bgp->srxProxy->proxyID;
++      zlog_debug ("Connect to SRx server %s:%d: %s", bgp->srx_host, 
++	      bgp->srx_port, cret ? "OK" : "Failed");
++  }
++
+ 
+   return 0;
+ }
+@@ -2161,7 +2173,7 @@
+ 
+ 
+ /* Called by proxy once notifications are received. */
+-static void handleSRxValidationResult (SRxValidationResult* result,
++void handleSRxValidationResult (SRxValidationResult* result,
+                                        void* bgpRouter)
+ {
+   struct bgp_info* info;
+@@ -2215,7 +2227,7 @@
+ }
+ 
+ /* Called by proxy once notifications are received. */
+-static void handleSRxSignatures(SRxUpdateID* updateID, BGPSecData* data,
++void handleSRxSignatures(SRxUpdateID* updateID, BGPSecData* data,
+                                 void* bgpRouter)
+ {
+   zlog_info ("*** Received SRx Signatures for update [0x%08X]! ***\n", 
+@@ -2264,7 +2276,7 @@
+  * @param bgpRouter A pointer to the bgp router instance that received this 
+  *        request
+  */
+-static void handleSRxSynchRequest(void* bgpRouter)
++void handleSRxSynchRequest(void* bgpRouter)
+ {
+   zlog_info ("*** Received SRx Synchronization Request! ***\n");
+   
+--- ./quagga-0.99.16-srx-0.2/bgpd/bgp_route.c	2011-10-07 13:54:16.000000000 -0400
++++ b ./quagga-0.99.16-srx-0.2/bgpd/bgp_route.c	2011-10-08 17:39:50.438913927 -0400
+@@ -65,6 +65,13 @@
+ extern const char *bgp_origin_str[];
+ extern const char *bgp_origin_long_str[];
+ 
++extern void handleSRxValidationResult (SRxValidationResult* result, 
++                                       void* bgpRouter);
++extern void handleSRxSignatures(SRxUpdateID* updateID, BGPSecData* data,
++                                void* bgpRouter);
++extern void handleSRxSynchRequest(void* bgpRouter);
++
++
+ static struct bgp_node *
+ bgp_afi_node_get (struct bgp_table *table, afi_t afi, safi_t safi, struct prefix *p,
+ 		  struct prefix_rd *prd)
+@@ -2529,7 +2536,8 @@
+   }
+   
+   // Now let proxy change it if necessary
+-  if (bgp->srxProxy != NULL)
++  // Also check if connectionHanlder->established (connHandler[1]) bool type must not be zero
++  if (bgp->srxProxy != NULL && ((char*)(bgp->srxProxy->connHandler))[1] != 0)
+   {
+     as_t oas;
+     int useResult;
+@@ -2568,12 +2576,28 @@
+         {
+           // A fatal error occurred within SRx
+           zlog_err ("ERROR: SRx verify failed for to verify!!");
++
++	    /* connection loss check */
++	    if (valResult->valResult.roaResult == 0xFF) 
++	    {
++		bgp_srx_unset (bgp);
++		srx_free_bgpsec_data(bgpsec);
++		free(valResult);
++		free(prefix);
++		bgp->srxProxy = createSRxProxy(handleSRxValidationResult, 
++                                     handleSRxSignatures, handleSRxSynchRequest, 
++                                     bgp->srx_proxyID, bgp->as, bgp);        
++		return;
+         }
+-//        else
+-//        {
++
++	}
++        else
++        {
+ //          // No connection to SRx
+ //          zlog_debug("Verification not possible, not connected to SRx server!");
+-//        }
++	    zlog_err ("ERROR: SRx connection lost!!");
++
++	}
+       }
+       else
+       {  
+--- ./srx-0.2.0/src/client/srx_api.c	2011-10-07 18:19:50.000000000 -0400
++++ b ./srx-0.2.0/src/client/srx_api.c	2011-10-08 17:38:39.706146906 -0400
+@@ -658,12 +658,6 @@
+       //sem_post(&connHandler->sem_transx); // V operation : atomically increase
+       return NULL;
+   }
+-#if 0
+-  do {
+-      usleep(2000);
+-      sem_getvalue(&connHandler->sem_transx, &i_semval);
+-  } while( i_semval != 0);
+-#endif
+ 
+ #if 0
+   sem_getvalue(&connHandler->sem_transx, &i_semval);
+@@ -681,15 +675,10 @@
+     // Wait until SRx sends the receipt with the new data
+     LOG(LEVEL_DEBUG, HDR "WAIT FOR RESULT of 0x%08X\n", result->updateID);
+ 
+-#if 0
+-    struct timespec to;
+-    memset(&to, 0, sizeof(to));
+-    to.tv_sec = time(0) +5;
+-    to.tv_nsec = 0;
+-    return(pthread_cond_timedwait(cond, self, &to));
+-#endif
+     
+     SRxProxy *old_proxy;
++    //struct bgp *bgp = (struct bgp *)proxy->userPtr;
++
+     s = sem_wait_wrapper(&connHandler->sem_register); // P operation : atomically decrease
+     if (s == -1) 
+     {
+@@ -698,15 +687,11 @@
+ 
+ 	    /* call disconnect */
+ 	    LOG(LEVEL_DEBUG, HDR "Disconnect !");      
+-#if 0
+ 	    old_proxy = proxy;
+-	    proxy = createSRxProxy(proxy->resCallback, \
+-                                   proxy->sigCallback, proxy->syncNotification, \
+-                                   proxy->proxyID, proxy->proxyAS, proxy->userPtr);
+-
+ 	    disconnectFromSRx (old_proxy, 0);      
+ 	    releaseSRxProxy(old_proxy);
+-#endif
++	    result->valResult.roaResult = 0xFF; // it means connection loss
++	    return false;
+ 	}
+ 	else if (errno == EINTR)
+ 	    ;//continue;
+--- ./srx-0.2.0/src/client/client_connection_handler.c	2011-10-07 18:19:50.000000000 -0400
++++ b ./srx-0.2.0/src/client/client_connection_handler.c	2011-10-08 02:07:56.000000000 -0400
+@@ -109,6 +109,10 @@
+ {
+   char* errPrefix = "[ClientConnectionHandler]";
+   int iSemState =0;
++  pthread_attr_t attr;
++
++  pthread_attr_init(&attr);
++  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+ 
+   if (self->initialized)
+   {
+@@ -173,7 +177,7 @@
+  
+ 
+   // Thread to receive packets from the server
+-  if (pthread_create(&self->recvThread, NULL, receivePacketsFromServer, self)
++  if (pthread_create(&self->recvThread, &attr, receivePacketsFromServer, self)
+       != 0)
+   {
+     closeClientSocket(&self->clSock);
+@@ -238,7 +242,8 @@
+         sendGoodbye(self, self->keepWindow);
+       }
+ 
+-      pthread_kill(self->recvThread, SIGINT);
++      //pthread_kill(self->recvThread, SIGINT);
++      pthread_cancel(self->recvThread);
+       closeClientSocket(&self->clSock);
+ 
+       // Reinstall the default signal handler

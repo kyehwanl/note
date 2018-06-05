@@ -1,0 +1,611 @@
+
+
+topology
+========
+
+ node1 --> node2 --> node3
+ prefix: 100.0.0.0/8
+
+
+
+gdb debugging script
+=====================
+
+1. node1 
+
+    2016/11/21 11:17:20 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 11:17:20 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 11:17:21 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 11:17:21 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 11:17:21 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 11:17:21 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+    2016/11/21 11:17:21 BGP: [BGPSEC] peer Capability SEND set
+    2016/11/21 11:17:21 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 11:17:21 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+    2016/11/21 11:17:21 BGP: [BGPSEC] peer Capability RECV set
+    2016/11/21 11:17:22 BGP: [BGPSEC] [bgp_update_packet] stream remain:4096 prefix size: 1 rn->p:00000064 attr:0xb89ae6a8
+
+    Hash(sign):
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+    Digest(sign):
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+    2016/11/21 11:17:22 BGP: 10.1.1.3 send UPDATE 100.0.0.0/8
+    2016/11/21 11:17:22 BGP: [BGPSEC] [bgp_update_packet] (after intern) adj->attr:0xb89ae6a8 bgpsec attr:(nil)
+    2016/11/21 11:17:22 BGP: [BGPSEC] update packet couter: 0
+    2016/11/21 11:23:59 BGP: Notification sent to neighbor 10.1.1.3: type 4/0
+    2016/11/21 11:24:11 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 11:24:11 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+
+
+
+
+
+
+
+
+
+
+2. node2
+
+    Starting program: /users/kyehwanl/srx_test1/test2/bgpd -i /tmp/bgpd.pid -f /users/kyehwanl/srx_test1/node2/bgpd.conf
+    [Thread debugging using libthread_db enabled]
+    [SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+    [SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+    [SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+    [SRxCryptoAPI - INFO] - debug type: 7
+    [SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+    [SRxCryptoAPI - INFO] - key_ext_private="private"
+    [SRxCryptoAPI - INFO] - key_ext_public="pub"
+    [SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+    [SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+    [SRxCryptoAPI - INFO] - method_init="init"
+    [SRxCryptoAPI - INFO] - method_release="release"
+    [SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+    [SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+    [SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - INFO] - method_sign="sign"
+    [SRxCryptoAPI - INFO] - method_validate="validate"
+    [SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+    [SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+    [SRxCryptoAPI - INFO] Linking "init" to "init"!
+    [SRxCryptoAPI - INFO] Linking "release" to "release"!
+    [SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+    [SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+    [SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+    [SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+    [SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+    [SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
+    +--------------------------------------------------------------+
+    | API: libBGPSec_OpenSSL.so                                    |
+    | WARNING: This API provides a reference implementation for    |
+    | BGPSec crypto processing. The key storage provided with this |
+    | API does not provide a 'secure' key storage which protects   |
+    | against malicious side attacks. Also it is not meant to be   |
+    | a FIBS certified key storage.                                |
+    | This API uses open source OpenSSL functions and checks, keys |
+    | for their correctness and once done, uses it repeatedly!     |
+    +--------------------------------------------------------------+
+    Router key: #0, algorithm-id: 1, ski: '45CAD0AC44F77EFAA94602E9984305215BF47DCD' successfully installed!
+    2016/11/21 09:18:10 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+    2016/11/21 09:18:10 BGP: Request to connect to SRx server
+    2016/11/21 09:18:10 BGP: Connect to SRx server node5:17900
+    2016/11/21 09:18:10 BGP: Connection to SRx-server succeeded
+    2016/11/21 09:18:10 BGP: *** Received SRx Synchronization Request! ***
+
+    2016/11/21 09:18:15 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:18:15 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 09:18:15 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:18:15 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 09:18:15 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:18:15 BGP: [BGPSEC] 10.1.1.2 capability code: 72 length:3 version_dir:08 afi:01
+    2016/11/21 09:18:15 BGP: [BGPSEC] peer Capability SEND set
+    2016/11/21 09:18:15 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:18:15 BGP: [BGPSEC] 10.1.1.2 capability code: 72 length:3 version_dir:00 afi:01
+    2016/11/21 09:18:15 BGP: [BGPSEC] peer Capability RECV set
+    2016/11/21 09:18:16 BGP: [BGPSEC] startp:0x801d6fe8 length:104 total:108
+    2016/11/21 09:18:16 BGP: [IN] 0x801d62f0 -  startp: 0x801d7054-- getp:0 endp:104 -- endp(startp+length):0x801d70bc length:104
+    2016/11/21 09:18:16 BGP: [IN] peer as:60002 peer->local_as:60003 Secure_Path Len:8
+    2016/11/21 09:18:16 BGP: [IN]  Secure_Path segment --> 1 AS:60002
+    2016/11/21 09:18:16 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+    2016/11/21 09:18:16 BGP: [IN]    signature --> 1, Length: 71
+    2016/11/21 09:18:16 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801d6050
+    2016/11/21 09:18:16 BGP: 10.1.1.2 rcvd UPDATE w/ attr: , origin i, metric 0, path 60002
+    2016/11/21 09:18:16 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff244]->bgpsecPathAttr:0x801d6050 seg:0x801d6360 AS:60002
+    2016/11/21 09:18:16 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0f0]->bgpsecPathAttr:0x801d6050 seg:0x801d6360
+    2016/11/21 09:18:16 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801d64f8]->bgpsecPath_Attr:0x801d6050 PathSeg:0x801d6360 AS:60002
+    2016/11/21 09:18:16 BGP: 10.1.1.2 rcvd 100.0.0.0/8
+    2016/11/21 09:18:16 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x801d64f8 aspath:0x801d6480 (attr interned) bpgsec:0x801d6050
+    2016/11/21 09:18:16 BGP: [BGPSEC] [as_segment:0x801d6438] as_segment_length:1 aspath_refcnt: 2
+
+    30 45 02 21 00 dd e1 7e d2 8d 76 79 37 7d 3e 05
+    72 c5 5f 12 0c d2 f7 80 75 a2 8d 74 26 22 99 e6
+    af bb 87 8e b3 02 20 41 26 bb f0 fe 02 0d aa a3
+    a7 2d c4 a0 98 69 43 47 ab 1f 09 1c 94 06 d2 9c
+    f4 0e 88 1a 00 f6 45  - from[print_signature]
+
+    Breakpoint 3, sca_generateHashMessage (data=0x801d6260, algoID=1 '\001', status=0x801d6264) at srxcryptoapi.c:1426
+    1426        data->hashMessage[BLOCK_0]->buffer     = malloc(size);
+    (gdb) n
+    1427        data->hashMessage[BLOCK_0]->bufferSize = size;
+    (gdb) p data->hashMessage [0]->buffer
+    $43 = (u_int8_t *) 0x801ebe78 "\020\224շ\020\224շ"
+    (gdb) n
+    1430        data->hashMessage[BLOCK_0]->hashMessageValPtr = malloc(sizeof(u_int8_t*) * segments);
+    (gdb) p size
+    $44 = 115
+    (gdb) finish
+    Run till exit from #0  sca_generateHashMessage (data=0x801d6260, algoID=1 '\001', status=0x801d6264)
+        at srxcryptoapi.c:1430
+    0xb7a41d66 in validate (data=0x801d6260) at bgpsec_openssl.c:536
+    536               if (sca_generateHashMessage(data, SCA_ECDSA_ALGORITHM, &data->status) > 0)
+    Value returned is $45 = 115
+    (gdb) x/115bx data->hashMessage [0]->buffer
+    0x801ebe78:     0x00    0x00    0x00    0x00    0xc3    0x04    0x33    0xfa
+    0x801ebe80:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801ebee8:     0x01    0x08    0x64
+    (gdb) c
+    Continuing.
+
+    Hash:
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+    Digest:
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+    VERIFY SUCCESS
+    2016/11/21 09:19:17 BGP: SLOW THREAD: task respawnReceivePacket (80020161) ran for 60912ms (cpu time 3ms)
+    2016/11/21 09:19:17 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:19:17 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 09:19:24 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:19:24 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 09:19:24 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:19:24 BGP: [BGPSEC] 10.1.1.4 capability code: 72 length:3 version_dir:08 afi:01
+    2016/11/21 09:19:24 BGP: [BGPSEC] peer Capability SEND set
+    2016/11/21 09:19:24 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:19:24 BGP: [BGPSEC] 10.1.1.4 capability code: 72 length:3 version_dir:00 afi:01
+    2016/11/21 09:19:24 BGP: [BGPSEC] peer Capability RECV set
+    2016/11/21 09:19:24 BGP: [BGPSEC] [bgp_attr_dup] orig[0x801d64f8]->bgpsecPathAttr:0x801d6050 seg:0x801d6360 AS:60002
+    2016/11/21 09:19:24 BGP: [BGPSEC] [bgp_attr_dup] new[0xbffff1f4]->bgpsecPathAttr:0x801d6050 seg:0x801d6360
+    2016/11/21 09:19:24 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801ec0e8]->bgpsecPath_Attr:0x801d6050 PathSeg:0x801d6360 AS:60002
+    2016/11/21 09:19:25 BGP: [BGPSEC] [bgp_update_packet] stream remain:4096 prefix size: 1 rn->p:00000064 attr:0x801ec0e8
+
+    Breakpoint 2, sign (bgpsec_data=0xbffff0cc) at bgpsec_openssl.c:746
+    746           u_int8_t*  buffPtr  = bgpsec_data->hashMessage->buffer;
+    (gdb) n
+    747           u_int32_t* targetAS = (u_int32_t*)buffPtr;
+    (gdb) p buffPtr
+    $46 = (u_int8_t *) 0x801ebe78 ""
+    (gdb) until 761
+    sign (bgpsec_data=0xbffff0cc) at bgpsec_openssl.c:761
+    761           _createSha256Digest (
+    (gdb) p bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessagePtr
+    $47 = (u_int8_t *) 0x801ebedb ""
+    (gdb) p bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessageLength
+    $48 = 16
+    (gdb) x/16bx bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessagePtr
+    0x801ebedb:     0x00    0x00    0xea    0x63    0x01    0x00    0x00    0x00
+    0x801ebee3:     0xea    0x62    0x01    0x00    0x01    0x01    0x08    0x64
+    (gdb) p bgpsec_data ->hashMessage->buffer
+    $49 = (u_int8_t *) 0x801ebe78 ""
+    (gdb) x/115bx bgpsec_data ->hashMessage->buffer
+    0x801ebe78:     0x00    0x00    0xea    0x64    0x01    0x00    0x00    0x00
+    0x801ebe80:     0xea    0x63    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801ebee8:     0x01    0x08    0x64
+    (gdb) c
+    Continuing.
+
+#error1:  - 0x801ebe7c부터 line 750에서 memcpy를 통해 bgpsec_data->myHost로(Path segment) 덮어버림
+
+#error2:  - Line 761에서 _createSha256Digest를 호출할때, hashMessageValPtr [0]->hashMessagePtr를 호출함
+          - hashMessage->buffer를 호출해야됨
+                
+
+    Hash(sign):
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+    Digest(sign):
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+    2016/11/21 09:21:52 BGP: 10.1.1.4 send UPDATE 100.0.0.0/8
+    2016/11/21 09:21:52 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801ec0e8]->bgpsecPath_Attr:0x801d6050 PathSeg:0x801d6360 AS:60002
+    2016/11/21 09:21:52 BGP: [BGPSEC] [bgp_update_packet] (after intern) adj->attr:0x801ec0e8 bgpsec attr:0x801d6050
+    2016/11/21 09:21:52 BGP: [BGPSEC] update packet couter: 0
+    2016/11/21 09:21:52 BGP: SLOW THREAD: task bgp_write (80036bbe) ran for 147917ms (cpu time 2ms)
+    2016/11/21 09:21:52 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:21:52 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    ^C
+    Program received signal SIGINT, Interrupt.
+    0xb7fdf424 in __kernel_vsyscall ()
+    (gdb)
+
+
+
+3. node3
+
+    Starting program: /users/kyehwanl/srx_test1/test2/bgpd -i /tmp/bgpd.pid -f /users/kyehwanl/srx_test1/node3/bgpd.conf
+    [Thread debugging using libthread_db enabled]
+    [SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+    [SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+    [SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+    [SRxCryptoAPI - INFO] - debug type: 7
+    [SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+    [SRxCryptoAPI - INFO] - key_ext_private="private"
+    [SRxCryptoAPI - INFO] - key_ext_public="pub"
+    [SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+    [SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+    [SRxCryptoAPI - INFO] - method_init="init"
+    [SRxCryptoAPI - INFO] - method_release="release"
+    [SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+    [SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+    [SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+    [SRxCryptoAPI - INFO] - method_sign="sign"
+    [SRxCryptoAPI - INFO] - method_validate="validate"
+    [SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+    [SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+    [SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+    [SRxCryptoAPI - INFO] Linking "init" to "init"!
+    [SRxCryptoAPI - INFO] Linking "release" to "release"!
+    [SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+    [SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+    [SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+    [SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+    [SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+    [SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+    [SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+    [SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
+    +--------------------------------------------------------------+
+    | API: libBGPSec_OpenSSL.so                                    |
+    | WARNING: This API provides a reference implementation for    |
+    | BGPSec crypto processing. The key storage provided with this |
+    | API does not provide a 'secure' key storage which protects   |
+    | against malicious side attacks. Also it is not meant to be   |
+    | a FIBS certified key storage.                                |
+    | This API uses open source OpenSSL functions and checks, keys |
+    | for their correctness and once done, uses it repeatedly!     |
+    +--------------------------------------------------------------+
+    Router key: #0, algorithm-id: 1, ski: '492AAE72485D926CACDA2D259BE19DAE82DFBDE3' successfully installed!
+    2016/11/21 09:19:16 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+    2016/11/21 09:19:16 BGP: Request to connect to SRx server
+    2016/11/21 09:19:16 BGP: Connect to SRx server node5:17900
+    2016/11/21 09:19:16 BGP: Connection to SRx-server succeeded
+    2016/11/21 09:19:16 BGP: *** Received SRx Synchronization Request! ***
+
+    2016/11/21 09:19:24 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+    2016/11/21 09:19:24 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+    2016/11/21 09:19:24 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:19:24 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+    2016/11/21 09:19:24 BGP: [BGPSEC] peer Capability SEND set
+    2016/11/21 09:19:24 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+    2016/11/21 09:19:24 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+    2016/11/21 09:19:24 BGP: [BGPSEC] peer Capability RECV set
+    2016/11/21 09:21:52 BGP: [BGPSEC] startp:0x801cb189 length:203 total:207
+    2016/11/21 09:21:52 BGP: [IN] 0x801d63f8 -  startp: 0x801cb258-- getp:0 endp:203 -- endp(startp+length):0x801cb323 length:203
+    2016/11/21 09:21:52 BGP: [IN] peer as:60003 peer->local_as:60004 Secure_Path Len:14
+    2016/11/21 09:21:52 BGP: [IN]  Secure_Path segment --> 2 AS:60003
+    2016/11/21 09:21:52 BGP: [IN]  Secure_Path segment --> 1 AS:60002
+    2016/11/21 09:21:52 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 189
+    2016/11/21 09:21:52 BGP: [IN]    signature --> 1, Length: 71
+    2016/11/21 09:21:52 BGP: [IN]    signature --> 2, Length: 71
+    2016/11/21 09:21:52 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801d5fe0
+    2016/11/21 09:21:52 BGP: 10.1.1.3 rcvd UPDATE w/ attr: , origin i, path 60003 60002
+    2016/11/21 09:21:52 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff244]->bgpsecPathAttr:0x801d5fe0 seg:0x801d64c8 AS:60003
+    2016/11/21 09:21:52 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0f0]->bgpsecPathAttr:0x801d5fe0 seg:0x801d64c8
+    2016/11/21 09:21:52 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801e1250]->bgpsecPath_Attr:0x801d5fe0 PathSeg:0x801d64c8 AS:60003
+    2016/11/21 09:21:52 BGP: 10.1.1.3 rcvd 100.0.0.0/8
+    2016/11/21 09:21:52 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x801e1250 aspath:0x801e11d8 (attr interned) bpgsec:0x801d5fe0
+    2016/11/21 09:21:52 BGP: [BGPSEC] [as_segment:0x801d65c0] as_segment_length:2 aspath_refcnt: 2
+
+    30 45 02 20 0b 36 d6 d3 c8 0b 4e b5 0e 91 84 a0
+    ae 47 67 8a e6 f7 1f ac 30 20 ba c0 a3 d9 b0 1c
+    55 3c 8e e4 02 21 00 99 75 7f 33 74 02 dc 11 e9
+    2f 77 87 03 c9 71 0f 82 6b cb 26 a6 38 2d 21 fb
+    2d 0c e5 06 2c 22 23  - from[print_signature]
+
+    Breakpoint 1, sca_generateHashMessage (data=0x801bea70, algoID=1 '\001', status=0x801bea74) at srxcryptoapi.c:1262
+    1262      sca_status_t myStatus = API_STATUS_OK;
+    (gdb) until 1536
+    sca_generateHashMessage (data=0x801bea70, algoID=1 '\001', status=0x801bea74) at srxcryptoapi.c:1536
+    1536      if (status != NULL)
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [0]->hashMessagePtr
+    $31 = (u_int8_t *) 0x801e13fb ""
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [0]->hashMessageLength
+    $32 = 115
+    (gdb) p segments
+    No symbol "segments" in current context.
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [1]->hashMessageLength
+    $33 = 16
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [1]->hashMessagePtr
+    $34 = (u_int8_t *) 0x801e145e ""
+    (gdb) x/115bx data->hashMessage [0]->hashMessageValPtr [0]->hashMessagePtr
+    0x801e13fb:     0x00    0x00    0xea    0x64    0xc3    0x04    0x33    0xfa
+    0x801e1403:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801e140b:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801e1413:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801e141b:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801e1423:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801e142b:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801e1433:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801e143b:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801e1443:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801e144b:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801e1453:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801e145b:     0x45    0x01    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801e1463:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801e146b:     0x01    0x08    0x64
+    (gdb) x/16bx data->hashMessage [0]->hashMessageValPtr [1]->hashMessagePtr
+    0x801e145e:     0x00    0x00    0xea    0x63    0x01    0x00    0x00    0x00
+    0x801e1466:     0xea    0x62    0x01    0x00    0x01    0x01    0x08    0x64
+    (gdb) c
+    Continuing.
+
+    Hash:
+    00 00 ea 64 c3 04 33 fa 19 75 ff 19 31 81 45 8f 
+    b9 02 b5 01 ea 97 89 dc 00 47 30 45 02 21 00 dd 
+    e1 7e d2 8d 76 79 37 7d 3e 05 72 c5 5f 12 0c d2 
+    f7 80 75 a2 8d 74 26 22 99 e6 af bb 87 8e b3 02 
+    20 41 26 bb f0 fe 02 0d aa a3 a7 2d c4 a0 98 69 
+    43 47 ab 1f 09 1c 94 06 d2 9c f4 0e 88 1a 00 f6 
+    45 01 00 00 00 ea 63 01 00 00 00 ea 62 01 00 01 
+    01 08 64 
+
+
+    Digest:
+    a6 d5 3e ff 44 a0 e7 0b 2d ea 60 00 7e 79 79 ae 
+    4a c3 49 7e 82 93 b3 74 41 ab 1d 64 aa 15 55 73 
+
+    VERIFY FAILED
+    [SRxCryptoAPI - WARNING] [validate:644] verify failed and quit: ret:0 idx:0, ecIdx:1
+
+    Hash:
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64 
+
+
+    Digest:
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d 
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df 
+
+    VERIFY SUCCESS
+    2016/11/21 10:12:28 BGP: SLOW THREAD: task respawnReceivePacket (80020161) ran for 3035184ms (cpu time 6ms)
+    2016/11/21 10:12:28 BGP: Notification sent to neighbor 10.1.1.3: type 4/0
+    ^C
+    Program received signal SIGINT, Interrupt.
+    0xb7fdf424 in __kernel_vsyscall ()
+    (gdb) 
+
+
+ Bugzilla Report
+ ===============
+
+ in my further investigation, it turns out that there are some logical programming errors found in sca_generateHashMessage() 
+ at srxcryptoapi.c and sign() at bgpsec_openssl.c.
+
+
+1. 2nd node
+ (1) sca_generateHashMessage(), when receiving update and storing the retrieved data from parsing.
+ (2) constructed a hash message structure like following,
+
+    Breakpoint 3, sca_generateHashMessage (data=0x801d6260, algoID=1 '\001', status=0x801d6264) at srxcryptoapi.c:1426
+
+    1426        data->hashMessage[BLOCK_0]->buffer     = malloc(size);
+    1427        data->hashMessage[BLOCK_0]->bufferSize = size;
+
+    (gdb) p data->hashMessage [0]->buffer
+        (u_int8_t *) 0x801ebe78 
+
+    (gdb) p size
+         115
+
+    (gdb) data->hashMessage [0]->buffer
+    0x801ebe78:     0x00    0x00    0x00    0x00    0xc3    0x04    0x33    0xfa
+    0x801ebe80:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801ebee8:     0x01    0x08    0x64
+
+
+
+    (gdb) p data->hashMessage ->hashMessageValPtr [0]->hashMessagePtr
+        (u_int8_t *) 0x801ebedb ""
+
+
+ (3) retrived hash message from Node1 is starting at 0x801ebedb.
+        --> and then verified with SUCCESS
+
+    Hash:
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+    Digest:
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+    VERIFY SUCCESS
+
+
+
+
+ (4) when sending to Node3
+
+    Breakpoint 2, sign (bgpsec_data=0xbffff0cc) at bgpsec_openssl.c:746
+    746           u_int8_t*  buffPtr  = bgpsec_data->hashMessage->buffer;
+    747           u_int32_t* targetAS = (u_int32_t*)buffPtr;
+
+    (gdb) p bgpsec_data->hashMessage->buffer
+        (u_int8_t *) 0x801ebe78 ""
+
+    (gdb) bgpsec_data ->hashMessage->buffer
+    0x801ebe78:     0x00    0x00    0xea    0x64    0x01    0x00    0x00    0x00
+    0x801ebe80:     0xea    0x63    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801ebee8:     0x01    0x08    0x64
+
+  #error point1:  - memcpy in line750, overwrote address staring at 0x801ebe7c for 6bytes, which was filled with
+                        Node1's SKI value.
+
+
+    sign (bgpsec_data=0xbffff0cc) at bgpsec_openssl.c:761
+    761           _createSha256Digest (
+
+    (gdb) p bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessagePtr
+        (u_int8_t *) 0x801ebedb ""
+    (gdb) p bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessageLength
+        16
+
+    (gdb) bgpsec_data ->hashMessage ->hashMessageValPtr [0]->hashMessagePtr
+    0x801ebedb:     0x00    0x00    0xea    0x63    0x01    0x00    0x00    0x00
+    0x801ebee3:     0xea    0x62    0x01    0x00    0x01    0x01    0x08    0x64
+
+
+  #error point2:  - at Line 761, when calling _createSha256Digest(), hash message should have an address 0x801ebe78, 
+                    not 0x801ebedb which hashMessageValPtr [0]->hashMessagePtr has.
+                    That's why the signing hash message go off only 16 bytes long.
+                
+
+   Result printout:
+    Hash(sign):
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+    Digest(sign):
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+
+
+ 2. Node3
+
+ (1) node3 reconstruct validation hash message from the update attribute to compare its received digest.
+
+
+ 
+    sca_generateHashMessage (data=0x801bea70, algoID=1 '\001', status=0x801bea74) at srxcryptoapi.c:1536
+
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [0]->hashMessagePtr
+        (u_int8_t *) 0x801e13fb ""
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [0]->hashMessageLength
+        115
+
+    (gdb) data->hashMessage [0]->hashMessageValPtr [0]->hashMessagePtr
+    0x801e13fb:     0x00    0x00    0xea    0x64    0xc3    0x04    0x33    0xfa
+    0x801e1403:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+    0x801e140b:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+    0x801e1413:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+    0x801e141b:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+    0x801e1423:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+    0x801e142b:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+    0x801e1433:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+    0x801e143b:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+    0x801e1443:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+    0x801e144b:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+    0x801e1453:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+    0x801e145b:     0x45    0x01    0x00    0x00    0x00    0xea    0x63    0x01
+    0x801e1463:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+    0x801e146b:     0x01    0x08    0x64
+
+    Hash:
+    00 00 ea 64 c3 04 33 fa 19 75 ff 19 31 81 45 8f 
+    b9 02 b5 01 ea 97 89 dc 00 47 30 45 02 21 00 dd 
+    e1 7e d2 8d 76 79 37 7d 3e 05 72 c5 5f 12 0c d2 
+    f7 80 75 a2 8d 74 26 22 99 e6 af bb 87 8e b3 02 
+    20 41 26 bb f0 fe 02 0d aa a3 a7 2d c4 a0 98 69 
+    43 47 ab 1f 09 1c 94 06 d2 9c f4 0e 88 1a 00 f6 
+    45 01 00 00 00 ea 63 01 00 00 00 ea 62 01 00 01 
+    01 08 64 
+
+
+    Digest:
+    a6 d5 3e ff 44 a0 e7 0b 2d ea 60 00 7e 79 79 ae 
+    4a c3 49 7e 82 93 b3 74 41 ab 1d 64 aa 15 55 73 
+
+    VERIFY FAILED
+    [SRxCryptoAPI - WARNING] [validate:644] verify failed and quit: ret:0 idx:0, ecIdx:1
+
+
+ (2) Here, the reconstructed hash has descrepancy with the recieved hash, so the result is invalid.
+    But, later, this result will be overwritten by the next validation step.
+
+
+
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [1]->hashMessagePtr
+        (u_int8_t *) 0x801e145e ""
+    (gdb) p data->hashMessage [0]->hashMessageValPtr [1]->hashMessageLength
+        16
+
+    (gdb) data->hashMessage [0]->hashMessageValPtr [1]->hashMessagePtr
+    0x801e145e:     0x00    0x00    0xea    0x63    0x01    0x00    0x00    0x00
+    0x801e1466:     0xea    0x62    0x01    0x00    0x01    0x01    0x08    0x64
+
+
+    Hash:
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64 
+
+
+    Digest:
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d 
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df 
+
+    VERIFY SUCCESS
+    2016/11/21 10:12:28 BGP: SLOW THREAD: task respawnReceivePacket (80020161) ran for 3035184ms (cpu time 6ms)
+    2016/11/21 10:12:28 BGP: Notification sent to neighbor 10.1.1.3: type 4/0
+    ^C

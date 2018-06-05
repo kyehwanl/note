@@ -1,0 +1,2441 @@
+Last login: Wed Jul 27 15:25:06 2011 from 192.168.1.100
+[root@luka ~]# ssh 165.229.167.108
+root@165.229.167.108's password: 
+Last login: Tue Aug 23 11:03:19 2011 from c-98-218-192-132.hsd1.md.comcast.net
+[root@antl ~]# yum install subversion
+Loaded plugins: presto, refresh-packagekit
+Setting up Install Process
+Resolving Dependencies
+--> Running transaction check
+---> Package subversion.i686 0:1.6.16-1.fc13 set to be updated
+--> Processing Dependency: subversion-libs(x86-32) = 1.6.16-1.fc13 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: perl(URI) >= 1.17 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_repos-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_swig_py-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_ra_neon-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_ra_svn-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_diff-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_fs_base-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_fs_fs-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_delta-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_subr-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_fs-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_ra-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_wc-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_ra_local-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_fs_util-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Processing Dependency: libsvn_client-1.so.0 for package: subversion-1.6.16-1.fc13.i686
+--> Running transaction check
+---> Package perl-URI.noarch 0:1.54-1.fc13 set to be updated
+---> Package subversion-libs.i686 0:1.6.16-1.fc13 set to be updated
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=============================================================================================================
+ Package                       Arch                 Version                      Repository             Size
+=============================================================================================================
+Installing:
+ subversion                    i686                 1.6.16-1.fc13                updates               1.5 M
+Installing for dependencies:
+ perl-URI                      noarch               1.54-1.fc13                  updates               102 k
+ subversion-libs               i686                 1.6.16-1.fc13                updates               708 k
+
+Transaction Summary
+=============================================================================================================
+Install       3 Package(s)
+Upgrade       0 Package(s)
+
+Total download size: 2.3 M
+Installed size: 11 M
+Is this ok [y/N]: y
+Downloading Packages:
+Setting up and reading Presto delta metadata
+updates/prestodelta                                                                   | 837 kB     00:00     
+Processing delta metadata
+Package(s) data still to download: 2.3 M
+(1/3): perl-URI-1.54-1.fc13.noarch.rpm                                                | 102 kB     00:00     
+(2/3): subversion-1.6.16-1.fc13.i686.rpm                                              | 1.5 MB     00:01     
+(3/3): subversion-libs-1.6.16-1.fc13.i686.rpm                                         | 708 kB     00:00     
+-------------------------------------------------------------------------------------------------------------
+Total                                                                        1.3 MB/s | 2.3 MB     00:01     
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing     : perl-URI-1.54-1.fc13.noarch                                                           1/3 
+  Installing     : subversion-libs-1.6.16-1.fc13.i686                                                    2/3 
+  Installing     : subversion-1.6.16-1.fc13.i686                                                         3/3 
+
+Installed:
+  subversion.i686 0:1.6.16-1.fc13                                                                            
+
+Dependency Installed:
+  perl-URI.noarch 0:1.54-1.fc13                     subversion-libs.i686 0:1.6.16-1.fc13                    
+
+Complete!
+[root@antl ~]# mkdir /home/svnroot
+[root@antl ~]# svnadmin create --fs-type fsfs /home/svnroot/ForCES
+[root@antl ~]# groupadd svn
+[root@antl ~]#  chown root.svn /home/svnroot/ForCES/ -R
+[root@antl ~]# chmod g+w /home/svnroot/ForCES/ -R
+[root@antl ~]# svn info svn_ssh://localhost/home/svnroot/ForCES
+svn_ssh://localhost/home/svnroot/ForCES:  (Not a valid URL)
+
+svn: A problem occurred; see other errors for details
+[root@antl ~]# svn info svn+ssh://localhost/home/svnroot/ForCES
+The authenticity of host 'localhost (::1)' can't be established.
+RSA key fingerprint is 78:26:6c:53:e2:b2:31:25:f7:a6:ad:f3:15:da:2d:e9.
+Are you sure you want to continue connecting (yes/no)? yes
+root@localhost's password: 
+Path: ForCES
+URL: svn+ssh://localhost/home/svnroot/ForCES
+Repository Root: svn+ssh://localhost/home/svnroot/ForCES
+Repository UUID: dda6388a-afb8-48e5-bdb3-ada1bf0d39d1
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 13:37:18 +0900 (Tue, 23 Aug 2011)
+
+[root@antl ~]# svn info ssh://localhost/home/svnroot/ForCES    
+ssh://localhost/home/svnroot/ForCES:  (Not a valid URL)
+
+svn: A problem occurred; see other errors for details
+[root@antl ~]# yum install httpd mod_dav_svn
+Loaded plugins: presto, refresh-packagekit
+Setting up Install Process
+Resolving Dependencies
+--> Running transaction check
+--> Processing Dependency: httpd = 2.2.15-1.fc13 for package: httpd-manual-2.2.15-1.fc13.noarch
+--> Processing Dependency: httpd = 2.2.15-1.fc13 for package: 1:mod_ssl-2.2.15-1.fc13.i686
+---> Package httpd.i686 0:2.2.17-1.fc13.1 set to be updated
+--> Processing Dependency: httpd-tools = 2.2.17-1.fc13.1 for package: httpd-2.2.17-1.fc13.1.i686
+---> Package mod_dav_svn.i686 0:1.6.16-1.fc13 set to be updated
+--> Running transaction check
+---> Package httpd-manual.noarch 0:2.2.17-1.fc13.1 set to be updated
+---> Package httpd-tools.i686 0:2.2.17-1.fc13.1 set to be updated
+---> Package mod_ssl.i686 1:2.2.17-1.fc13.1 set to be updated
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=============================================================================================================
+ Package                    Arch                 Version                         Repository             Size
+=============================================================================================================
+Installing:
+ mod_dav_svn                i686                 1.6.16-1.fc13                   updates                80 k
+Updating:
+ httpd                      i686                 2.2.17-1.fc13.1                 updates               814 k
+Updating for dependencies:
+ httpd-manual               noarch               2.2.17-1.fc13.1                 updates               782 k
+ httpd-tools                i686                 2.2.17-1.fc13.1                 updates                67 k
+ mod_ssl                    i686                 1:2.2.17-1.fc13.1               updates                85 k
+
+Transaction Summary
+=============================================================================================================
+Install       1 Package(s)
+Upgrade       4 Package(s)
+
+Total download size: 1.8 M
+Is this ok [y/N]: y
+Downloading Packages:
+Setting up and reading Presto delta metadata
+Processing delta metadata
+Download delta size: 538 k
+(1/4): httpd-2.2.15-1.fc13_2.2.17-1.fc13.1.i686.drpm                                  | 395 kB     00:00     
+(2/4): httpd-manual-2.2.15-1.fc13_2.2.17-1.fc13.1.noarch.drpm                         |  60 kB     00:00     
+(3/4): httpd-tools-2.2.15-1.fc13_2.2.17-1.fc13.1.i686.drpm                            |  49 kB     00:00     
+(4/4): mod_ssl-2.2.15-1.fc13_2.2.17-1.fc13.1.i686.drpm                                |  34 kB     00:00     
+Finishing rebuild of rpms, from deltarpms
+<delta rebuild>                                                                       | 1.7 MB     00:02     
+Presto reduced the update size by 70% (from 1.7 M to 538 k).
+Package(s) data still to download: 80 k
+mod_dav_svn-1.6.16-1.fc13.i686.rpm                                                    |  80 kB     00:00     
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Updating       : httpd-tools-2.2.17-1.fc13.1.i686                                                      1/9 
+  Updating       : httpd-2.2.17-1.fc13.1.i686                                                            2/9 
+  Updating       : httpd-manual-2.2.17-1.fc13.1.noarch                                                   3/9 
+  Updating       : 1:mod_ssl-2.2.17-1.fc13.1.i686                                                        4/9 
+  Installing     : mod_dav_svn-1.6.16-1.fc13.i686                                                        5/9 
+  Cleanup        : 1:mod_ssl-2.2.15-1.fc13.i686                                                          6/9 
+  Cleanup        : httpd-manual-2.2.15-1.fc13.noarch                                                     7/9 
+  Cleanup        : httpd-2.2.15-1.fc13.i686                                                              8/9 
+  Cleanup        : httpd-tools-2.2.15-1.fc13.i686                                                        9/9 
+
+Installed:
+  mod_dav_svn.i686 0:1.6.16-1.fc13                                                                           
+
+Updated:
+  httpd.i686 0:2.2.17-1.fc13.1                                                                               
+
+Dependency Updated:
+  httpd-manual.noarch 0:2.2.17-1.fc13.1  httpd-tools.i686 0:2.2.17-1.fc13.1  mod_ssl.i686 1:2.2.17-1.fc13.1 
+
+Complete!
+[root@antl ~]# chown apache /home/svnroot/ForCES/ -R
+[root@antl ~]# chmod u+w /home/svnroot/ForCES  -R
+[root@antl ~]# vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+<Location /svn>
+   DAV svn
+   SVNParentPath /home/svnroot
+#
+#   # Limit write permission to list of valid users.
+#   <LimitExcept GET PROPFIND OPTIONS REPORT>
+#      # Require SSL connection for password protection.
+#      # SSLRequireSSL
+#
+      AuthType Basic
+      AuthName "Authorization Realm"
+      AuthUserFile /etc/svn-passwd
+      Require valid-user
+#   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# htpasswd -nd kyehwan
+New password: 
+Re-type new password: 
+kyehwan:7QipYmULaUV3U
+
+[root@antl ~]# vim /etc/svn-passwd
+
+kyehwan:7QipYmULaUV3U
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# htpasswd -nd changhwan
+New password: 
+Re-type new password: 
+changhwan:aVmpUI0i7j0oQ
+
+[root@antl ~]# htpasswd -nd kals25
+New password: 
+Re-type new password: 
+kals25:6tYnAtRRKRZPs
+
+[root@antl ~]# htpasswd -nd jwkim
+New password: 
+Re-type new password: 
+jwkim:rB91Ur7xT3tUM
+
+[root@antl ~]# htpasswd -nd qmffhdn55
+New password: 
+Re-type new password: 
+qmffhdn55:u38QO3RorsGuM
+
+[root@antl ~]# !vim
+vim /etc/svn-passwd
+
+[root@antl ~]# htpasswd -nd kals25
+New password:
+Re-type new password: 
+
+[root@antl ~]# htpasswd -nd jwkim
+New password: 
+Re-type new password: 
+New password: 
+Re-type new password: 
+kyehwan:7QipYmULaUV3U
+kals25:6tYnAtRRKRZPs
+jwkim:rB91Ur7xT3tUM
+qmffhdn55:u38QO3RorsGuM
+
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# htpasswd -nd kyehwan2
+New password: 
+Re-type new password: 
+kyehwan2:QyvQzR.7lqjS6
+
+[root@antl ~]# !vim
+vim /etc/svn-passwd
+
+kyehwan:7QipYmULaUV3U
+kyehwan2:QyvQzR.7lqjS6
+kals25:6tYnAtRRKRZPs
+jwkim:rB91Ur7xT3tUM
+qmffhdn55:u38QO3RorsGuM
+
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# service httpd restart
+httpd ë?ìì                                      [?¤패]
+httpd (??ë?작?©니??                            [  OK  ]
+[root@antl ~]# chkconfig --list
+NetworkManager  0:off   1:off   2:on    3:on    4:on    5:on    6:off
+abrtd           0:off   1:off   2:off   3:on    4:off   5:on    6:off
+acpid           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+atd             0:off   1:off   2:off   3:on    4:on    5:on    6:off
+auditd          0:off   1:off   2:on    3:on    4:on    5:on    6:off
+avahi-daemon    0:off   1:off   2:off   3:on    4:on    5:on    6:off
+bluetooth       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+btseed          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+bttrack         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+cpuspeed        0:off   1:on    2:on    3:on    4:on    5:on    6:off
+crond           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+cups            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+dc_client       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dc_server       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dnsmasq         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+firstboot       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+haldaemon       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+httpd           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ip6tables       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+iptables        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+irda            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+irqbalance      0:off   1:off   2:off   3:on    4:on    5:on    6:off
+lvm2-monitor    0:off   1:on    2:on    3:on    4:on    5:on    6:off
+mdmonitor       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+messagebus      0:off   1:off   2:on    3:on    4:on    5:on    6:off
+multipathd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+mysqld          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+named           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netconsole      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netfs           0:off   1:off   2:off   3:on    4:on    5:on    6:off
+network         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfs             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfslock         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+nmb             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nscd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpdate         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+openvpn         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+pcscd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+portreserve     0:off   1:off   2:on    3:on    4:on    5:on    6:off
+postgresql      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+psacct          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rdisc           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+restorecond     0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rpcbind         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+rpcgssd         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcidmapd       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcsvcgssd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rsyslog         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+saslauthd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sendmail        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smartd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+smb             0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smolt           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmpd           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmptrapd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+squid           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sshd            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+sssd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+svnserve        0:off   1:off   2:off   3:off   4:off   5:off   6:off
+udev-post       0:off   1:on    2:on    3:on    4:on    5:on    6:off
+vsftpd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+wpa_supplicant  0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ypbind          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+[root@antl ~]# chkconfig httpd on
+[root@antl ~]# chkconfig --list  
+NetworkManager  0:off   1:off   2:on    3:on    4:on    5:on    6:off
+abrtd           0:off   1:off   2:off   3:on    4:off   5:on    6:off
+acpid           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+atd             0:off   1:off   2:off   3:on    4:on    5:on    6:off
+auditd          0:off   1:off   2:on    3:on    4:on    5:on    6:off
+avahi-daemon    0:off   1:off   2:off   3:on    4:on    5:on    6:off
+bluetooth       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+btseed          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+bttrack         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+cpuspeed        0:off   1:on    2:on    3:on    4:on    5:on    6:off
+crond           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+cups            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+dc_client       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dc_server       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dnsmasq         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+firstboot       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+haldaemon       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+httpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+ip6tables       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+iptables        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+irda            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+irqbalance      0:off   1:off   2:off   3:on    4:on    5:on    6:off
+lvm2-monitor    0:off   1:on    2:on    3:on    4:on    5:on    6:off
+mdmonitor       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+messagebus      0:off   1:off   2:on    3:on    4:on    5:on    6:off
+multipathd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+mysqld          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+named           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netconsole      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netfs           0:off   1:off   2:off   3:on    4:on    5:on    6:off
+network         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfs             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfslock         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+nmb             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nscd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpdate         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+openvpn         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+pcscd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+portreserve     0:off   1:off   2:on    3:on    4:on    5:on    6:off
+postgresql      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+psacct          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rdisc           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+restorecond     0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rpcbind         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+rpcgssd         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcidmapd       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcsvcgssd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rsyslog         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+saslauthd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sendmail        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smartd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+smb             0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smolt           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmpd           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmptrapd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+squid           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sshd            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+sssd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+svnserve        0:off   1:off   2:off   3:off   4:off   5:off   6:off
+udev-post       0:off   1:on    2:on    3:on    4:on    5:on    6:off
+vsftpd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+wpa_supplicant  0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ypbind          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+svn: Could not open the requested SVN filesystem
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: root
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2       
+Password for 'kyehwan2': 
+svn: OPTIONS of 'http://localhost/svn/ForCES': authorization failed: Could not authenticate to server: rejected Basic challenge (http://localhost)
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+svn: Could not open the requested SVN filesystem
+[root@antl ~]# useradd kyehwan2 -g svn
+[root@antl ~]# useradd qmffhdn55 -g svn
+[root@antl ~]# useradd kals25 -g svn
+[root@antl ~]# useradd jwkim -g svn
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+svn: Could not open the requested SVN filesystem
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# /etc/init.d/httpd restart
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+svn: Could not open the requested SVN filesystem
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info svn+ssh://kyehwan2@localhost/home/svnroot/ForCES
+kyehwan2@localhost's password: 
+kyehwan2@localhost's password: 
+kyehwan2@localhost's password: 
+svn: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.
+svn: Network connection closed unexpectedly
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# passwd kyehwan2
+Changing password for user kyehwan2.
+New password: 
+BAD PASSWORD: it is WAY too short
+BAD PASSWORD: is a palindrome
+Retype new password: 
+No password supplied
+passwd: Authentication token manipulation error
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info svn+ssh://kyehwan2@localhost/home/svnroot/ForCES
+kyehwan2@localhost's password: 
+kyehwan2@localhost's password: 
+kyehwan2@localhost's password: 
+svn: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.
+svn: Network connection closed unexpectedly
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# passwd kyehwan2
+Changing password for user kyehwan2.
+New password: 
+BAD PASSWORD: it is based on a dictionary word
+BAD PASSWORD: is too simple
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info svn+ssh://kyehwan2@localhost/home/svnroot/ForCES
+kyehwan2@localhost's password: 
+Path: ForCES
+URL: svn+ssh://kyehwan2@localhost/home/svnroot/ForCES
+Repository Root: svn+ssh://kyehwan2@localhost/home/svnroot/ForCES
+Repository UUID: dda6388a-afb8-48e5-bdb3-ada1bf0d39d1
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 13:37:18 +0900 (Tue, 23 Aug 2011)
+
+[root@antl ~]# svn info http://localhost/svn/ForCES                     
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: ^Csvn: OPTIONS of 'http://localhost/svn/ForCES': authorization failed: Could not authenticate to server: rejected Basic challenge (http://localhost)
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# service httpd restart
+httpd ë?ìì                                      [  OK  ]
+httpd (??ë?작?©니??                            [  OK  ]
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: 
+Password for '': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: 
+Password for '': 
+svn: OPTIONS of 'http://localhost/svn/ForCES': authorization failed: Could not authenticate to server: rejected Basic challenge (http://localhost)
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info http://kyehwan2@localhost/svn/ForCES
+Authentication realm: <http://localhost:80> Authorization Realm
+Password for 'root': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: kyehwan2
+Password for 'kyehwan2': 
+Authentication realm: <http://localhost:80> Authorization Realm
+Username: 
+Password for '': 
+svn: OPTIONS of 'http://kyehwan2@localhost/svn/ForCES': authorization failed: Could not authenticate to server: rejected Basic challenge (http://localhost)
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# passwd qmffhdn55
+Changing password for user qmffhdn55.
+New password: 
+BAD PASSWORD: it is based on a dictionary word
+BAD PASSWORD: is too simple
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@antl ~]# passwd jwkim
+Changing password for user jwkim.
+New password: 
+BAD PASSWORD: it is based on a dictionary word
+BAD PASSWORD: is too simple
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# passwd kals25
+Changing password for user kals25.
+New password: 
+BAD PASSWORD: it is based on a dictionary word
+BAD PASSWORD: is too simple
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# cat /etc/svn-passwd 
+kyehwan2:QyvQzR.7lqjS6
+kals25:6tYnAtRRKRZPs
+jwkim:rB91Ur7xT3tUM
+qmffhdn55:u38QO3RorsGuM
+
+[root@antl ~]# htpasswd -nd kyehwan2
+New password: 
+Re-type new password: 
+kyehwan2:1Atk.dRbNbvcc
+
+[root@antl ~]# vim /etc/svn-passwd 
+
+kyehwan2:QyvQzR.7lqjS6
+kyehwan2:1Atk.dRbNbvcc
+kals25:6tYnAtRRKRZPs
+jwkim:rB91Ur7xT3tUM
+qmffhdn55:u38QO3RorsGuM
+
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# /etc/init.d/httpd restart
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+<Location /svn>
+   DAV svn
+   SVNParentPath /home/svnroot
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+#
+#
+#   # Limit write permission to list of valid users.
+#   <LimitExcept GET PROPFIND OPTIONS REPORT>
+#      # Require SSL connection for password protection.
+#      # SSLRequireSSL
+#
+#   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# /etc/init.d/httpd restart             
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Authentication realm: <http://localhost:80> ForCES
+Password for 'root': 
+Authentication realm: <http://localhost:80> ForCES
+Username: kyehwan2
+Password for 'kyehwan2': 
+svn: Could not open the requested SVN filesystem
+[root@antl ~]# cat /etc/httpd/conf.d/
+manual.conf      perl.conf        proxy_ajp.conf   README           ssl.conf         webalizer.conf
+mod_dnssd.conf   php.conf         python.conf      squid.conf       subversion.conf  welcome.conf
+[root@antl ~]# vim /etc/httpd/conf.d/subversion.conf    
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+<Location /svn>
+   DAV svn
+   SVNParentPath /home/svnroot
+#
+#
+#   # Limit write permission to list of valid users.
+   <LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# /etc/init.d/httpd restart             
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# getenforce
+Enforcing
+[root@antl ~]# setenforce 0
+[root@antl ~]# getenforce  
+Permissive
+[root@antl ~]# svn info http://localhost/svn/ForCES  
+Path: ForCES
+URL: http://localhost/svn/ForCES
+Repository Root: http://localhost/svn/ForCES
+Repository UUID: dda6388a-afb8-48e5-bdb3-ada1bf0d39d1
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 13:37:18 +0900 (Tue, 23 Aug 2011)
+
+[root@antl ~]# chkconfig --list
+NetworkManager  0:off   1:off   2:on    3:on    4:on    5:on    6:off
+abrtd           0:off   1:off   2:off   3:on    4:off   5:on    6:off
+acpid           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+atd             0:off   1:off   2:off   3:on    4:on    5:on    6:off
+auditd          0:off   1:off   2:on    3:on    4:on    5:on    6:off
+avahi-daemon    0:off   1:off   2:off   3:on    4:on    5:on    6:off
+bluetooth       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+btseed          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+bttrack         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+cpuspeed        0:off   1:on    2:on    3:on    4:on    5:on    6:off
+crond           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+cups            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+dc_client       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dc_server       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+dnsmasq         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+firstboot       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+haldaemon       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+httpd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+ip6tables       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+iptables        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+irda            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+irqbalance      0:off   1:off   2:off   3:on    4:on    5:on    6:off
+lvm2-monitor    0:off   1:on    2:on    3:on    4:on    5:on    6:off
+mdmonitor       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+messagebus      0:off   1:off   2:on    3:on    4:on    5:on    6:off
+multipathd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+mysqld          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+named           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netconsole      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+netfs           0:off   1:off   2:off   3:on    4:on    5:on    6:off
+network         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfs             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nfslock         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+nmb             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+nscd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ntpdate         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+openvpn         0:off   1:off   2:off   3:off   4:off   5:off   6:off
+pcscd           0:off   1:off   2:on    3:on    4:on    5:on    6:off
+portreserve     0:off   1:off   2:on    3:on    4:on    5:on    6:off
+postgresql      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+psacct          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rdisc           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+restorecond     0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rpcbind         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+rpcgssd         0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcidmapd       0:off   1:off   2:off   3:on    4:on    5:on    6:off
+rpcsvcgssd      0:off   1:off   2:off   3:off   4:off   5:off   6:off
+rsyslog         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+saslauthd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sendmail        0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smartd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+smb             0:off   1:off   2:on    3:on    4:on    5:on    6:off
+smolt           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmpd           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+snmptrapd       0:off   1:off   2:off   3:off   4:off   5:off   6:off
+squid           0:off   1:off   2:off   3:off   4:off   5:off   6:off
+sshd            0:off   1:off   2:on    3:on    4:on    5:on    6:off
+sssd            0:off   1:off   2:off   3:off   4:off   5:off   6:off
+svnserve        0:off   1:off   2:off   3:off   4:off   5:off   6:off
+udev-post       0:off   1:on    2:on    3:on    4:on    5:on    6:off
+vsftpd          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+wpa_supplicant  0:off   1:off   2:off   3:off   4:off   5:off   6:off
+ypbind          0:off   1:off   2:off   3:off   4:off   5:off   6:off
+[root@antl ~]# iptables
+iptables v1.4.7: no command specified
+Try `iptables -h' or 'iptables --help' for more information.
+[root@antl ~]# iptables
+iptables v1.4.7: no command specified
+Try `iptables -h' or 'iptables --help' for more information.
+[root@antl ~]# iptables --help
+iptables v1.4.7
+
+Usage: iptables -[AD] chain rule-specification [options]
+       iptables -I chain [rulenum] rule-specification [options]
+       iptables -R chain rulenum rule-specification [options]
+       iptables -D chain rulenum [options]
+       iptables -[LS] [chain [rulenum]] [options]
+       iptables -[FZ] [chain] [options]
+       iptables -[NX] chain
+       iptables -E old-chain-name new-chain-name
+       iptables -P chain target [options]
+       iptables -h (print this help information)
+
+Commands:
+Either long or short options are allowed.
+  --append  -A chain            Append to chain
+  --delete  -D chain            Delete matching rule from chain
+  --delete  -D chain rulenum
+                                Delete rule rulenum (1 = first) from chain
+  --insert  -I chain [rulenum]
+                                Insert in chain as rulenum (default 1=first)
+  --replace -R chain rulenum
+                                Replace rule rulenum (1 = first) in chain
+  --list    -L [chain [rulenum]]
+                                List the rules in a chain or all chains
+  --list-rules -S [chain [rulenum]]
+                                Print the rules in a chain or all chains
+  --flush   -F [chain]          Delete all rules in  chain or all chains
+  --zero    -Z [chain [rulenum]]
+                                Zero counters in chain or all chains
+  --new     -N chain            Create a new user-defined chain
+  --delete-chain
+            -X [chain]          Delete a user-defined chain
+  --policy  -P chain target
+                                Change policy on chain to target
+  --rename-chain
+            -E old-chain new-chain
+                                Change chain name, (moving any references)
+Options:
+[!] --proto     -p proto        protocol: by number or name, eg. `tcp'
+[!] --source    -s address[/mask][...]
+                                source specification
+[!] --destination -d address[/mask][...]
+                                destination specification
+[!] --in-interface -i input name[+]
+                                network interface name ([+] for wildcard)
+ --jump -j target
+                                target for rule (may load target extension)
+  --goto      -g chain
+                              jump to chain with no return
+  --match       -m match
+                                extended match (may load extension)
+  --numeric     -n              numeric output of addresses and ports
+[!] --out-interface -o output name[+]
+                                network interface name ([+] for wildcard)
+  --table       -t table        table to manipulate (default: `filter')
+  --verbose     -v              verbose mode
+  --line-numbers                print line numbers when listing
+  --exact       -x              expand numbers (display exact values)
+[!] --fragment  -f              match second or further fragments only
+  --modprobe=<command>          try to insert modules using this command
+  --set-counters PKTS BYTES     set the counter during insert/append
+[!] --version   -V              print package version.
+[root@antl ~]# iptables show
+Bad argument `show'
+Try `iptables -h' or 'iptables --help' for more information.
+[root@antl ~]# iptables --list
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:ssh 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:netbios-ssn 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:microsoft-ds 
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+[root@antl ~]# /etc/init.d/iptables save
+iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
+[root@antl ~]# /etc/init.d/iptables stop
+iptables: Flushing firewall rules:                         [  OK  ]
+iptables: Setting chains to policy ACCEPT: filter          [  OK  ]
+iptables: Unloading modules:                               [  OK  ]
+[root@antl ~]# !vim
+vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+<Location /svn>
+   DAV svn
+   SVNParentPath /home/svnroot
+#
+#
+#   # Limit write permission to list of valid users.
+   <LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# /etc/init.d/iptables 
+Usage: iptables {start|stop|restart|condrestart|status|panic|save}
+[root@antl ~]# /etc/init.d/iptables start
+iptables: Applying firewall rules:                         [  OK  ]
+iptables: Loading additional modules: nf_conntrack_netbios_[  OK  ]
+[root@antl ~]# /etc/init.d/iptables status
+Table: filter
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
+5    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:137 
+6    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:138 
+7    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:137 
+8    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:138 
+9    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:139 
+10   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:445 
+11   REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination         
+1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+
+[root@antl ~]# iptables --help
+iptables v1.4.7
+
+Usage: iptables -[AD] chain rule-specification [options]
+       iptables -I chain [rulenum] rule-specification [options]
+       iptables -R chain rulenum rule-specification [options]
+       iptables -D chain rulenum [options]
+       iptables -[LS] [chain [rulenum]] [options]
+       iptables -[FZ] [chain] [options]
+       iptables -[NX] chain
+       iptables -E old-chain-name new-chain-name
+       iptables -P chain target [options]
+       iptables -h (print this help information)
+
+Commands:
+Either long or short options are allowed.
+  --append  -A chain            Append to chain
+  --delete  -D chain            Delete matching rule from chain
+  --delete  -D chain rulenum
+                                Delete rule rulenum (1 = first) from chain
+  --insert  -I chain [rulenum]
+                                Insert in chain as rulenum (default 1=first)
+  --replace -R chain rulenum
+                                Replace rule rulenum (1 = first) in chain
+  --list    -L [chain [rulenum]]
+                                List the rules in a chain or all chains
+  --list-rules -S [chain [rulenum]]
+                                Print the rules in a chain or all chains
+  --flush   -F [chain]          Delete all rules in  chain or all chains
+  --zero    -Z [chain [rulenum]]
+                                Zero counters in chain or all chains
+  --new     -N chain            Create a new user-defined chain
+  --delete-chain
+            -X [chain]          Delete a user-defined chain
+  --policy  -P chain target
+                                Change policy on chain to target
+  --rename-chain
+            -E old-chain new-chain
+                                Change chain name, (moving any references)
+Options:
+[!] --proto     -p proto        protocol: by number or name, eg. `tcp'
+[!] --source    -s address[/mask][...]
+                                source specification
+[!] --destination -d address[/mask][...]
+                                destination specification
+[!] --in-interface -i input name[+]
+                                network interface name ([+] for wildcard)
+ --jump -j target
+                                target for rule (may load target extension)
+  --goto      -g chain
+                              jump to chain with no return
+  --match       -m match
+                                extended match (may load extension)
+  --numeric     -n              numeric output of addresses and ports
+[!] --out-interface -o output name[+]
+                                network interface name ([+] for wildcard)
+  --table       -t table        table to manipulate (default: `filter')
+  --verbose     -v              verbose mode
+  --line-numbers                print line numbers when listing
+  --exact       -x              expand numbers (display exact values)
+[!] --fragment  -f              match second or further fragments only
+  --modprobe=<command>          try to insert modules using this command
+  --set-counters PKTS BYTES     set the counter during insert/append
+[!] --version   -V              print package version.
+[root@antl ~]# iptables -A INPUT -p tcp dpt:80
+Bad argument `dpt:80'
+Try `iptables -h' or 'iptables --help' for more information.
+[root@antl ~]# iptables -A INPUT -p tcp -dpt 80
+Bad argument `80'
+Try `iptables -h' or 'iptables --help' for more information.
+[root@antl ~]# iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+[root@antl ~]# iptables --list
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:ssh 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:netbios-ssn 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:microsoft-ds 
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:http 
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+[root@antl ~]# iptables -I INPUT 2 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT 
+[root@antl ~]# iptables --list
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:http 
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:ssh 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:netbios-ssn 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:microsoft-ds 
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:http 
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+[root@antl ~]# /etc/init.d/iptables status
+Table: filter
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:80 
+3    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
+4    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+5    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
+6    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:137 
+7    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:138 
+8    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:137 
+9    ACCEPT     udp  --  0.0.0.0/0            0.0.0.0/0           state NEW udp dpt:138 
+10   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:139 
+11   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:445 
+12   REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+13   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:80 
+
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination         
+1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+
+[root@antl ~]# iptables -D INPUT 13
+[root@antl ~]# iptables --list
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:http 
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:ssh 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-ns 
+ACCEPT     udp  --  anywhere             anywhere            state NEW udp dpt:netbios-dgm 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:netbios-ssn 
+ACCEPT     tcp  --  anywhere             anywhere            state NEW tcp dpt:microsoft-ds 
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+REJECT     all  --  anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+[root@antl ~]# svn info http://localhost/svn/ForCES
+Path: ForCES
+URL: http://localhost/svn/ForCES
+Repository Root: http://localhost/svn/ForCES
+Repository UUID: dda6388a-afb8-48e5-bdb3-ada1bf0d39d1
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 13:37:18 +0900 (Tue, 23 Aug 2011)
+
+[root@antl ~]# htpasswd -nd kals25
+New password: 
+Re-type new password: 
+kals25:6EmzzalyxfpZg
+
+[root@antl ~]# vim /etc/svn-passwd 
+
+kyehwan2:1Atk.dRbNbvcc
+kals25:6EmzzalyxfpZg
+jwkim:
+qmffhdn55:
+
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# htpasswd -nd jwkim
+New password: 
+Re-type new password: 
+jwkim:Uwhg2HZicvlbU
+
+[root@antl ~]# htpasswd -nd qmffhdn55
+New password: 
+Re-type new password: 
+qmffhdn55:04bP4Xt6URqSw
+
+[root@antl ~]# !vim
+vim /etc/svn-passwd 
+
+kyehwan2:1Atk.dRbNbvcc
+kals25:6EmzzalyxfpZg
+jwkim:Uwhg2HZicvlbU
+qmffhdn55:04bP4Xt6URqSw
+
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# svnadmin create --fs-type fsfs /home/svnroot
+svnadmin: Repository creation failed
+svnadmin: Could not create top-level directory
+svnadmin: '/home/svnroot' exists and is non-empty
+[root@antl ~]# svnadmin create --fs-type fsfs /home/svn
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# chown root.svn /home/svn
+[root@antl ~]# chmod g+w /home/svn
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# svn info svn+ssh://kyehwan2@localhost/home/svn
+kyehwan2@localhost's password: 
+Path: svn
+URL: svn+ssh://kyehwan2@localhost/home/svn
+Repository Root: svn+ssh://kyehwan2@localhost/home/svn
+Repository UUID: 3135b64c-351d-40b4-ac4a-8fbbfd3cc7a2
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 14:43:19 +0900 (Tue, 23 Aug 2011)
+
+[root@antl ~]# chown apache /home/svn
+[root@antl ~]# chmod u+w /home/svn -R
+[root@antl ~]# chown apache /home/svn -R
+[root@antl ~]# chown root.svn /home/svn -R                        
+[root@antl ~]# chmod g+w /home/svn -R                  
+[root@antl ~]# 
+[root@antl ~]# 
+[root@antl ~]# vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+<Location /svn>
+   DAV svn
+#   SVNParentPath /home/svnroot
+   SVNParentPath /home/svn
+#
+#
+#   # Limit write permission to list of valid users.
+   <LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl ~]# /etc/init.d/httpd restart
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# chown apache /home/svn -R
+[root@antl ~]# chmod u+w /home/svn -R
+[root@antl ~]# /etc/init.d/httpd restart
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl ~]# svn info http://localhost/svn
+svn: access to 'http://localhost/svn' forbidden
+[root@antl ~]# cd /home/
+[root@antl home]# ll
+total 44
+drwxrwxrwx. 23 antl      antl  4096 Aug 11 01:27 antl
+drwx------.  4 jwkim     svn   4096 Aug 23 14:06 jwkim
+drwx------.  4 kals25    svn   4096 Aug 23 14:05 kals25
+drwx------.  4 kyehwan2  svn   4096 Aug 23 14:05 kyehwan2
+drwx------.  2 root      root 16384 Jan  1  2008 lost+found
+drwx------.  4 qmffhdn55 svn   4096 Aug 23 14:05 qmffhdn55
+drwxrwxr-x.  6 apache    svn   4096 Aug 23 14:43 svn
+drwxr-xr-x.  3 root      root  4096 Aug 23 13:37 svnroot
+[root@antl home]# ll svnroot/
+total 4
+drwxrwxr-x. 6 apache svn 4096 Aug 23 13:37 ForCES
+[root@antl home]# !vim
+vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+#<Location /svn>
+<Location>
+   DAV svn
+#   SVNParentPath /home/svnroot
+   SVNParentPath /home/svn
+#
+#
+#   # Limit write permission to list of valid users.
+   <LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl home]# /etc/init.d/httpd restart    
+Stopping httpd:                                            [  OK  ]
+Starting httpd: Syntax error on line 27 of /etc/httpd/conf.d/subversion.conf:
+<Location> directive requires additional arguments
+                                                           [FAILED]
+[root@antl home]# !v
+vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+#<Location /svn>
+<Location />
+   DAV svn
+#   SVNParentPath /home/svnroot
+   SVNParentPath /home/svn
+#
+#
+#   # Limit write permission to list of valid users.
+   <LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   </LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl home]# /etc/init.d/httpd restart             
+Stopping httpd:                                            [FAILED]
+Starting httpd:                                            [  OK  ]
+[root@antl home]# !v
+vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+#<Location /svn>
+<Location /svn>
+   DAV svn
+#   SVNParentPath /home/svnroot
+   SVNParentPath /home/svn
+#
+#
+#   # Limit write permission to list of valid users.
+   #<LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   #</LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl home]# /etc/init.d/httpd restart             
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl home]# !v
+vim /etc/httpd/conf.d/subversion.conf 
+
+
+LoadModule dav_svn_module     modules/mod_dav_svn.so
+LoadModule authz_svn_module   modules/mod_authz_svn.so
+
+#
+# Example configuration to enable HTTP access for a directory
+# containing Subversion repositories, "/var/www/svn".  Each repository
+# must be both:
+#
+#   a) readable and writable by the 'apache' user, and
+#
+#   b) labelled with the 'httpd_sys_content_t' context if using
+#   SELinux
+#
+
+#
+# To create a new repository "http://localhost/repos/stuff" using
+# this configuration, run as root:
+#
+#   # cd /var/www/svn
+#   # svnadmin create stuff   
+#   # chown -R apache.apache stuff
+#   # chcon -R -t httpd_sys_content_t stuff
+#
+
+#<Location /svn>
+<Location /svn>
+   DAV svn
+#   SVNParentPath /home/svnroot
+   SVNPath /home/svn
+#
+#
+#   # Limit write permission to list of valid users.
+   #<LimitExcept GET PROPFIND OPTIONS REPORT>
+      # Require SSL connection for password protection.
+      # SSLRequireSSL
+   AuthType Basic
+   AuthName "ForCES"
+   AuthUserFile /etc/svn-passwd
+   Require valid-user
+
+#
+   #</LimitExcept>
+</Location>
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+~                                                                                                            
+[root@antl home]# /etc/init.d/httpd restart             
+Stopping httpd:                                            [  OK  ]
+Starting httpd:                                            [  OK  ]
+[root@antl home]# svn info http://localhost/svn
+Authentication realm: <http://localhost:80> ForCES
+Password for 'root': 
+Authentication realm: <http://localhost:80> ForCES
+Username: ^Csvn: OPTIONS of 'http://localhost/svn': authorization failed: Could not authenticate to server: rejected Basic challenge (http://localhost)
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# svn info http://localhost/svn/
+Authentication realm: <http://localhost:80> ForCES
+Password for 'root': 
+Authentication realm: <http://localhost:80> ForCES
+Username: kyehwan2   
+Password for 'kyehwan2': 
+
+-----------------------------------------------------------------------
+ATTENTION!  Your password for authentication realm:
+
+   <http://localhost:80> ForCES
+
+can only be stored to disk unencrypted!  You are advised to configure
+your system so that Subversion can store passwords encrypted, if
+possible.  See the documentation for details.
+
+You can avoid future appearances of this warning by setting the value
+of the 'store-plaintext-passwords' option to either 'yes' or 'no' in
+'/root/.subversion/servers'.
+-----------------------------------------------------------------------
+Store password unencrypted (yes/no)? yes
+Path: svn
+URL: http://localhost/svn
+Repository Root: http://localhost/svn
+Repository UUID: 3135b64c-351d-40b4-ac4a-8fbbfd3cc7a2
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 14:43:19 +0900 (Tue, 23 Aug 2011)
+
+[root@antl home]# vim ~/.subversion/servers 
+
+###                              may be cached to disk.
+###   username                   Specifies the default username.
+###
+### Set store-passwords to 'no' to avoid storing passwords in the
+### auth/ area of your config directory.  It defaults to 'yes',
+### but Subversion will never save your password to disk in
+### plaintext unless you tell it to.
+### Note that this option only prevents saving of *new* passwords;
+### it doesn't invalidate existing passwords.  (To do that, remove
+### the cache files by hand as described in the Subversion book.)
+###
+### Set store-plaintext-passwords to 'no' to avoid storing
+### passwords in unencrypted form in the auth/ area of your config
+### directory. Set it to 'yes' to allow Subversion to store
+### unencrypted passwords in the auth/ area.  The default is
+### 'ask', which means that Subversion will ask you before
+### saving a password to disk in unencrypted form.  Note that
+### this option has no effect if either 'store-passwords' or 
+### 'store-auth-creds' is set to 'no'.
+###
+### Set store-ssl-client-cert-pp to 'no' to avoid storing ssl
+### client certificate passphrases in the auth/ area of your
+### config directory.  It defaults to 'yes', but Subversion will
+### never save your passphrase to disk in plaintext unless you tell
+### it to via 'store-ssl-client-cert-pp-plaintext' (see below).
+###
+### Note store-ssl-client-cert-pp only prevents the saving of *new*
+### passphrases; it doesn't invalidate existing passphrases.  To do
+### that, remove the cache files by hand as described in the
+### Subversion book at http://svnbook.red-bean.com/nightly/en/\
+###                    svn.serverconfig.netmodel.html\
+###                    #svn.serverconfig.netmodel.credcache
+###
+### Set store-ssl-client-cert-pp-plaintext to 'no' to avoid storing
+### passphrases in unencrypted form in the auth/ area of your
+### config directory.  Set it to 'yes' to allow Subversion to
+### store unencrypted passphrases in the auth/ area.  The default
+### is 'ask', which means that Subversion will prompt before
+### saving a passphrase to disk in unencrypted form.  Note that
+### this option has no effect if either 'store-auth-creds' or 
+### 'store-ssl-client-cert-pp' is set to 'no'.
+###
+### Set store-auth-creds to 'no' to avoid storing any Subversion
+### credentials in the auth/ area of your config directory.
+### Note that this includes SSL server certificates.
+### It defaults to 'yes'.  Note that this option only prevents
+### saving of *new* credentials;  it doesn't invalidate existing
+### caches.  (To do that, remove the cache files by hand.)
+###
+### HTTP timeouts, if given, are specified in seconds.  A timeout
+### of 0, i.e. zero, causes a builtin default to be used.
+###
+### The commented-out examples below are intended only to
+### demonstrate how to use this file; any resemblance to actual
+### servers, living or dead, is entirely coincidental.
+
+### In the 'groups' section, the URL of the repository you're
+### trying to access is matched against the patterns on the right.
+### If a match is found, the server options are taken from the
+### section with the corresponding name on the left.
+
+[groups]
+# group1 = *.collab.net
+# othergroup = repository.blarggitywhoomph.com
+# thirdgroup = *.example.com
+
+### Information for the first group:
+# [group1]
+# http-proxy-host = proxy1.some-domain-name.com
+# http-proxy-port = 80
+# http-proxy-username = blah
+# http-proxy-password = doubleblah
+# http-timeout = 60
+# http-auth-types = basic;digest;negotiate
+# neon-debug-mask = 130
+ store-plaintext-passwords = no
+# username = harry
+
+### Information for the second group:
+# [othergroup]
+# http-proxy-host = proxy2.some-domain-name.com
+# http-proxy-port = 9000
+# No username and password for the proxy, so use the defaults below.
+
+### You can set default parameters in the 'global' section.
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# svn info http://localhost/svn/
+svn: /root/.subversion/servers:113: Option expected
+[root@antl home]# !v
+vim ~/.subversion/servers 
+
+###                              may be cached to disk.
+###   username                   Specifies the default username.
+###
+### Set store-passwords to 'no' to avoid storing passwords in the
+### auth/ area of your config directory.  It defaults to 'yes',
+### but Subversion will never save your password to disk in
+### plaintext unless you tell it to.
+### Note that this option only prevents saving of *new* passwords;
+### it doesn't invalidate existing passwords.  (To do that, remove
+### the cache files by hand as described in the Subversion book.)
+###
+### Set store-plaintext-passwords to 'no' to avoid storing
+### passwords in unencrypted form in the auth/ area of your config
+### directory. Set it to 'yes' to allow Subversion to store
+### unencrypted passwords in the auth/ area.  The default is
+### 'ask', which means that Subversion will ask you before
+### saving a password to disk in unencrypted form.  Note that
+### this option has no effect if either 'store-passwords' or 
+### 'store-auth-creds' is set to 'no'.
+###
+### Set store-ssl-client-cert-pp to 'no' to avoid storing ssl
+### client certificate passphrases in the auth/ area of your
+### config directory.  It defaults to 'yes', but Subversion will
+### never save your passphrase to disk in plaintext unless you tell
+### it to via 'store-ssl-client-cert-pp-plaintext' (see below).
+###
+### Note store-ssl-client-cert-pp only prevents the saving of *new*
+### passphrases; it doesn't invalidate existing passphrases.  To do
+### that, remove the cache files by hand as described in the
+### Subversion book at http://svnbook.red-bean.com/nightly/en/\
+###                    svn.serverconfig.netmodel.html\
+###                    #svn.serverconfig.netmodel.credcache
+###
+### Set store-ssl-client-cert-pp-plaintext to 'no' to avoid storing
+### passphrases in unencrypted form in the auth/ area of your
+### config directory.  Set it to 'yes' to allow Subversion to
+### store unencrypted passphrases in the auth/ area.  The default
+### is 'ask', which means that Subversion will prompt before
+### saving a passphrase to disk in unencrypted form.  Note that
+### this option has no effect if either 'store-auth-creds' or 
+### 'store-ssl-client-cert-pp' is set to 'no'.
+###
+### Set store-auth-creds to 'no' to avoid storing any Subversion
+### credentials in the auth/ area of your config directory.
+### Note that this includes SSL server certificates.
+### It defaults to 'yes'.  Note that this option only prevents
+### saving of *new* credentials;  it doesn't invalidate existing
+### caches.  (To do that, remove the cache files by hand.)
+###
+### HTTP timeouts, if given, are specified in seconds.  A timeout
+### of 0, i.e. zero, causes a builtin default to be used.
+###
+### The commented-out examples below are intended only to
+### demonstrate how to use this file; any resemblance to actual
+### servers, living or dead, is entirely coincidental.
+
+### In the 'groups' section, the URL of the repository you're
+### trying to access is matched against the patterns on the right.
+### If a match is found, the server options are taken from the
+### section with the corresponding name on the left.
+
+[groups]
+# group1 = *.collab.net
+# othergroup = repository.blarggitywhoomph.com
+# thirdgroup = *.example.com
+
+### Information for the first group:
+# [group1]
+# http-proxy-host = proxy1.some-domain-name.com
+# http-proxy-port = 80
+# http-proxy-username = blah
+# http-proxy-password = doubleblah
+# http-timeout = 60
+# http-auth-types = basic;digest;negotiate
+# neon-debug-mask = 130
+store-plaintext-passwords = no
+# username = harry
+
+### Information for the second group:
+# [othergroup]
+# http-proxy-host = proxy2.some-domain-name.com
+# http-proxy-port = 9000
+# No username and password for the proxy, so use the defaults below.
+
+### You can set default parameters in the 'global' section.
+### These parameters apply if no corresponding parameter is set in
+### a specifically matched group as shown above.  Thus, if you go
+### through the same proxy server to reach every site on the
+### Internet, you probably just want to put that server's
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# 
+[root@antl home]# svn info http://localhost/svn
+Path: svn
+URL: http://localhost/svn
+Repository Root: http://localhost/svn
+Repository UUID: 3135b64c-351d-40b4-ac4a-8fbbfd3cc7a2
+Revision: 0
+Node Kind: directory
+Last Changed Rev: 0
+Last Changed Date: 2011-08-23 14:43:19 +0900 (Tue, 23 Aug 2011)

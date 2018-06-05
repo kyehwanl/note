@@ -1,0 +1,139 @@
+
+1) ls10-status before/after put 'addNow 10.0.0.0/9 11 34' into rpki_rtr_srv
+----------------------------------------------------------------------------
+ls10# show ip bgp
+BGP table version is 0, local router ID is 129.6.140.229
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, R Removed
+Validation:    v - valid, u - unknown, i - invalid, ? - undefined
+SRx Status:    I - route ignored, D - SRx evaluation deactivated
+SRxVal Format: validation result (origin validation, path validation)
+Origin codes: i - IGP, e - EGP, ? - incomplete
+
+   Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+*  39D848C0 ?(?,-)          I   10.0.0.0         129.6.141.34             0            100 34 i
+*> A7164F5A u(u,-)                               129.6.141.221            0              0 221 i
+*  2EA35C83 ?(?,-)          I   10.0.0.0/9       129.6.141.34             0            100 34 i
+*> B06D5B19 u(u,-)                               129.6.141.221            0              0 221 i
+*  65D83D4E ?(?,-)          I   10.0.0.0/10      129.6.141.34             0            100 34 i
+*> FB163AD4 u(u,-)                               129.6.141.221            0              0 221 i
+*  5C55018B ?(?,-)          I   10.0.0.0/11      129.6.141.34             0            100 34 i
+*  C29B0611 ?(?,-)          I                    129.6.141.221            0              0 221 i
+*  4B2E15C8 ?(?,-)          I   10.0.0.0/12      129.6.141.34             0            100 34 i
+*> D5E01252 u(u,-)                               129.6.141.221            0              0 221 i
+*  2F4F7801 ?(?,-)          I   10.0.0.0/13      129.6.141.34             0            100 34 i
+*> B1817F9B u(u,-)                               129.6.141.221            0              0 221 i
+*  38346C42 ?(?,-)          I   10.0.0.0/14      129.6.141.34             0            100 34 i
+*> A6FA6BD8 u(u,-)                               129.6.141.221            0              0 221 i
+*  01B95087 ?(?,-)          I   10.0.0.0/15      129.6.141.34             0            100 34 i
+*> 9F77571D u(u,-)                               129.6.141.221            0              0 221 i
+*  6DC281E6 ?(?,-)          I   10.0.0.0/16      129.6.141.34             0            100 34 i
+*> F30C867C u(u,-)                               129.6.141.221            0              0 221 i
+*  7AB995A5 ?(?,-)          I   10.0.0.0/17      129.6.141.34             0            100 34 i
+*> E477923F u(u,-)                               129.6.141.221            0              0 221 i
+
+Total number of prefixes 10
+ls10# show ip bgp
+BGP table version is 0, local router ID is 129.6.140.229
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, R Removed
+Validation:    v - valid, u - unknown, i - invalid, ? - undefined
+SRx Status:    I - route ignored, D - SRx evaluation deactivated
+SRxVal Format: validation result (origin validation, path validation)
+Origin codes: i - IGP, e - EGP, ? - incomplete
+
+   Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+*  39D848C0 ?(?,-)          I   10.0.0.0         129.6.141.34             0            100 34 i
+*> A7164F5A u(u,-)                               129.6.141.221            0              0 221 i
+*> 2EA35C83 v(v,-)              10.0.0.0/9       129.6.141.34             0            100 34 i
+*  B06D5B19 i(i,-)          I                    129.6.141.221            0              0 221 i
+*> 65D83D4E v(v,-)              10.0.0.0/10      129.6.141.34             0            100 34 i
+*  FB163AD4 i(i,-)          I                    129.6.141.221            0              0 221 i
+*> 5C55018B v(v,-)              10.0.0.0/11      129.6.141.34             0            100 34 i
+*  C29B0611 i(i,-)          I                    129.6.141.221            0              0 221 i
+*> 4B2E15C8 v(v,-)              10.0.0.0/12      129.6.141.34             0            100 34 i
+*  D5E01252 i(i,-)          I                    129.6.141.221            0              0 221 i
+*  2F4F7801 i(i,-)          I   10.0.0.0/13      129.6.141.34             0            100 34 i
+*  B1817F9B i(i,-)          I                    129.6.141.221            0              0 221 i
+*  38346C42 i(i,-)          I   10.0.0.0/14      129.6.141.34             0            100 34 i
+*  A6FA6BD8 i(i,-)          I                    129.6.141.221            0              0 221 i
+*  01B95087 i(i,-)          I   10.0.0.0/15      129.6.141.34             0            100 34 i
+*  9F77571D i(i,-)          I                    129.6.141.221            0              0 221 i
+*  6DC281E6 i(i,-)          I   10.0.0.0/16      129.6.141.34             0            100 34 i
+*  F30C867C i(i,-)          I                    129.6.141.221            0              0 221 i
+*  7AB995A5 i(i,-)          I   10.0.0.0/17      129.6.141.34             0            100 34 i
+*  E477923F i(i,-)          I                    129.6.141.221            0              0 221 i
+
+Total number of prefixes 10
+ls10#
+
+(2) ls10 - quagga script
+------------------------------------------------------------------------------------
+2011/09/21 14:31:38 BGP: Import timer expired.
+NO RECEIPT! 0x2EA35C83
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x2EA35C83], 0
+2011/09/21 14:31:43 BGP: Remove 'Ignore' flag for update [0x2EA35C83]!
+NO RECEIPT! 0xB06D5B19
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xB06D5B19], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xB06D5B19]!
+NO RECEIPT! 0x65D83D4E
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x65D83D4E], 0
+2011/09/21 14:31:43 BGP: Remove 'Ignore' flag for update [0x65D83D4E]!
+NO RECEIPT! 0xFB163AD4
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xFB163AD4], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xFB163AD4]!
+NO RECEIPT! 0x5C55018B
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x5C55018B], 0
+2011/09/21 14:31:43 BGP: Remove 'Ignore' flag for update [0x5C55018B]!
+NO RECEIPT! 0xC29B0611
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xC29B0611], 2
+NO RECEIPT! 0x4B2E15C8
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x4B2E15C8], 0
+2011/09/21 14:31:43 BGP: Remove 'Ignore' flag for update [0x4B2E15C8]!
+NO RECEIPT! 0xD5E01252
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xD5E01252], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xD5E01252]!
+NO RECEIPT! 0xB1817F9B
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xB1817F9B], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xB1817F9B]!
+NO RECEIPT! 0x2F4F7801
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x2F4F7801], 2
+NO RECEIPT! 0xA6FA6BD8
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xA6FA6BD8], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xA6FA6BD8]!
+NO RECEIPT! 0x38346C42
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x38346C42], 2
+NO RECEIPT! 0x9F77571D
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x9F77571D], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0x9F77571D]!
+NO RECEIPT! 0x01B95087
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x01B95087], 2
+NO RECEIPT! 0xF30C867C
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xF30C867C], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xF30C867C]!
+NO RECEIPT! 0x6DC281E6
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x6DC281E6], 2
+NO RECEIPT! 0xE477923F
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0xE477923F], 2
+2011/09/21 14:31:43 BGP: Setting 'Ignore' flag for update [0xE477923F]!
+NO RECEIPT! 0x7AB995A5
+2011/09/21 14:31:43 BGP: SRx Validation result (Origin): Update [0x7AB995A5], 2
+2011/09/21 14:31:44 BGP: 129.6.141.34 [FSM] Timer (keepalive timer expire)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

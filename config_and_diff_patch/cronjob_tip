@@ -1,0 +1,75 @@
+
+
+1. command 
+===========
+    list: crontab -l     
+    edit: crontab -e
+
+
+
+2.. crontab format:
+==================
+ MIN HOUR DOM MON DOW CMD
+ 
+ MIN    : minute
+ HOUR   : hourly
+ DOM    : day of month
+ MON    : month
+ DOW    : day of week(ex. Sun Mon Tue...)
+ CMD    : shell command
+
+
+3. Keyword Equivalent
+=====================
+@yearly 0 0 1 1 *
+@daily  0 0 * * *
+@hourly 0 * * * *
+@reboot Run at startup.
+
+The * means all the possible unit — i.e every minute of every hour through out the year. More than using this * directly, you will find it very useful in the following cases.
+
+When you specify */5 in minute field means every 5 minutes.
+When you specify 0-10/2 in minute field mean every 2 minutes in the first 10 minute.
+Thus the above convention can be used for all the other 4 fields.
+
+
+
+4. examples
+===========
+a. twice a day
+00 11,16 * * * /home/ramesh/bin/incremental-backup
+
+00 – 0th Minute (Top of the hour)
+11,16 – 11 AM and 4 PM
+* – Every day
+* – Every month
+* – Every day of the week
+
+b. specific range
+00 09-18 * * * /home/ramesh/bin/check-db-status
+09-18 – 9 am, 10 am,11 am, 12 am, 1 pm, 2 pm, 3 pm, 4 pm, 5 pm, 6 pm
+
+ my configuration of crontab
+==============================
+
+# remove email alert and disable
+MAILTO=""
+
+0 0 * * * rsync -avPui --delete node1:~/proj-bgp/ ~/project-iip-bgp/proj-bgp/
+0 1 * * * rsync -avPui --delete node1:~/config_and_diff_patch/ ~/config_and_diff_patch/
+
+
+# for my laptop (sudo crontab -l)
+@reboot /usr/bin/freshclam
+
+
+# current setting in ls5 or bgp2 or vmware-023
+MAILTO=""
+1 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/config_and_diff_patch/ ~/Emulab/config_and_diff_patch/
+2 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Documents/ ~/Emulab/Documents/
+3 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/srx_test1/DEBUGGING_NOTE/ ~/Emulab/DEBUGGING_NOTE/
+4 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Shell_Script/ ~/Emulab/Shell_Script/
+5 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/proj-bgp/ ~/Emulab/proj-bgp/
+7 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Quagga_test/ ~/Emulab/Quagga_test/
+9 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Programming/ ~/Emulab/Programming/
+

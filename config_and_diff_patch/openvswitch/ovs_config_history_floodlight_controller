@@ -1,0 +1,13 @@
+
+
+< floodlight install >
+  481  apt-get update
+  482  apt-get install floodlight
+  483  /etc/init.d/floodlight status
+  484  /etc/init.d/floodlight start
+
+  486  tail -f /var/log/floodlight/floodlight.log
+
+< floodlight GUI >
+  487  wget http://openflow.marist.edu/static/download/avior-1.3_linux_x64.jar
+  488  java -jar avior-1.3_linux_x64.jar

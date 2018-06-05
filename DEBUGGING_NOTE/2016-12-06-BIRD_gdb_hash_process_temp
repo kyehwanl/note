@@ -1,0 +1,268 @@
+[kyehwanl@node2 bird-1.6-bgpsec-0.9]$ sudo gdb --args ./bird -c ./node2.conf
+GNU gdb (GDB) Fedora (7.3.1-48.fc15)
+Copyright (C) 2011 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /users/kyehwanl/Bird_test/bird-1.6-bgpsec-0.9/bird...done.
+(gdb) b bgp_encode_prefix_withdrawn
+Breakpoint 1 at 0x80722d0: file ../../../proto/bgp/packets.c, line 429.
+(gdb) r
+Starting program: /users/kyehwanl/Bird_test/bird-1.6-bgpsec-0.9/bird -c ./node2.conf
+[Thread debugging using libthread_db enabled]
+2016-12-02 17:04:56 <INFO> Started
+BGP: Scheduling packet type 1
+BGP: kicking TX
+BGP: RX hook: Got 61 bytes
+BGP: Got packet 01 (61 bytes)
+        Option 02: 01 04 00 01 00 01 02 00 40 02 00 00 41 04 00 00 ea 64 48 03 08 00 01 48 03 00 00 01 46 00
+2016-12-02 17:04:59 <DBG> parse_capability: Multiprotocol Extension AFI: IPv4
+2016-12-02 17:04:59 <DBG> parse_capability: Route refresh
+2016-12-02 17:04:59 <DBG> parse_capability: Graceful restart
+2016-12-02 17:04:59 <DBG> parse_capability: AS4
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender BGPSEC_VERSION matches : 8
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender can send BGPSEC messages : 8
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender bgpsec AFI: IPV4 : 1
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender BGPSEC_VERSION matches : 0
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender can receive BGPSEC messages : 0
+2016-12-02 17:04:59 <DBG> bgp_parse_capabilities: sender bgpsec AFI: IPV4 : 1
+2016-12-02 17:04:59 <DBG> parse_capability: Enhanced route refresh
+BGP: Hold timer set to 240, keepalive to 80, AS to 60004, ID to a010104, AS4 session to 1
+BGP: Scheduling packet type 4
+BGP: kicking TX
+BGP: RX hook: Got 19 bytes
+BGP: Got packet 04 (19 bytes)
+BGP: Scheduling packet type 2
+BGP: kicking TX
+2016-12-02 17:04:59 <DBG> bgp23: bgp_create_update
+2016-12-02 17:04:59 <DBG> bgp23: bgp_create_update
+BGP: RX hook: Got 29 bytes
+BGP: Got packet 02 (29 bytes)
+Sizes: withdrawn=0, attrs=6, NLRI=0
+2016-12-02 17:04:59 <DBG> bgp23: bgp_do_rx_update
+BGP: Parsing attributes
+2016-12-02 17:04:59 <DBG> bgp23: BGP Decode: Attr BA_MP_UNREACH_NLRI : 0f 80 3
+BGP: Scheduling packet type 1
+BGP: kicking TX
+BGP: RX hook: Got 61 bytes
+BGP: Got packet 01 (61 bytes)
+        Option 02: 01 04 00 01 00 01 02 00 40 02 00 00 41 04 00 00 ea 62 48 03 08 00 01 48 03 00 00 01 46 00
+2016-12-02 17:05:13 <DBG> parse_capability: Multiprotocol Extension AFI: IPv4
+2016-12-02 17:05:13 <DBG> parse_capability: Route refresh
+2016-12-02 17:05:13 <DBG> parse_capability: Graceful restart
+2016-12-02 17:05:13 <DBG> parse_capability: AS4
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender BGPSEC_VERSION matches : 8
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender can send BGPSEC messages : 8
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender bgpsec AFI: IPV4 : 1
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender BGPSEC_VERSION matches : 0
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender can receive BGPSEC messages : 0
+2016-12-02 17:05:13 <DBG> bgp_parse_capabilities: sender bgpsec AFI: IPV4 : 1
+2016-12-02 17:05:13 <DBG> parse_capability: Enhanced route refresh
+BGP: Hold timer set to 240, keepalive to 80, AS to 60002, ID to a010102, AS4 session to 1
+BGP: Scheduling packet type 4
+BGP: kicking TX
+BGP: RX hook: Got 19 bytes
+BGP: Got packet 04 (19 bytes)
+BGP: Scheduling packet type 2
+BGP: kicking TX
+2016-12-02 17:05:13 <DBG> bgp12: bgp_create_update
+2016-12-02 17:05:13 <DBG> bgp12: bgp_create_update
+BGP: RX hook: Got 160 bytes
+BGP: Got packet 02 (160 bytes)
+Sizes: withdrawn=0, attrs=133, NLRI=4
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update
+BGP: Parsing attributes
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_ORIGIN : 01 40 1
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_NEXT_HOP : 03 40 4
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_MP_REACH_NLRI : 0e 80 13
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_BGPSEC_SIGNATURE : 1e 80 103
+        NLRI AF=1 sub=1 len=10
+2016-12-02 17:05:13 <DBG> decode_bgpsec: 60003 < 60002 : using NLRI 100.0.1.0/24
+
+cpu clock diff - EVP_PKEY_verify:  1730.56 us
+2016-12-02 17:05:13 <DBG> decode_bgpsec: 60003 < 60002 : good last sig. AS: 60002, marked BGPsec Valid
+2016-12-02 17:05:13 <DBG> bgpsec_create_aspath: tot pcount/as path length : 1
+        NLRI AF=1 sub=1 len=10
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update: using MP_REACH: x: 8.30.56.86, len: 4
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update: Adding: 100.0.1.0/24
+BGP: Got route 100.0.1.0/24 up
+Creating bucket.
+BGP: Scheduling packet type 2
+BGP: kicking TX
+2016-12-02 17:05:13 <DBG> bgp23: bgp_create_update
+Processing bucket 081e6a10
+2016-12-02 17:05:13 <DBG>       bgpsec_get_buck_prefix: 100.0.1.0/24
+
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_ORIGIN
+        Attribute 01 (1 bytes, flags 40)
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_AS_PATH
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_NEXT_HOP
+        Attribute 03 (4 bytes, flags 40)
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_BGPSEC_SIGNATURE
+2016-12-02 17:05:13 <DBG> bgp23: create update: Adding Next Hop to MP_REACH: 10.1.1.2
+2016-12-02 17:05:13 <DBG>     Encode Prefix: 100.0.1.0/24
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_MP_REACH_NLRI
+        Attribute 0e (13 bytes, flags 80)
+2016-12-02 17:05:13 <DBG> encode_bgpsec_attr: 60003 > 60004 : AS PATH length: 2
+2016-12-02 17:05:13 <DBG> encode_bgpsec_attr:N: Signed 60003 > 60004, signature length = 72
+        Attribute 1e (203 bytes, flags 80)
+2016-12-02 17:05:13 <DBG>     Encode Prefix: Dequeued route 100.0.1.0/24
+2016-12-02 17:05:13 <DBG> bgp23: bgp_create_update
+Deleting empty bucket 081e6a10
+BGP: RX hook: Got 191 bytes
+BGP: Got packet 02 (162 bytes)
+Sizes: withdrawn=0, attrs=135, NLRI=4
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update
+BGP: Parsing attributes
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_ORIGIN : 01 40 1
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_NEXT_HOP : 03 40 4
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_MP_REACH_NLRI : 0e 80 13
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_BGPSEC_SIGNATURE : 1e 80 105
+        NLRI AF=1 sub=1 len=10
+2016-12-02 17:05:13 <DBG> decode_bgpsec: 60003 < 60002 : using NLRI 100.0.2.0/24
+
+cpu clock diff - EVP_PKEY_verify:  1754.97 us
+2016-12-02 17:05:13 <DBG> decode_bgpsec: 60003 < 60002 : good last sig. AS: 60002, marked BGPsec Valid
+2016-12-02 17:05:13 <DBG> bgpsec_create_aspath: tot pcount/as path length : 1
+        NLRI AF=1 sub=1 len=10
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update: using MP_REACH: x: 8.30.56.86, len: 4
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update: Adding: 100.0.2.0/24
+BGP: Got route 100.0.2.0/24 up
+Creating bucket.
+BGP: Scheduling packet type 2
+BGP: Got packet 02 (29 bytes)
+Sizes: withdrawn=0, attrs=6, NLRI=0
+2016-12-02 17:05:13 <DBG> bgp12: bgp_do_rx_update
+BGP: Parsing attributes
+2016-12-02 17:05:13 <DBG> bgp12: BGP Decode: Attr BA_MP_UNREACH_NLRI : 0f 80 3
+BGP: kicking TX
+2016-12-02 17:05:13 <DBG> bgp23: bgp_create_update
+Processing bucket 081eb080
+2016-12-02 17:05:13 <DBG>       bgpsec_get_buck_prefix: 100.0.2.0/24
+
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_ORIGIN
+        Attribute 01 (1 bytes, flags 40)
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_AS_PATH
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_NEXT_HOP
+        Attribute 03 (4 bytes, flags 40)
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_BGPSEC_SIGNATURE
+2016-12-02 17:05:13 <DBG> bgp23: create update: Adding Next Hop to MP_REACH: 10.1.1.2
+2016-12-02 17:05:13 <DBG>     Encode Prefix: 100.0.2.0/24
+2016-12-02 17:05:13 <DBG> bgp23: bgp_encode_attrs: Attr BA_MP_REACH_NLRI
+        Attribute 0e (13 bytes, flags 80)
+2016-12-02 17:05:13 <DBG> encode_bgpsec_attr: 60003 > 60004 : AS PATH length: 2
+2016-12-02 17:05:13 <DBG> encode_bgpsec_attr:N: Signed 60003 > 60004, signature length = 72
+        Attribute 1e (205 bytes, flags 80)
+2016-12-02 17:05:13 <DBG>     Encode Prefix: Dequeued route 100.0.2.0/24
+2016-12-02 17:05:13 <DBG> bgp23: bgp_create_update
+Deleting empty bucket 081eb080
+
+
+
+
+
+BGP: Got route 100.0.1.0/24 down
+BGP: Scheduling packet type 2
+BGP: Got route 100.0.2.0/24 down
+BGP: Scheduling packet type 2
+BGP: kicking TX
+2016-12-02 17:05:35 <DBG> bgp23: bgp_create_update
+Withdrawn routes:
+
+Breakpoint 1, bgp_encode_prefix_withdrawn (p=0x81d0ff0, w=0x81dfeed "", buck=0x81e6600, remains=4073)
+    at ../../../proto/bgp/packets.c:429
+429       byte *start = w;
+(gdb)
+(gdb)
+(gdb)
+(gdb)
+(gdb)
+(gdb) n
+433       while (!EMPTY_LIST(buck->prefixes) && (remains >= (5+sizeof(ip_addr)))) {
+(gdb)
+434         struct bgp_prefix *px = SKIP_BACK(struct bgp_prefix, bucket_node, HEAD(buck->prefixes));
+(gdb) p buck->prefixes
+$1 = {{head_node = {next = 0x81e8e64, prev = 0x0}, head_padding = 0x81e8e80}, {tail_padding = 0x81e8e64,
+    tail_node = {next = 0x0, prev = 0x81e8e80}}, {head = 0x81e8e64, null = 0x0, tail = 0x81e8e80}}
+(gdb) p buck->prefixes.head
+$2 = (struct node *) 0x81e8e64
+(gdb) p &((struct bgp_prefix*)0)->bucket_node
+$3 = (node *) 0x10
+(gdb) p ((size_t) &((struct bgp_prefix*)0)->bucket_node)
+$4 = 16
+(gdb) p (struct bgp_prefix*)(0x81e8e64 - 0x10)
+$5 = (struct bgp_prefix *) 0x81e8e54
+(gdb) p/x * (struct bgp_prefix*)(0x81e8e64 - 0x10)
+$6 = {n = {prefix = {addr = 0x64000100}, pxlen = 0x18}, path_id = 0x0, next = 0x0, bucket_node = {next = 0x81e8e80,
+    prev = 0x81e6614}}
+(gdb) p buck->prefixes.head.next
+$7 = (struct node *) 0x81e8e80
+(gdb) p/x * buck->prefixes.head
+$8 = {next = 0x81e8e80, prev = 0x81e6614}
+(gdb) p/x * (struct bgp_prefix*)(0x81e8e80 - 0x10)
+$9 = {n = {prefix = {addr = 0x64000200}, pxlen = 0x18}, path_id = 0x0, next = 0x0, bucket_node = {next = 0x81e6618,
+    prev = 0x81e8e64}}
+(gdb) p/x * (struct bgp_prefix*)(0x81e8e70)
+$10 = {n = {prefix = {addr = 0x64000200}, pxlen = 0x18}, path_id = 0x0, next = 0x0, bucket_node = {
+    next = 0x81e6618, prev = 0x81e8e64}}
+(gdb) p/x * buck->prefixes.head.next.next
+$11 = {next = 0x0, prev = 0x81e8e80}
+(gdb) p/x * buck->prefixes.head.next
+$12 = {next = 0x81e6618, prev = 0x81e8e64}
+(gdb) p/x  buck->prefixes.head.next
+$13 = 0x81e8e80
+(gdb) p/x  buck->prefixes.head
+$14 = 0x81e8e64
+(gdb) p/x * buck->prefixes.head
+$15 = {next = 0x81e8e80, prev = 0x81e6614}
+(gdb) p/x * buck->prefixes.head.next
+$16 = {next = 0x81e6618, prev = 0x81e8e64}
+(gdb) p/x * buck->prefixes.head.next.next
+$17 = {next = 0x0, prev = 0x81e8e80}
+(gdb) p/x * (struct bgp_prefix*)(0x81e6608)
+$18 = {n = {prefix = {addr = 0x0}, pxlen = 0x20}, path_id = 0x0, next = 0x81e8e64, bucket_node = {next = 0x0,
+    prev = 0x81e8e80}}
+(gdb) p/x * (struct bgp_prefix*)(0x81e6608).n.prefix.addr
+Attempt to extract a component of a value that is not a structure.
+(gdb) p/x * (struct bgp_prefix*)(0x81e6608).n
+Attempt to extract a component of a value that is not a structure.
+(gdb) p/x ((struct bgp_prefix*)(0x81e6608)).n
+$19 = {prefix = {addr = 0x0}, pxlen = 0x20}
+(gdb) p/x ((struct bgp_prefix*)(0x81e6608)).n.prefix.addr
+$20 = 0x0
+(gdb) p/x ((struct bgp_prefix*)(buck->prefixes.head - 0x10)).n.prefix.addr
+$21 = 0x0
+(gdb) p/x ((struct bgp_prefix*)(buck->prefixes.head - 0x10))
+$22 = 0x81e8de4
+(gdb) p/x ((struct bgp_prefix*)(buck->prefixes.head))
+$23 = 0x81e8e64
+(gdb) p/x ((struct bgp_prefix*)(buck->prefixes.head)-0x10)
+$24 = 0x81e8ce4
+(gdb) p/x (struct bgp_prefix*)(buck->prefixes.head)-0x10
+$25 = 0x81e8ce4
+(gdb) p/x (struct bgp_prefix*)(buck->prefixes.head)
+$26 = 0x81e8e64
+(gdb) p/x (struct bgp_prefix*)(buck->prefixes.head-0x10)
+$27 = 0x81e8de4
+(gdb) p/x (buck->prefixes.head-0x10)
+$28 = 0x81e8de4
+(gdb) p/x buck->prefixes.head
+$29 = 0x81e8e64
+(gdb) p/x buck->prefixes.head - 16
+$30 = 0x81e8de4
+(gdb) p/x * (struct bgp_prefix*)(0x81e8e80 - 0x10)
+$31 = {n = {prefix = {addr = 0x64000200}, pxlen = 0x18}, path_id = 0x0, next = 0x0, bucket_node = {
+    next = 0x81e6618, prev = 0x81e8e64}}
+(gdb) p/x  (struct bgp_prefix*)(0x81e8e80 - 0x10)
+$32 = 0x81e8e70
+(gdb) q
+A debugging session is active.
+
+        Inferior 1 [process 18926] will be killed.
+
+Quit anyway? (y or n) y
+

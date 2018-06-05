@@ -1,0 +1,107 @@
+
+
+(1) VPN configuration
+=======================
+0. Install PPTP Client
+    Ubuntu/Debian
+        sudo apt-get install pptp-linux
+    RHEL/CentOS/Fedora
+        sudo yum install pptp
+
+A. Modify chap-secrets /etc/ppp/chap-secrets and add the below line (replacing variables)
+    $USERNAME   PPTP    $PASSWORD   *
+
+B. Create a config file named vpn.domain.com in the directory /etc/ppp/peers, 
+and add (replacing variables)
+    pty "pptp $VPN_SERVER --nolaunchpppd"
+    name $USERNAME
+    remotename PPTP
+    require-mppe-128
+    file /etc/ppp/options.pptp
+    ipparam vpn.domain.com
+    Register the ppp_mppe kernel module
+    sudo modprobe ppp_mppe
+    *Note that on a VPS, you will need to enable PPP through the VPS console.
+
+C. Validate that the following options in /etc/ppp/options.pptp are not commented
+    lock
+    noauth
+    refuse-pap
+    refuse-eap
+    refuse-chap
+    nobsdcomp
+    nodeflate
+    require-mppe-128
+
+D. Edit /etc/ppp/ip-up.local and add the following route
+    #!/bin/bash
+    NET="10.0.0.0/8" #< Modify
+    IFACE="ppp0"     #< Modify
+    route add -net ${NET} dev ${IFACE}
+
+E. Connect to the VPN server
+    RedHat/CentOS
+        sudo pppd call vpn.domain.com
+
+    Ubuntu/Debian
+        sudo pon vpn.domain.com
+
+F. Verify that the interface is up
+
+
+
+
+(2) VPN connection info
+========================
+vpn pptp server: 165.229.185.192
+VPAN ID: admin
+VPAN Pw: antl..
+
+
+165.229.185.213
+165.229.185.207
+
+ID: root
+pw: antl..
+
+
+
+(3) VPN cmd history
+=====================
+  205  pptp --help
+  206  rpm -q pptp
+  210  vi /etc/ppp/chap-secrets 
+  211  cat /etc/ppp/chap-secrets 
+  213  modprobe ppp_mppe 
+  214  lsmod | grep ppp
+
+  215  less /etc/ppp/options.pptp 
+  216  vi /etc/ppp/ip-up.local
+
+  220  ll /etc/ppp/peers/
+  221  touch /etc/ppp/peers/vpn.domain.com
+  227  vi peers/vpn.domain.com 
+
+  237  pppd call vpn.domain.com
+  238  ip a 
+  239  ifconfig
+  240  tail /var/log/messages | grep ppp
+
+  241  ping 165.229.185.207
+  243  ping 165.229.185.213
+  246  ssh 165.229.185.207
+
+  247  pkill pppd
+  251  rmmod ppp_mppe 
+  252  lsmod | grep ppp
+
+
+
+
+
+
+
+
+
+
+

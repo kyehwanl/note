@@ -1,0 +1,358 @@
+
+SRx IPv6 Support Test
+=====================
+
+
+1. Status using IPv6 prefix (1001:1:1:1::/64)
+---------------------------------------------
+
+  A. RPKI-rtr server 
+
+    addNow 1001:1:1:1::/64 64 60002
+    Read 1 entry
+    >>
+    Sending multiple 'Serial Notify' (max. serial = 1)
+    >>
+    Sending an RPKI-RTR 'PDU[0] with Serial'
+    >>
+    >> Received Data From Client [6]...
+    [+-32s] Received a 'Serial Query'
+    >>
+    Sending a 'Cache Response'
+    >>
+    Cache size = 1
+    Sending an 'IPv6Prefix' (serial = 1)
+    Sending an 'End of Data (max. serial = 1)
+    >>
+    Sending an RPKI-RTR 'PDU[7] with Serial'
+
+    >> cache
+    Session ID: 0 (0x0000)
+         1: 1001:1:1:1::/64, OAS=60002, Max.Len=64, Serial=1, Prev.Serial=1
+
+
+  B. srx_server
+
+   (1) before receiving update
+
+    Welcome to BGP-SRx!
+    =======================================
+    [SRx]> dump-pcache
+    <?xml version="1.0" encoding="iso-8859-1"?>
+    <prefix-cache>
+      <prefix ip="1001:1:1:1::" length="64" roa-coverage="1" no-valid-updates="0" no-other-updates="0" state-of-other="INVALID">
+    Prefix Cache has 1 items. Start export into standard out!
+    [SRx]>       <roa valCacheID="0" as="60002" max-length="64" roa-count="1" deferred-count="0" update-count="0" />
+        </as>
+        <valid no-updates="0" />
+        <other no-updates="0" state="INVALID" />
+      </prefix>
+    </prefix-cache>
+    Export of prefix cache into  done.!
+
+
+
+   (2) after received and validated
+
+    [SRx]> dump-pcache
+    <?xml version="1.0" encoding="iso-8859-1"?>
+    <prefix-cache>
+      <prefix internal-trie-node="yes">
+        <prefix ip="16.1.0.1" length="64" roa-coverage="0" no-valid-updates="0" no-other-updates="1" state-of-other="NOTFOUND">
+          <as as-number="60002" update-count="1" />
+          <valid no-updates="0" />
+          <other no-updates="1" state="NOTFOUND">
+            <update update-id="0xBECB3732" origin-as="60002" roa-match="0" />
+          </other>
+        </prefix>
+        <prefix ip="1001:1:1:1::" length="64" roa-coverage="1" no-valid-updates="0" no-other-updates="0" state-of-other="INVALID">
+          <as as-number="60002" update-count="0">
+            <roa valCacheID="0" as="60002" max-length="64" roa-count="1" deferred-count="0" update-count="0" />
+          </as>
+          <valid no-updates="0" />
+          <other no-updates="0" state="INVALID" />
+        </prefix>
+    Prefix Cache has 3 items. Start export into standard out!
+    [SRx]>   </prefix>
+      <updates>
+        <update update-id="0xBECB3732" origin-as="60002" prefix="16.1.0.1/64" roa-count="0" val-state="NOTFOUND" />
+      </updates>
+    </prefix-cache>
+    Export of prefix cache into  done.!
+    [SRx]> 
+    address 
+
+
+
+  C. QuaggaSRx Result
+
+     Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+  *> BECB3732 i(n,v)              1001:1:1:1::/64  3ffe:1cfa:0:2:2c0:4fff:fe68:a225
+                                             0              0 60002 i
+
+
+
+
+
+2. comparison with IPv4
+-----------------------
+
+
+  A. rpkirtr_svr
+
+    addNow 100.0.0.0/8 8 60002
+    Read 1 entry
+    >>
+    Sending multiple 'Serial Notify' (max. serial = 1)
+    >>
+    Sending an RPKI-RTR 'PDU[0] with Serial'
+    >>
+    >> Received Data From Client [6]...
+    [+-57s] Received a 'Serial Query'
+    >>
+    Sending a 'Cache Response'
+    >>
+    Cache size = 1
+    Sending an 'IPv4Prefix' (serial = 1)
+    Sending an 'End of Data (max. serial = 1)
+    >>
+
+
+  B. srx_server
+
+
+   (1) before receiving update
+
+    Welcome to BGP-SRx!
+    =======================================
+    [SRx]> dump-pcache
+    <?xml version="1.0" encoding="iso-8859-1"?>
+    <prefix-cache>
+      <prefix ip="100.0.0.0" length="8" roa-coverage="1" no-valid-updates="0" no-other-updates="0" state-of-other="INVALID">
+        <as as-number="60002" update-count="0">
+          <roa valCacheID="0" as="60002" max-length="8" roa-count="1" deferred-count="0" update-count="0" />
+        </as>
+        <valid no-updates="0" />
+        <other no-updates="0" state="INVALID" />
+      </prefix>
+    </prefix-cache>
+    Prefix Cache has 1 items. Start export into standard out!
+    [SRx]> Export of prefix cache into  done.!
+
+
+
+   (2) after received and validated
+
+    [SRx]> dump-pcache
+    <?xml version="1.0" encoding="iso-8859-1"?>
+    <prefix-cache>
+      <prefix ip="100.0.0.0" length="8" roa-coverage="1" no-valid-updates="1" no-other-updates="0" state-of-other="INVALID">
+        <as as-number="60002" update-count="1">
+          <roa valCacheID="0" as="60002" max-length="8" roa-count="1" deferred-count="0" update-count="1" />
+        </as>
+        <valid no-updates="1">
+          <update update-id="0x94B5CD64" as="60002" roa-match="1" />
+        </valid>
+        <other no-updates="0" state="INVALID" />
+      </prefix>
+      <updates>
+    Prefix Cache has 1 items. Start export into standard out!
+    [SRx]>     <update update-id="0x94B5CD64" origin-as="60002" prefix="100.0.0.0/8" roa-count="1" val-state="VALID" />
+      </updates>
+    </prefix-cache>
+    Export of prefix cache into  done.!
+
+
+
+  C. QuaggaSRx Result
+
+     Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+  *> 94B5CD64 v(v,v)              100.0.0.0        10.1.1.2                 0              0 60002 i
+
+
+
+
+
+
+3. Debugging & Solution
+------------------------
+
+  A. net-patricia is combined to srx_server as a static library
+
+      $ nm ./srx_server | grep patricia
+      080736e0 b num_active_patricia
+      0805ba4b T patricia_lookup
+      0805b4cd T patricia_process
+      0805c122 T patricia_remove
+      0805ba29 T patricia_search_best
+      0805b83d T patricia_search_best2
+      0805b653 T patricia_search_exact
+      0805b5ad T patricia_walk_inorder
+
+
+
+  B. Bugs on QuaggaSRx
+
+    (1) Wrong Spelling
+
+      --- a/bgpd/bgp_route.c
+      +++ b/bgpd/bgp_route.c
+      @@ -2803,7 +2803,7 @@ static void prefix_to_IPPrefix (struct prefix* src, IPPrefix* dst)
+       { 
+         dst->length = src->prefixlen;
+
+      -#ifdef HAVE_UPV6
+      +#ifdef HAVE_IPV6
+         dst->ip.version = GET_VERSION_OF_AF (src->family);
+         memcpy (&dst->ip.addr, &src->u, 16);
+
+
+  C. Bugs on SRx server side
+        
+     (1) IPv6 address overwritten :Warning level
+
+        - srxsvr_client.c:: verifyUpdate --> createV6Request :line 719
+            if ((numHops + attrLength) != 0)  
+            {                                 
+              uint8_t* pduPtr = pdu + sizeof(SRXPROXY_VERIFY_V4_REQUEST);  
+              memcpy(pduPtr, bgpsec->asPath, (numHops*4));                 
+              pduPtr += (numHops*4);                                       
+              memcpy(pduPtr, bgpsec->bgpsec_path_attr, attrLength);        
+            }                                                              
+
+        - uint8_t* pduPtr = pdu + sizeof(SRXPROXY_VERIFY_V4_REQUEST); 
+                <-- only considered V4, so that this line overwrote some of IPv6 address pointer in memory
+        - This will affect bgpsec processing, but now it doesn't affect the origin validation at all.
+
+
+     (2) bgpsecData filled with zeros in case IPv6 :  Warning level
+
+        - server_connection_handler.c:: processValidationRequest : line 580 ~ 605
+        - BGPSecData bgpsecData; initialized zero, but, later in IPv6 case, it doesn't have any value at all.
+        - so that, updateID generation doesn't have any bgpsecData value except zeros
+        - it will cause a collision ID
+        - inappropriatly processing bgpsecData
+        
+
+
+
+     (3) Flag Setting Error : Critical Level
+
+        - QuaggsSRx:verifyUpdate --> SRx: _handlePacket --> processValidationRequest --> queueCommand
+        - handleCommands --> _processUpdateValidation
+
+            bool originVal = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN);
+            bool pathVal   = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PATH);
+            SRxUpdateID updateID = (SRxUpdateID)item->dataID;
+
+            if (!originVal && !pathVal)
+            {
+              RAISE_SYS_ERROR("Invalid call to process update validation, flags are not "
+                              "set properly");
+              return false;
+            }
+
+        - SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN == 0x01, SRX_PROXY_FLAGS_VERIFY_PATH == 0x02
+        - IPv6 case, bhdr->type set 4, IPv4 case 3
+        - IPv6 case, originVal and pathVal both will be set as 0 by running Bit-And operation, 
+        - then it will raise errors and return false value
+        - IPv6 will not be processed and remains UNDEFINED
+
+
+    
+  D. using GDB to inject True value into originVal on the bug C.(3) 
+
+      (1) gdb command
+
+      (gdb) f
+      #0  _processUpdateValidation (cmdHandler=0x80721e0, item=0xb4f004b0) at server/command_handler.c:379
+      379       bool pathVal   = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PATH);
+      (gdb) n
+      380       SRxUpdateID updateID = (SRxUpdateID)item->dataID;
+      (gdb) 
+      382       if (!originVal && !pathVal)
+      (gdb) p/x updateID
+      $37 = 0xbd9edc18
+      (gdb) p originVal 
+      $38 = false
+      (gdb) p pathVal 
+      $39 = false
+      (gdb) p/x bhdr->type
+      $40 = 0x4
+      (gdb) n
+      384         RAISE_SYS_ERROR("Invalid call to process update validation, flags are not "
+
+
+        
+      (gdb) p bhdr
+      $41 = (SRXRPOXY_BasicHeader_VerifyRequest *) 0xb4f00728
+      (gdb) p/x * bhdr
+      $42 = {type = 0x4, flags = 0x3, roaResSrc = 0x1, bgpsecResSrc = 0x1, length = 0xab000000, roaDefRes = 0x3, 
+        bgpsecDefRes = 0x3, zero = 0x0, prefixLen = 0x40, requestToken = 0x1000000}
+
+      *** --> here intentionally set a originVal variable 1
+        
+      (gdb) set originVal = 1
+      (gdb) p originVal 
+      $43 = true
+      (gdb) p/x updateID
+      $44 = 0xbd9edc18
+
+      *** Jump to the next line of RAISE_SYS_ERROR if-clause
+
+      (gdb) jump 390
+      Continuing at 0x804a4c1.
+
+
+
+
+
+     (2) QuaggaSRx Result 
+
+         Ident    SRxVal SRxLP Status Network          Next Hop            Metric  LocPrf Weight Path
+      *> BD9EDC18 v(v,v)              1001:1:1:1::/64  fe80::92b1:1cff:fe5a:4fe9 0              0 60002 i
+
+
+
+
+     (3) SRx server's result using dump-pcache
+
+      <?xml version="1.0" encoding="iso-8859-1"?>
+      <prefix-cache>
+        <prefix ip="1001:1:1:1::" length="64" roa-coverage="1" no-valid-updates="1" no-other-updates="0" state-of-other="INVALID">
+          <as as-number="60002" update-count="1">
+            <roa valCacheID="0" as="60002" max-length="64" roa-count="1" deferred-count="0" update-count="1" />
+          </as>
+          <valid no-updates="1">
+            <update update-id="0xBD9EDC18" as="60002" roa-match="1" />
+          </valid>
+          <other no-updates="0" state="INVALID" />
+        </prefix>
+        <updates>
+          <update update-id="0xBD9EDC18" origin-as="60002" prefix="1001:1:1:1::/64" roa-count="1" val-state="VALID" />
+        </updates>
+      </prefix-cache>
+
+
+
+
+
+
+  E. Solution on Bug C-(3)
+
+    After all, it was not properly selected as operands
+    So, replace 'type' with 'flags' and compile again. It was SOLVED    
+
+
+      --- a/src/server/command_handler.c
+      +++ b/src/server/command_handler.c
+      @@ -375,8 +375,8 @@ static bool _processUpdateValidation(CommandHandler* cmdHandler,
+                                       (SRXRPOXY_BasicHeader_VerifyRequest*)item->data;
+       
+         // 1. get an idea what validations are requested:
+      -  bool originVal = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN);
+      -  bool pathVal   = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PATH);
+      +  bool originVal = _isSet(bhdr->flags, SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN);
+      +  bool pathVal   = _isSet(bhdr->flags, SRX_PROXY_FLAGS_VERIFY_PATH);
+         SRxUpdateID updateID = (SRxUpdateID)item->dataID;
+         

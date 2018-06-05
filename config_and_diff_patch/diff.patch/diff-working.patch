@@ -1,0 +1,1348 @@
+diff --git a/quaggasrx/bgpd/bgp_attr.c b/quaggasrx/bgpd/bgp_attr.c
+index 20d2057..bd9662e 100644
+--- a/quaggasrx/bgpd/bgp_attr.c
++++ b/quaggasrx/bgpd/bgp_attr.c
+@@ -330,7 +330,6 @@ bgp_attr_dup (struct attr *new, struct attr *orig)
+   *new = *orig;
+ 
+ #ifdef USE_SRX
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     if(orig->bgpsecPathAttr)
+     {
+@@ -342,7 +341,6 @@ bgp_attr_dup (struct attr *new, struct attr *orig)
+           new->bgpsecPathAttr?new->bgpsecPathAttr->pathSegments:0);
+     }
+ #endif
+-#endif
+ 
+   /* if caller provided attr_extra space, use it in any case.
+    *
+@@ -584,11 +582,9 @@ bgp_attr_intern (struct attr *attr)
+     else
+       attr->bgpsecPathAttr->refcnt++;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[BGPSEC] changed or dereferenced attr[%p]->bgpsecPath_Attr:%p AS:%d", \
+           attr, attr->bgpsecPathAttr, attr->bgpsecPathAttr->pathSegments->as);
+-#endif
+   }
+ #endif
+ 
+@@ -596,13 +592,11 @@ bgp_attr_intern (struct attr *attr)
+   find->refcnt++;
+ 
+ #ifdef USE_SRX
+-#if 0
+-  if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
++  if (BGP_DEBUG (bgpsec, BGPSEC))
+     if (find->bgpsecPathAttr) \
+       zlog_debug("[BGPSEC] AFTER find(attrhash...): attr[%p]->bgpsecPath_Attr:%p PathSeg:%p AS:%d",\
+           find, find->bgpsecPathAttr, find->bgpsecPathAttr->pathSegments, find->bgpsecPathAttr->pathSegments->as );
+ #endif
+-#endif
+     return find;
+ }
+ 
+@@ -1698,6 +1692,44 @@ bgp_mp_unreach_parse (struct bgp_attr_parser_args *args,
+   return BGP_ATTR_PARSE_PROCEED;
+ }
+ 
++#ifdef USE_SRX
++#define TIME_MEASURE_TEST_ENABLED
++#ifdef TIME_MEASURE_TEST_ENABLED
++struct ecommunity_val srx_gettime(as_t local_as)
++{
++
++  /* time measure here and put the data into 8 byte long ecommunity payload
++   * (cf.) tv_sec, tv_usec: __SLONGWORD_TYPE ( == long int type )
++   */
++  unsigned long int val;
++  unsigned short sec;
++  struct timeval community_now;         /* current time */
++  struct ecommunity_val eval;
++  //
++  quagga_gettime(1 /*QUAGGA_CLK_MONOTONIC*/, &community_now);
++  printf("+++ [%s] TIME -- sec: %lu(0x%08x) msec: %lu(0x%08x)\n",
++      __FUNCTION__,
++      community_now.tv_sec, community_now.tv_sec,
++      community_now.tv_usec/1000, community_now.tv_usec/1000);
++
++  sec = (community_now.tv_sec) & 0xFFFF; // sec : 2 byte-long
++  val = community_now.tv_usec / 1000; // mili-sec: 4 byte-long
++
++  printf("sec = 0x%02x val = 0x%08X\n", sec, val);
++  printf("local as: %02x\n", local_as);
++
++
++  /* fill the ecommunity value here */
++  memset(&eval, 0x00, sizeof(struct ecommunity_val));
++  memcpy(&eval, &local_as, 2);
++  memcpy(&eval.val[2], &sec, 2);
++  memcpy(&eval.val[4], &val, 4);
++
++  return eval;
++}
++#endif
++#endif
++
+ /* Extended Community attribute. */
+ static bgp_attr_parse_ret_t
+ bgp_attr_ext_communities (struct bgp_attr_parser_args *args)
+@@ -1716,6 +1748,39 @@ bgp_attr_ext_communities (struct bgp_attr_parser_args *args)
+ 
+   (bgp_attr_extra_get (attr))->ecommunity =
+     ecommunity_parse ((u_int8_t *)stream_pnt (peer->ibuf), length);
++
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++  /* Prepare one structure for adding a new value into the a new
++   * Extended Communities  */
++  struct ecommunity_val eval;
++  struct ecommunity *old_ecom, *new_ecom;
++
++  old_ecom = (bgp_attr_extra_get (attr))->ecommunity;
++
++  if (old_ecom)
++  {
++    new_ecom = ecommunity_dup (old_ecom);
++  }
++
++  // fill eval with time measured
++  eval = srx_gettime(peer->local_as);
++
++  if ( call_ecommunity_add_val (new_ecom, &eval))
++  {
++    ecommunity_unintern (&old_ecom);
++    attr->extra->ecommunity = ecommunity_intern (new_ecom);
++  }
++  else
++  {
++    if(new_ecom)
++      ecommunity_free (&new_ecom);
++  }
++
++#endif
++#endif
++
++
+   /* XXX: fix ecommunity_parse to use stream API */
+   stream_forward_getp (peer->ibuf, length);
+ 
+@@ -1729,6 +1794,7 @@ bgp_attr_ext_communities (struct bgp_attr_parser_args *args)
+   return BGP_ATTR_PARSE_PROCEED;
+ }
+ 
++
+ /* BGP unknown attribute treatment. */
+ static bgp_attr_parse_ret_t
+ bgp_attr_unknown (struct bgp_attr_parser_args *args)
+@@ -1825,13 +1891,11 @@ static bgp_attr_parse_ret_t bgp_attr_bgpsec(struct bgp_attr_parser_args *args,
+     return BGP_ATTR_PARSE_ERROR;
+   }
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[BGPSEC] startp:%p length:%d total:%d", \
+         args->startp, args->length, args->total);
+   }
+-#endif
+ #ifdef HAVE_IPV6
+   /* not IPv4 nexthop flag set */
+   if (!CHECK_FLAG (attr->flag, ATTR_FLAG_BIT (BGP_ATTR_NEXT_HOP)))
+@@ -1884,11 +1948,9 @@ static bgp_attr_parse_ret_t bgp_attr_bgpsec(struct bgp_attr_parser_args *args,
+     /* SRx server's default policy overwritten with this valude */
+     peer->bgp->srx_default_bgpsecVal = SRx_RESULT_INVALID;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC))
+       zlog_debug("[BGPSEC] %s:  disable BGPSEC capabilities against peer AS:%u",\
+           __FUNCTION__, peer->as);
+-#endif
+     return BGP_ATTR_PARSE_ERROR;
+   }
+ 
+@@ -1938,7 +2000,6 @@ static bgp_attr_parse_ret_t bgp_attr_bgpsec(struct bgp_attr_parser_args *args,
+     ps = ps->next;
+   }
+ 
+-#if 0
+   if (BGP_DEBUG(as4, AS4_SEGMENT))
+   {
+     zlog_debug("[AS4SEG] dump the maden stream for aspath parse ");
+@@ -1950,7 +2011,6 @@ static bgp_attr_parse_ret_t bgp_attr_bgpsec(struct bgp_attr_parser_args *args,
+     }
+     printf(" -- from [%s] \n", __FUNCTION__);
+   }
+-#endif
+ 
+   /* call aspath_parse() here with the manipulated parameters */
+   attr->aspath = aspath_parse (tmpStream, streamLen,
+@@ -2397,11 +2457,9 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+      )
+   {
+     fSetAspath = 1;
+-#if 0
+     if (BGP_DEBUG (as4, AS4_SEGMENT))
+       zlog_debug("[AS4SEG] ASPATH TRANSFERRED");
+ #endif
+-#endif
+     stream_putc (s, BGP_ATTR_FLAG_TRANS|BGP_ATTR_FLAG_EXTLEN);
+     stream_putc (s, BGP_ATTR_AS_PATH);
+     aspath_sizep = stream_get_endp (s);
+@@ -2413,7 +2471,6 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+ 
+ //#undef DEBUG_TEST
+ #ifdef DEBUG_TEST
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     struct aspath *attaspath = aspath;
+@@ -2445,7 +2502,7 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+           attr->bgpsecPathAttr->pathSegments->as);
+       print_signature(attr->bgpsecPathAttr);
+     }
+-#endif
++
+ #endif
+ 
+ #ifdef USE_SRX
+@@ -2723,6 +2780,12 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+       stream_putc_at (s, sizep, (stream_get_endp (s) - sizep) - 1);
+     }
+ 
++
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++  unsigned long pos_eval;
++#endif
++#endif
+   /* Extended Communities attribute. */
+   if (CHECK_FLAG (peer->af_flags[afi][safi], PEER_FLAG_SEND_EXT_COMMUNITY)
+       && (attr->flag & ATTR_FLAG_BIT (BGP_ATTR_EXT_COMMUNITIES)))
+@@ -2731,6 +2794,29 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+ 
+       assert (attre);
+ 
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++      /* change ecommunity value for time-measure purpose.
++       * And later return the origianl pointer
++       */
++      struct ecommunity *ecom_orig=NULL;
++      struct ecommunity *old_ecom, *new_ecom;
++      struct ecommunity_val eval;
++
++      old_ecom = attre->ecommunity;
++      new_ecom = ecommunity_dup (old_ecom);
++
++      /* the reasone commented out: need to use dummy first */
++      memcpy(eval.val, &peer->local_as, 2);
++      memset(&eval.val[2], 0xff, 6); // in order to advance than other ecomm values
++      //eval = srx_gettime(peer->local_as);
++
++      if( call_ecommunity_add_val (new_ecom, &eval))
++      {
++        attre->ecommunity = new_ecom;
++      }
++#endif
++#endif
+       if (peer->sort == BGP_PEER_IBGP
+           || peer->sort == BGP_PEER_CONFED)
+ 	{
+@@ -2803,10 +2889,29 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+                   if (CHECK_FLAG (tbit, ECOMMUNITY_FLAG_NON_TRANSITIVE))
+                     continue;
+ #endif
++
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++                  pos_eval = stream_get_endp (s);
++#endif
++#endif
+ 		  stream_put (s, pnt, 8);
+ 		}
+ 	    }
+ 	}
++
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++      // return back the origianl value to attr
++      if(attre->ecommunity != old_ecom)
++        attre->ecommunity = old_ecom;
++
++      // release the previous temp instance
++      if(new_ecom)
++        ecommunity_free (&new_ecom);
++#endif
++#endif
++
+     }
+ 
+   if ( send_as4_path )
+@@ -2883,13 +2988,11 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+     /* Remember size pointer. */
+     bgpsec_sizep = stream_get_endp (s);
+     stream_putw (s,0);
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     {
+       zlog_debug("[BGPSEC] [%s] attr->aspath:%p segments:%p",
+           __FUNCTION__, attr->aspath, attr->aspath->segments);
+     }
+-#endif
+ 
+       /* call main function */
+     if (peer->sort == BGP_PEER_EBGP)
+@@ -2934,10 +3037,8 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+     }
+     else
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[BGPSEC] total length: %d ", bgpsec_ret);
+-#endif
+       stream_putw_at(s, bgpsec_sizep, bgpsec_ret); /* attr_length */
+     }
+   }
+@@ -2948,6 +3049,37 @@ bgp_packet_attribute (struct bgp *bgp, struct peer *peer,
+ 
+ #endif /* USE_SRX */
+ 
++#ifdef USE_SRX
++#ifdef TIME_MEASURE_TEST_ENABLED
++  struct ecommunity_val eval;
++  volatile uint64_t tmpq =0;
++  int i=0;
++  eval = srx_gettime(peer->local_as);
++
++
++  printf("------ eval: 0x");
++  for(i=0; i< ECOMMUNITY_SIZE; i++)
++    printf("%02x ", eval.val[i] & 0xFF);
++  printf("\n");
++
++  tmpq |= (uint64_t) (eval.val[0] & 0xFF) << 56;
++  tmpq |= (uint64_t) (eval.val[1] & 0xFF) << 48;
++  tmpq |= (uint64_t) (eval.val[2] & 0xFF) << 40;
++  tmpq |= (uint64_t) (eval.val[3] & 0xFF) << 32;
++  tmpq |= (uint64_t) (eval.val[4] & 0xFF) << 24;
++  tmpq |= (uint64_t) (eval.val[5] & 0xFF) << 16;
++  tmpq |= (uint64_t) (eval.val[6] & 0xFF) << 8;
++  tmpq |= (uint64_t) (eval.val[7] & 0xFF);
++
++  stream_putq_at (s, pos_eval, tmpq); // replace
++
++  printf(" ------ pos(s): %d tmpq: %16x \n", pos_eval, (uint64_t) tmpq);
++  printf(" ------ s->data : 0x");
++  for(i=0; i< ECOMMUNITY_SIZE; i++)
++    printf("%02x ", s->data[pos_eval + i]);
++  printf("\n");
++#endif
++#endif
+   /* Unknown transit attribute. */
+   if (attr->extra && attr->extra->transit)
+     stream_put (s, attr->extra->transit->val, attr->extra->transit->length);
+diff --git a/quaggasrx/bgpd/bgp_ecommunity.c b/quaggasrx/bgpd/bgp_ecommunity.c
+index 49fc6d5..85bdebd 100644
+--- a/quaggasrx/bgpd/bgp_ecommunity.c
++++ b/quaggasrx/bgpd/bgp_ecommunity.c
+@@ -594,6 +594,12 @@ ecommunity_bgpsec_str2com(int type, unsigned int state_value)
+ 
+   return ecom;
+ }
++
++/* wrapper function to call ecommunity_add_val from outside */
++int call_ecommunity_add_val (struct ecommunity *ecom, struct ecommunity_val *eval)
++{
++  return ecommunity_add_val (ecom, eval);
++}
+ #endif
+ 
+ /* Convert extended community attribute to string.
+diff --git a/quaggasrx/bgpd/bgp_ecommunity.h b/quaggasrx/bgpd/bgp_ecommunity.h
+index 9b6c6e2..06e10c4 100644
+--- a/quaggasrx/bgpd/bgp_ecommunity.h
++++ b/quaggasrx/bgpd/bgp_ecommunity.h
+@@ -94,6 +94,7 @@ extern unsigned int ecommunity_hash_make (void *);
+ extern struct ecommunity *ecommunity_str2com (const char *, int, int);
+ #ifdef USE_SRX
+ extern struct ecommunity *ecommunity_bgpsec_str2com(int, unsigned int);
++int call_ecommunity_add_val (struct ecommunity *, struct ecommunity_val *);
+ #endif
+ extern char *ecommunity_ecom2str (struct ecommunity *, int);
+ extern int ecommunity_match (const struct ecommunity *, const struct ecommunity *);
+diff --git a/quaggasrx/bgpd/bgp_main.c b/quaggasrx/bgpd/bgp_main.c
+index 839a5c3..cd8053c 100644
+--- a/quaggasrx/bgpd/bgp_main.c
++++ b/quaggasrx/bgpd/bgp_main.c
+@@ -117,10 +117,6 @@ static const char *pid_file = PATH_BGPD_PID;
+ int vty_port = BGP_VTY_PORT;
+ char *vty_addr = NULL;
+ 
+-#ifdef USE_SRX
+-unsigned int g_measureCount=0;
+-#endif
+-
+ /* privileges */
+ static zebra_capabilities_t _caps_p [] =
+ {
+@@ -347,10 +343,7 @@ main (int argc, char **argv)
+   /* Command line argument treatment. */
+   while (1)
+     {
+-#ifdef USE_SRX
+-      //opt = getopt_long (argc, argv, "df:i:z:hp:l:A:P:rnu:g:vC", longopts, 0);
+-      opt = getopt_long (argc, argv, "df:i:z:hp:l:A:P:rnu:g:vCc:", longopts, 0);
+-#endif
++      opt = getopt_long (argc, argv, "df:i:z:hp:l:A:P:rnu:g:vC", longopts, 0);
+ 
+       if (opt == EOF)
+ 	break;
+@@ -415,12 +408,6 @@ main (int argc, char **argv)
+ 	case 'C':
+ 	  dryrun = 1;
+ 	  break;
+-#ifdef USE_SRX
+-        case 'c':
+-          g_measureCount=atoi(optarg);
+-          printf("[%s] Time Measuring Count: %ld\n", __FUNCTION__, g_measureCount);
+-          break;
+-#endif
+ 	case 'h':
+ 	  usage (progname, 0);
+ 	  break;
+diff --git a/quaggasrx/bgpd/bgp_packet.c b/quaggasrx/bgpd/bgp_packet.c
+index 6ff30cb..a03b0c9 100644
+--- a/quaggasrx/bgpd/bgp_packet.c
++++ b/quaggasrx/bgpd/bgp_packet.c
+@@ -158,13 +158,15 @@ struct ecommunity* srxEcommunityChange(struct bgp *bgp, struct attr *attr, struc
+ 
+   if(attre)
+   {
++    ecom_orig = ecom = attre->ecommunity;
++    if(!ecom)
++    {
+     ecom = ecommunity_bgpsec_str2com (bgp->srx_ecommunity_subcode, state);
+-    attr->flag |= ATTR_FLAG_BIT (BGP_ATTR_EXT_COMMUNITIES);
+-    ecom_orig = attre->ecommunity;
+     attre->ecommunity = ecom;
++      ecom_orig = NULL;
++    }
++    attr->flag |= ATTR_FLAG_BIT (BGP_ATTR_EXT_COMMUNITIES);
+   }
+-  else
+-    return NULL;
+ 
+   return ecom_orig;
+ }
+@@ -175,6 +177,8 @@ int srxEcommunityRestore(struct attr *attr, struct ecommunity* ecom_orig)
+   struct ecommunity *ecom=NULL;
+   int ret=0;
+ 
++  if(ecom_orig == NULL)
++  {
+   if(attre && attre->ecommunity && (attr->flag & ATTR_FLAG_BIT (BGP_ATTR_EXT_COMMUNITIES)))
+   {
+     attr->flag &= ~(ATTR_FLAG_BIT (BGP_ATTR_EXT_COMMUNITIES));
+@@ -182,6 +186,7 @@ int srxEcommunityRestore(struct attr *attr, struct ecommunity* ecom_orig)
+     attre->ecommunity = ecom_orig;
+     ret = 1;
+   }
++  }
+ 
+   if(ecom)
+     free(ecom);
+@@ -220,13 +225,11 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+         binfo = adv->binfo;
+ 
+ #ifdef USE_SRX
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[BGPSEC] [%s] stream remain:%d prefix size: %d rn->p:%08x attr:%p ",
+             __FUNCTION__, STREAM_REMAIN (s),  PSIZE (rn->p.prefixlen), \
+           rn->p.u.prefix4, adv->baa->attr);
+ #endif
+-#endif
+       /* When remaining space can't include NLRI and it's length.  */
+       if (STREAM_REMAIN (s) <= BGP_NLRI_LENGTH + PSIZE (rn->p.prefixlen))
+ 	break;
+@@ -273,7 +276,6 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+       if (afi == AFI_IP && safi == SAFI_UNICAST)
+ 	stream_put_prefix (s, &rn->p);
+ 
+-#if 0
+       if (BGP_DEBUG (update, UPDATE_OUT))
+         {
+           char buf[INET6_BUFSIZ];
+@@ -283,7 +285,6 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+                 inet_ntop (rn->p.family, &(rn->p.u.prefix), buf, INET6_BUFSIZ),
+                 rn->p.prefixlen);
+         }
+-#endif
+ 
+       /* Synchnorize attribute.  */
+       if (adj->attr)
+@@ -296,12 +297,10 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+       adj->attr = bgp_attr_intern (adv->baa->attr);
+ 
+ #ifdef USE_SRX
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[BGPSEC] [%s] (after intern) adj->attr:%p bgpsec attr:%p ",\
+             __FUNCTION__, adj->attr, adj->attr->bgpsecPathAttr );
+ #endif
+-#endif
+ 
+       adv = bgp_advertise_clean (peer, adj, afi, safi);
+ 
+@@ -326,12 +325,10 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+           if( (CHECK_FLAG (peer->flags, PEER_FLAG_BGPSEC_CAPABILITY_SEND) \
+                 && CHECK_FLAG (peer->cap, PEER_CAP_BGPSEC_ADV)) )
+           {
+-#if 0
+             /* debug */
+             if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+               zlog_debug("[BGPSEC] from:%p from->as:%d from->cap:%04x", \
+                   from, from->as, from->cap);
+-#endif
+ 
+             /* in case, when the previous(from) node sends to the current node which is connected
+              * to the next node(peer), to determine whether to send BGPSec or BGPv4 */
+@@ -379,10 +376,8 @@ bgp_update_packet (struct peer *peer, afi_t afi, safi_t safi)
+           bgp_packet_set_size (s);
+           packet = stream_dup (s);
+           bgp_packet_add (peer, packet);
+-#if 0
+           if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+             zlog_debug("*** Update Message Fragmentation ON (to peer:%d)*** ", peer->as);
+-#endif
+           BGP_WRITE_ON (peer->t_write, bgp_write, peer->fd);
+           stream_reset (s);
+           return packet;
+@@ -629,7 +624,6 @@ bgp_default_withdraw_send (struct peer *peer, afi_t afi, safi_t safi)
+   total_attr_len = 0;
+   pos = 0;
+ 
+-#if 0
+   if (BGP_DEBUG (update, UPDATE_OUT))
+     {
+       char buf[INET6_BUFSIZ];
+@@ -638,7 +632,6 @@ bgp_default_withdraw_send (struct peer *peer, afi_t afi, safi_t safi)
+             peer->host, inet_ntop(p.family, &(p.u.prefix), buf, INET6_BUFSIZ),
+             p.prefixlen);
+     }
+-#endif
+ 
+   s = stream_new (BGP_MAX_PACKET_SIZE);
+ 
+@@ -2723,14 +2716,6 @@ bgp_read (struct thread *thread)
+ 
+   size = (peer->packet_size - BGP_HEADER_SIZE);
+ 
+-
+-//#define TIME_MEASURE_TEST_ENABLED
+-#ifdef TIME_MEASURE_TEST_ENABLED
+-  extern unsigned int g_measureCount;
+-  unsigned long realtime, cputime;
+-  static unsigned long tCount=0;
+-  static RUSAGE_T before, after;
+-#endif /* TIME_MEASURE_TEST_ENABLED */
+   /* Read rest of the packet and call each sort of packet routine */
+   switch (type)
+     {
+@@ -2739,26 +2724,8 @@ bgp_read (struct thread *thread)
+       bgp_open_receive (peer, size); /* XXX return value ignored! */
+       break;
+     case BGP_MSG_UPDATE:
+-#ifdef TIME_MEASURE_TEST_ENABLED
+-      if(tCount==0)
+-      {
+-        printf("[%s] g_measureCount:%ld starting...\n", __FUNCTION__, g_measureCount);
+-        GETRUSAGE (&before);
+-      }
+-#endif /* TIME_MEASURE_TEST_ENABLED */
+       peer->readtime = bgp_recent_clock ();
+       bgp_update_receive (peer, size);
+-#ifdef TIME_MEASURE_TEST_ENABLED
+-      tCount++;
+-      if(tCount >= g_measureCount && g_measureCount != 0)
+-      {
+-        GETRUSAGE (&after);
+-        realtime = thread_consumed_time (&after, &before, &cputime);
+-        printf ("\n RECV TASK(single): ran for %lums (cpu time %lums)\n", realtime/1000, cputime/1000);
+-        tCount=0;
+-      }
+-#endif /* TIME_MEASURE_TEST_ENABLED */
+-
+       break;
+     case BGP_MSG_NOTIFY:
+       bgp_notify_receive (peer, size);
+diff --git a/quaggasrx/bgpd/bgp_validate.c b/quaggasrx/bgpd/bgp_validate.c
+index 33df034..99767c7 100644
+--- a/quaggasrx/bgpd/bgp_validate.c
++++ b/quaggasrx/bgpd/bgp_validate.c
+@@ -21,7 +21,6 @@
+ #include "srxcryptoapi.h"
+ SRxCryptoAPI *g_capi;
+ #define RET_ID_OFFSET 1
+-extern unsigned int g_measureCount;
+ #endif
+ 
+ /* Hash for bgpsec path.  This is the top level structure of BGPSEC AS path. */
+@@ -94,13 +93,11 @@ unsigned int bgpsec_path_attr_key_make (void *p)
+   struct SigSegment *ss;
+   unsigned int key = 0;
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[BGPSEC] [%s]: bpa:%p, seg:%p, sb:%p sigSeg:%p AS:%d ", \
+         __FUNCTION__, bpa, seg, sb, sb->sigSegments, seg->as);
+   }
+-#endif
+ 
+   if (sb)
+   {
+@@ -127,13 +124,11 @@ unsigned int bgpsec_path_attr_key_make (void *p)
+     key += jhash(bpa->sigBlocks, 4, 0);
+   }
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[BGPSEC] [%s]:  - - key = =:%d, index:%d", \
+         __FUNCTION__, key, key % 32767);
+   }
+-#endif
+   return key;
+ }
+ 
+@@ -156,8 +151,6 @@ void bgpsec_path_attr_init (void)
+   {
+     zlog_err("[BGPSEC] SRxCryptoAPI not initialized!\n");
+   }
+-  if(g_measureCount)
+-    printf("[%s] Time Measuring Count: %ld\n", __FUNCTION__, g_measureCount);
+ #endif
+ }
+ 
+@@ -370,10 +363,8 @@ void bgpsec_path_free (struct BgpsecPathAttr *bpa)
+ /* Unintern bgpsec path attr from bgpsec path attr bucket. */
+ void bgpsec_path_unintern (struct BgpsecPathAttr **pbpa)
+ {
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[BGPSEC]  bgpsec_path_unintern function called");
+-#endif
+   struct BgpsecPathAttr *ret;
+   struct BgpsecPathAttr *bpa = *pbpa;
+ 
+@@ -385,10 +376,8 @@ void bgpsec_path_unintern (struct BgpsecPathAttr **pbpa)
+       /* This bgpsec path attr must exist in bgpsec path attr hash table. */
+       ret = hash_release (bgpsechash, bpa);
+       assert (ret != NULL);
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[BGPSEC] [%s] bpa: %p will be uninterned ", __FUNCTION__, bpa);
+-#endif
+       bgpsec_path_free (bpa);
+       *pbpa = NULL;
+     }
+@@ -407,12 +396,10 @@ struct BgpsecPathAttr *bgpsec_path_intern (struct BgpsecPathAttr *bpa)
+   find = hash_get (bgpsechash, bpa, bgpsec_path_hash_alloc);
+ 
+ #ifdef DEBUG_TEST
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[BGPSEC]  [%s]: find: %p (refcnt:%ld) Vs bpa: %p",\
+         __FUNCTION__, find, find->refcnt, bpa);
+ #endif
+-#endif
+ 
+   if (find != bpa)
+     bgpsec_path_free (bpa);
+@@ -504,11 +491,9 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+   start_endp = stream_get_endp (s);
+   endp = startp + length;
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[IN] %p -  startp: %p-- getp:%d endp:%d -- endp(startp+length):%p length:%d ", \
+         stream_pnt(s), startp, start_getp, start_endp, endp, length);
+-#endif
+ 
+   /* get prefix from nlri */
+   struct prefix p;
+@@ -563,23 +548,19 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+   }
+ #endif /* HAVE_IPV6 */
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[IN] - -- - nlri: %08x ntolh(nlri): %08x", nlri, ntohl(nlri));
+     zlog_debug("[IN] prefixlen:%d psize:%d nlri:%08x p.u.prefix:%08x",
+         p.prefixlen, psize, nlri, p.u.prefix);
+   }
+-#endif
+ 
+   int numSecurePathSegment = 0;
+   //u_char *bptr;
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[IN] peer as:%d peer->local_as:%d Secure_Path Len:%d",\
+         peer->as, peer->local_as, stream_getw_from(s, start_getp));
+-#endif
+ 
+   /* calculation of total aspath length using SecurePath Len */
+   u_int16_t spl = stream_getw_from(s, start_getp), numSeg=0;
+@@ -612,11 +593,9 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     ss->ski = ski_new();
+ 
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[IN] bpa:%p, seg:%p, sb:%p, ss:%p", \
+           bpa, bpa->pathSegments, bpa->sigBlocks, bpa->sigBlocks->sigSegments);
+-#endif
+ 
+     /* Secure_Path */
+     bpa->securePathLen = stream_getw(s);
+@@ -650,7 +629,7 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     if (g_capi->libHandle == NULL)
+     {
+       *errCode = BGPSEC_VERIFY_ERROR;
+-      //zlog_debug("[%s:%d] api handle error", __FUNCTION__, __LINE__);
++      zlog_debug("[%s:%d] api handle error", __FUNCTION__, __LINE__);
+       goto ValidateFail;
+     }
+ 
+@@ -662,10 +641,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     outKeyInfo= (BGPSecKey*) malloc(sizeof(BGPSecKey));
+     if(!outKeyInfo)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_err("[%s:%d] pubkey info mem allocation failed", __FUNCTION__, __LINE__);
+-#endif
+     }
+     else
+     {
+@@ -683,10 +660,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+         /* load key info for pubkey in forms of DER */
+         if(sca_loadKey(outKeyInfo, 0 /* pubkey */) == 0)
+         {
+-#if 0
+           if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+             zlog_err("[%s:%d] failed to load pubkey", __FUNCTION__, __LINE__);
+-#endif
+           outKeyInfo->keyData = NULL;
+           outKeyInfo->keyLength = 0;
+         }
+@@ -695,33 +670,27 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+         keyID_pub = g_capi->registerPublicKey(outKeyInfo);
+       }
+ 
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       {
+         if(outKeyInfo && outKeyInfo->keyData)
+           zlog_debug("[OUT] out key: %p, pkey pub key:%p(len:%d) key_id:%x", \
+               outKeyInfo, outKeyInfo->keyData, outKeyInfo->keyLength, keyID_pub - RET_ID_OFFSET);
+       }
+-#endif
+     }
+ #endif /* end VERIFY_WITH_KEY_ENABLED */
+ 
+-#define TIME_MEASURE_TEST_ENABLED
+-#define NUM_TOTAL_COUNT 100000
+ #ifdef TIME_MEASURE_TEST_ENABLED
+     unsigned long realtime, cputime;
+-    static unsigned long tCount=0;
+-    static RUSAGE_T before, after;
+-    if(tCount==0) GETRUSAGE (&before);
++    RUSAGE_T before, after;
++
++    GETRUSAGE (&before);
+ #endif /* TIME_MEASURE_TEST_ENABLED */
+ 
+     /* perform validation */
+     if(outKeyInfo && outKeyInfo->keyData)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[%s:%d] calling validation function with keys ", __FUNCTION__, __LINE__);
+-#endif
+ 
+       if( g_capi->validate((BgpsecPathAttr*)bpa, num_key, &outKeyInfo, &p, peer->local_as) != BGPSEC_VERIFY_SUCCESS)
+       {
+@@ -731,10 +700,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     }
+     else
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[%s:%d] calling validation function WITHOUT keys ", __FUNCTION__, __LINE__);
+-#endif
+ 
+       /* call the library function --> cl_BgpsecVerify */
+       if( g_capi->validate((BgpsecPathAttr*)bpa, 0, NULL, &p, peer->local_as) != BGPSEC_VERIFY_SUCCESS)
+@@ -744,15 +711,10 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+       }
+     }
+ #ifdef TIME_MEASURE_TEST_ENABLED
+-    tCount++;
+-    //if(tCount >= NUM_TOTAL_COUNT)
+-    if(tCount >= g_measureCount && g_measureCount != 0)
+-    {
+       GETRUSAGE (&after);
++
+       realtime = thread_consumed_time (&after, &before, &cputime);
+-      printf ("\nVALIDATION TASK(single): ran for %lums (cpu time %lums)\n", realtime/1000, cputime/1000);
+-      tCount=0;
+-    }
++    zlog_info ("VALIDATION TASK(single): ran for %lums (cpu time %lums)", realtime/1000, cputime/1000);
+ #endif /* TIME_MEASURE_TEST_ENABLED */
+ 
+     /* release parameter resources */
+@@ -770,11 +732,9 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     /* bgpsec parsed info intern */
+     ret = bpa;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[IN] %s: [INTERNed] bgpsec path attr: %p",\
+           __FUNCTION__, bpa);
+-#endif
+ 
+   } /* end of if */
+ 
+@@ -811,10 +771,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+       seg->pCount = stream_getc(s);
+       seg->flags = stream_getc(s);
+ 
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[IN]  Secure_Path segments? --> %d AS:%d", iter, seg->as);
+-#endif
+ 
+       prev = seg;
+ 
+@@ -837,10 +795,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     /* read the multiple Signature_Segments */
+     while(iter)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[IN]  iteration of SigSegment:%d ", iter);
+-#endif
+ 
+       /* create instances */
+       ss = sigSegment_New();
+@@ -905,7 +861,6 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+         keyID_pub = g_capi->registerPublicKey(arrOutKeyInfo[idx]);
+       }
+ 
+-#if 0
+       /* debugging */
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       {
+@@ -914,7 +869,6 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+               arrOutKeyInfo[idx], arrOutKeyInfo[idx]->keyData, arrOutKeyInfo[idx]->keyLength, \
+               keyID_pub - RET_ID_OFFSET);
+       }
+-#endif
+ 
+       /* chaining for iteration */
+       if(tmp_ss->next)
+@@ -939,19 +893,16 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+ 
+ #ifdef TIME_MEASURE_TEST_ENABLED
+     unsigned long realtime, cputime;
+-    static unsigned long tCount=0;
+-    static RUSAGE_T before, after;
+-    if(tCount==0) GETRUSAGE (&before);
++    RUSAGE_T before, after;
++    GETRUSAGE (&before);
+ #endif /* TIME_MEASURE_TEST_ENABLED */
+ 
+     /* TODO: more robust function to check all key pointers in array below */
+     //IS_KEYINFO_OK
+     if(!arrOutKeyInfo[0])
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[%s:%d] calling validation function WITHOUT keys ", __FUNCTION__, __LINE__);
+-#endif
+ 
+       /* call the library function --> bgpsecVerify */
+       if( g_capi->validate((BgpsecPathAttr*)bpa, 0, NULL, &p, peer->local_as)\
+@@ -963,10 +914,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     }
+     else
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[%s:%d] calling validation function with keys ", __FUNCTION__, __LINE__);
+-#endif
+       if( g_capi->validate((BgpsecPathAttr*)bpa, numSecurePathSegment, \
+             arrOutKeyInfo, &p, peer->local_as) != BGPSEC_VERIFY_SUCCESS)
+       {
+@@ -975,15 +924,9 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+       }
+     }
+ #ifdef TIME_MEASURE_TEST_ENABLED
+-    tCount++;
+-    //if(tCount >= NUM_TOTAL_COUNT)
+-    if(tCount >= g_measureCount && g_measureCount != 0)
+-    {
+       GETRUSAGE (&after);
+       realtime = thread_consumed_time (&after, &before, &cputime);
+-      printf ("VALIDATION TASK: ran for %lums (cpu time %lums)\n", realtime/1000, cputime/1000);
+-      tCount=0;
+-    }
++    zlog_info ("VALIDATION TASK: ran for %lums (cpu time %lums)", realtime/1000, cputime/1000);
+ #endif /* TIME_MEASURE_TEST_ENABLED */
+ 
+     /* release all resources - keyInfoData or others */
+@@ -1007,10 +950,8 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+     //ret = new_bpa;
+     ret = bpa;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[IN]  %s: return value(final bpa): %p", __FUNCTION__, bpa);
+-#endif
+   } /* end of else */
+ 
+ 
+@@ -1019,11 +960,9 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+ ValidateFail:
+   /* clearing due to error */
+   // bgpsec-protocol-draft section5.2
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC))
+     zlog_debug("[BGPSEC]  %s: Vaildation Failed !! (bpa): %p Error Code: %d",\
+         __FUNCTION__, bpa, *errCode);
+-#endif
+   return bpa;
+ //  bgpsec_path_free (bpa);
+ //  return NULL;
+@@ -1045,10 +984,8 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+   start_endp = stream_get_endp (s);
+   endp = startp + length;
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[IN] [%s] start", __FUNCTION__);
+-#endif
+ 
+   /* sanity check */
+   if (STREAM_READABLE(s) < length
+@@ -1074,18 +1011,14 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+     nlri |= stream_getc_from(s, nlrip+i) <<  8 *i;
+   }
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[IN] - -- - nlri: %08x ntolh(nlri): %08x", nlri, ntohl(nlri));
+-#endif
+ 
+   memcpy (&p.u.prefix, &nlri, psize);
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[IN] prefixlen:%d psize:%d nlri:%08x p.u.prefix:%08x",
+         p.prefixlen, psize, nlri, p.u.prefix );
+-#endif
+ 
+   /* calculation of total aspath length using SecurePath Len */
+   u_int16_t spl = stream_getw_from(s, start_getp);
+@@ -1097,10 +1030,8 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+   if(spl == (OCTET_SECURE_PATH_SEGMENT + OCTET_SECURE_PATH_LEN)
+       && length <= 14) /* 14 : bgpsec message size of bgpsecPathAttribute_iBGP() */
+   {
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[IN] originating AS in iBGP peers");
+-#endif
+     bpa = bgpsec_path_attr_new();
+     seg = bpa->pathSegments = pathSegment_New();
+     sb = bpa->sigBlocks = sigBlock_New();
+@@ -1133,10 +1064,8 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+   /* else this message is NOT from the Original AS in iBGP peers */
+   else
+   {
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[IN] transit AS in iBGP peers");
+-#endif
+     u_short iter;
+     int numSecurePathSegment = 0;
+     struct PathSegment  *prev = NULL, *head = NULL;
+@@ -1167,10 +1096,8 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+       seg->pCount = stream_getc(s);
+       seg->flags = stream_getc(s);
+ 
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[IN]  Secure_Path segments? --> %d AS:%d", iter, seg->as);
+-#endif
+ 
+       prev = seg;
+ 
+@@ -1194,10 +1121,8 @@ struct BgpsecPathAttr * bgpsec_parse_iBGP(struct peer *peer, struct stream *s,
+     /* read the multiple Signature_Segments */
+     while(iter)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_IN) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[IN]  iteration of SigSegment:%d ", iter);
+-#endif
+ 
+       /* create instances */
+       ss = sigSegment_New();
+@@ -1280,7 +1205,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+   if(aspath->segments == NULL)
+     return -1;
+ 
+-#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[OUT] duplicated bgpsec_aspath:%p aspath->segments:%p", aspath, aspath->segments);
+@@ -1294,7 +1218,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     zlog_debug("[OUT] ATTR:cp[%d]: 0x%02X FLAG:cp[%d]: 0x%02X ",
+         cp-OFFSET_BGP_ATTR, fBgpAttr, cp-OFFSET_BGP_FLAG, fBgpFlag );
+   }
+-#endif
+ 
+ #ifdef USE_SRX_CRYPTO_API
+   static u_int8_t keyID_priv=0;
+@@ -1343,10 +1266,8 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     put_u32(hashbuff+4, oas);
+ 
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] ++ origin AS: %d remote AS:%d local AS: %d", oas, remoteAS, localAS);
+-#endif
+ 
+     /* pCount of 1, and no confed flag handling yet */
+     hashbuff[8] = pCount;
+@@ -1361,11 +1282,9 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     hashbuff[12+psize] = (p->family == AF_INET6) ? AFI_IP6 : AFI_IP;
+ #endif /* HAVE_IPV6 */
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] prefix_length: %d psize: %d, prefix: 0x%08x", \
+           p->prefixlen, psize, p->u.prefix);
+-#endif
+ 
+ #ifdef USE_SRX_CRYPTO_API
+     //u_int8_t keyID=0;
+@@ -1393,10 +1312,8 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     outKeyInfo= (BGPSecKey*) malloc(sizeof(BGPSecKey));
+     if(!outKeyInfo)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_err("[%s:%d] mem allocation failed", __FUNCTION__, __LINE__);
+-#endif
+     }
+     else
+     {
+@@ -1411,10 +1328,8 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+         /* load key info */
+         if(sca_loadKey(outKeyInfo, 1) == 0)
+         {
+-#if 0
+           if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+             zlog_err("[%s:%d] failed to load key", __FUNCTION__, __LINE__);
+-#endif
+           outKeyInfo->keyData = NULL;
+           outKeyInfo->keyLength = 0;
+         }
+@@ -1423,14 +1338,12 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       /* call register function in srx crypto api */
+       keyID_priv = g_capi->registerPrivateKey(outKeyInfo);
+ 
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       {
+         if(outKeyInfo && outKeyInfo->keyData)
+           zlog_debug("[OUT] out key: %p, ec key:%p key_id:%x", \
+               outKeyInfo, outKeyInfo->keyData, keyID_priv - RET_ID_OFFSET);
+       }
+-#endif
+     }
+ 
+ #define SIGN_WITH_ID_ENABLED
+@@ -1459,14 +1372,11 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+ 
+     if ( 1 >= sig_length )
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_err("[OUT] bgpsec_sign:%d>%d:o: signing failed", localAS, remoteAS);
+-#endif
+       return -1;
+     }
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     {
+       zlog_debug("[OUT] signature print");
+@@ -1478,17 +1388,14 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       }
+       printf("\n");
+     }
+-#endif
+ 
+ 
+     u_int16_t sig_segments_len = 0;
+     sig_segments_len = OCTET_SIG_BLOCK_LEN + OCTET_ALGORITHM_ID + \
+                        sig_length + BGPSEC_SKI_LENGTH + OCTET_SIGNATURE_LEN;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] sig segments len: 0x%02x sig_len: 0x%02x", sig_segments_len, sig_length );
+-#endif
+ 
+     /* add new bgpsec sig attr */
+     /* Secure Path Length */
+@@ -1518,19 +1425,15 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       || (aspath->segments->length == 1 && bpa)) // 2nd case for iBGP transmitting router 'from' peer is eBGP
+   {
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] -- This part more than 2 BGPSEC nodes -- ");
+-#endif
+     u_short  aspathLen = aspath->segments->length;
+ 
+     /* Sanity check */
+     if(bgpsecSanityCheck(bpa) != 0)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_debug("[OUT] bgpsec Path Attr structure error ");
+-#endif
+       return -1;
+     }
+ 
+@@ -1571,7 +1474,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+ 
+     size_t totalHashLen = 10 + sigSegLen;
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     {
+       zlog_debug("[OUT] ---- HASH sending total length: %d----", totalHashLen);
+@@ -1582,7 +1484,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       }
+       printf("\n");
+     }
+-#endif
+ 
+ #ifdef USE_SRX_CRYPTO_API
+     //u_int32_t keyID=0;
+@@ -1603,10 +1504,8 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     outKeyInfo= (BGPSecKey*) malloc(sizeof(BGPSecKey));
+     if(!outKeyInfo)
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_err("[%s:%d] mem allocation failed", __FUNCTION__, __LINE__);
+-#endif
+     }
+     else
+     {
+@@ -1621,10 +1520,8 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+         /* load key info */
+         if(sca_loadKey(outKeyInfo, 1) == 0)
+         {
+-#if 0
+           if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+             zlog_err("[%s:%d] failed to load key", __FUNCTION__, __LINE__);
+-#endif
+           outKeyInfo->keyData = NULL;
+           outKeyInfo->keyLength = 0;
+         }
+@@ -1633,14 +1530,12 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       /* call register function in srx crypto api */
+       keyID_priv = g_capi->registerPrivateKey(outKeyInfo);
+ 
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       {
+         if(outKeyInfo && outKeyInfo->keyData)
+           zlog_debug("[OUT] out key: %p, ec key:%p key_id:%x", \
+               outKeyInfo, outKeyInfo->keyData, keyID_priv - RET_ID_OFFSET);
+       }
+-#endif
+     }
+ 
+ #ifdef SIGN_WITH_ID_ENABLED
+@@ -1668,14 +1563,11 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+ 
+     if ( 1 >= sig_length )
+     {
+-#if 0
+       if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         zlog_err("[OUT] bgpsec_sign:%d>%d:o: signing failed", localAS, remoteAS);
+-#endif
+       return -1;
+     }
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+     {
+       zlog_debug("[OUT] signature print");
+@@ -1687,7 +1579,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       }
+       printf("\n");
+     }
+-#endif
+ 
+     /* first, fill in and concatenate this router information */
+     /* BGPSEC_Path attribute and Secure_Path structures */
+@@ -1716,11 +1607,9 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+     memcpy(tmpSs->signature, sigbuff, sig_length);
+ 
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] bpa(param):%p new_bpa(duplicated):%p, tmpBpa(final concat):%p",\
+           bpa, new_bpa, tmpBpa);
+-#endif
+ 
+     /* fill in the PDU's with all according to the BGPSEC protocols
+      * Secure_Path, Signature_Block and Signature Segment */
+@@ -1768,7 +1657,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       {
+         stream_put (s, pntSs->ski, BGPSEC_SKI_LENGTH);    // Subject Key Identifier
+ 
+-#if 0
+         if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         {
+           for(i=0; i<BGPSEC_SKI_LENGTH; i++ )
+@@ -1777,7 +1665,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+           }
+           printf("  --- SKI \n");
+         }
+-#endif
+ 
+         stream_putw (s, pntSs->sigLen);                     // Signature Length
+         stream_put (s, pntSs->signature, pntSs->sigLen);    // Signature
+@@ -1795,7 +1682,6 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+         OCTET_SIG_BLOCK_LEN + OCTET_ALGORITHM_ID + \
+         aspathLen * (BGPSEC_SKI_LENGTH + OCTET_SIGNATURE_LEN));
+ 
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     {
+       zlog_debug("[BGPSEC] segments test - from: bpa:%p", bpa);
+@@ -1814,11 +1700,10 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       }
+       printf("\n");
+     }
+-#endif
+ 
+     /* release temporary instance */
+     bgpsec_path_free(tmpBpa);
+-    //bgpsec_path_free(new_bpa);
++    //bgpsec_path_free(new_bpa); <-- if you free here, it will invoke free error
+ 
+   } /* end of else if */
+ 
+@@ -1856,10 +1741,8 @@ int bgpsecPathAttribute_iBGP(struct bgp *bgp, struct peer *peer,
+   //if(aspath->segments->length == 1)
+   if(bpa == NULL)
+   {
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] [%s]null bpa, so that send NULL values", __FUNCTION__);
+-#endif
+ 
+     localAS = 0;
+     pCount = 0;
+@@ -1887,10 +1770,8 @@ int bgpsecPathAttribute_iBGP(struct bgp *bgp, struct peer *peer,
+   /* copying the BGPSEC_Path attribute from the received update message */
+   else
+   {
+-#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[OUT] [%s] copy and send bgpsecPathAttr values", __FUNCTION__);
+-#endif
+ 
+     //struct BgpsecPathAttr *pntBpa;
+     struct PathSegment *pntSeg;
+@@ -1947,7 +1828,6 @@ int bgpsecPathAttribute_iBGP(struct bgp *bgp, struct peer *peer,
+       {
+         stream_put (s, pntSs->ski, BGPSEC_SKI_LENGTH);    // Subject Key Identifier
+ 
+-#if 0
+         if (BGP_DEBUG (bgpsec, BGPSEC_OUT) || BGP_DEBUG(bgpsec, BGPSEC_DETAIL))
+         {
+           for(i=0; i<BGPSEC_SKI_LENGTH; i++ )
+@@ -1956,7 +1836,6 @@ int bgpsecPathAttribute_iBGP(struct bgp *bgp, struct peer *peer,
+           }
+           printf("  --- SKI \n");
+         }
+-#endif
+ 
+         stream_putw (s, pntSs->sigLen);                     // Signature Length
+         stream_put (s, pntSs->signature, pntSs->sigLen);    // Signature
+diff --git a/quaggasrx/tests/aspath_test.c b/quaggasrx/tests/aspath_test.c
+index 1c74887..7fdb5e2 100644
+--- a/quaggasrx/tests/aspath_test.c
++++ b/quaggasrx/tests/aspath_test.c
+@@ -20,7 +20,6 @@ struct zebra_privs_t *bgpd_privs = NULL;
+ struct thread_master *master = NULL;
+ 
+ static int failed = 0;
+-unsigned int g_measureCount;
+ 
+ /* specification for a test - what the results should be */
+ struct test_spec
+diff --git a/quaggasrx/tests/bgp_capability_test.c b/quaggasrx/tests/bgp_capability_test.c
+index 3356e83..65c6a70 100644
+--- a/quaggasrx/tests/bgp_capability_test.c
++++ b/quaggasrx/tests/bgp_capability_test.c
+@@ -26,7 +26,6 @@ struct thread_master *master = NULL;
+ 
+ static int failed = 0;
+ static int tty = 0;
+-unsigned int g_measureCount;
+ 
+ /* test segments to parse and validate, and use for other tests */
+ static struct test_segment {
+diff --git a/quaggasrx/tests/bgp_mp_attr_test.c b/quaggasrx/tests/bgp_mp_attr_test.c
+index 2c4fea0..177c1ad 100644
+--- a/quaggasrx/tests/bgp_mp_attr_test.c
++++ b/quaggasrx/tests/bgp_mp_attr_test.c
+@@ -26,7 +26,6 @@ struct thread_master *master = NULL;
+ 
+ static int failed = 0;
+ static int tty = 0;
+-unsigned int g_measureCount;
+ 
+ /* test segments to parse and validate, and use for other tests */
+ static struct test_segment {
+diff --git a/quaggasrx/tests/bgp_mpath_test.c b/quaggasrx/tests/bgp_mpath_test.c
+index 55844f0..3d0ecb7 100644
+--- a/quaggasrx/tests/bgp_mpath_test.c
++++ b/quaggasrx/tests/bgp_mpath_test.c
+@@ -45,7 +45,6 @@
+ 
+ #define TEST_PASSED 0
+ #define TEST_FAILED -1
+-unsigned int g_measureCount;
+ 
+ #define EXPECT_TRUE(expr, res)                                          \
+   if (!(expr))                                                          \

@@ -1,0 +1,57 @@
+
+1. bgpsec-io Vs. BIRD connection error
+=======================================
+
+ (confer) InterOp_test_QSRx_BIRD_Kyehwan_20161017_17pm.ppt
+
+ 1. description
+
+ When the BGP_OPEN exchange, bgpsec-io detects BIRD doesn't support 4-byte ASN.
+ And then, send a notification
+    type          : NOTIFICATION Message(3)
+    Error Code    : OPEN Message Error(2)
+    Error subcode : unknown(0)
+ then, connection off
+
+
+ 2. log
+
+ 2-1 on BGPSEC-IO ,
+
+    [kyehwanl@node1 bio]$ ./bgpsecio -f ./bgpsecio.cfg 
+    Starting bgpsecio 0.2.0.4...
+    [SRxCryptoAPI - INFO] Extension for private key not set. Set 'der' as key-file extension!
+    [SRxCryptoAPI - INFO] Extension for public key (X509 cert) not set. Set 'cert' as cert-file extension!
+    Send Open Message
+      +--marker: FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      +--length: 59
+      +--type:   1 (OPEN)
+      +--data:   04 00 40 00 B4 0A 01 01   02 1E 02 06 01 04 00 01 
+                 00 01 02 06 41 04 00 00   00 40 02 05 48 03 00 00 
+                 01 02 05 48 03 08 00 01   
+    ERROR: Peer does not support 4-byte ASN
+    Send Notification Message
+      +--marker: FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      +--length: 21
+      +--type:   3 (NOTIFICATION)
+      +--Error code: 2 (OPEN Message Error)
+      +--Error subcode: 0 (UNKNOWN)
+    Session is already established.
+    Connection failed, retry in 30 seconds.
+    Send Open Message
+      +--marker: FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      +--length: 59
+      +--type:   1 (OPEN)
+      +--data:   04 00 40 00 B4 0A 01 01   02 1E 02 06 01 04 00 01 
+                 00 01 02 06 41 04 00 00   00 40 02 05 48 03 00 00 
+                 01 02 05 48 03 08 00 01   
+    WARNING: Seems to be a stale connection - Abort!
+    NOTIFICATION: Could not establish the session 64 <=> 32!
+    Done.
+
+ 2-2 on BIRD side
+
+    [kyehwanl@node2 bird-1.6-bgpsec-0.9]$ sudo tail -f /var/log/messages | grep bir[d]
+    Oct 17 15:26:18 localhost bird: Started
+    Oct 17 15:26:26 localhost bird: bgp1: Received: Invalid OPEN message
+

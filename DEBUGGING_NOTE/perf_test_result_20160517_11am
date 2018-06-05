@@ -1,0 +1,181 @@
+
+validation:
+
+tara - 
+
+1. single hop validation
+(1) only validation  elapsed time during g_api->validte()
+103.41 us  / 1000 signing
+9670.24 ops/s
+
+(2) whole parsing function
+548.7 us
+1822.48 ops/s
+
+
+
+2. multihop validation
+
+(1) only validation call
+118.04 us
+8471.7 ops/s
+
+(2) whole parsing function
+918.31 us
+1088.95 ops/s
+
+
+
+3. OpenSSL signing operation
+(1) sign_with_key staring - ending
+378.75 us
+
+(2) ECDSA_sign
+363.25 us
+
+
+4. validation test (tara-BGPSec library)
+
+ (1) 1000 validation with same update 
+
+    received one update
+    --> time stamp start
+    for each 1000 repetitions
+        api->validate()
+    --> time stamp end
+
+    59.167 us
+    16903.31 ops/s
+
+
+    A) 10,000 times:
+        57.52 us
+        17384.32 ops/s
+
+    B) 100,000 times:
+        57.20 us
+        17480.93 ops/s
+
+
+ (1') 1000 validation with same update
+
+    received one update
+    for each 1000 repetitions
+    --> time stamp start
+        api->validate()
+    --> time stamp end
+
+    59.895 us
+    16695.88 ops/s
+
+    A) 10,000 times:
+        57.541 us
+        17378.90 ops/s
+
+    B) 100,000 times:
+        57.094 us
+        17514.76 ops/s
+
+
+
+ (2) validation with 1000 different prefix update 
+
+    received for each 1000 different update
+    --> time stamp start
+        api->validate()
+    --> time stamp end
+
+    91.85 us
+    10887.31 ops/s
+
+
+  (3) total elapsed time with a peer's 1000 prefix update
+
+
+    --> time stamp start with 1st update
+
+        bgp_update_receive
+        bgp_attr_parse
+        bgpsec_attr_parse
+            api->validate
+        (srx_origin_validation off)
+        decision_process
+        update_announce_process 
+
+    --> time stamp end with 1000th update
+
+    1,584,970.8 us
+
+
+
+
+5. bgpsec_openssl library
+(1)  651.59 us
+    1534.70 ops/s
+
+(2)  658.57 us
+    1518.44 ops/s
+
+(3) 1,575,525.8 us
+
+
+
+
+
+
+
+
+
+6.1 each part spending time with verify_with_key (on bgpsec_parse) - tara_lib
+ (1) bgpsec_parse total                     : 460.08 us
+ (2)  register pubkey info - if_else clause : 371.77 us
+ (3)    malloc part                         :   0.18 us
+ (4)    memset -- 1st registerPublicKey     :   0.10 us
+ (5)    sca_loadKey()                       : 367.98 us
+ (6)  validate                              :  91.xx us
+
+
+6.2 verify_with_id (tara-lib)
+    
+ (1) bgpsec_parse total                     :  85.57 us
+ (2) extValidate                            :  80.38 us
+
+
+7. total elapsed time with 1000 update cycle (verify_with_id) - (tara-lib)
+
+7.1 peer with emulab
+ (1) with key : 1,667,302 us (cpu time     631903 us)
+ (2) with id  : 1,524,984 us (cpu time     240964 us)
+
+7.2 peer with bgpsec2
+ (1) with key :   460,890 us (cpu time     456931 us)
+ (2) with id  :   385,906 us (cpu time     129980 us)
+
+
+
+
+8.1 BGPSecOpenssl verify_with_id
+ (1) extValidate                            : 402.68 us (2483.35 ops/s) 
+        which is faster than verify_with_key (658.57 us)
+
+8.2 each part analysis
+ (1) bgpsec_parse total                     : 405.17 us
+ (2) register pubkey info - if_else clause  :   0.93 us
+ (3) extvalidate                            : 402.68 us
+
+
+8.3 total elapsed time with 1000 update with verify_with_id
+ (1) peer with emulab  : 1,525,323 us (cpu time     440933 us)
+ (2) peer with bgpsec2 :   422,736 us (cpu time     413937 us) 
+
+
+8.4 total elapsed time with 1000 updates with verify_with_key
+ (1) peer with bgpsec2 : 1,028,960 us (cpu time    1023844 us)
+
+
+
+
+
+
+
+

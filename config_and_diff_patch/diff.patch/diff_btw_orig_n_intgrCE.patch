@@ -1,0 +1,4832 @@
+--- ./zebra/main.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./zebra/main.c	2011-10-06 21:54:25.343524440 -0400
+@@ -40,6 +40,33 @@
+ #include "zebra/irdp.h"
+ #include "zebra/rtadv.h"
+ 
++#include "tml_core.h"
++
++#define DEST_ADDR "192.168.138.138"
++
++FORCES_PAYLOAD *msg_gen(int vPri, int vType)
++{
++	FORCES_PAYLOAD *send_forces_data = (FORCES_PAYLOAD *)malloc(sizeof(FORCES_PAYLOAD));
++	memset (send_forces_data, 0, sizeof(FORCES_PAYLOAD));
++	send_forces_data->header.message_type = vType;
++	send_forces_data->header.flags.pri = vPri;
++	send_forces_data->header.source_id.TS = 0x00;
++	send_forces_data->header.source_id.sub_id = 0x00000005;
++	send_forces_data->header.dest_id.TS = 0x01;
++	send_forces_data->header.dest_id.sub_id = 0x00000001;
++	
++	return send_forces_data;
++}
++
++int fe_setup_assoc(void)
++{
++	FORCES_PAYLOAD *send_data;
++	send_data = msg_gen(7, MSG_ASSOCIATION_SETUP);
++	tml_SendMsg(send_data);
++
++	return 1;
++}
++
+ /* Zebra instance */
+ struct zebra_t zebrad =
+ {
+@@ -386,10 +413,12 @@
+   pid = getpid ();
+ 
+   /* This must be done only after locking pidfile (bug #403). */
+-  zebra_zserv_socket_init ();
++ // zebra_zserv_socket_init ();
+ 
+   /* Make vty server socket. */
+-  vty_serv_sock (vty_addr, vty_port, ZEBRA_VTYSH_PATH);
++ // vty_serv_sock (vty_addr, vty_port, ZEBRA_VTYSH_PATH);
++  tml_core_init(DEST_ADDR);
++  fe_setup_assoc();
+ 
+   /* Print banner. */
+   zlog_notice ("Zebra %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+--- ./ospfd/ospf_network.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_network.c	2011-10-06 21:54:21.683578318 -0400
+@@ -51,6 +51,7 @@
+ 			   unsigned int ifindex)
+ {
+   int ret;
++  printf(" zclient socket number is %d in ospf_if_add_allspfrouters function (ospf_network.c) \n", top->fd);
+   
+   ret = setsockopt_multicast_ipv4 (top->fd, IP_ADD_MEMBERSHIP,
+                                    p->u.prefix4, htonl (OSPF_ALLSPFROUTERS),
+--- ./ospfd/ospf_zebra.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_zebra.c	2011-10-06 21:54:21.896438724 -0400
+@@ -20,6 +20,7 @@
+  * Boston, MA 02111-1307, USA. 
+  */
+ 
++#include <stdio.h>
+ #include <zebra.h>
+ 
+ #include "thread.h"
+@@ -45,10 +46,13 @@
+ #include "ospfd/ospf_dump.h"
+ #include "ospfd/ospf_route.h"
+ #include "ospfd/ospf_zebra.h"
++#include "tml_core.h"
+ #ifdef HAVE_SNMP
+ #include "ospfd/ospf_snmp.h"
+ #endif /* HAVE_SNMP */
+ 
++#define MY_ADDR "192.10.3.3"
++
+ /* Zebra structure to hold current status. */
+ struct zclient *zclient = NULL;
+ 
+@@ -74,8 +78,12 @@
+ 
+   router_id_zebra = router_id.u.prefix4;
+ 
++  /////////////////////////////////////////// KT ///////////////////////////////////
++  forwarding->fe_router_id = router_id_zebra;
++  /////////////////////////////////////////////////////////////////////////////
++  router_id_zebra.s_addr = inet_addr(CE_ROUTER_ID);
++ // printf(" router id prefix4 : %s \n", inet_ntoa(router_id.u.prefix4));
+   ospf = ospf_lookup ();
+-  
+   if (ospf != NULL)
+     ospf_router_id_update (ospf);
+   
+@@ -87,16 +95,17 @@
+ ospf_interface_add (int command, struct zclient *zclient, zebra_size_t length)
+ {
+   struct interface *ifp;
+-
+   ifp = zebra_interface_add_read (zclient->ibuf);
+ 
++  if(ifp->ifindex == 2)
++	  return 0;
++
+   if (IS_DEBUG_OSPF (zebra, ZEBRA_INTERFACE))
+     zlog_debug ("Zebra: interface add %s index %d flags %llx metric %d mtu %d",
+                ifp->name, ifp->ifindex, (unsigned long long)ifp->flags,
+                ifp->metric, ifp->mtu);
+ 
+   assert (ifp->info);
+-
+   if (!OSPF_IF_PARAM_CONFIGURED (IF_DEF_PARAMS (ifp), type))
+     {
+       SET_IF_PARAM (IF_DEF_PARAMS (ifp), type);
+@@ -253,13 +262,18 @@
+ ospf_interface_address_add (int command, struct zclient *zclient,
+                             zebra_size_t length)
+ {
++
+   struct connected *c;
+ 
+   c = zebra_interface_address_read (command, zclient->ibuf);
+ 
++
+   if (c == NULL)
+     return 0;
+ 
++  if(c->ifp->ifindex == 2)
++	  return 0;
++
+   if (IS_DEBUG_OSPF (zebra, ZEBRA_INTERFACE))
+     {
+       char buf[128];
+@@ -334,6 +348,7 @@
+   struct stream *s;
+   struct ospf_path *path;
+   struct listnode *node;
++  struct forwarding_element *tempforwardingptr;
+ 
+   if (zclient->redist[ZEBRA_ROUTE_OSPF])
+     {
+@@ -1258,9 +1273,15 @@
+ void
+ ospf_zebra_init ()
+ {
++  if(!tml_core_init(MY_ADDR))
++  {
++	  printf(" Error init_tml_core() \n");
++	  exit(1);
++  }
+   /* Allocate zebra structure. */
+   zclient = zclient_new ();
+   zclient_init (zclient, ZEBRA_ROUTE_OSPF);
++  zclient_read_thread_start(zclient);
+   zclient->router_id_update = ospf_router_id_update_zebra;
+   zclient->interface_add = ospf_interface_add;
+   zclient->interface_delete = ospf_interface_delete;
+@@ -1275,4 +1296,90 @@
+   access_list_delete_hook (ospf_filter_update);
+   prefix_list_add_hook (ospf_prefix_list_update);
+   prefix_list_delete_hook (ospf_prefix_list_update);
++
++  
++}
++
++
++//////////////////////////////////////// KT ///////////////////////////////////////////////
++void
++ospf_fe_zebra_add (struct forwarding_element *forwarding, struct prefix_ipv4 *p, struct ospf_route *or)
++{
++
++   u_char message;
++   u_char distance;
++   u_char flags;
++   int psize;
++   struct stream *s;
++   struct ospf_path *path;
++   struct listnode *node;
++
++   if (zclient->redist[ZEBRA_ROUTE_OSPF])
++   {
++      message = 0;
++      flags = 0;
++
++	  SET_FLAG (message, ZAPI_MESSAGE_NEXTHOP);
++	  SET_FLAG (message, ZAPI_MESSAGE_METRIC);
++      distance = ospf_distance_apply (p, or);
++      if (distance)
++        SET_FLAG (message, ZAPI_MESSAGE_DISTANCE);
++
++	  s = zclient->obuf;
++      stream_reset (s);
++	  zclient_create_header (s, ZEBRA_IPV4_ROUTE_ADD);
++      stream_putc (s, ZEBRA_ROUTE_OSPF);
++      stream_putc (s, flags);
++      stream_putc (s, message);
++
++      psize = PSIZE (p->prefixlen);
++      stream_putc (s, p->prefixlen);
++      stream_write (s, (u_char *) & p->prefix, psize);
++																														 stream_putc (s, or->paths->count);
++
++      for (ALL_LIST_ELEMENTS_RO (or->paths, node, path))
++      {
++          if (path->nexthop.s_addr != INADDR_ANY)
++          {
++              stream_putc (s, ZEBRA_NEXTHOP_IPV4);
++              stream_put_in_addr (s, &path->nexthop);
++          }
++          else
++          {
++              stream_putc (s, ZEBRA_NEXTHOP_IFINDEX);
++              if (path->ifindex)
++                 stream_putl (s, path->ifindex);
++              else
++                stream_putl (s, 0);
++          }
++
++          if (IS_DEBUG_OSPF (zebra, ZEBRA_REDISTRIBUTE))
++          {
++	          char buf[2][INET_ADDRSTRLEN];
++	 	      zlog_debug("Zebra: Route add %s/%d nexthop %s",
++		     			 inet_ntop(AF_INET, &p->prefix,
++			        	   buf[0], sizeof(buf[0])),
++			 			 p->prefixlen,
++		 			 inet_ntop(AF_INET, &path->nexthop,
++			        	   buf[1], sizeof(buf[1])));
++	       }
++        }
++
++        if (CHECK_FLAG (message, ZAPI_MESSAGE_DISTANCE))
++	        stream_putc (s, distance);
++        if (CHECK_FLAG (message, ZAPI_MESSAGE_METRIC))
++        {
++            if (or->path_type == OSPF_PATH_TYPE1_EXTERNAL)
++                stream_putl (s, or->cost + or->u.ext.type2_cost);
++	        else if (or->path_type == OSPF_PATH_TYPE2_EXTERNAL)
++	            stream_putl (s, or->u.ext.type2_cost);
++	        else
++	            stream_putl (s, or->cost);
++	    }
++		stream_putw_at (s, 0, stream_get_endp (s));
++        
++		zclient->sock = forwarding->fe_id;
++
++        zclient_send_message(zclient);
++     }
+ }
+--- ./ospfd/ospf_neighbor.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_neighbor.c	2011-10-06 21:54:21.666451527 -0400
+@@ -216,6 +216,7 @@
+   oi->nbr_self->src = oi->address->u.prefix4;
+   oi->nbr_self->state = NSM_TwoWay;
+   
++
+   switch (oi->area->external_routing)
+     {
+       case OSPF_AREA_DEFAULT:
+@@ -376,10 +377,14 @@
+                  struct ospf_header *ospfh)
+ {
+   if (oi->type == OSPF_IFTYPE_VIRTUALLINK)
++  {
+     return (ospf_nbr_lookup_by_routerid (oi->nbrs, &ospfh->router_id));
++  }
+   else
++  {
+     return (ospf_nbr_lookup_by_addr (oi->nbrs, &iph->ip_src));
+ }
++}
+ 
+ static struct ospf_neighbor *
+ ospf_nbr_add (struct ospf_interface *oi, struct ospf_header *ospfh,
+--- ./ospfd/ospf_main.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_main.c	2011-10-06 21:54:21.656447639 -0400
+@@ -21,7 +21,7 @@
+  */
+ 
+ #include <zebra.h>
+-
++#include <string.h>
+ #include <lib/version.h>
+ #include "getopt.h"
+ #include "thread.h"
+@@ -49,6 +49,10 @@
+ #include "ospfd/ospf_zebra.h"
+ #include "ospfd/ospf_vty.h"
+ 
++#include "tml_core.h"
++#include "table.h"
++#include "common.h"
++
+ /* ospfd privileges */
+ zebra_capabilities_t _caps_p [] = 
+ {
+@@ -172,6 +176,7 @@
+   },
+ };
+ 
++
+ /* OSPFd main routine. */
+ int
+ main (int argc, char **argv)
+@@ -215,9 +220,11 @@
+       int opt;
+ 
+       opt = getopt_long (argc, argv, "df:i:hA:P:u:g:avC", longopts, 0);
+-    
+       if (opt == EOF)
+ 	break;
++      opt = argv[1][1];
++
++      printf(" fe name %s \n", argv[2]);
+ 
+       switch (opt) 
+ 	{
+@@ -268,6 +275,7 @@
+ 	case 'h':
+ 	  usage (progname, 0);
+ 	  break;
++	
+ 	default:
+ 	  usage (progname, 1);
+ 	  break;
+@@ -288,52 +296,56 @@
+   access_list_init ();
+   prefix_list_init ();
+ 
++  printf("[test...] ospf_zebra_init function is called...\n");
++//  printf("  size of struct tagAPP_DATA is %d\n", sizeof(struct tagAPP_DATA))
++//  printf("  size of struct IPC_HEAD is %d\n", sizeof(struct tagAPP_DATA)); 
+   /* OSPFd inits. */
+   ospf_if_init ();
+   ospf_zebra_init ();
+ 
+-  /* OSPF vty inits. */
++  // OSPF vty inits. 
+   ospf_vty_init ();
+   ospf_vty_show_init ();
+ 
+   ospf_route_map_init ();
+ #ifdef HAVE_SNMP
+   ospf_snmp_init ();
+-#endif /* HAVE_SNMP */
++#endif // HAVE_SNMP 
+ #ifdef HAVE_OPAQUE_LSA
+   ospf_opaque_init ();
+-#endif /* HAVE_OPAQUE_LSA */
++#endif // HAVE_OPAQUE_LSA 
+   
+   sort_node ();
+ 
+-  /* Get configuration file. */
++  // Get configuration file. 
+   vty_read_config (config_file, config_default);
+ 
+-  /* Start execution only if not in dry-run mode */
++  // Start execution only if not in dry-run mode 
+   if (dryrun)
+     return(0);
+   
+-  /* Change to the daemon program. */
++  // Change to the daemon program. 
+   if (daemon_mode && daemon (0, 0) < 0)
+     {
+       zlog_err("OSPFd daemon failed: %s", strerror(errno));
+       exit (1);
+     }
+-
+-  /* Process id file create. */
++  // Process id file create. 
+   pid_output (pid_file);
+ 
+-  /* Create VTY socket */
++  // Create VTY socket 
+   vty_serv_sock (vty_addr, vty_port, OSPF_VTYSH_PATH);
+ 
+-  /* Print banner. */
++  // Print banner. 
+   zlog_notice ("OSPFd %s starting: vty@%d", QUAGGA_VERSION, vty_port);
+ 
+-  /* Fetch next active thread. */
++  pthread_mutex_init(&sync_mutex, NULL);
++
++  // Fetch next active thread. 
+   while (thread_fetch (master, &thread))
+     thread_call (&thread);
+ 
+-  /* Not reached. */
++  // Not reached. 
+   return (0);
+ }
+ 
+--- ./ospfd/ospf_spf.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_spf.c	2011-10-06 21:54:21.824363765 -0400
+@@ -262,6 +262,8 @@
+ static void
+ ospf_vertex_add_parent (struct vertex *v)
+ {
++  printf(" ospf_vertex_add_parent function start (line 265 in ospf_spf.c) \n");
++
+   struct vertex_parent *vp;
+   struct listnode *node;
+   
+@@ -269,13 +271,17 @@
+   
+   for (ALL_LIST_ELEMENTS_RO (v->parents, node, vp))
+     {
++	 
+       assert (vp->parent && vp->parent->children);
+       
+       /* No need to add two links from the same parent. */
+       if (listnode_lookup (vp->parent->children, v) == NULL)
++	  {
++		printf("listnode_lookup == NULL (line 280 in ospf_spf.c) \n");
+         listnode_add (vp->parent->children, v);
+     }
+ }
++}
+ 
+ static void
+ ospf_spf_init (struct ospf_area *area)
+@@ -495,18 +501,15 @@
+       ospf_vertex_dump("W (dest)  :", w, 1, 1);
+       zlog_debug ("V->W distance: %d", distance);
+     }
++  printf(" ospf_nexthop_calculation function start (line 498 in ospf_spf.c) \n");
+ 
+   if (v == area->spf)
+     {      
+-      /* 16.1.1 para 4.  In the first case, the parent vertex (V) is the
+-	 root (the calculating router itself).  This means that the 
+-	 destination is either a directly connected network or directly
+-	 connected router.  The outgoing interface in this case is simply 
+-         the OSPF interface connecting to the destination network/router.
+-      */
++	  printf(" v == area->spf (line 501 in ospf_spf.c) \n");
+ 
+       if (w->type == OSPF_VERTEX_ROUTER)
+         {
++			printf(" w->type == OSPF_VERTEX_ROUTER (line 506 in ospf_spf.c) \n");
+           /* l  is a link from v to w
+            * l2 will be link from w to v
+            */
+@@ -529,25 +532,6 @@
+ 
+           if (l->m[0].type == LSA_LINK_TYPE_POINTOPOINT)
+             {
+-              /* If the destination is a router which connects to
+-                 the calculating router via a Point-to-MultiPoint
+-                 network, the destination's next hop IP address(es)
+-                 can be determined by examining the destination's
+-                 router-LSA: each link pointing back to the
+-                 calculating router and having a Link Data field
+-                 belonging to the Point-to-MultiPoint network
+-                 provides an IP address of the next hop router.
+-
+-                 At this point l is a link from V to W, and V is the
+-                 root ("us").  Find the local interface associated 
+-                 with l (its address is in l->link_data).  If it
+-                 is a point-to-multipoint interface, then look through
+-                 the links in the opposite direction (W to V).  If
+-                 any of them have an address that lands within the
+-                 subnet declared by the PtMP link, then that link
+-                 is a constituent of the PtMP link, and its address is 
+-                 a nexthop address for V.
+-              */
+               oi = ospf_if_is_configured (area->ospf, &l->link_data);
+               if (oi && oi->type == OSPF_IFTYPE_POINTOMULTIPOINT)
+                 {
+@@ -632,6 +616,7 @@
+         } /* end W is a Router vertex */
+       else
+         {
++			printf(" else (line 613 in ospf_spf.c) \n");
+           assert(w->type == OSPF_VERTEX_NETWORK);
+           oi = ospf_if_is_configured (area->ospf, &(l->link_data));
+           if (oi)
+@@ -650,56 +635,29 @@
+   /* Check if W's parent is a network connected to root. */
+   else if (v->type == OSPF_VERTEX_NETWORK)
+     {
++		printf(" v->type == OSPF_VERTEX_NETWROK (line 629 in ospf_spf.c) \n");
+       /* See if any of V's parents are the root. */
+       for (ALL_LIST_ELEMENTS (v->parents, node, nnode, vp))
+         {
+           if (vp->parent == area->spf) /* connects to root? */
+ 	    {
+-	      /* 16.1.1 para 5. ...the parent vertex is a network that
+-	       * directly connects the calculating router to the destination
+-	       * router.  The list of next hops is then determined by
+-	       * examining the destination's router-LSA...
+-	       */
+ 
+ 	      assert(w->type == OSPF_VERTEX_ROUTER);
+               while ((l = ospf_get_next_link (w, v, l)))
+                 {
+-		  /* ...For each link in the router-LSA that points back to the
+-		   * parent network, the link's Link Data field provides the IP
+-		   * address of a next hop router.  The outgoing interface to
+-		   * use can then be derived from the next hop IP address (or 
+-		   * it can be inherited from the parent network).
+-		   */
+ 		  nh = vertex_nexthop_new ();
+ 		  nh->oi = vp->nexthop->oi;
+ 		  nh->router = l->link_data;
+ 		  added = 1;
++		  printf(" vp->nexthop->oi address : %s (line 645 in ospf_spf.c) \n", inet_ntoa(vp->nexthop->oi->address->u.prefix4));
+                   ospf_spf_add_parent (v, w, nh, distance);
+                 }
+             }
+         }
+-      /* NB: This code is non-trivial.
+-       * 
+-       * E.g. it is not enough to know that V connects to the root. It is
+-       * also important that the while above, looping through all links from
+-       * W->V found at least one link, so that we know there is
+-       * bi-directional connectivity between V and W.  Otherwise, if we
+-       * /always/ return here, but don't check that W->V exists then we
+-       * we will prevent SPF from finding/using higher cost paths..
+-       *
+-       * See also bug #330, and also:
+-       *
+-       * http://blogs.sun.com/paulj/entry/the_difference_a_line_makes
+-       */
+       if (added)
+         return added;
+     }
+ 
+-  /* 16.1.1 para 4.  If there is at least one intervening router in the
+-   * current shortest path between the destination and the root, the
+-   * destination simply inherits the set of next hops from the
+-   * parent.
+-   */
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("%s: Intervening routers, adding parent(s)", __func__);
+ 
+@@ -745,6 +703,8 @@
+   p = ((u_char *) v->lsa) + OSPF_LSA_HEADER_SIZE + 4;
+   lim = ((u_char *) v->lsa) + ntohs (v->lsa->length);
+ 
++  printf(" v->id : %s (line 700 in ospf_spf.c) \n", inet_ntoa(v->id));
++
+   while (p < lim)
+     {
+       struct vertex *w;
+@@ -754,6 +714,7 @@
+       if (v->lsa->type == OSPF_ROUTER_LSA)
+         {
+           l = (struct router_lsa_link *) p;
++          printf(" link id : %s (line 759 in ospf_spf.c) \n", inet_ntoa(l->link_id));
+ 
+           p += (ROUTER_LSA_MIN_SIZE +
+                 (l->m[0].tos_count * ROUTER_LSA_TOS_SIZE));
+@@ -775,6 +736,8 @@
+           /* (b) Otherwise, W is a transit vertex (router or transit
+              network).  Look up the vertex W's LSA (router-LSA or
+              network-LSA) in Area A's link state database. */
++
++		  printf(" check point 1 (line 725 in ospf_spf.c) \n");
+           switch (type)
+             {
+             case LSA_LINK_TYPE_POINTOPOINT:
+@@ -800,6 +763,12 @@
+                            inet_ntoa (l->link_id));
+               w_lsa = ospf_lsa_lookup_by_id (area, OSPF_NETWORK_LSA,
+                                              l->link_id);
++
++			  if(w_lsa)
++				  printf(" w_lsa is not NULL (line 762 in ospf_spf.c)\n");
++			  else
++				  printf(" w_lsa is NULL (line 764 in ospf_spf.c) \n");
++
+               if (w_lsa)
+                 if (IS_DEBUG_OSPF_EVENT)
+                   zlog_debug ("found the LSA");
+@@ -869,6 +838,7 @@
+       else /* v is not a Router-LSA */
+ 	distance = v->distance;
+ 
++
+       /* Is there already vertex W in candidate list? */
+       if (w_lsa->stat == LSA_SPF_NOT_EXPLORED)
+ 	{
+@@ -960,6 +930,7 @@
+                         struct route_table *rt,
+                         int parent_is_root)
+ {
++  printf(" ospf_spf_process_stubs function start (line 927 in ospf_spf.c) \n");
+   struct listnode *cnode, *cnnode;
+   struct vertex *child;
+ 
+@@ -968,6 +939,7 @@
+                inet_ntoa (area->area_id));
+   if (v->type == OSPF_VERTEX_ROUTER)
+     {
++	 printf(" v->type == OSPF_VERTEX_ROUTER (line 936 in ospf_spf.c) \n");
+       u_char *p;
+       u_char *lim;
+       struct router_lsa_link *l;
+@@ -992,12 +964,18 @@
+           p += (ROUTER_LSA_MIN_SIZE +
+                 (l->m[0].tos_count * ROUTER_LSA_TOS_SIZE));
+ 
++
+           if (l->m[0].type == LSA_LINK_TYPE_STUB)
++		  {
++		    printf(" v id : %s (line 957 in ospf_spf.c) \n", inet_ntoa(v->id));
++		    printf(" link id : %s (line 958 in ospf_spf.c) \n", inet_ntoa(l->link_id));
++		    printf(" link data : %s (line 959 in ospf_spf.c) \n", inet_ntoa(l->link_data));
+             ospf_intra_add_stub (rt, l, v, area, parent_is_root);
+         }
+     }
++    }
+ 
+-  ospf_vertex_dump("ospf_process_stubs(): after examining links: ", v, 1, 1);
++  //ospf_vertex_dump("ospf_process_stubs(): after examining links: ", v, 1, 1);
+ 
+   for (ALL_LIST_ELEMENTS (v->children, cnode, cnnode, child))
+     {
+@@ -1013,6 +991,7 @@
+       else if (v->type == OSPF_VERTEX_ROUTER)
+         parent_is_root = 0;
+         
++	  child->type = OSPF_VERTEX_ROUTER;
+       ospf_spf_process_stubs (area, child, rt, parent_is_root);
+ 
+       SET_FLAG (child->flags, OSPF_VERTEX_PROCESSED);
+@@ -1145,6 +1124,7 @@
+   /* Initialize the shortest-path tree to only the root (which is the
+      router doing the calculation). */
+   ospf_spf_init (area);
++
+   v = area->spf;
+   /* Set LSA position to LSA_SPF_IN_SPFTREE. This vertex is the root of the
+    * spanning tree. */
+@@ -1154,11 +1134,14 @@
+   area->transit = OSPF_TRANSIT_FALSE;
+   area->shortcut_capability = 1;
+   
++  printf(" root vertex id : %s (line 1132 in ospf_spf.c) \n", inet_ntoa(v->id));
+   for (;;)
+     {
+       /* RFC2328 16.1. (2). */
+       ospf_spf_next (v, area, candidate);
+ 
++	  printf(" candidate->size : %d (line 1143 in ospf_spf.c) \n", candidate->size);
++
+       /* RFC2328 16.1. (3). */
+       /* If at this step the candidate list is empty, the shortest-
+          path tree (of transit vertices) has been completely built and
+@@ -1172,6 +1155,9 @@
+          process). */
+       /* Extract from the candidates the node with the lower key. */
+       v = (struct vertex *) pqueue_dequeue (candidate);
++
++	  printf(" v->id : %s (line ospf_spf.c) \n", inet_ntoa(v->id));
++
+       /* Update stat field in vertex. */
+       *(v->stat) = LSA_SPF_IN_SPFTREE;
+ 
+@@ -1193,7 +1179,6 @@
+       ospf_spf_dump (area->spf, 0);
+       ospf_route_table_dump (new_table);
+     }
+-
+   /* Second stage of SPF calculation procedure's  */
+   ospf_spf_process_stubs (area, area->spf, new_table, 0);
+ 
+@@ -1243,6 +1228,7 @@
+   ospf_vl_unapprove (ospf);
+ 
+   /* Calculate SPF for each area. */
++
+   for (ALL_LIST_ELEMENTS (ospf->areas, node, nnode, area))
+     {
+       /* Do backbone last, so as to first discover intra-area paths
+@@ -1293,7 +1279,6 @@
+ 
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("SPF: calculation complete");
+-
+   return 0;
+ }
+ 
+@@ -1302,6 +1287,7 @@
+ void
+ ospf_spf_calculate_schedule (struct ospf *ospf)
+ {
++	printf(" ospf_spf_calculate_schedule function start (line 1310 in ospf_spf.c) \n");
+   unsigned long delay, elapsed, ht;
+   struct timeval result;
+ 
+@@ -1359,3 +1345,674 @@
+   ospf->t_spf_calc =
+     thread_add_timer_msec (master, ospf_spf_calculate_timer, ospf, delay);
+ }
++
++///////////////////////////////////////////// KT ////////////////////////////////////////
++
++/* Second stage of SPF calculation. */
++static void
++ospf_fe_spf_process_stubs (struct forwarding_element *forwarding,
++		                struct ospf_area *area, struct vertex *v,
++                        struct route_table *rt,
++                        int parent_is_root)
++{
++	printf(" ospf_fe_spf_process_stubs function start (line 1347 in ospf_spf.c) \n");
++  struct listnode *cnode, *cnnode;
++  struct vertex *child;
++  struct Interface *interfaceptr;
++  struct nbrinterface *nbr;
++  struct forwarding_element *temp;
++
++  if(forwarding->update_flag == 0)
++  {
++	  forwarding->update_flag = 1;
++
++	  printf(" v->type == OSPF_VERTEX_ROUTER (line 936 in ospf_spf.c) \n");
++      u_char *p;
++      u_char *lim;
++      struct router_lsa_link *l;
++      struct router_lsa *rlsa;
++      
++	  v->id =forwarding->fe_router_id;
++
++      if (IS_DEBUG_OSPF_EVENT)
++        zlog_debug ("ospf_process_stubs():processing router LSA, id: %s",
++                   inet_ntoa (v->lsa->id));
++      rlsa = (struct router_lsa *) v->lsa;
++
++
++      if (IS_DEBUG_OSPF_EVENT)
++        zlog_debug ("ospf_process_stubs(): we have %d links to process",
++                   ntohs (rlsa->links));
++
++		  
++		  for(interfaceptr = forwarding->interface_head->next;
++			  interfaceptr != forwarding->interface_tail;
++			  interfaceptr = interfaceptr->next)
++		  {
++			 if(interfaceptr->ifaddress.s_addr != forwarding->fe_router_id.s_addr)
++			 {
++			  p = ((u_char *) v->lsa) + OSPF_LSA_HEADER_SIZE + 4;
++			  lim = ((u_char *) v->lsa) + ntohs (v->lsa->length);
++
++              while (p < lim)
++			  {
++
++				  l = (struct router_lsa_link *) p;
++
++				  p += (ROUTER_LSA_MIN_SIZE +
++					 (l->m[0].tos_count * ROUTER_LSA_TOS_SIZE));
++
++                if ((interfaceptr->ifaddress.s_addr & l->link_data.s_addr) == l->link_id.s_addr)
++		        {
++		           printf(" v id : %s (line 957 in ospf_spf.c) \n", inet_ntoa(v->id));
++	     	       printf(" link id : %s (line 958 in ospf_spf.c) \n", inet_ntoa(l->link_id));
++		           printf(" link data : %s (line 959 in ospf_spf.c) \n", inet_ntoa(l->link_data));
++                   ospf_intra_fe_add_stub (rt, l, v, area, parent_is_root, parent_is_root);
++
++				   break;
++		        }
++		    }
++		}
++      }
++        
++
++
++ // for (ALL_LIST_ELEMENTS (v->children, cnode, cnnode, child))
++    for(interfaceptr = forwarding->interface_head->next;
++		interfaceptr != forwarding->interface_tail;
++		interfaceptr = interfaceptr->next)
++    {
++
++		if(interfaceptr->nbrcount > 0)
++		{
++			for(nbr = interfaceptr->nbrhead->next;
++				nbr != interfaceptr->nbrtail;
++				nbr = nbr->next)
++			{
++				if (!parent_is_root)
++					parent_is_root = 1;
++
++				temp = lookupforwarding(nbr->address);
++
++				printf(" nbr->router_id : %s (line 1429 in ospf_spf.c) \n", inet_ntoa(nbr->router_id));
++				if(temp)
++					printf(" temp is not null (line 1430 in ospf_spf.c) \n");
++				else
++					printf(" temp is null (line 1432 in ospf_spf.c) \n");
++
++		        ospf_fe_spf_process_stubs (temp, area, v, rt, parent_is_root);		
++
++     		}
++		}
++
++    }
++  }
++}
++
++static unsigned int
++ospf_fe_nexthop_calculation (struct forwarding_element *forwarding, struct vertex *v,
++		              struct vertex *w, struct in_addr next_link, struct router_lsa_link *l,
++			  		  unsigned int distance)
++{
++  struct listnode *node, *nnode;
++  struct vertex_nexthop *nh;
++  struct vertex_parent *vp;
++  struct ospf_interface *oi = NULL;
++  unsigned int added = 0;
++ 
++  printf(" ospf_fe_nexthop_calculation function start (line 1327 in ospf_spf.c) \n");
++
++  if (v == forwarding->spf) 
++  {
++    printf(" v == fprwarding->spf (line 1336 in ospf_spf.c) \n");
++
++    if (w->type == OSPF_VERTEX_ROUTER)
++	{
++	  struct router_lsa_link *l2 = NULL;
++	  if(l->m[0].type == LSA_LINK_TYPE_POINTOPOINT)			        
++	  {
++	    oi = ospf_if_is_configured (forwarding->ospf, &l->link_data);
++
++        if (oi && oi->type == OSPF_IFTYPE_POINTOMULTIPOINT)
++		{
++		  struct prefix_ipv4 la;
++		  
++		  la.family = AF_INET;
++		  la.prefixlen = oi->address->prefixlen;
++
++
++          while ((l2 = ospf_get_next_link (w, v, l2)))
++		  {
++	        la.prefix = l2->link_data;
++
++			if (prefix_cmp ((struct prefix *) &la, oi->address) == 0)
++			  break;
++		  }
++		}
++		
++		else
++		{
++			while((l2 = ospf_get_next_link (w, v, l2)))
++			{
++			  oi = ospf_if_is_configured (forwarding->ospf, &(l2->link_data));
++
++              if (oi == NULL)
++			    continue;
++
++	          if (!IPV4_ADDR_SAME (&oi->address->u.prefix4, &l->link_data))
++				continue;
++
++			  break;
++			}
++		}
++ 
++		if (oi && 12)
++		{
++		  nh = vertex_nexthop_new ();
++	      nh->oi = oi;
++		  nh->router = l2->link_data;
++		  ospf_spf_add_parent (v, w, nh, distance);
++		  return 1;  
++		}
++		else
++	      zlog_info("ospf_nexthop_calculation(): "
++				  "could not determine nexthop for link");		
++	  }
++    else if (l->m[0].type == LSA_LINK_TYPE_VIRTUALLINK)
++	{
++	  struct ospf_vl_data *vl_data;
++
++      vl_data = ospf_vl_lookup (forwarding->ospf, NULL, l->link_id);
++	   
++      if (vl_data && CHECK_FLAG (vl_data->flags, OSPF_VL_FLAG_APPROVED))			   {
++	    nh = vertex_nexthop_new ();
++	    nh->oi = vl_data->nexthop.oi;
++	    nh->router = vl_data->nexthop.router;
++	    ospf_spf_add_parent (v, w, nh, distance);
++	    return 1;
++	  }
++      else
++	    zlog_info("ospf_nexthop_calculation(): "
++		  "vl_data for VL link not found");
++	}
++    return 0;
++  }  
++
++  else
++  {
++	  printf(" else (line 1416 in ospf_spf.c) \n");
++    assert(w->type == OSPF_VERTEX_NETWORK);
++ //   oi = ospf_if_is_configured (forwarding->ospf, &(l->link_data));
++    oi = ospf_fe_if_configured (forwarding->ospf,  next_link);
++
++    if (oi)
++	{
++	  nh = vertex_nexthop_new ();
++      nh->oi = oi;
++      nh->router.s_addr = 0;
++      ospf_spf_add_parent (v, w, nh, distance);
++      return 1;	  
++	}
++  }
++  zlog_info("ospf_nexthop_calculation(): "
++		  "Unknown attached link");
++  return 0;
++  }
++
++  else if (v->type == OSPF_VERTEX_NETWORK)
++  {
++	printf(" v->type == OSPF_VERTEX_NETWORK (line 1431 in ospf_spf.c) \n");
++
++	for (ALL_LIST_ELEMENTS (v->parents, node, nnode, vp))
++	{
++	  if (vp->parent == forwarding->spf)
++	  {
++	    assert(w->type == OSPF_VERTEX_ROUTER);
++	//	while ((l = ospf_get_next_link (w, v, l)))
++	//	{
++		  nh = vertex_nexthop_new ();
++		  nh->oi = vp->nexthop->oi;
++     //     nh->router = l->link_data;
++		  nh->router = next_link;
++		  added = 1;
++		  ospf_spf_add_parent (v, w, nh, distance);
++	//	}
++	  }
++	}
++
++	if(added)
++	  return added;
++  }
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("%s: Intervening routers, adding parent(s)", __func__);
++
++  for (ALL_LIST_ELEMENTS (v->parents, node, nnode, vp))
++  {
++    added = 1;
++	ospf_spf_add_parent (v, w, vp->nexthop, distance);
++  }
++
++  return added;
++}
++
++static void
++ospf_fe_spf_next (struct forwarding_element *forwarding, struct vertex *v, struct ospf_area *area,
++		struct pqueue * candidate)
++{
++  struct ospf_lsa *w_lsa = NULL;
++  u_char *p;
++  u_char *lim;
++  struct router_lsa_link *l = NULL;
++  struct in_addr *r;
++  int type = 0;
++
++  struct Interface *interfaceptr;
++  struct nbrinterface *nbrinterfaceptr;
++ 
++  printf(" ospf_fe_spf_next function start (line 1485 in ospf_spf.c) \n");
++
++  if (v->type == OSPF_VERTEX_ROUTER)
++  {
++    if (IS_ROUTER_LSA_VIRTUAL ((struct router_lsa *) v->lsa))
++		area->transit = OSPF_TRANSIT_TRUE;
++  }
++
++  if (IS_DEBUG_OSPF_EVENT)
++	zlog_debug ("%s: Next vertex of %s vertex %s",
++                __func__,
++                v->type == OSPF_VERTEX_ROUTER ? "Router" : "Network",
++				inet_ntoa(v->lsa->id));
++
++  p = ((u_char *) v->lsa) + OSPF_LSA_HEADER_SIZE + 4;
++  lim = ((u_char *) v->lsa) + ntohs (v->lsa->length);
++
++ // while (p < lim)
++  for(interfaceptr = forwarding->interface_head->next;
++	  interfaceptr != forwarding->interface_tail;
++	  interfaceptr = interfaceptr->next)
++  {
++
++    for(nbrinterfaceptr = interfaceptr->nbrhead->next;
++		nbrinterfaceptr != interfaceptr->nbrtail;
++		nbrinterfaceptr = nbrinterfaceptr->next)
++	{
++
++	   type = LSA_LINK_TYPE_TRANSIT;
++       v->lsa->type = OSPF_ROUTER_LSA;
++    struct vertex *w;
++	unsigned int distance;	
++
++    if (v->lsa->type == OSPF_ROUTER_LSA)
++	{
++	
++		printf(" vertex id : %s (line 1510 in ospf_spf.c) \n", inet_ntoa(v->id));
++		printf(" nbr id : %s (line 1511 in ospf_spf.c) \n", inet_ntoa(nbrinterfaceptr->address));
++	    
++
++	  l = (struct router_lsa_link *) p;
++
++      p += (ROUTER_LSA_MIN_SIZE +
++			  (l->m[0].tos_count * ROUTER_LSA_TOS_SIZE));
++
++	  switch (type)
++	  {
++	    case LSA_LINK_TYPE_POINTOPOINT:
++		case LSA_LINK_TYPE_VIRTUALLINK:
++	      if (type == LSA_LINK_TYPE_VIRTUALLINK)
++		  {
++		    if (IS_DEBUG_OSPF_EVENT)
++			  zlog_debug ("looking up LSA through VL: %s",
++					  inet_ntoa (l->link_id));
++		  }
++
++		  w_lsa = ospf_lsa_lookup (area, OSPF_ROUTER_LSA, l->link_id,
++				  l->link_id);
++
++		  if (w_lsa)
++		  {
++		    if (IS_DEBUG_OSPF_EVENT)
++			  zlog_debug ("found Router LSA %s", inet_ntoa (l->link_id));
++		  }
++		  break;
++	    case LSA_LINK_TYPE_TRANSIT:
++		  if (IS_DEBUG_OSPF_EVENT)
++			zlog_debug ("Looking up Network LSA, ID: %s",
++					inet_ntoa (l->link_id));
++		  w_lsa = ospf_lsa_lookup_by_id (area, OSPF_NETWORK_LSA,
++				  nbrinterfaceptr->address);
++          if(w_lsa)
++		  {
++			  printf(" w_lsa is not NULL (line 1546 in ospf_spf.c) \n");
++		  }
++		  else
++			  printf(" w_lsa is NULL (line 1549 in ospf_spf.c) \n");
++
++          if (w_lsa)
++            if (IS_DEBUG_OSPF_EVENT)
++              zlog_debug ("found the LSA");
++          break;
++		
++		default:
++              zlog_warn ("Invalid LSA link type %d", type);
++              continue;
++	  }
++	}
++
++    else
++    {
++          r = (struct in_addr *) p;
++          p += sizeof (struct in_addr);
++
++          w_lsa = ospf_lsa_lookup_by_id (area, OSPF_ROUTER_LSA, *r);
++          if (w_lsa)
++            {
++              if (IS_DEBUG_OSPF_EVENT)
++                zlog_debug ("found Router LSA %s", inet_ntoa (w_lsa->data->id));
++            }
++        }
++
++      if (w_lsa == NULL)
++        {
++          if (IS_DEBUG_OSPF_EVENT)
++            zlog_debug ("No LSA found");
++          continue;
++        }
++
++      if (IS_LSA_MAXAGE (w_lsa))
++        {
++          if (IS_DEBUG_OSPF_EVENT)
++            zlog_debug ("LSA is MaxAge");
++          continue;
++        }
++
++      if (ospf_lsa_has_link (w_lsa->data, v->lsa) < 0 )
++        {
++          if (IS_DEBUG_OSPF_EVENT)
++            zlog_debug ("The LSA doesn't have a link back");
++          continue;
++        }
++
++      if (w_lsa->stat == LSA_SPF_IN_SPFTREE)
++	{
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("The LSA is already in SPF");
++	  continue;
++	}
++
++	
++      if (v->lsa->type == OSPF_ROUTER_LSA)
++	distance = v->distance + nbrinterfaceptr->cost;
++      else /* v is not a Router-LSA */
++	distance = v->distance;
++
++	/* Is there already vertex W in candidate list? */
++      if (w_lsa->stat == LSA_SPF_NOT_EXPLORED)
++	{
++		printf("w_lsa->stat == LSA_SPF_NOT_EXPLORED) (line 1612 in ospf_spf.c \n");
++          /* prepare vertex W. */
++          w = ospf_vertex_new (w_lsa);
++
++          /* Calculate nexthop to W. */
++          if (ospf_fe_nexthop_calculation (forwarding, v, w, nbrinterfaceptr->address, l, distance))
++            pqueue_enqueue (w, candidate);
++          else if (IS_DEBUG_OSPF_EVENT)
++            zlog_debug ("Nexthop Calc failed");
++	}
++      else if (w_lsa->stat >= 0)
++	{
++	  /* Get the vertex from candidates. */
++	  w = candidate->array[w_lsa->stat];
++
++	  /* if D is greater than. */  
++	  if (w->distance < distance)
++            {
++              continue;
++            }
++          /* equal to. */
++	  else if (w->distance == distance)
++            {
++	      /* Found an equal-cost path to W.  
++               * Calculate nexthop of to W from V. */
++              ospf_fe_nexthop_calculation (forwarding, v, w, nbrinterfaceptr->address, l, distance);
++            }
++           /* less than. */
++	  else
++            {
++              /* Found a lower-cost path to W.
++               * nexthop_calculation is conditional, if it finds
++               * valid nexthop it will call spf_add_parents, which
++               * will flush the old parents
++               */
++              if (ospf_fe_nexthop_calculation (forwarding, v, w, nbrinterfaceptr->address, l, distance))
++                /* Decrease the key of the node in the heap.
++                 * trickle-sort it up towards root, just in case this
++                 * node should now be the new root due the cost change. 
++                 * (next pqueu_{de,en}queue will fully re-heap the queue).
++                 */
++                trickle_up (w_lsa->stat, candidate);
++            }
++        } /* end W is already on the candidate list */
++	}
++    } /* end loop over the links in V's LSA */
++}
++			  
++			  
++/* Calculating the shortest-path tree for an area. */
++static void
++ospf_spf_fe_calculate (struct forwarding_element *forwarding, struct ospf_area *area,
++		        struct route_table *new_table,struct route_table *new_rtrs)
++{
++  struct pqueue *candidate;
++  struct vertex *v;
++  struct forwarding_element *tempforwarding = forwarding;
++
++  if (IS_DEBUG_OSPF_EVENT)
++  {
++    zlog_debug ("ospf_spf_calculate: Start");
++    zlog_debug ("ospf_spf_calculate: running Dijkstra for area %s",
++    inet_ntoa (area->area_id));
++  }
++
++  if (!area->router_lsa_self)
++  {
++	if (IS_DEBUG_OSPF_EVENT)
++	zlog_debug ("ospf_spf_calculate: "
++	"Skip area %s's calculation due to empty router_lsa_self",
++	inet_ntoa (area->area_id));
++	return;
++  }
++
++  ospf_lsdb_clean_stat (area->lsdb);
++
++  candidate = pqueue_create();
++  candidate->cmp = cmp;
++  candidate->update = update_stat;
++
++  ospf_spf_init (area);
++
++  v = area->spf;
++  //v = forwarding->spf;
++
++  v->id = forwarding->fe_router_id;
++
++  *(v->stat) = LSA_SPF_IN_SPFTREE;
++
++  area->transit = OSPF_TRANSIT_FALSE;
++  area->shortcut_capability = 1;
++  
++  printf(" root vertex : %s (line 1838 in ospf_spf.c) \n", inet_ntoa(v->id));
++  for (;;)
++  {
++    ospf_fe_spf_next (tempforwarding, v, area, candidate);
++    
++	if (candidate->size == 0)
++	  break;
++
++	v = (struct vertex *) pqueue_dequeue (candidate);
++	*(v->stat) = LSA_SPF_IN_SPFTREE;
++
++    printf(" v->id %s (line 1727 in ospf_spf.c) \n", inet_ntoa(v->id));
++   
++	ospf_vertex_add_parent (v);
++
++	if (v->type == OSPF_VERTEX_ROUTER) // connection to another router
++		ospf_intra_add_router (new_rtrs, v, area);
++	else // network LSA
++		ospf_intra_add_transit (new_table, v, area);
++
++	tempforwarding = lookupforwarding(v->id);
++
++
++  } /* end loop until no more candidate vertices */
++
++  forwarding->spf = area->spf;
++
++  ospf_fe_spf_process_stubs (forwarding, area, forwarding->spf, new_table, 0);
++
++  printf(" ====================================== KT 1 ============================== \n");
++  ospf_route_table_dump(new_table);
++
++  pqueue_delete (candidate);
++
++  ospf_canonical_nexthops_free (forwarding->spf);
++
++  list_delete_all_node (&vertex_list);
++
++  area->spf_calculation++;
++
++  quagga_gettime (QUAGGA_CLK_MONOTONIC, &forwarding->ospf->ts_spf);
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("ospf_spf_calculate: Stop. %ld vertices",
++			mtype_stats_alloc(MTYPE_OSPF_VERTEX));
++}
++
++/* Timer for SPF calculation. */
++
++static int
++ospf_spf_fe_calculate_timer (struct thread *thread)
++{
++	struct forwarding_element *forwarding = THREAD_ARG (thread);
++	struct route_table *new_table, *new_rtrs;
++	struct ospf_area *area;
++	struct listnode *node, *nnode;
++
++	if (IS_DEBUG_OSPF_EVENT)
++		zlog_debug ("SPF: Timer (SPF calculation expire)");
++
++    forwarding->ospf->t_spf_calc = NULL;
++    
++	pthread_mutex_lock(&sync_mutex);
++
++	new_table = route_table_init ();
++	new_rtrs = route_table_init ();
++
++    ospf_vl_unapprove (forwarding->ospf);
++	
++	nbrupdateinit();
++
++    for (ALL_LIST_ELEMENTS (forwarding->ospf->areas, node, nnode, area))
++    {
++	   if (forwarding->ospf->backbone && forwarding->ospf->backbone == area)
++	         continue;
++										        
++	   ospf_spf_fe_calculate (forwarding, area, new_table, new_rtrs);
++    }
++						  
++    if (forwarding->ospf->backbone)
++      ospf_spf_fe_calculate (forwarding, forwarding->ospf->backbone, new_table, new_rtrs);
++						    
++    ospf_vl_shut_unapproved (forwarding->ospf);
++
++	printf(" ================================= KT ============================ \n");
++	ospf_route_table_dump(new_table);
++	printf(" ================================================================= \n");
++
++    ospf_ia_routing (forwarding->ospf, new_table, new_rtrs);
++
++    ospf_prune_unreachable_networks (new_table);
++    ospf_prune_unreachable_routers (new_rtrs);
++
++    if (1)
++      ospf_ase_calculate_schedule (forwarding->ospf);
++   
++	pthread_mutex_unlock(&sync_mutex);
++
++    ospf_ase_calculate_timer_add (forwarding->ospf);
++   
++    ospf_fe_route_install (forwarding, new_table);
++
++    if (forwarding->old_rtrs)
++    {
++      ospf_rtrs_free (forwarding->old_rtrs);
++    }
++
++    forwarding->old_rtrs = forwarding->new_rtrs;
++    forwarding->new_rtrs = new_rtrs;
++
++    if (IS_OSPF_ABR (forwarding->ospf))
++       ospf_abr_task (forwarding->ospf);
++
++    if (IS_DEBUG_OSPF_EVENT)
++       zlog_debug ("SPF: calculation complete");
++    
++    return 0;
++}
++
++void
++ospf_spf_fe_calculate_schedule (struct ospf *ospf, int feid)
++{
++  printf(" ospf_spf_fe_caculate_schedule function start (line 1434 in ospf_spf.c) \n");
++  unsigned long delay, elapsed, ht;
++  struct timeval result;
++  struct forwarding_element *forwarding = lookupfe(feid);
++
++  if(forwarding == NULL)
++	  printf(" forwarding is NULL (line 1441 in ospf_spf.c) \n");
++
++  if (IS_DEBUG_OSPF_EVENT)
++     zlog_debug ("SPF: calculation timer scheduled");
++
++  if (ospf == NULL)
++    return;
++			  
++  if (ospf->t_spf_calc)
++  {
++      if (IS_DEBUG_OSPF_EVENT)
++         zlog_debug ("SPF: calculation timer is already scheduled: %p",
++         ospf->t_spf_calc);
++         return;
++  }
++			    
++  result = tv_sub (recent_relative_time (), ospf->ts_spf);
++				  
++  elapsed = (result.tv_sec * 1000) + (result.tv_usec / 1000);
++  ht = ospf->spf_holdtime * ospf->spf_hold_multiplier;
++					  
++  if (ht > ospf->spf_max_holdtime)
++      ht = ospf->spf_max_holdtime;
++					    
++   if (elapsed < ht)
++   {
++      if (ht < ospf->spf_max_holdtime)
++          ospf->spf_hold_multiplier++;
++										        
++      if ( (ht - elapsed) < ospf->spf_delay)
++          delay = ospf->spf_delay;
++      else
++          delay = ht - elapsed;
++   }
++   else
++   {
++      delay = ospf->spf_delay;
++      ospf->spf_hold_multiplier = 1;
++   }
++						    
++   if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("SPF: calculation timer delay = %ld", delay);
++
++	  ospf->t_spf_calc =
++          thread_add_timer_msec (master, ospf_spf_fe_calculate_timer, forwarding, delay);
++}
++
+--- ./ospfd/ospf_interface.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_interface.h	2011-10-06 21:54:21.586392975 -0400
+@@ -256,7 +256,10 @@
+ 						      struct interface *);
+ extern struct ospf_interface *ospf_if_is_configured (struct ospf *,
+ 						     struct in_addr *);
+-
++//////////////////////////////// KT ///////////////////////////////////////////////
++extern struct ospf_interface *ospf_fe_if_is_configured (struct ospf *,
++		                     struct in_addr );
++///////////////////////////////////////////////////////////////////////////////////
+ extern struct ospf_if_params *ospf_lookup_if_params (struct interface *,
+ 						     struct in_addr);
+ extern struct ospf_if_params *ospf_get_if_params (struct interface *,
+--- ./ospfd/ospf_packet.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_packet.h	2011-10-06 21:54:21.762618036 -0400
+@@ -117,7 +117,6 @@
+   u_int32_t dd_seqnum;
+ };
+ 
+-
+ /* Macros. */
+ /* XXX Perhaps obsolete; function in ospf_packet.c */
+ #define OSPF_PACKET_MAX(oi)     ospf_packet_max (oi)
+@@ -163,5 +162,9 @@
+ extern int ospf_poll_timer (struct thread *);
+ extern int ospf_hello_reply_timer (struct thread *);
+ extern void ospf_hello_send_sub (struct ospf_interface *, struct in_addr *);
++////////////////////////////////// KT ////////////////////////////////////////////
++extern void ospf_recv_packet_kt (struct msghdr *, struct stream *);
++extern int ospf_read_jw (struct interface *, struct stream *);
++//////////////////////////////////////////////////////////////////////////////////
+ 
+ #endif /* _ZEBRA_OSPF_PACKET_H */
+--- ./ospfd/ospf_spf.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_spf.h	2011-10-06 21:54:21.837406447 -0400
+@@ -61,7 +61,8 @@
+ 
+ extern void ospf_spf_calculate_schedule (struct ospf *);
+ extern void ospf_rtrs_free (struct route_table *);
+-
++///////////////////////////////////////////// KT //////////////////////////////////////
++extern void ospf_spf_fe_calculate_schedule (struct ospf *, int);
+ /* void ospf_spf_calculate_timer_add (); */
+ 
+ #endif /* _QUAGGA_OSPF_SPF_H */
+--- ./ospfd/ospf_interface.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_interface.c	2011-10-06 21:54:21.576675209 -0400
+@@ -148,6 +148,7 @@
+ struct ospf_interface *
+ ospf_if_table_lookup (struct interface *ifp, struct prefix *prefix)
+ {
++
+   struct prefix p;
+   struct route_node *rn;
+   struct ospf_interface *rninfo = NULL;
+@@ -156,12 +157,15 @@
+   p.prefixlen = IPV4_MAX_PREFIXLEN;
+   
+   /* route_node_get implicitely locks */
+-  if ((rn = route_node_lookup (IF_OIFS (ifp), &p)))
++  
++  if ((rn = route_node_lookup (IF_OIFS (ifp), &p))) // ospf_if_info->oifs(struct route_table)
+     {
++
+       rninfo = (struct ospf_interface *) rn->info;
++
++
+       route_unlock_node (rn);
+     }
+-  
+   return rninfo;
+ }
+ 
+@@ -373,7 +377,23 @@
+       }
+   return NULL;
+ }
++//////////////////////////////////////// KT //////////////////////////////////////
++struct ospf_interface *
++ospf_fe_if_configured (struct ospf *ospf, struct in_addr address)
++{
++	
++  struct listnode *node, *nnode;
++  struct ospf_interface *oi;
+ 
++  for (ALL_LIST_ELEMENTS (ospf->oiflist, node, nnode, oi))
++    if (oi->type != OSPF_IFTYPE_VIRTUALLINK)
++      {
++	    if (oi->address->u.prefix4.s_addr == address.s_addr)
++	      return oi;
++      }
++  return NULL;
++}
++//////////////////////////////////////////////////////////////////////////////////
+ int
+ ospf_if_is_up (struct ospf_interface *oi)
+ {
+@@ -422,7 +442,12 @@
+ {
+   struct listnode *node;
+   struct ospf_interface *oi;
+-  
++ /*
++  printf(" ======================= prefix_ipv4 ======================== \n");
++  printf(" prefixlen in prefix_ipv4 : %d (line 447 in ospf_interface.c) \n", p->prefixlen);
++  printf(" prefix in prefix_ipv4 : %s (line 448 in ospf_interface.c) \n", inet_ntoa(p->prefix));
++  printf(" =========================================================== \n"); 
++  */
+   /* Check each Interface. */
+   for (ALL_LIST_ELEMENTS_RO (ospf->oiflist, node, oi))
+     {
+@@ -599,6 +624,8 @@
+     }
+ 
+   return NULL;
++
++
+ }
+ 
+ struct ospf_if_params *
+@@ -722,6 +749,7 @@
+       (oi->type != OSPF_IFTYPE_VIRTUALLINK) &&
+       (OSPF_IF_PASSIVE_STATUS(oi) == OSPF_IF_ACTIVE))
+     {
++
+       /* The interface should belong to the OSPF-all-routers group. */
+       if (!OI_MEMBER_CHECK(oi, MEMBER_ALLROUTERS) &&
+ 	  (ospf_if_add_allspfrouters(oi->ospf, oi->address,
+@@ -777,6 +805,7 @@
+ int
+ ospf_if_up (struct ospf_interface *oi)
+ {
++
+   if (oi == NULL)
+     return 0;
+ 
+@@ -785,14 +814,13 @@
+   else
+     {
+       struct ospf *ospf = ospf_lookup ();
+-      if (ospf != NULL)
++ /*     if (ospf != NULL)
+         ospf_adjust_sndbuflen (ospf, oi->ifp->mtu);
+       else
+-        zlog_warn ("%s: ospf_lookup() returned NULL", __func__);
++        zlog_warn ("%s: ospf_lookup() returned NULL", __func__); */
+       ospf_if_stream_set (oi);
+       OSPF_ISM_EVENT_SCHEDULE (oi, ISM_InterfaceUp);
+     }
+-
+   return 1;
+ }
+ 
+--- ./ospfd/ospf_route.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_route.c	2011-10-06 21:54:21.772363693 -0400
+@@ -40,6 +40,7 @@
+ #include "ospfd/ospf_zebra.h"
+ #include "ospfd/ospf_dump.h"
+ 
++
+ struct ospf_route *
+ ospf_route_new ()
+ {
+@@ -531,11 +532,19 @@
+       return;
+     }
+   
++  printf(" p.prefix : %s (line 535 in ospf_route.c) \n", inet_ntoa(p.prefix));
++  printf(" link data : %s (line 536 in ospf_route.c) \n", inet_ntoa(link->link_data));
++  
+   rn = route_node_get (rt, (struct prefix *) &p);
+ 
++  ////////////////////////// KT 1_1 ///////////////////////
++ // printf(" ================================ KT 1.1 ===================================== \n");
++ // ospf_route_table_dump(rt);
++
+   /* Lookup current routing table. */
+   if (rn->info)
+     {
++		printf(" rn->info start (line 547 in ospf_route.c) \n");
+       struct ospf_route *cur_or;
+ 
+       route_unlock_node (rn);
+@@ -607,6 +616,7 @@
+ 	}
+     }
+ 
++  printf(" or start (line 619 in ospf_route.c) \n");
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("ospf_intra_add_stub(): installing new route");
+ 
+@@ -620,20 +630,27 @@
+   or->type = OSPF_DESTINATION_NETWORK;
+   or->u.std.origin = (struct lsa_header *) lsa;
+ 
++  printf(" or->id : %s (line 633 in ospf_route.c) \n", inet_ntoa(or->id));
++  printf(" or->u.std.origin : %s (line 634 in ospf_route.c) \n", inet_ntoa(or->u.std.origin->id));
++
++  printf(" or->adv_router : %s (line 636 in ospf_route.c) \n", inet_ntoa(or->u.std.origin->adv_router)); 
+   /* Nexthop is depend on connection type. */
+   if (v != area->spf)
+     {
++		printf(" v != area->spf (line 636 in ospf_route.c) \n");
+       if (IS_DEBUG_OSPF_EVENT)
+ 	zlog_debug ("ospf_intra_add_stub(): this network is on remote router");
+       ospf_route_copy_nexthops_from_vertex (or, v);
+     }
+   else
+     {
++		printf(" else (line 647 in ospf_route.c) \n");
+       if (IS_DEBUG_OSPF_EVENT)
+ 	zlog_debug ("ospf_intra_add_stub(): this network is on this router");
+ 
+       if ((oi = ospf_if_lookup_by_prefix (area->ospf, &p)))
+ 	{
++		printf(" ospf_if_lookup_by_prefix function call (line 647 in ospf_route) \n");
+ 	  if (IS_DEBUG_OSPF_EVENT)
+ 	    zlog_debug ("ospf_intra_add_stub(): the interface is %s",
+ 		       IF_NAME (oi));
+@@ -789,7 +806,7 @@
+ 
+   for (ALL_LIST_ELEMENTS (plist, node, nnode, path))
+     if (IPV4_ADDR_SAME (&path->nexthop, &nexthop) &&
+-	path->ifindex == oi->ifp->ifindex)
++	path->ifindex == oi->ifp->ifindex && path->feid == oi->ifp->feid)
+       return 1;
+ 
+   return 0;
+@@ -806,23 +823,45 @@
+ 
+   assert (to->paths);
+ 
++  printf(" ospf_route_copy_nexthops_from_vertex function start (line 825 in ospf_route.c) \n");
++  
++  printf(" v->id : %s (line 828 in ospf_route.c) \n", inet_ntoa(v->id));
++  printf(" v->lsa->id : %s (line 829 in ospf_route.c) \n", inet_ntoa(v->lsa->id));
++
++  if(v->parents)
++	  printf(" v->parents is not NULL (line 832 in ospf_route.c) \n");
++  else
++	  printf(" v->parents is NULL (line 834 in ospf_route.c) \n");
++
+   for (ALL_LIST_ELEMENTS_RO (v->parents, node, vp))
+     {
++		printf(" check point (line 827 in ospf_route.c) \n");
+       nexthop = vp->nexthop;
+       
+       if (nexthop->oi != NULL) 
+ 	{
++		printf(" nexthop->oi is not NULL (line 831 in ospf_route.c) \n");
+ 	  if (! ospf_path_exist (to->paths, nexthop->router, nexthop->oi))
+ 	    {
++		  printf(" insert path in path list (line 835 in ospf_route.c) \n");
+ 	      path = ospf_path_new ();
+ 	      path->nexthop = nexthop->router;
+ 	      path->ifindex = nexthop->oi->ifp->ifindex;
++		  path->feid = nexthop->oi->ifp->feid; // KT
+ 	      listnode_add (to->paths, path);
++		  printf(" ============================= path information ======================= \n");
++		  printf(" path->nexthop : %s (line 844 in ospf_route.c) \n", inet_ntoa(path->nexthop));
++		  printf(" path->ifindex : %d (line 845 in ospf_route.c) \n", path->ifindex);
++		  printf(" path->feid : %d (line 846 in ospf_route.c) \n", path->feid);
++		  printf(" nexthop->oi address : %s (line 847 in ospf_route.c) \n", inet_ntoa(nexthop->oi->address->u.prefix4));
++		  printf(" nexthop->oi->id : %s (line 848 in ospf_route.c) \n", inet_ntoa(nexthop->oi->address->u.lp.id));
++		  printf(" ====================================================================== \n");
+ 	    }
+ 	}
+     }
+ }
+ 
++
+ struct ospf_path *
+ ospf_path_lookup (struct list *plist, struct ospf_path *path)
+ {
+@@ -906,6 +945,7 @@
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("Pruning unreachable networks");
+ 
++
+   for (rn = route_top (rt); rn; rn = next)
+     {
+       next = route_next (rn);
+@@ -1033,3 +1073,239 @@
+   ospf_zebra_delete_discard(p);
+ }
+ 
++////////////////////////////////////////////// KT ///////////////////////////////////////
++
++/* Install routes to table. */
++void
++ospf_fe_route_install (struct forwarding_element *forwarding, struct route_table *rt)
++{
++	struct route_node *rn;
++	struct ospf_route *or;
++    
++	if (forwarding->old_table)
++	   ospf_route_table_free (forwarding->old_table);
++
++	forwarding->old_table = forwarding->new_table; 
++	forwarding->new_table = rt; 
++
++	if (forwarding->old_table)
++		ospf_route_delete_uniq (forwarding->old_table, rt);
++	if (forwarding->ospf->old_external_route)
++		ospf_route_delete_same_ext (forwarding->ospf->old_external_route, rt);
++
++	for (rn = route_top (rt); rn; rn = route_next (rn))
++		if ((or = rn->info) != NULL)
++		{
++			if (or->type == OSPF_DESTINATION_NETWORK)
++		    {
++		 	    if (! ospf_route_match_same (forwarding->old_table, (struct prefix_ipv4 *)&rn->p, or))
++						ospf_zebra_add ((struct prefix_ipv4 *) &rn->p, or);
++		    }
++			else if (or->type == OSPF_DESTINATION_DISCARD)
++			    if (! ospf_route_match_same (forwarding->old_table,
++			       (struct prefix_ipv4 *) &rn->p, or))
++		       	    ospf_zebra_add_discard ((struct prefix_ipv4 *) &rn->p);
++       }
++}
++
++
++/* RFC2328 16.1. second stage. */
++void
++ospf_intra_fe_add_stub (struct route_table *rt, struct router_lsa_link *link,
++		     struct vertex *v, struct ospf_area *area,
++		     int parent_is_root, int intra)
++{
++  u_int32_t cost;
++  struct route_node *rn;
++  struct ospf_route *or;
++  struct prefix_ipv4 p;
++  struct router_lsa *lsa;
++  struct ospf_interface *oi;
++  struct ospf_path *path;
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("ospf_intra_add_stub(): Start");
++
++  lsa = (struct router_lsa *) v->lsa;
++
++  p.family = AF_INET;
++  p.prefix = link->link_id;
++  p.prefixlen = ip_masklen (link->link_data);
++  apply_mask_ipv4 (&p);
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("ospf_intra_add_stub(): processing route to %s/%d",  
++	       inet_ntoa (p.prefix), p.prefixlen);
++
++  /* (1) Calculate the distance D of stub network from the root.  D is
++     equal to the distance from the root to the router vertex
++     (calculated in stage 1), plus the stub network link's advertised
++     cost. */
++  cost = v->distance + ntohs (link->m[0].metric);
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("ospf_intra_add_stub(): calculated cost is %d + %d = %d", 
++	       v->distance, ntohs(link->m[0].metric), cost);
++  
++  /* PtP links with /32 masks adds host routes to remote, directly
++   * connected hosts, see RFC 2328, 12.4.1.1, Option 1.
++   * Such routes can just be ignored for the sake of tidyness.
++   */
++  if (parent_is_root && link->link_data.s_addr == 0xffffffff &&
++      ospf_if_lookup_by_local_addr (area->ospf, NULL, link->link_id))
++    {
++      if (IS_DEBUG_OSPF_EVENT)
++        zlog_debug ("%s: ignoring host route %s/32 to self.",
++                    __func__, inet_ntoa (link->link_id));
++      return;
++    }
++
++  printf(" p.prefix : %s (line 535 in ospf_route.c) \n", inet_ntoa(p.prefix));
++  printf(" link data : %s (line 536 in ospf_route.c) \n", inet_ntoa(link->link_data));
++  
++  rn = route_node_get (rt, (struct prefix *) &p);
++
++  ////////////////////////// KT 1_2 ///////////////////////
++  printf(" ================================ KT 1.2 ===================================== \n");
++  ospf_route_table_dump(rt);
++
++  /* Lookup current routing table. */
++  if ((rn->info) && (intra == 0))
++    {
++		printf(" rn->info start (line 547 in ospf_route.c) \n");
++      struct ospf_route *cur_or;
++
++      route_unlock_node (rn);
++
++      cur_or = rn->info;
++
++      if (IS_DEBUG_OSPF_EVENT)
++	zlog_debug ("ospf_intra_add_stub(): "
++		   "another route to the same prefix found with cost %u",
++		   cur_or->cost);
++
++      /* Compare this distance to the current best cost to the stub
++	 network.  This is done by looking up the stub network's
++	 current routing table entry.  If the calculated distance D is
++	 larger, go on to examine the next stub network link in the
++	 LSA. */
++      if (cost > cur_or->cost)
++	{
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("ospf_intra_add_stub(): old route is better, exit");
++	  return;
++	}
++
++      /* (2) If this step is reached, the stub network's routing table
++	 entry must be updated.  Calculate the set of next hops that
++	 would result from using the stub network link.  This
++	 calculation is shown in Section 16.1.1; input to this
++	 calculation is the destination (the stub network) and the
++	 parent vertex (the router vertex). If the distance D is the
++	 same as the current routing table cost, simply add this set
++	 of next hops to the routing table entry's list of next hops.
++	 In this case, the routing table already has a Link State
++	 Origin.  If this Link State Origin is a router-LSA whose Link
++	 State ID is smaller than V's Router ID, reset the Link State
++	 Origin to V's router-LSA. */
++
++      if (cost == cur_or->cost)
++	{
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("ospf_intra_add_stub(): routes are equal, merge");
++
++	  ospf_route_copy_nexthops_from_vertex (cur_or, v);
++
++	  if (IPV4_ADDR_CMP (&cur_or->u.std.origin->id, &lsa->header.id) < 0)
++	    cur_or->u.std.origin = (struct lsa_header *) lsa;
++	  return;
++	}
++
++      /* Otherwise D is smaller than the routing table cost.
++	 Overwrite the current routing table entry by setting the
++	 routing table entry's cost to D, and by setting the entry's
++	 list of next hops to the newly calculated set.  Set the
++	 routing table entry's Link State Origin to V's router-LSA.
++	 Then go on to examine the next stub network link. */
++
++      if (cost < cur_or->cost)
++	{
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("ospf_intra_add_stub(): new route is better, set it");
++
++	  cur_or->cost = cost;
++
++	  list_delete_all_node (cur_or->paths);
++
++	  ospf_route_copy_nexthops_from_vertex (cur_or, v);
++
++	  cur_or->u.std.origin = (struct lsa_header *) lsa;
++	  return;
++	}
++    }
++
++  printf(" or start (line 619 in ospf_route.c) \n");
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug ("ospf_intra_add_stub(): installing new route");
++
++  or = ospf_route_new ();
++
++  or->id = v->id;
++  or->u.std.area_id = area->area_id;
++  or->u.std.external_routing = area->external_routing;
++  or->path_type = OSPF_PATH_INTRA_AREA;
++  or->cost = cost;
++  or->type = OSPF_DESTINATION_NETWORK;
++  or->u.std.origin = (struct lsa_header *) lsa;
++ 
++  or->u.std.origin->id = or->id;
++  or->u.std.origin->adv_router = or->id;
++
++  printf(" or->id : %s (line 1236 in ospf_route.c) \n", inet_ntoa(or->id));
++  printf(" or->u.std.origin : %s (line 1237 in ospf_route.c) \n", inet_ntoa(or->u.std.origin->id));
++  printf(" or->adv_router : %s (line 1240 in ospf_route.c) \n", inet_ntoa(or->u.std.origin->adv_router)); 
++  /* Nexthop is depend on connection type. */
++  if (v != area->spf || intra == 1)
++    {
++      printf(" v != area->spf (line 1235 in ospf_route.c) \n");
++
++      if (IS_DEBUG_OSPF_EVENT)
++	zlog_debug ("ospf_intra_add_stub(): this network is on remote router");
++      ospf_route_copy_nexthops_from_vertex (or, v);
++    }
++  else
++    {
++		printf(" else (line 1243 in ospf_route.c) \n");
++      if (IS_DEBUG_OSPF_EVENT)
++	zlog_debug ("ospf_intra_add_stub(): this network is on this router");
++
++      if ((oi = ospf_if_lookup_by_prefix (area->ospf, &p)))
++	{
++		printf(" oi = ospf_if_lookup_by_prefix state (line 1274 in ospf_route.c) \n");
++
++		if(oi)
++			printf(" oi is not NULL (line 1251 in ospf_route) \n");
++		else
++			printf(" oi is NULL (line 1253 in ospf_route) \n");
++
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("ospf_intra_add_stub(): the interface is %s",
++		       IF_NAME (oi));
++
++	  path = ospf_path_new ();
++	  path->nexthop.s_addr = 0;
++	  path->ifindex = oi->ifp->ifindex;
++	  listnode_add (or->paths, path);
++	}
++      else
++	{
++	  if (IS_DEBUG_OSPF_EVENT)
++	    zlog_debug ("ospf_intra_add_stub(): where's the interface ?");
++	}
++    }
++
++  rn->info = or;
++
++  if (IS_DEBUG_OSPF_EVENT)
++    zlog_debug("ospf_intra_add_stub(): Stop");
++}
+--- ./ospfd/ospfd.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospfd.h	2011-10-06 21:54:21.945535647 -0400
+@@ -601,6 +601,12 @@
+ extern int ospf_oi_count (struct interface *);
+ 
+ extern struct ospf_area *ospf_area_get (struct ospf *, struct in_addr, int);
++//////////////////////////////////KT/////////////////////////////////////////////
++extern struct ospf_area *ospf_area_get_kt (struct ospf *, struct in_addr, int);
++////////////////////////////////////////////////////////////////////////////////
++////////////////////////////////// JW //////////////////////////////////////////
++extern struct in_addr ospf_pick_out_prefix (struct in_addr, unsigned char);
++////////////////////////////////////////////////////////////////////////////////
+ extern void ospf_area_check_free (struct ospf *, struct in_addr);
+ extern struct ospf_area *ospf_area_lookup_by_area_id (struct ospf *,
+ 						      struct in_addr);
+--- ./ospfd/ospf_packet.c	2010-01-14 08:25:38.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_packet.c	2011-10-06 21:54:21.751454297 -0400
+@@ -575,14 +575,20 @@
+   struct ospf *ospf = THREAD_ARG (thread);
+   struct ospf_interface *oi;
+   struct ospf_packet *op;
++//  struct ospf_header oh;
+   struct sockaddr_in sa_dst;
+   struct ip iph;
+   struct msghdr msg;
+   struct iovec iov[2];
+   u_char type;
+-  int ret;
++//  int ret;
+   int flags = 0;
+   struct listnode *node;
++//  struct msghdr temp_msg;
++//  struct sockaddr_in temp_dst;
++  //////////////////////////// KT ///////////////////////////////
++  FORCES_PAYLOAD *send_data;
++  ////////////////////////////////////////////////////////
+ #ifdef WANT_OSPF_WRITE_FRAGMENT
+   static u_int16_t ipid = 0;
+ #endif /* WANT_OSPF_WRITE_FRAGMENT */
+@@ -613,11 +619,9 @@
+   op = ospf_fifo_head (oi->obuf);
+   assert (op);
+   assert (op->length >= OSPF_HEADER_SIZE);
+-
+   if (op->dst.s_addr == htonl (OSPF_ALLSPFROUTERS)
+       || op->dst.s_addr == htonl (OSPF_ALLDROUTERS))
+       ospf_if_ipmulticast (ospf, oi->address, oi->ifp->ifindex);
+-    
+   /* Rewrite the md5 signature & update the seq */
+   ospf_make_md5_digest (oi, op);
+ 
+@@ -636,12 +640,15 @@
+   sa_dst.sin_len = sizeof(sa_dst);
+ #endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
+   sa_dst.sin_addr = op->dst;
++ // printf(" address is %s \n", inet_ntoa(op->dst));
+   sa_dst.sin_port = htons (0);
+ 
+   /* Set DONTROUTE flag if dst is unicast. */
+   if (oi->type != OSPF_IFTYPE_VIRTUALLINK)
+     if (!IN_MULTICAST (htonl (op->dst.s_addr)))
++	{
+       flags = MSG_DONTROUTE;
++	}
+ 
+   iph.ip_hl = sizeof (struct ip) >> OSPF_WRITE_IPHL_SHIFT;
+   /* it'd be very strange for header to not be 4byte-word aligned but.. */
+@@ -670,7 +677,6 @@
+   iph.ip_sum = 0;
+   iph.ip_src.s_addr = oi->address->u.prefix4.s_addr;
+   iph.ip_dst.s_addr = op->dst.s_addr;
+-
+   memset (&msg, 0, sizeof (msg));
+   msg.msg_name = (caddr_t) &sa_dst;
+   msg.msg_namelen = sizeof (sa_dst); 
+@@ -681,6 +687,8 @@
+   iov[1].iov_base = STREAM_PNT (op->s);
+   iov[1].iov_len = op->length;
+   
++
++
+   /* Sadly we can not rely on kernels to fragment packets because of either
+    * IP_HDRINCL and/or multicast destination being set.
+    */
+@@ -691,16 +699,27 @@
+ #endif /* WANT_OSPF_WRITE_FRAGMENT */
+ 
+   /* send final fragment (could be first) */
+-  sockopt_iphdrincl_swab_htosys (&iph);
+-  ret = sendmsg (ospf->fd, &msg, flags);
+-  sockopt_iphdrincl_swab_systoh (&iph);
++//  sockopt_iphdrincl_swab_htosys (&iph);
++//  ret = sendmsg (ospf->fd, &msg, flags);
++ ////////////////////////// KT /////////////////////////////////////
++ send_data = tml_MakeMsghdrPayload(7, MSG_OSPF_CONFIG, oi->ifp->feid, sa_dst,
++				  iph, oi->ifp->ifindex, op->s,
++                                  sizeof(sa_dst)+iov[0].iov_len +
++				  iov[1].iov_len);
++ 
++ //ospf_ip_header_dump (&iph);
++
++ tml_SendMsg(send_data);
++ ///////////////////////////////////////////////////////////////////
++//  sockopt_iphdrincl_swab_systoh (&iph);
+   
++  /*
+   if (ret < 0)
+     zlog_warn ("*** sendmsg in ospf_write failed to %s, "
+ 	       "id %d, off %d, len %d, interface %s, mtu %u: %s",
+ 	       inet_ntoa (iph.ip_dst), iph.ip_id, iph.ip_off, iph.ip_len,
+ 	       oi->ifp->name, oi->ifp->mtu, safe_strerror (errno));
+-
++*/
+   /* Show debug sending packet. */
+   if (IS_DEBUG_OSPF_PACKET (type - 1, SEND))
+     {
+@@ -753,7 +772,8 @@
+   hello = (struct ospf_hello *) STREAM_PNT (s);
+ 
+   /* If Hello is myself, silently discard. */
+-  if (IPV4_ADDR_SAME (&ospfh->router_id, &oi->ospf->router_id))
++  if (IPV4_ADDR_SAME (&ospfh->router_id, &oi->ospf->router_id) &&
++	 (oi->ifp->feid != select_fe_id)) // KT
+     {
+       if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, RECV))
+         {
+@@ -769,7 +789,6 @@
+   p.family = AF_INET;
+   p.prefixlen = ip_masklen (hello->network_mask);
+   p.u.prefix4 = iph->ip_src;
+-
+   /* Compare network mask. */
+   /* Checking is ignored for Point-to-Point and Virtual link. */
+   if (oi->type != OSPF_IFTYPE_POINTOPOINT 
+@@ -791,7 +810,6 @@
+ 		 OSPF_IF_PARAM(oi, v_wait), ntohl(hello->dead_interval));
+       return;
+     }
+-
+   /* Compare Hello Interval - ignored if fast-hellos are set. */
+   if (OSPF_IF_PARAM (oi, fast_hello) == 0)
+     {
+@@ -873,6 +891,8 @@
+       }
+   
+   /* get neighbour struct */
++
++
+   nbr = ospf_nbr_get (oi, ospfh, iph, &p);
+ 
+   /* neighbour must be valid, ospf_nbr_get creates if none existed */
+@@ -907,7 +927,6 @@
+       nbr->bd_router = hello->bd_router;
+       return;
+     }
+-
+   if (ospf_nbr_bidirectional (&oi->ospf->router_id, hello->neighbors,
+ 			      size - OSPF_HELLO_MIN_SIZE))
+     {
+@@ -923,7 +942,6 @@
+       nbr->bd_router = hello->bd_router;
+       return;
+     }
+-
+   /* If neighbor itself declares DR and no BDR exists,
+      cause event BackupSeen */
+   if (IPV4_ADDR_SAME (&nbr->address.u.prefix4, &hello->d_router))
+@@ -986,6 +1004,7 @@
+       stream_forward_getp (s, OSPF_LSA_HEADER_SIZE);
+ 
+       /* Unknown LS type. */
++	
+       if (lsah->type < OSPF_MIN_LSA || lsah->type >= OSPF_MAX_LSA)
+ 	{
+ 	  zlog_warn ("Packet [DD:RECV]: Unknown LS type %d.", lsah->type);
+@@ -1030,7 +1049,10 @@
+ 
+       /* Lookup received LSA, then add LS request list. */
+       find = ospf_lsa_lookup_by_header (oi->area, lsah);
+-      
++ ///////////////////////////// KT //////////////////////////////////////     
++	  if(oi->ospf->router_id.s_addr == lsah->id.s_addr)
++		  find = NULL;
++ ///////////////////////////////////////////////////////////////////////
+       /* ospf_lsa_more_recent is fine with NULL pointers */
+       switch (ospf_lsa_more_recent (find, new))
+         {
+@@ -1051,7 +1073,9 @@
+              * DB Description process implemented here.
+              */
+             if (find)
++			{
+               ospf_lsdb_delete (&nbr->db_sum, find);
++			}
+             ospf_lsa_discard (new);
+             break;
+           default:
+@@ -1073,10 +1097,13 @@
+ 
+       /* Both sides have no More, then we're done with Exchange */
+       if (!IS_SET_DD_M (dd->flags) && !IS_SET_DD_M (nbr->dd_flags))
++	  { 
+ 	OSPF_NSM_EVENT_SCHEDULE (nbr, NSM_ExchangeDone);
+-      else
++	  }
++      else {
+ 	ospf_db_desc_send (nbr);
+     }
++    }
+   /* Slave */
+   else
+     {
+@@ -1093,9 +1120,10 @@
+       ospf_db_desc_send (nbr);
+       
+       /* Slave can raise ExchangeDone now, if master is also done */
+-      if (!IS_SET_DD_M (dd->flags) && !IS_SET_DD_M (nbr->dd_flags))
++      if (!IS_SET_DD_M (dd->flags) && !IS_SET_DD_M (nbr->dd_flags)) {
+ 	OSPF_NSM_EVENT_SCHEDULE (nbr, NSM_ExchangeDone);
+     }
++    }
+   
+   /* Save received neighbor values from DD. */
+   ospf_db_desc_save_current (nbr, dd);
+@@ -1120,6 +1148,7 @@
+ {
+   struct ospf_db_desc *dd;
+   struct ospf_neighbor *nbr;
++  struct in_addr srcrouteid, destrouteid;
+ 
+   /* Increment statistics. */
+   oi->db_desc_in++;
+@@ -1127,6 +1156,17 @@
+   dd = (struct ospf_db_desc *) STREAM_PNT (s);
+ 
+   nbr = ospf_nbr_lookup (oi, iph, ospfh);
++  
++  /////////////////////////////////////// KT ///////////////////////////////////////
++  if(nbr->router_id.s_addr == oi->ospf->router_id.s_addr)
++  {
++	  if(!checknbrrouter(oi->ifp->feid, oi->address->u.prefix4, nbr->src))
++	  {
++		  addnbrrouter(oi->ifp->feid, oi->address->u.prefix4, nbr->src, nbr->router_id);
++	  }
++  }
++  ////////////////////////////////////////////////////////////////////////////////
++
+   if (nbr == NULL)
+     {
+       zlog_warn ("Packet[DD]: Unknown Neighbor %s",
+@@ -1210,10 +1250,22 @@
+ 	break;
+     case NSM_ExStart:
+       /* Initial DBD */
++//////////////////////////////////// KT ////////////////////////////////////////
++	  if(!IPV4_ADDR_CMP (&nbr->router_id, &oi->ospf->router_id))
++	  {
++		  srcrouteid = oi->address->u.prefix4;
++		  destrouteid = nbr->src;
++	  }
++	  else
++	  {
++		  srcrouteid = oi->ospf->router_id;
++		  destrouteid = nbr->router_id;
++	  }
++///////////////////////////////////////////////////////////////////////////////
+       if ((IS_SET_DD_ALL (dd->flags) == OSPF_DD_FLAG_ALL) &&
+ 	  (size == OSPF_DB_DESC_MIN_SIZE))
+ 	{
+-	  if (IPV4_ADDR_CMP (&nbr->router_id, &oi->ospf->router_id) > 0)
++		if(IPV4_ADDR_CMP (&destrouteid, &srcrouteid) > 0) // KT
+ 	    {
+ 	      /* We're Slave---obey */
+ 	      zlog_info ("Packet[DD]: Neighbor %s Negotiation done (Slave).",
+@@ -1234,7 +1286,8 @@
+       /* Ack from the Slave */
+       else if (!IS_SET_DD_MS (dd->flags) && !IS_SET_DD_I (dd->flags) &&
+ 	       ntohl (dd->dd_seqnum) == nbr->dd_seqnum &&
+-	       IPV4_ADDR_CMP (&nbr->router_id, &oi->ospf->router_id) < 0)
++	 //      IPV4_ADDR_CMP (&nbr->router_id, &oi->ospf->router_id) < 0)
++	       IPV4_ADDR_CMP (&destrouteid, &srcrouteid) <  0) // KT
+ 	{
+ 	  zlog_info ("Packet[DD]: Neighbor %s Negotiation done (Master).",
+ 		     inet_ntoa(nbr->router_id));
+@@ -1845,18 +1898,21 @@
+         if(Flag)
+           continue;
+       }
+-
+       /* (5) Find the instance of this LSA that is currently contained
+ 	 in the router's link state database.  If there is no
+ 	 database copy, or the received LSA is more recent than
+ 	 the database copy the following steps must be performed. */
+ 
++
+       if (current == NULL ||
+-	  (ret = ospf_lsa_more_recent (current, lsa)) < 0)
++	  (ret = ospf_lsa_more_recent (current, lsa)) < 0 ||
++	  (nbr->router_id.s_addr == oi->ospf->router_id.s_addr)) // KT
+ 	{
+ 	  /* Actual flooding procedure. */
+ 	  if (ospf_flood (oi->ospf, nbr, current, lsa) < 0)  /* Trap NSSA later. */
++	  {
+ 	    DISCARD_LSA (lsa, 4);
++	  }
+ 	  continue;
+ 	}
+ 
+@@ -1880,6 +1936,7 @@
+ 	  return;
+ 	}
+ 
++
+       /* If the received LSA is the same instance as the database copy
+ 	 (i.e., neither one is more recent) the following two steps
+ 	 should be performed: */
+@@ -2032,15 +2089,16 @@
+   unsigned int ifindex = 0;
+   struct iovec iov;
+   /* Header and data both require alignment. */
+-  char buff [CMSG_SPACE(SOPT_SIZE_CMSG_IFINDEX_IPV4())];
++//  char buff [CMSG_SPACE(SOPT_SIZE_CMSG_IFINDEX_IPV4())];
+   struct msghdr msgh;
++//  char buff [128];
+ 
+   memset (&msgh, 0, sizeof (struct msghdr));
+   msgh.msg_iov = &iov;
+   msgh.msg_iovlen = 1;
+-  msgh.msg_control = (caddr_t) buff;
+-  msgh.msg_controllen = sizeof (buff);
+-  
++//  msgh.msg_control = (caddr_t) buff;
++//  msgh.msg_controllen = sizeof (buff);
++  msgh.msg_controllen = 128;
+   ret = stream_recvmsg (ibuf, fd, &msgh, 0, OSPF_MAX_PACKET_SIZE+1);
+   if (ret < 0)
+     {
+@@ -2093,6 +2151,68 @@
+   
+   return ibuf;
+ }
++///////////////////////////////// KT ///////////////////////////////////////
++void
++ospf_recv_packet_kt (struct msghdr *msgh, struct stream *ibuf)
++{
++	printf(" ospf_recv_packet_kt start (line 2156 in ospf_packet.c) \n");
++//  int ret;
++  struct ip *iph;
++  u_int16_t ip_len;
++  unsigned int ifindex = 0;
++  struct interface *ifp;
++
++  struct forwarding_element *tempforwarding;
++
++  /* Header and data both require alignment. */
++//  char buff [CMSG_SPACE(SOPT_SIZE_CMSG_IFINDEX_IPV4())];
++
++//  ret = stream_recvmsg (ibuf, fd, &msgh, 0, OSPF_MAX_PACKET_SIZE+1);
++
++  /* Note that there should not be alignment problems with this assignment
++     because this is at the beginning of the stream data buffer. */
++  iph = (struct ip *) STREAM_DATA(ibuf);
++  sockopt_iphdrincl_swab_systoh (iph);
++
++  ip_len = iph->ip_len;
++
++#if !defined(GNU_LINUX) && (OpenBSD < 200311)
++  /*
++   * Kernel network code touches incoming IP header parameters,
++   * before protocol specific processing.
++   *
++   *   1) Convert byteorder to host representation.
++   *      --> ip_len, ip_id, ip_off
++   *
++   *   2) Adjust ip_len to strip IP header size!
++   *      --> If user process receives entire IP packet via RAW
++   *          socket, it must consider adding IP header size to
++   *          the "ip_len" field of "ip" structure.
++   *
++   * For more details, see <netinet/ip_input.c>.
++   */
++  ip_len = ip_len + (iph->ip_hl << 2);
++#endif
++  
++  printf(" check 1 (line 2195 in ospf_packet.c) \n"); 
++  ifindex = getsockopt_ifindex (AF_INET, msgh);
++
++  printf(" check 2 (line 2198 in ospf_packet.c) \n");
++  for(tempforwarding = FE_table.FE_table_head->next_FE;
++      tempforwarding != FE_table.FE_table_tail;
++	  tempforwarding = tempforwarding->next_FE)
++  {
++	  if(tempforwarding->fe_id == select_fe_id)
++	  {
++		  ifp = checkinterface(tempforwarding, ifindex);
++	  }
++  }
++
++  printf(" check 3 (line 2209 in ospf_packet.c) \n");
++
++  ospf_read_jw (ifp, ibuf); 
++}
++////////////////////////////////////////////////////////////////////////////
+ 
+ static struct ospf_interface *
+ ospf_associate_packet_vl (struct ospf *ospf, struct interface *ifp, 
+@@ -2328,7 +2448,8 @@
+   struct interface *ifp;
+ 
+   /* first of all get interface pointer. */
+-  ospf = THREAD_ARG (thread);
++//  ospf = THREAD_ARG (thread);
++  ospf = global_ospf;
+ 
+   /* prepare for next packet. */
+   ospf->t_read = thread_add_read (master, ospf_read, ospf, ospf->fd);
+@@ -2396,6 +2517,7 @@
+ 	   * make sure it is removed.
+ 	   */
+ 	  OI_MEMBER_JOINED(oi, MEMBER_ALLROUTERS);
++	 // printf(" ospf_packet.c line 2399 : ospf_read functation call \n");
+ 	  ospf_if_set_multicast(oi);
+ 	}
+       return 0;
+@@ -2433,6 +2555,7 @@
+     }
+   else if (oi->state == ISM_Down)
+     {
++  //    printf(" ospf_packet.c, line 2437, ospf_read function call \n");
+       char buf[2][INET_ADDRSTRLEN];
+       zlog_warn ("Ignoring packet from %s to %s received on interface that is "
+       		 "down [%s]; interface flags are %s",
+@@ -2508,6 +2631,7 @@
+   switch (ospfh->type)
+     {
+     case OSPF_MSG_HELLO:
++	  printf(" receive hello packet (fe number is %d) (line 2589 in ospf_packet.c) \n", select_fe_id);
+       ospf_hello (iph, ospfh, ibuf, oi, length);
+       break;
+     case OSPF_MSG_DB_DESC:
+@@ -2531,7 +2655,226 @@
+ 
+   return 0;
+ }
++/////////////////////////////////// KT //////////////////////////////////////
++int
++ospf_read_jw (struct interface *ifp, struct stream *buf)
++{
++  int ret;
++  struct stream *ibuf;
++  struct ospf *ospf;
++  struct ospf_interface *oi;
++  struct ospf_interface *temp_oi;
++  struct ip *iph;
++  struct ospf_header *ospfh;
++  u_int16_t length;
++  /* first of all get interface pointer. */
++  ospf = global_ospf;
++  ibuf = buf;
++  ospf->ibuf = buf;
++  
++  /* Note that there should not be alignment problems with this assignment
++     because this is at the beginning of the stream data buffer. */
++  iph = (struct ip *) STREAM_DATA (ibuf);
++
++ // ospf_ip_header_dump (iph);
++
++  /* Note that sockopt_iphdrincl_swab_systoh was called in ospf_recv_packet. */
++  if (ifp == NULL)
++    /* Handle cases where the platform does not support retrieving the ifindex,
++       and also platforms (such as Solaris 8) that claim to support ifindex
++       retrieval but do not. */
++    ifp = if_lookup_address (iph->ip_src);
++
++  if (ifp == NULL)
++	  return 0;
++
++  /* IP Header dump. */
++    if (IS_DEBUG_OSPF_PACKET(0, RECV))
++            ospf_ip_header_dump (iph);
++  /* Self-originated packet should be discarded silently. */
++  if ((temp_oi = ospf_if_lookup_by_local_addr (ospf, NULL, iph->ip_src)) && 
++	  (temp_oi->ifp->feid == select_fe_id))
++    {
++      if (IS_DEBUG_OSPF_PACKET (0, RECV))
++        {
++          zlog_debug ("ospf_read[%s]: Dropping self-originated packet",
++                     inet_ntoa (iph->ip_src));
++        }
++      return 0;
++    }
++  /* Adjust size to message length. */
++  stream_forward_getp (ibuf, iph->ip_hl * 4);
++
++  /* Get ospf packet header. */
++  ospfh = (struct ospf_header *) STREAM_PNT (ibuf);
++
++  /* associate packet with ospf interface */
++
++  oi = ospf_if_lookup_recv_if (ospf, iph->ip_src, ifp);
++  
++  if(oi == NULL)
++  {
++	  return 0;
++  }
++
++  /* If incoming interface is passive one, ignore it. */
++  if (oi && OSPF_IF_PASSIVE_STATUS (oi) == OSPF_IF_PASSIVE)
++    {
++      char buf[3][INET_ADDRSTRLEN];
+ 
++      if (IS_DEBUG_OSPF_EVENT)
++        zlog_debug ("ignoring packet from router %s sent to %s, "
++                    "received on a passive interface, %s",
++                    inet_ntop(AF_INET, &ospfh->router_id, buf[0], sizeof(buf[0])),
++                    inet_ntop(AF_INET, &iph->ip_dst, buf[1], sizeof(buf[1])),
++                    inet_ntop(AF_INET, &oi->address->u.prefix4,
++                              buf[2], sizeof(buf[2])));
++  if (iph->ip_dst.s_addr == htonl(OSPF_ALLSPFROUTERS))
++        {
++          /* Try to fix multicast membership.
++           * Some OS:es may have problems in this area,
++           * make sure it is removed.
++           */
++          OI_MEMBER_JOINED(oi, MEMBER_ALLROUTERS);
++         // printf(" ospf_packet.c line 2399 : ospf_read functation call \n");
++          ospf_if_set_multicast(oi);
++        }
++      return 0;
++  }
++  /* if no local ospf_interface, 
++   * or header area is backbone but ospf_interface is not
++   * check for VLINK interface
++   */
++  if ( (oi == NULL) ||
++      (OSPF_IS_AREA_ID_BACKBONE(ospfh->area_id)
++      && !OSPF_IS_AREA_ID_BACKBONE(oi->area->area_id))
++     )
++    { 
++
++      if ((oi = ospf_associate_packet_vl (ospf, ifp, iph, ospfh)) == NULL)
++        {
++          if (IS_DEBUG_OSPF_EVENT)
++            zlog_debug ("Packet from [%s] received on link %s"
++                        " but no ospf_interface",
++                        inet_ntoa (iph->ip_src), ifp->name);
++          return 0;
++        }
++    }
++
++  /* else it must be a local ospf interface, check it was received on 
++   * correct link 
++   */
++  else if (oi->ifp != ifp)
++    {
++      if (IS_DEBUG_OSPF_EVENT)
++        zlog_warn ("Packet from [%s] received on wrong link %s",
++                   inet_ntoa (iph->ip_src), ifp->name);
++      return 0;
++    }
++  else if (oi->state == ISM_Down)
++    {
++      char buf[2][INET_ADDRSTRLEN];
++      zlog_warn ("Ignoring packet from %s to %s received on interface that is "
++                 "down [%s]; interface flags are %s",
++                 inet_ntop(AF_INET, &iph->ip_src, buf[0], sizeof(buf[0])),
++                 inet_ntop(AF_INET, &iph->ip_dst, buf[1], sizeof(buf[1])),
++                 ifp->name, if_flag_dump(ifp->flags));
++     //  Fix multicast memberships? 
++      if (iph->ip_dst.s_addr == htonl(OSPF_ALLSPFROUTERS))
++        OI_MEMBER_JOINED(oi, MEMBER_ALLROUTERS);
++      else if (iph->ip_dst.s_addr == htonl(OSPF_ALLDROUTERS))
++        OI_MEMBER_JOINED(oi, MEMBER_DROUTERS);
++      if (oi->multicast_memberships)
++        ospf_if_set_multicast(oi);
++      return 0;
++    }
++/*
++   * If the received packet is destined for AllDRouters, the packet
++   * should be accepted only if the received ospf interface state is
++   * either DR or Backup -- endo.
++   */
++  if (iph->ip_dst.s_addr == htonl (OSPF_ALLDROUTERS)
++  && (oi->state != ISM_DR && oi->state != ISM_Backup))
++    {
++      zlog_warn ("Dropping packet for AllDRouters from [%s] via [%s] (ISM: %s)",
++                 inet_ntoa (iph->ip_src), IF_NAME (oi),
++                 LOOKUP (ospf_ism_state_msg, oi->state));
++      /* Try to fix multicast membership. */
++      SET_FLAG(oi->multicast_memberships, MEMBER_DROUTERS);
++      ospf_if_set_multicast(oi);
++      return 0;
++    }
++
++  /* Show debug receiving packet. */
++  if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, RECV))
++    {
++      if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, DETAIL))
++        {
++          zlog_debug ("-----------------------------------------------------");
++          ospf_packet_dump (ibuf);
++        }
++
++      zlog_debug ("%s received from [%s] via [%s]",
++                 ospf_packet_type_str[ospfh->type],
++                 inet_ntoa (ospfh->router_id), IF_NAME (oi));
++      zlog_debug (" src [%s],", inet_ntoa (iph->ip_src));
++      zlog_debug (" dst [%s]", inet_ntoa (iph->ip_dst));
++
++      if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, DETAIL))
++        zlog_debug ("-----------------------------------------------------");
++  }
++
++  /* Some header verification. */
++  ret = ospf_verify_header (ibuf, oi, iph, ospfh);
++  if (ret < 0)
++    {
++      if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, RECV))
++        {
++          zlog_debug ("ospf_read[%s/%s]: Header check failed, "
++                     "dropping.",
++                     ospf_packet_type_str[ospfh->type],
++                     inet_ntoa (iph->ip_src));
++        }
++      return ret;
++    }
++
++  stream_forward_getp (ibuf, OSPF_HEADER_SIZE);
++
++  /* Adjust size to message length. */
++  length = ntohs (ospfh->length) - OSPF_HEADER_SIZE;
++/* Read rest of the packet and call each sort of packet routine. */
++  switch (ospfh->type)
++    {
++    case OSPF_MSG_HELLO:
++      printf(" received hello msg case \n");
++      ospf_hello (iph, ospfh, ibuf, oi, length);
++      break;
++    case OSPF_MSG_DB_DESC:
++      printf(" received data base case \n");
++      ospf_db_desc (iph, ospfh, ibuf, oi, length);
++      break;
++    case OSPF_MSG_LS_REQ:
++      printf(" received link state request case \n");
++      ospf_ls_req (iph, ospfh, ibuf, oi, length);
++      break;
++    case OSPF_MSG_LS_UPD:
++      printf(" received link state update case \n");
++      ospf_ls_upd (iph, ospfh, ibuf, oi, length);
++      break;
++    case OSPF_MSG_LS_ACK:
++      printf(" received link state ack case \n");
++      ospf_ls_ack (iph, ospfh, ibuf, oi, length);
++      break;
++    default:
++      zlog (NULL, LOG_WARNING,
++            "interface %s: OSPF packet header type %d is illegal",
++            IF_NAME (oi), ospfh->type);
++      break;
++    }
++
++  return 0;
++}
++//////////////////////////////////////////////////////////////////////////////////////
+ /* Make OSPF header. */
+ static void
+ ospf_make_header (int type, struct ospf_interface *oi, struct stream *s)
+@@ -2542,8 +2885,11 @@
+ 
+   ospfh->version = (u_char) OSPF_VERSION;
+   ospfh->type = (u_char) type;
++  /////////////////////////////// KT ///////////////////////////////////////
++  ospfh->router_id = Find_router_id (oi->ifp->feid);
+ 
+-  ospfh->router_id = oi->ospf->router_id;
++  //////////////////////////////////////////////////////////////////////////
++ // ospfh->router_id = oi->ospf->router_id;
+ 
+   ospfh->checksum = 0;
+   ospfh->area_id = oi->area->area_id;
+@@ -2632,6 +2978,7 @@
+     masklen2ip (oi->address->prefixlen, &mask);
+   else
+     memset ((char *) &mask, 0, sizeof (struct in_addr));
++
+   stream_put_ipv4 (s, mask.s_addr);
+ 
+   /* Set Hello Interval. */
+@@ -2660,14 +3007,16 @@
+ 
+   /* Set Backup Designated Router. */
+   stream_put_ipv4 (s, BDR (oi).s_addr);
+-
+   /* Add neighbor seen. */
+   for (rn = route_top (oi->nbrs); rn; rn = route_next (rn))
+     if ((nbr = rn->info))
+       if (nbr->router_id.s_addr != 0)	/* Ignore 0.0.0.0 node. */
+ 	if (nbr->state != NSM_Attempt)  /* Ignore Down neighbor. */
+-	if (nbr->state != NSM_Down)     /* This is myself for DR election. */
+-	  if (!IPV4_ADDR_SAME (&nbr->router_id, &oi->ospf->router_id))
++	if (nbr->state != NSM_Down) {    /* This is myself for DR election. */
++	    //////////////////////// kT ///////////////////////////////
++
++		if (!IPV4_ADDR_SAME (&nbr->router_id, &oi->ospf->router_id) ||
++		   (!checkintra(oi->ifp->feid, nbr->src)))
+ 	    {
+ 	      /* Check neighbor is sane? */
+ 	      if (nbr->d_router.s_addr != 0
+@@ -2678,11 +3027,12 @@
+ 	      stream_put_ipv4 (s, nbr->router_id.s_addr);
+ 	      length += 4;
+ 	    }
+-
++	}
+   /* Let neighbor generate BackupSeen. */
+   if (flag == 1)
+     stream_putl_at (s, p, 0); /* ipv4 address, normally */
+ 
++
+   return length;
+ }
+ 
+@@ -2802,6 +3152,7 @@
+           assert (IS_SET_DD_M(nbr->dd_flags));
+         }
+     }
++
+   return length;
+ }
+ 
+@@ -3178,6 +3529,7 @@
+     ospf_packet_free (nbr->last_send);
+   nbr->last_send = ospf_packet_dup (op);
+   quagga_gettime (QUAGGA_CLK_MONOTONIC, &nbr->last_send_ts);
++
+ }
+ 
+ /* Re-send Database Description. */
+--- ./ospfd/ospf_nsm.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_nsm.c	2011-10-06 21:54:21.704476022 -0400
+@@ -79,7 +79,6 @@
+   nbr->t_db_desc = NULL;
+ 
+   oi = nbr->oi;
+-
+   if (IS_DEBUG_OSPF (nsm, NSM_TIMERS))
+     zlog (NULL, LOG_DEBUG, "NSM[%s:%s]: Timer (DD Retransmit timer expire)",
+ 	  IF_NAME (nbr->oi), inet_ntoa (nbr->src));
+@@ -652,6 +651,8 @@
+   int x;
+   int force = 1;
+   
++  printf(" old state : %d (line 661 in nsm_change_state) \n", nbr->state );
++  printf(" new state : %d (line 662 in nsm_change_state) \n", state ); 
+   /* Preserve old status. */
+   old_state = nbr->state;
+ 
+--- ./ospfd/ospf_lsa.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_lsa.c	2011-10-06 21:54:21.616736989 -0400
+@@ -836,7 +836,6 @@
+ ospf_router_lsa_originate (struct ospf_area *area)
+ {
+   struct ospf_lsa *new;
+-  
+   /* Create new router-LSA instance. */
+   if ( (new = ospf_router_lsa_new (area)) == NULL)
+     {
+@@ -983,10 +982,10 @@
+ 
+       /* Keep Area ID string. */
+       area_str = AREA_NAME (area);
+-
+       /* If LSA not exist in this Area, originate new. */
+       if (lsa == NULL)
+         {
++
+ 	  if (IS_DEBUG_OSPF (lsa, LSA_GENERATE))
+ 	    zlog_debug("LSA[Type1]: Create router-LSA for Area %s", area_str);
+ 
+@@ -2408,7 +2407,6 @@
+ 			 struct ospf_lsa *new, int rt_recalc)
+ {
+   struct ospf_area *area = new->area;
+-
+   /* RFC 2328 Section 13.2 Router-LSAs and network-LSAs
+      The entire routing table must be recalculated, starting with
+      the shortest path calculations for each area (not just the
+@@ -2434,9 +2432,19 @@
+       area->router_lsa_self = ospf_lsa_lock (new);
+ 
+     }
++  ///////////////////////////////////// KT ///////////////////////////////////
++ 
++  if(intra_id != 0)
++  {
++	  if (rt_recalc)
++		ospf_spf_fe_calculate_schedule (ospf, intra_id);
++  }
++  else
++  { 
+   if (rt_recalc)
+     ospf_spf_calculate_schedule (ospf);
+-
++  }
++  /////////////////////////////////////////////////////////////////////////////
+   return new;
+ }
+ 
+@@ -2748,8 +2756,8 @@
+   /* Insert LSA to LSDB. */
+   ospf_lsdb_add (lsdb, lsa);
+   lsa->lsdb = lsdb;
+-
+   /* Do LSA specific installation process. */
++
+   switch (lsa->data->type)
+     {
+     case OSPF_ROUTER_LSA:
+--- ./ospfd/ospf_zebra.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_zebra.h	2011-10-06 21:54:21.907610644 -0400
+@@ -45,6 +45,9 @@
+ extern void ospf_zclient_start (void);
+ 
+ extern void ospf_zebra_add (struct prefix_ipv4 *, struct ospf_route *);
++///////////////////////////////////////// KT //////////////////////////////////////
++extern void ospf_fe_zebra_add (struct forwarding_element *, struct prefix_ipv4 *, struct ospf_route *);
++///////////////////////////////////////////////////////////////////////////////////
+ extern void ospf_zebra_delete (struct prefix_ipv4 *, struct ospf_route *);
+ 
+ extern void ospf_zebra_add_discard (struct prefix_ipv4 *);
+--- ./ospfd/ospf_ism.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_ism.c	2011-10-06 21:54:21.596406217 -0400
+@@ -191,11 +191,14 @@
+       /* Ignore 0.0.0.0 node*/
+       if (nbr->router_id.s_addr != 0)
+ 	/* Is neighbor upper 2-Way? */
+-	if (nbr->state >= NSM_TwoWay)
++	if (nbr->state >= NSM_TwoWay) {
+ 	  /* Ignore myself. */
+-	  if (!IPV4_ADDR_SAME (&nbr->router_id, &ospf->router_id))
++////////////////////////////// KT //////////////////////////
++	 if (!IPV4_ADDR_SAME (&nbr->router_id, &ospf->router_id) ||
++		(!checkintra(nbr->oi->ifp->feid, nbr->src)))
+ 	    OSPF_NSM_EVENT_SCHEDULE (nbr, NSM_AdjOK);
+ }
++}
+ 
+ static int
+ ospf_dr_election (struct ospf_interface *oi)
+@@ -220,7 +223,6 @@
+   dr = ospf_elect_dr (oi, el_list);
+ 
+   new_state = ospf_ism_state (oi);
+-
+   zlog_info ("DR-Election[1st]: Backup %s", inet_ntoa (BDR (oi)));
+   zlog_info ("DR-Election[1st]: DR     %s", inet_ntoa (DR (oi)));
+ 
+@@ -241,7 +243,9 @@
+   /* if DR or BDR changes, cause AdjOK? neighbor event. */
+   if (!IPV4_ADDR_SAME (&old_dr, &DR (oi)) ||
+       !IPV4_ADDR_SAME (&old_bdr, &BDR (oi)))
++  {
+     ospf_dr_change (oi->ospf, oi->nbrs);
++  }
+ 
+   return new_state;
+ }
+@@ -258,7 +262,6 @@
+   if (IS_DEBUG_OSPF (ism, ISM_TIMERS))
+     zlog (NULL, LOG_DEBUG, "ISM[%s]: Timer (Hello timer expire)",
+ 	  IF_NAME (oi));
+-
+   /* Sending hello packet. */
+   ospf_hello_send (oi);
+ 
+@@ -535,6 +538,7 @@
+ static void
+ ism_change_state (struct ospf_interface *oi, int state)
+ {
++
+   int old_state;
+   struct ospf_lsa *lsa;
+ 
+@@ -563,7 +567,7 @@
+ #endif
+ 
+   /* Set multicast memberships appropriately for new state. */
+-  ospf_if_set_multicast(oi);
++ // ospf_if_set_multicast(oi);
+ 
+   if (old_state == ISM_Down || state == ISM_Down)
+     ospf_check_abr_status (oi->ospf);
+--- ./ospfd/ospf_flood.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_flood.c	2011-10-06 21:54:21.538551930 -0400
+@@ -250,10 +250,20 @@
+   lsa_ack_flag = 0;
+   oi = nbr->oi;
+ 
++
+   /* If there is already a database copy, and if the
+      database copy was received via flooding and installed less
+      than MinLSArrival seconds ago, discard the new LSA
+      (without acknowledging it). */
++
++    
++    printf(" ospf->router_id : %s (line 260 in ospf_flood.c) \n", inet_ntoa(ospf->router_id));
++    printf(" nbr->router_id : %s (line 261 in ospf_flood.c) \n", inet_ntoa(nbr->router_id));
++	printf(" nbr->address.u.lp.id : %s (line 262 in ospf_flood.c) \n", inet_ntoa(nbr->address.u.lp.id));
++
++    if(ospf->router_id.s_addr != nbr->router_id.s_addr) // KT 
++	{
++		intra_id = 0;
+   if (current != NULL)		/* -- endo. */
+     {
+       if (IS_LSA_SELF (current)
+@@ -273,6 +283,9 @@
+           return -1;
+         }
+     }
++   }
++	else
++		intra_id = nbr->oi->ifp->feid;
+ 
+   /* Flood the new LSA out some subset of the router's interfaces.
+      In some cases (e.g., the state of the receiving interface is
+@@ -318,7 +331,6 @@
+      timestamp the new LSA with the current time.  The flooding
+      procedure cannot overwrite the newly installed LSA until
+      MinLSArrival seconds have elapsed. */  
+-
+   new = ospf_lsa_install (ospf, nbr->oi, new);
+ 
+   /* Acknowledge the receipt of the LSA by sending a Link State
+@@ -372,6 +384,7 @@
+ 	continue;
+ 
+       onbr = rn->info;
++
+       if (IS_DEBUG_OSPF_EVENT)
+ 	zlog_debug ("ospf_flood_through_interface(): considering nbr %s (%s)",
+ 		   inet_ntoa (onbr->router_id),
+@@ -419,7 +432,6 @@
+ 		}
+ 	    }
+ 	}
+-
+ #ifdef HAVE_OPAQUE_LSA
+       if (IS_OPAQUE_LSA (lsa->data->type))
+         {
+@@ -549,10 +561,14 @@
+       for (rn = route_top (oi->nbrs); rn; rn = route_next (rn))
+         if ((nbr = rn->info) != NULL)
+ 	  if (nbr != oi->nbr_self && nbr->state >= NSM_Exchange)
++	  {
+ 	    ospf_ls_upd_send_lsa (nbr, lsa, OSPF_SEND_PACKET_DIRECT);
+     }
++    }
+   else
++  {
+     ospf_ls_upd_send_lsa (oi->nbr_self, lsa, OSPF_SEND_PACKET_INDIRECT);
++  }
+ 
+   return 0;
+ }
+@@ -591,7 +607,6 @@
+       if (ospf_flood_through_interface (oi, inbr, lsa))
+ 	lsa_ack_flag = 1;
+     }
+-
+   return (lsa_ack_flag);
+ }
+ 
+--- ./ospfd/ospfd.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospfd.c	2011-10-06 21:54:21.926364483 -0400
+@@ -84,11 +84,11 @@
+   struct ospf_interface *oi;
+   struct interface *ifp;
+   struct listnode *node;
+-
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("Router-ID[OLD:%s]: Update", inet_ntoa (ospf->router_id));
+-
++  memset(&ospf->router_id, 0, sizeof(struct in_addr));
+   router_id_old = ospf->router_id;
++ // printf(" ospf router id old : %s \n", inet_ntoa(ospf->router_id));
+ 
+   /* Select the router ID based on these priorities:
+        1. Statically assigned router ID is always the first choice.
+@@ -103,9 +103,17 @@
+     router_id = ospf->router_id;
+   else
+     router_id = router_id_zebra;
+-
+-  ospf->router_id = router_id;
+-  
++ // ospf->router_id = router_id;
++ ospf->router_id.s_addr = inet_addr(CE_ROUTER_ID);
++//////////////////////////// KT ///////////////////////////////
++   router_id_flag = 1;
++   if(forwarding != NULL)
++   {
++	 forwarding->router_id = router_id;
++	 forwarding->ospf = ospf;
++     FE_table_add (forwarding);
++   }
++///////////////////////////////////////////////////////////////
+   if (IS_DEBUG_OSPF_EVENT)
+     zlog_debug ("Router-ID[NEW:%s]: Update", inet_ntoa (ospf->router_id));
+ 
+@@ -136,9 +144,12 @@
+       
+       /* update ospf_interface's */
+       for (ALL_LIST_ELEMENTS_RO (om->iflist, node, ifp))
++	  {
++		  if(!interface_duplication_check_in_all(ifp))
+         ospf_if_update (ospf, ifp);
+     }
+ }
++}
+ 
+ /* For OSPF area sort by area id. */
+ static int
+@@ -215,7 +226,7 @@
+ 
+   if ((new->fd = ospf_sock_init()) < 0)
+     {
+-      zlog_err("ospf_new: fatal error: ospf_sock_init was unable to open "
++      zlog_err("ospf_new: fatal error: aospf_sock_init was unable to open "
+ 	       "a socket");
+       exit(1);
+     }
+@@ -266,6 +277,7 @@
+     {
+       ospf = ospf_new ();
+       ospf_add (ospf);
++      global_ospf = ospf;
+ 
+       if (ospf->router_id_static.s_addr == 0)
+ 	ospf_router_id_update (ospf);
+@@ -683,6 +695,18 @@
+ }
+ 
+ struct ospf_area *
++ospf_area_get_kt (struct ospf *ospf, struct in_addr area_id, int format)
++{
++  struct ospf_area *area;
++	  
++  area = ospf_area_new (ospf, area_id);
++  area->format = format;
++  listnode_add_sort (ospf->areas, area);
++  ospf_check_abr_status (ospf);
++		  
++  return area;
++}
++struct ospf_area *
+ ospf_area_lookup_by_area_id (struct ospf *ospf, struct in_addr area_id)
+ {
+   struct ospf_area *area;
+@@ -698,7 +722,9 @@
+ void
+ ospf_area_add_if (struct ospf_area *area, struct ospf_interface *oi)
+ {
++ 
+   listnode_add (area->oiflist, oi);
++
+ }
+ 
+ void
+@@ -845,8 +871,12 @@
+ ospf_network_run_interface (struct prefix *p, struct ospf_area *area,
+                             struct interface *ifp)
+ {
++// jw //
++ 
++///////
+   struct listnode *cnode;
+   struct connected *co;
++  struct Interface *tempinterface;
+   
+   if (memcmp (ifp->name, "VLINK", 5) == 0)
+     return;
+@@ -863,13 +893,21 @@
+ 	  && ! ospf_if_table_lookup(ifp, co->address)
+           && ospf_network_match_iface(co,p))
+         {
+-           struct ospf_interface *oi;
+             
++           struct ospf_interface *oi;
+             oi = ospf_if_new (area->ospf, ifp, co->address);
++
+             oi->connected = co;
+             
+             oi->area = area;
+ 
++ /////////////////////////////////////////////////////// KT ///////////////////////////
++            tempinterface = lookupinterface(forwarding, ifp->ifindex);
++			tempinterface->prefixlen = co->address->prefixlen;
++			tempinterface->ifaddress = oi->address->u.prefix4;
++
++ ////////////////////////////////////////////////////////////////////////////////////
++
+             oi->params = ospf_lookup_if_params (ifp, oi->address->u.prefix4);
+             oi->output_cost = ospf_if_get_output_cost (oi);
+             
+@@ -878,7 +916,6 @@
+ 
+             /* Relate ospf interface to ospf instance. */
+             oi->ospf = area->ospf;
+-
+             /* update network type as interface flag */
+             /* If network type is specified previously,
+                skip network type setting. */
+@@ -891,11 +928,14 @@
+              * ospf_router_id_update() will call ospf_if_update
+              * whenever r-id is configured instead.
+              */
++
+             if ((area->ospf->router_id.s_addr != 0)
+                 && if_is_operative (ifp)) 
+               ospf_if_up (oi);
++
+           }
+     }
++
+ }
+ 
+ static void
+@@ -950,17 +990,20 @@
+   if (!ospf)
+     ospf = ospf_lookup ();
+ 
+-  /* OSPF must be on and Router-ID must be configured. */
+-  if (!ospf || ospf->router_id.s_addr == 0)
++ // if (!ospf || ospf->router_id.s_addr == 0)
++  if (!ospf || router_id_flag == 0)
+     return;
+   
+   /* Run each netowrk for this interface. */
+   for (rn = route_top (ospf->networks); rn; rn = route_next (rn))
+     if (rn->info != NULL)
+       {
++		interface_add_in_forwarding_element (forwarding, ifp);
++
+         network = (struct ospf_network *) rn->info;
+         area = ospf_area_get (ospf, network->area_id, network->format);
+         ospf_network_run_interface (&rn->p, area, ifp);
++
+       }
+ }
+ 
+@@ -973,9 +1016,8 @@
+   for (ALL_LIST_ELEMENTS (ospf->vlinks, node, nnode, vl_data))
+     if (IPV4_ADDR_SAME (&vl_data->vl_area_id, &area->area_id))
+       ospf_vl_delete (ospf, vl_data);
+-}
+-
+ 
++}
+ static const struct message ospf_area_type_msg[] =
+ {
+   { OSPF_AREA_DEFAULT,	"Default" },
+@@ -1643,3 +1685,12 @@
+   om->master = thread_master_create ();
+   om->start_time = quagga_time (NULL);
+ }
++////////////////////////////////// JW //////////////////////////////////////////
++struct in_addr
++ospf_pick_out_prefix (struct in_addr addr, unsigned char shift_bit)
++{
++	addr.s_addr = addr.s_addr << (int)shift_bit;
++	addr.s_addr = addr.s_addr >> (int)shift_bit;
++	return addr;
++}
++////////////////////////////////////////////////////////////////////////////////
+--- ./ospfd/ospf_route.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospfd/ospf_route.h	2011-10-06 21:54:21.783533616 -0400
+@@ -40,6 +40,7 @@
+   struct in_addr nexthop;
+   struct in_addr adv_router;
+   unsigned int ifindex;
++  unsigned int feid;
+ };
+ 
+ /* Below is the structure linked to every
+@@ -130,6 +131,9 @@
+ extern void ospf_route_table_free (struct route_table *);
+ 
+ extern void ospf_route_install (struct ospf *, struct route_table *);
++////////////////////////////////////// KT ////////////////////////////////////
++extern void ospf_fe_route_install (struct forwarding_element *, struct route_table *);
++//////////////////////////////////////////////////////////////////////////////
+ extern void ospf_route_table_dump (struct route_table *);
+ 
+ extern void ospf_intra_add_router (struct route_table *, struct vertex *,
+@@ -143,6 +147,12 @@
+ 				 struct ospf_area *,
+ 				 int parent_is_root);
+ 
++/////////////////////////////////// KT ////////////////////////////////////
++extern void ospf_intra_fe_add_stub (struct route_table *,
++		        struct router_lsa_link *, struct vertex *,
++				struct ospf_area *,
++				int parent_is_root, int intra);
++//////////////////////////////////////////////////////////////////////////////////
+ extern int ospf_route_cmp (struct ospf *, struct ospf_route *,
+ 			   struct ospf_route *);
+ extern void ospf_route_copy_nexthops (struct ospf_route *, struct list *);
+--- ./lib/buffer.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/buffer.c	2011-10-06 21:54:18.900410267 -0400
+@@ -463,6 +463,7 @@
+ buffer_write(struct buffer *b, int fd, const void *p, size_t size)
+ {
+   ssize_t nbytes;
++  FORCES_PAYLOAD *send_data;
+ 
+ #if 0
+   /* Should we attempt to drain any previously buffered data?  This could help
+@@ -475,7 +476,9 @@
+   if (b->head)
+     /* Buffer is not empty, so do not attempt to write the new data. */
+     nbytes = 0;
+-  else if ((nbytes = write(fd, p, size)) < 0)
++
++// jw will change // write(int sock, stream*, size_t ) -> tml_SendMsg(FORCE_PAYLOAD*) 
++/*  else if ((nbytes = write(fd, p, size)) < 0)
+     {
+       if (ERRNO_IO_RETRY(errno))
+         nbytes = 0;
+@@ -485,7 +488,15 @@
+ 		    __func__, fd, safe_strerror(errno));
+ 	  return BUFFER_ERROR;
+ 	}
++    } */
++  //////////////////////////// KT /////////////////////////////////////
++  else
++  {
++	nbytes = size;
++	send_data = tml_MakePayload(7, MSG_ROUTE_CONFIG, fd, p, size);
++	tml_SendMsg(send_data);
+     }
++  /////////////////////////////////////////////////////////////////////
+   /* Add any remaining data to the buffer. */
+   {
+     size_t written = nbytes;
+--- ./lib/table.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/table.h	2011-10-06 21:54:19.839526956 -0400
+@@ -23,6 +23,8 @@
+ #ifndef _ZEBRA_TABLE_H
+ #define _ZEBRA_TABLE_H
+ 
++#include "common.h"
++
+ /* Routing table top structure. */
+ struct route_table
+ {
+@@ -39,6 +41,7 @@
+   struct route_table *table;
+   struct route_node *parent;
+   struct route_node *link[2];
++
+ #define l_left   link[0]
+ #define l_right  link[1]
+ 
+@@ -52,6 +55,79 @@
+   void *aggregate;
+ };
+ 
++/////////////////////////////////// KT /////////////////////////////////////////////////////////////
++struct nbrinterface
++{
++	struct nbrinterface *next;
++	struct nbrinterface *prev;
++
++	struct in_addr address;
++	struct in_addr router_id;
++	int cost;
++};
++
++struct Interface
++{
++	struct Interface *next;
++	struct Interface *prev;
++
++	struct in_addr ifaddress;
++	struct in_addr subaddress;
++  
++	struct interface *interfaceptr;
++
++	int nbrcount;
++
++    u_char prefixlen;
++
++	struct nbrinterface *nbrhead;
++	struct nbrinterface *nbrtail;
++};
++
++struct forwarding_element
++{
++	struct forwarding_element *next_FE;
++	struct forwarding_element *prev_FE;
++   
++	struct ospf *ospf;
++
++	unsigned int fe_id;
++
++	struct in_addr router_id;
++	struct in_addr fe_router_id;
++
++	unsigned int interface_count;
++
++	struct Interface *interface_head;
++	struct Interface *interface_tail;
++
++	struct zclient *zclientptr;
++	struct ospf_lsa *router_lsa_self;
++
++	struct vertex *spf;
++	struct route_table *new_table;
++	struct route_table *old_table;
++
++	struct route_table *new_rtrs;
++	struct route_table *old_rtrs;
++
++	int hello_flag;
++	int update_flag;
++
++};
++
++struct forwarding_element_table
++{
++	unsigned int FE_count;
++
++	struct forwarding_element *FE_table_head;
++	struct forwarding_element *FE_table_tail;
++};
++
++struct forwarding_element_table FE_table;
++struct forwarding_element *forwarding;
++///////////////////////////////////////////////////////////////////////////////////////////////////
++
+ /* Prototypes. */
+ extern struct route_table *route_table_init (void);
+ extern void route_table_finish (struct route_table *);
+@@ -70,6 +146,29 @@
+                                             const struct prefix *);
+ extern struct route_node *route_node_match_ipv4 (const struct route_table *,
+ 						 const struct in_addr *);
++
++///////////////////////////// KT /////////////////////////////////////////////////////////////////
++extern void FE_table_init ();
++extern void interface_table_init (struct forwarding_element *);
++extern void nbrinterfaceinit(struct Interface *);
++extern struct forwarding_element *forwarding_new();
++extern void FE_table_add (struct forwarding_element * );
++extern void interface_add_in_forwadring_element (struct forwarding_element *,
++												 struct interface * );
++extern int interface_duplication_check (struct forwarding_element *,
++	                                   	 struct interface * );
++extern struct in_addr Find_router_id (unsigned int );
++extern int interface_duplication_check_in_all (struct interface *);
++extern struct interface *checkinterface(struct forwarding_element *, int );
++extern struct Interface *lookupinterface(struct forwarding_element *, int);
++extern int checkintra(int, struct in_addr );
++extern struct forwarding_element * lookupfe(int );
++extern int addnbrrouter(int, struct in_addr, struct in_addr, struct in_addr );
++extern void addnbr(struct Interface *, struct in_addr, struct in_addr);
++extern int checknbrrouter(int, struct in_addr, struct in_addr );
++extern struct forwarding_element *lookupforwarding(struct in_addr );
++extern void nbrupdateinit();
++//////////////////////////////////////////////////////////////////////////////////////////////////
+ #ifdef HAVE_IPV6
+ extern struct route_node *route_node_match_ipv6 (const struct route_table *,
+ 						 const struct in6_addr *);
+--- ./lib/table.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/table.c	2011-10-06 21:54:19.821738010 -0400
+@@ -27,6 +27,8 @@
+ #include "memory.h"
+ #include "sockunion.h"
+ 
++#include "common.h"
++#include "log.h"
+ void route_node_delete (struct route_node *);
+ void route_table_free (struct route_table *);
+ 
+@@ -253,10 +255,10 @@
+ struct route_node *
+ route_node_lookup (struct route_table *table, struct prefix *p)
+ {
++
+   struct route_node *node;
+ 
+   node = table->top;
+-
+   while (node && node->p.prefixlen <= p->prefixlen && 
+ 	 prefix_match (&node->p, p))
+     {
+@@ -266,6 +268,7 @@
+       node = node->link[prefix_bit(&p->u.prefix, node->p.prefixlen)];
+     }
+ 
++
+   return NULL;
+ }
+ 
+@@ -459,3 +462,357 @@
+   route_unlock_node (start);
+   return NULL;
+ }
++
++/////////////////////////////////////////////////// KT //////////////////////////////////////////////
++
++struct forwarding_element *
++forwarding_new()
++{
++	return (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++}
++
++void 
++FE_table_init ()
++{
++	FE_table.FE_count = 0;
++	FE_table.FE_table_head = NULL;
++	FE_table.FE_table_tail = NULL;
++
++	FE_table.FE_table_head = (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++	FE_table.FE_table_tail = (struct forwarding_element *)malloc(sizeof(struct forwarding_element));
++	
++	FE_table.FE_table_head->interface_head = NULL;
++	FE_table.FE_table_tail->interface_tail = NULL;
++
++	FE_table.FE_table_head->next_FE = FE_table.FE_table_tail;
++	FE_table.FE_table_head->prev_FE = FE_table.FE_table_head;
++	FE_table.FE_table_tail->next_FE = FE_table.FE_table_tail;
++	FE_table.FE_table_tail->prev_FE = FE_table.FE_table_head;
++
++}
++
++void
++interface_table_init (struct forwarding_element *forwarding)
++{
++	forwarding->interface_count = 0;
++
++	forwarding->interface_head = NULL;
++	forwarding->interface_tail = NULL;
++
++	forwarding->interface_head = (struct Interface *)malloc(sizeof(struct Interface));
++	forwarding->interface_tail = (struct Interface *)malloc(sizeof(struct Interface));
++
++	forwarding->interface_head->next = forwarding->interface_tail;
++	forwarding->interface_head->prev = forwarding->interface_head;
++	forwarding->interface_tail->next = forwarding->interface_tail;
++	forwarding->interface_tail->prev = forwarding->interface_head;
++}
++
++struct in_addr
++Find_router_id (unsigned int id)
++{
++	struct forwarding_element *FE_ptr;
++	struct in_addr temp_addr;
++
++	memset(&temp_addr, 0, sizeof(struct in_addr));
++
++	for(FE_ptr = FE_table.FE_table_head->next_FE; FE_ptr != FE_table.FE_table_tail; FE_ptr = FE_ptr->next_FE)
++	{
++		    if(FE_ptr->fe_id == id)
++			{
++				temp_addr = FE_ptr->router_id;
++			    return temp_addr;	
++			}
++	}	
++
++	return temp_addr;
++			
++}
++
++
++void
++FE_table_add (struct forwarding_element *new_FE)
++{
++	new_FE->next_FE = FE_table.FE_table_head->next_FE;
++	new_FE->prev_FE = FE_table.FE_table_head;
++	FE_table.FE_table_head->next_FE->prev_FE = new_FE;
++	FE_table.FE_table_head->next_FE = new_FE;
++
++	FE_table.FE_count++;
++
++}
++
++void
++interface_add_in_forwarding_element (struct forwarding_element *target_forwarding,
++		                             struct interface *newinterface)
++{
++	struct Interface *new_interface;
++
++	new_interface = (struct Interface *)malloc(sizeof(struct Interface));
++    
++	nbrinterfaceinit(new_interface);
++
++	new_interface->nbrcount = 0;
++
++	new_interface->interfaceptr = newinterface;
++
++	new_interface->next = target_forwarding->interface_head->next;
++	new_interface->prev = target_forwarding->interface_head;
++	target_forwarding->interface_head->next->prev = new_interface;
++	target_forwarding->interface_head->next = new_interface;
++
++	target_forwarding->interface_count++;
++}
++void
++nbrinterfaceinit(struct Interface *interfaceptr)
++{
++	interfaceptr->nbrhead = NULL;
++	interfaceptr->nbrtail = NULL;
++
++	interfaceptr->nbrhead = (struct nbrinterface *)malloc(sizeof(struct nbrinterface *));
++	interfaceptr->nbrtail = (struct nbrinterface *)malloc(sizeof(struct nbrinterface *));
++
++	interfaceptr->nbrhead->next = interfaceptr->nbrtail;
++	interfaceptr->nbrhead->prev = interfaceptr->nbrhead;
++	interfaceptr->nbrtail->next = interfaceptr->nbrtail;
++	interfaceptr->nbrtail->prev = interfaceptr->nbrhead;
++}
++void
++addnbr (struct Interface *interfaceptr, struct in_addr dest, struct in_addr router_id)
++{
++	struct nbrinterface *newnbr;
++
++	newnbr = (struct nbrinterface *)malloc(sizeof(struct nbrinterface));
++
++	newnbr->address = dest;
++	newnbr->router_id = router_id;
++
++    newnbr->cost = rand()%11;
++	
++	interfaceptr->nbrcount++;
++
++	newnbr->next = interfaceptr->nbrhead->next;
++	newnbr->prev = interfaceptr->nbrhead;
++	interfaceptr->nbrhead->next->prev = newnbr;
++	interfaceptr->nbrhead->next = newnbr;
++
++}
++int
++addnbrrouter(int feid, struct in_addr src, struct in_addr dest, struct in_addr router_id)
++{
++	struct forwarding_element *tempforwarding;
++	struct Interface *tempinterface;
++
++	for(tempforwarding = FE_table.FE_table_head->next_FE;
++		tempforwarding != FE_table.FE_table_tail;
++		tempforwarding = tempforwarding->next_FE)
++	{
++		if(tempforwarding->fe_id == feid)
++		{
++			for(tempinterface = tempforwarding->interface_head->next;
++				tempinterface != tempforwarding->interface_tail;
++				tempinterface = tempinterface->next)
++			{
++				if(tempinterface->ifaddress.s_addr == src.s_addr)
++				{
++					addnbr(tempinterface, dest, router_id);
++
++					return 1;
++				}
++			}
++		}
++	}
++	return 0;
++}
++
++int
++checknbrrouter(int feid, struct in_addr src, struct in_addr dest)
++{   
++  struct forwarding_element *tempforwarding;
++  struct Interface *tempinterface;
++  struct nbrinterface *tempnbr;
++
++  for(tempforwarding = FE_table.FE_table_head->next_FE;
++      tempforwarding != FE_table.FE_table_tail;
++      tempforwarding = tempforwarding->next_FE)
++  {
++       if(tempforwarding->fe_id == feid)
++       {
++           for(tempinterface = tempforwarding->interface_head->next;
++               tempinterface != tempforwarding->interface_tail;
++               tempinterface = tempinterface->next)
++           {
++              if(tempinterface->ifaddress.s_addr == src.s_addr)
++              {
++                 for(tempnbr = tempinterface->nbrhead->next;
++					 tempnbr != tempinterface->nbrtail;
++					 tempnbr = tempnbr->next)
++				 {
++				     if(tempnbr->address.s_addr == dest.s_addr)
++					 {
++						return 1;
++				     }
++		         }
++		     }
++		  }
++      }
++  }
++  return 0;
++}
++int
++interface_duplication_check (struct forwarding_element *target_forwarding,
++		                     struct interface *checkinterface)
++{
++	struct Interface *temp_interface;
++
++	for(temp_interface = target_forwarding->interface_head->next;
++		temp_interface != target_forwarding->interface_tail;
++		temp_interface = temp_interface->next)
++	{
++		if(temp_interface->interfaceptr->ifindex == checkinterface->ifindex &&
++		   temp_interface->interfaceptr->feid == checkinterface->feid)
++		{
++			return 1;
++		}
++	}
++
++	return 0;
++}
++
++int
++interface_duplication_check_in_all (struct interface *checkinterface)
++{
++	struct forwarding_element *tempforwardingptr;
++
++	for(tempforwardingptr = FE_table.FE_table_head->next_FE;
++			tempforwardingptr != FE_table.FE_table_tail;
++			tempforwardingptr = tempforwardingptr->next_FE)
++	{
++		if(interface_duplication_check(tempforwardingptr, checkinterface))
++		{
++			return 1;
++		}
++	}
++	return 0;
++}
++struct interface *
++checkinterface (struct forwarding_element * targetforwarding, int index)
++{
++	struct Interface *tempinterface;
++
++	 for(tempinterface = targetforwarding->interface_head->next;
++	     tempinterface != targetforwarding->interface_tail;
++		 tempinterface = tempinterface->next)
++     {
++		if(tempinterface->interfaceptr->ifindex == index)
++		{
++		   return tempinterface->interfaceptr;
++		}
++	}
++	return NULL;
++}
++struct Interface *
++lookupinterface (struct forwarding_element * targetforwarding, int index)
++{
++	struct Interface *tempinterface;
++
++    for(tempinterface = targetforwarding->interface_head->next;
++		tempinterface != targetforwarding->interface_tail;
++		tempinterface = tempinterface->next)
++		{
++		   if(tempinterface->interfaceptr->ifindex == index)
++           {
++		       return tempinterface;
++		   }
++	    }
++    return NULL;
++}
++
++int checkintra (int feid, struct in_addr checkaddr)
++{
++	struct forwarding_element * temp;
++    struct Interface *tempinterface;
++
++	for(temp = FE_table.FE_table_head->next_FE;
++		temp != FE_table.FE_table_tail;
++		temp = temp->next_FE)
++	{
++		if(temp->fe_id == feid)
++		{
++          for(tempinterface = temp->interface_head->next;
++			  tempinterface != temp->interface_tail;
++			  tempinterface = tempinterface->next)
++		  {
++			  if(tempinterface->ifaddress.s_addr == checkaddr.s_addr)
++			  {
++				  return 1;
++			  }
++		  }
++		}
++	}
++	return 0;
++}
++
++struct forwarding_element *
++lookupfe (int feid)
++{
++	struct forwarding_element *temp;
++
++	for(temp = FE_table.FE_table_head->next_FE;
++		temp != FE_table.FE_table_tail;
++		temp = temp->next_FE)
++	{
++		if(temp->fe_id == feid)
++			return temp;
++	}
++
++	return NULL;
++}
++
++struct forwarding_element *
++lookupforwarding (struct in_addr find)
++{
++	struct forwarding_element *temp;
++	struct Interface *tempinterface;
++
++	for(temp = FE_table.FE_table_head->next_FE;
++		temp != FE_table.FE_table_tail;
++		temp = temp->next_FE)
++	{
++		if(temp->fe_router_id.s_addr == find.s_addr)
++		{
++			return temp;
++		}
++		else
++		{
++			for(tempinterface = temp->interface_head->next;
++				tempinterface != temp->interface_tail;
++				tempinterface = tempinterface->next)
++			{
++				if(tempinterface->ifaddress.s_addr == find.s_addr)
++				{
++					return temp;
++				}
++			}
++
++		}
++
++	}
++	return NULL;
++}
++
++
++void
++nbrupdateinit()
++{
++
++	struct forwarding_element *temp;
++
++	for(temp = FE_table.FE_table_head->next_FE;
++		temp != FE_table.FE_table_tail;
++		temp = temp->next_FE)
++	{
++        temp->update_flag = 0;
++    }
++
++}
+--- ./lib/stream.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/stream.h	2011-10-06 21:54:19.812705480 -0400
+@@ -24,6 +24,7 @@
+ #define _ZEBRA_STREAM_H
+ 
+ #include "prefix.h"
++#include "if.h"
+ 
+ /*
+  * A stream is an arbitrary buffer, whose contents generally are assumed to
+@@ -170,6 +171,13 @@
+ extern u_int16_t stream_getw_from (struct stream *, size_t);
+ extern u_int32_t stream_getl (struct stream *);
+ extern u_int32_t stream_getl_from (struct stream *, size_t);
++/////////////////////////////////////// KT ////////////////////////////////////////////////
++extern void stream_getfl (struct stream *, struct interface *);
++extern uint32_t stream_getil (struct stream *);
++extern uint32_t stream_getfe (struct stream *);
++extern void stream_putfl (struct stream *, u_int16_t, u_int16_t);
++extern int tml_read(char *, size_t );
++//////////////////////////////////////////////////////////////////////////////////////////
+ extern uint64_t stream_getq (struct stream *);
+ extern uint64_t stream_getq_from (struct stream *, size_t);
+ extern u_int32_t stream_get_ipv4 (struct stream *);
+--- ./lib/Makefile.am	2010-01-27 04:37:34.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/Makefile.am	2011-10-06 21:54:18.831653793 -0400
+@@ -12,7 +12,8 @@
+ 	sockunion.c prefix.c thread.c if.c memory.c buffer.c table.c hash.c \
+ 	filter.c routemap.c distribute.c stream.c str.c log.c plist.c \
+ 	zclient.c sockopt.c smux.c md5.c if_rmap.c keychain.c privs.c \
+-	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c
++	sigevent.c pqueue.c jhash.c memtypes.c workqueue.c \
++	queue.c link_list.c tml_core.c
+ 
+ BUILT_SOURCES = memtypes.h route_types.h
+ 
+@@ -27,7 +28,7 @@
+ 	str.h stream.h table.h thread.h vector.h version.h vty.h zebra.h \
+ 	plist.h zclient.h sockopt.h smux.h md5.h if_rmap.h keychain.h \
+ 	privs.h sigevent.h pqueue.h jhash.h zassert.h memtypes.h \
+-	workqueue.h route_types.h
++	workqueue.h route_types.h queue.h link_list.h tml_core.h common.h
+ 
+ EXTRA_DIST = regex.c regex-gnu.h memtypes.awk route_types.awk route_types.txt
+ 
+--- ./lib/thread.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/thread.c	2011-10-06 21:54:19.856407923 -0400
+@@ -616,13 +616,11 @@
+   struct thread *thread;
+ 
+   assert (m != NULL);
+-
+   if (FD_ISSET (fd, &m->readfd))
+     {
+       zlog (NULL, LOG_WARNING, "There is already read fd [%d]", fd);
+       return NULL;
+     }
+-
+   thread = thread_get (m, THREAD_READ, func, arg, funcname);
+   FD_SET (fd, &m->readfd);
+   thread->u.fd = fd;
+--- ./lib/zclient.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/zclient.c	2011-10-06 21:54:19.988423589 -0400
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include <zebra.h>
++#include <stdio.h>
+ 
+ #include "prefix.h"
+ #include "stream.h"
+@@ -33,8 +34,12 @@
+ #include "memory.h"
+ #include "table.h"
+ 
++#define MY_ADDR "192.10.3.3"
++/* SCTP connection mode setting - add by wook */
++#define HAVE_SCTP_ZEBRA 1
++
+ /* Zebra client events. */
+-enum event {ZCLIENT_SCHEDULE, ZCLIENT_READ, ZCLIENT_CONNECT};
++enum event {ZCLIENT_SERV, ZCLIENT_SCHEDULE, ZCLIENT_READ, ZCLIENT_CONNECT};
+ 
+ /* Prototype for event manager. */
+ static void zclient_event (enum event, struct zclient *);
+@@ -44,9 +49,11 @@
+ /* This file local debug flag. */
+ int zclient_debug = 0;
+ 
++//struct zclient *temp_zclient;
++
+ /* Allocate zclient structure. */
+-struct zclient *
+-zclient_new ()
++struct zclient
++*zclient_new ()
+ {
+   struct zclient *zclient;
+   zclient = XCALLOC (MTYPE_ZCLIENT, sizeof (struct zclient));
+@@ -87,7 +94,7 @@
+   zclient->enable = 1;
+ 
+   /* Set -1 to the default socket value. */
+-  zclient->sock = -1;
++  zclient->sock = 1;
+ 
+   /* Clear redistribution flags. */
+   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
+@@ -104,8 +111,14 @@
+   /* Schedule first zclient connection. */
+   if (zclient_debug)
+     zlog_debug ("zclient start scheduled");
++////////////////////////////////////// KT /////////////////////////////////////////////////
++/* Forwarding table initalization. */
++  FE_table_init ();
++///////////////////////////////////////////////////////////////////////////////////////////
++ // zclient_event (ZCLIENT_SCHEDULE, zclient); 
++ //temp_zclient = zclient;
+ 
+-  zclient_event (ZCLIENT_SCHEDULE, zclient);
++  zclient_connect (zclient);
+ }
+ 
+ /* Stop zebra client services. */
+@@ -115,6 +128,9 @@
+   if (zclient_debug)
+     zlog_debug ("zclient stopped");
+ 
++  /* SCTP: destroy tml_core - add by wook */
++  tml_core_destroy();
++
+   /* Stop threads. */
+   THREAD_OFF(zclient->t_read);
+   THREAD_OFF(zclient->t_connect);
+@@ -128,11 +144,11 @@
+   buffer_reset(zclient->wb);
+ 
+   /* Close socket. */
+-  if (zclient->sock >= 0)
+-    {
+-      close (zclient->sock);
+-      zclient->sock = -1;
+-    }
++ // if (zclient->sock >= 0)
++ //   {
++ //     close (zclient->sock);
++  //    zclient->sock = -1;
++  //  }
+   zclient->fail = 0;
+ }
+ 
+@@ -145,12 +161,16 @@
+ 
+ /* Make socket to zebra daemon. Return zebra socket. */
+ int
+-zclient_socket(void)
++ForCES_ospf_server_socket(void)
+ {
+   int sock;
+   int ret;
++  
++  struct sockaddr_in client_addr;
+   struct sockaddr_in serv;
+ 
++  int cliaddr_len = sizeof(client_addr);
++
+   /* We should think about IPv6 connection. */
+   sock = socket (AF_INET, SOCK_STREAM, 0);
+   if (sock < 0)
+@@ -160,18 +180,45 @@
+   memset (&serv, 0, sizeof (struct sockaddr_in));
+   serv.sin_family = AF_INET;
+   serv.sin_port = htons (ZEBRA_PORT);
+-#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+-  serv.sin_len = sizeof (struct sockaddr_in);
+-#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
+-  serv.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++//#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
++//serv.sin_len = sizeof (struct sockaddr_in);
++//#endif /* HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
++// serv.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
++ 
++ serv.sin_addr.s_addr = inet_addr("192.168.138.138");
+ 
+   /* Connect to zebra. */
+-  ret = connect (sock, (struct sockaddr *) &serv, sizeof (serv));
++ /* ret = connect (sock, (struct sockaddr *) &serv, sizeof (serv));
+   if (ret < 0)
+     {
+       close (sock);
+       return -1;
+     }
++ */
++ //  sockopt_reuseaddr ( sock);
++ //  sockopt_reuseport ( sock);
++  ////////////////////////////// KT ////////////////////////////////////
++
++  ret = bind ( sock, (struct sockaddr *)&serv, sizeof (struct sockaddr_in));
++
++  if(ret < 0)
++  {
++	  printf(" Can't bind to stream socket\n");
++	  close(sock);
++	  return -1;
++  }
++  printf(" Server socket bind OK!!! \n");
++  ret = listen (sock, 7);
++
++  if( ret < 0 )
++  {
++	  printf(" Can't listen to stream socket \n");
++	  close (sock);
++	  return -1;
++  }
++
++  printf(" Server socket listen OK !!! \n");
++  ////////////////////////////////////////////////////////////////////
+   return sock;
+ }
+ 
+@@ -181,6 +228,8 @@
+ int
+ zclient_socket_un (const char *path)
+ {
++  printf(" zclient socket un function call \n");
++
+   int ret;
+   int sock, len;
+   struct sockaddr_un addr;
+@@ -192,7 +241,9 @@
+   /* Make server socket. */ 
+   memset (&addr, 0, sizeof (struct sockaddr_un));
+   addr.sun_family = AF_UNIX;
++
+   strncpy (addr.sun_path, path, strlen (path));
++ // addr.sin_addr.s_addr = inet_addr("192.168.29.1");
+ #ifdef HAVE_STRUCT_SOCKADDR_UN_SUN_LEN
+   len = addr.sun_len = SUN_LEN(&addr);
+ #else
+@@ -294,52 +345,90 @@
+ 
+ /* Make connection to zebra daemon. */
+ int
+-zclient_start (struct zclient *zclient)
++zclient_start ()
+ {
+   int i;
+-
+   if (zclient_debug)
+     zlog_debug ("zclient_start is called");
+ 
+-  /* zclient is disabled. */
+-  if (! zclient->enable)
+-    return 0;
++  // We need interface information. 
++  //temp_zclient->sock = forwarding->fe_id;
++  zebra_message_send (forwarding->zclientptr, ZEBRA_INTERFACE_ADD);
++  usleep(100);
++  // We need router-id information. 
++  zebra_message_send (forwarding->zclientptr, ZEBRA_ROUTER_ID_ADD);
++  usleep(100); 
++  // Flush all redistribute request. 
++  for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
++    if (i != forwarding->zclientptr->redist_default && forwarding->zclientptr->redist[i])
++      zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, forwarding->zclientptr, i);
+ 
+-  /* If already connected to the zebra. */
+-  if (zclient->sock >= 0)
++  // If default information is needed.
++  if (forwarding->zclientptr->default_information)
++    zebra_message_send (forwarding->zclientptr, ZEBRA_REDISTRIBUTE_DEFAULT_ADD);
+     return 0;
++}
++///////////////////////////////////////////// KT ///////////////////////////////////
++void
++zclient_read_thread_start(struct zclient *zclient)
++{
++	zclient_event(ZCLIENT_READ, zclient);
++}
++///////////////////////////////////////////////////////////////////////////////////
++/* This function is a wrapper function for calling zclient_start from
++   timer or event thread. */
++static int
++zclient_connect (struct zclient *zclient)
++{
++  printf(" zclient connect function call \n");
+ 
+-  /* Check connect thread. */
+-  if (zclient->t_connect)
++  zclient->t_connect = NULL;
++
++  if (zclient_debug)
++    zlog_debug ("zclient_connect is called");
+     return 0;
++}
+ 
+-  /* Make socket. */
+-#ifdef HAVE_TCP_ZEBRA
+-  zclient->sock = zclient_socket ();
+-#else
+-  zclient->sock = zclient_socket_un (ZEBRA_SERV_PATH);
+-#endif /* HAVE_TCP_ZEBRA */
+-  if (zclient->sock < 0)
++//////////////////////////////////////// KT ////////////////////////////////////////////
++static int
++zclient_accept (struct thread *thread)
+     {
+-      if (zclient_debug)
+-	zlog_debug ("zclient connection fail");
+-      zclient->fail++;
+-      zclient_event (ZCLIENT_CONNECT, zclient);
++	int i = 0;
++	int accept_sock;
++	int client_sock;
++	struct sockaddr_in client;
++	socklen_t len;
++	struct zclient *zclient;
++	
++	zclient = THREAD_ARG (thread);
++	accept_sock = THREAD_FD (thread);
++
++	zclient->sock = accept_sock;
++
++	/* Reregister myself. */
++	zclient_event (ZCLIENT_SERV, zclient);
++
++	len = sizeof (struct sockaddr_in);
++
++	client_sock = accept (accept_sock, (struct sockaddr *)&client, &len);
++
++	if (client_sock < 0)
++	{
++		printf("Can't accept zclient server socket \n");
+       return -1;
+     }
+ 
+-  if (set_nonblocking(zclient->sock) < 0)
+-    zlog_warn("%s: set_nonblocking(%d) failed", __func__, zclient->sock);
+ 
+-  /* Clear fail count. */
+-  zclient->fail = 0;
+-  if (zclient_debug)
+-    zlog_debug ("zclient connect success with socket [%d]", zclient->sock);
++	zclient->sock = client_sock;
++
++	sockopt_reuseaddr(client_sock);
++	sockopt_reuseport(client_sock);
++
++	set_nonblocking(client_sock);
+       
+   /* Create read thread. */
+-  zclient_event (ZCLIENT_READ, zclient);
+ 
+-  /* We need interface information. */
++	/* We need interface information */
+   zebra_message_send (zclient, ZEBRA_INTERFACE_ADD);
+ 
+   /* We need router-id information. */
+@@ -356,22 +445,7 @@
+ 
+   return 0;
+ }
+-
+-/* This function is a wrapper function for calling zclient_start from
+-   timer or event thread. */
+-static int
+-zclient_connect (struct thread *t)
+-{
+-  struct zclient *zclient;
+-
+-  zclient = THREAD_ARG (t);
+-  zclient->t_connect = NULL;
+-
+-  if (zclient_debug)
+-    zlog_debug ("zclient_connect is called");
+-
+-  return zclient_start (zclient);
+-}
++///////////////////////////////////////////////////////////////////////////////////////////
+ 
+  /* 
+   * "xdr_encode"-like interface that allows daemon (client) to send
+@@ -421,6 +495,7 @@
+ zapi_ipv4_route (u_char cmd, struct zclient *zclient, struct prefix_ipv4 *p,
+                  struct zapi_ipv4 *api)
+ {
++	//printf(" zapi_ipv4_route function call \n");
+   int i;
+   int psize;
+   struct stream *s;
+@@ -540,6 +615,7 @@
+ int
+ zebra_redistribute_send (int command, struct zclient *zclient, int type)
+ {
++	printf(" zebra_redistribute_send function call \n");
+   struct stream *s;
+ 
+   s = zclient->obuf;
+@@ -604,16 +680,22 @@
+ {
+   struct interface *ifp;
+   char ifname_tmp[INTERFACE_NAMSIZ];
++  u_int32_t feid;
+ 
+   /* Read interface name. */
+   stream_get (ifname_tmp, s, INTERFACE_NAMSIZ);
+-
+   /* Lookup/create interface by name. */
+-  ifp = if_get_by_name_len (ifname_tmp, strnlen(ifname_tmp, INTERFACE_NAMSIZ));
+-
++  ////////////////////////////////////////// KT ///////////////////////////////////////
++  feid = stream_getfe (s);
++  ifp = if_get_by_name_len_kt (ifname_tmp, feid, strnlen(ifname_tmp, INTERFACE_NAMSIZ));
++  //ifp = if_get_by_name_len (ifname_tmp, strnlen(ifname_tmp, INTERFACE_NAMSIZ));
+   /* Read interface's index. */
+-  ifp->ifindex = stream_getl (s);
+-
++  /////////////////////////////////////////// KT ///////////////////////////////////////
++  s->getp--;
++  s->getp--;
++  stream_getfl (s, ifp);
++  //////////////////////////////////////////////////////////////////////////////////////
++ // ifp->ifindex = stream_getl (s);
+   /* Read interface's value. */
+   ifp->status = stream_getc (s);
+   ifp->flags = stream_getq (s);
+@@ -657,7 +739,10 @@
+      return NULL;
+ 
+   /* Read interface's index. */
+-  ifp->ifindex = stream_getl (s);
++ // ifp->ifindex = stream_getl (s);
++ //////////////////////////////// KT ///////////////////////////////////////
++  stream_getfl (s, ifp);
++  //////////////////////////////////////////////////////////////////////////
+ 
+   /* Read interface's value. */
+   ifp->status = stream_getc (s);
+@@ -706,7 +791,10 @@
+ zebra_interface_if_set_value (struct stream *s, struct interface *ifp)
+ {
+   /* Read interface's index. */
+-  ifp->ifindex = stream_getl (s);
++ // ifp->ifindex = stream_getl (s);
++  ////////////////////////////// KT ///////////////////////////////////////////
++  stream_getfl (s, ifp);
++  /////////////////////////////////////////////////////////////////////////////
+   ifp->status = stream_getc (s);
+ 
+   /* Read interface's value. */
+@@ -744,7 +832,9 @@
+ 
+   /* Get interface index. */
+   ifindex = stream_getl (s);
+-
++//////////////////////////// KT /////////////////////////////
++ //   ifindex = stream_getil (s);
++////////////////////////////////////////////////////////////
+   /* Lookup index. */
+   ifp = if_lookup_by_index (ifindex);
+   if (ifp == NULL)
+@@ -773,8 +863,7 @@
+   if (type == ZEBRA_INTERFACE_ADDRESS_ADD) 
+     {
+        /* N.B. NULL destination pointers are encoded as all zeroes */
+-       ifc = connected_add_by_prefix(ifp, &p,(memconstant(&d.u.prefix,0,plen) ?
+-					      NULL : &d));
++       ifc = connected_add_by_prefix(ifp, &p,(memconstant(&d.u.prefix,0,plen) ? NULL : &d));
+        if (ifc != NULL)
+ 	 {
+ 	   ifc->flags = ifc_flags;
+@@ -806,36 +895,42 @@
+   zclient = THREAD_ARG (thread);
+   zclient->t_read = NULL;
+ 
++//  printf("[test...] zclient_read thrd is created...\n");
+   /* Read zebra header (if we don't have it already). */
+-  if ((already = stream_get_endp(zclient->ibuf)) < ZEBRA_HEADER_SIZE)
+-    {
+-      ssize_t nbyte;
++//  if ((already = stream_get_endp(zclient->ibuf)) < ZEBRA_HEADER_SIZE)
++//   {
++      ssize_t nbyte = 0;
++
+       if (((nbyte = stream_read_try(zclient->ibuf, zclient->sock,
+ 				     ZEBRA_HEADER_SIZE-already)) == 0) ||
+ 	  (nbyte == -1))
+ 	{
+-	  if (zclient_debug)
++/*	  if (zclient_debug)
+ 	   zlog_debug ("zclient connection closed socket [%d].", zclient->sock);
+ 	  return zclient_failed(zclient);
+ 	}
+       if (nbyte != (ssize_t)(ZEBRA_HEADER_SIZE-already))
+ 	{
+-	  /* Try again later. */
++	   Try again later. 
+ 	  zclient_event (ZCLIENT_READ, zclient);
+ 	  return 0;
+ 	}
+-      already = ZEBRA_HEADER_SIZE;
++      already = ZEBRA_HEADER_SIZE; */ 
++      usleep(1);
++      zclient_event (ZCLIENT_READ, zclient);
++      return 0;
+     }
+ 
+   /* Reset to read from the beginning of the incoming packet. */
+   stream_set_getp(zclient->ibuf, 0);
+-
+   /* Fetch header values. */
+   length = stream_getw (zclient->ibuf);
+   marker = stream_getc (zclient->ibuf);
+   version = stream_getc (zclient->ibuf);
+   command = stream_getw (zclient->ibuf);
+   
++  zclient->sock = select_fe_id;
++ // zlog_debug("zclient 0x%p command 0x%x \n", zclient, command);
+   if (marker != ZEBRA_HEADER_MARKER || version != ZSERV_VERSION)
+     {
+       zlog_err("%s: socket %d version mismatch, marker %d, version %d",
+@@ -861,9 +956,8 @@
+       stream_free (zclient->ibuf);
+       zclient->ibuf = ns;
+     }
+-
+   /* Read rest of zebra packet. */
+-  if (already < length)
++/*  if (already < length)
+     {
+       ssize_t nbyte;
+       if (((nbyte = stream_read_try(zclient->ibuf, zclient->sock,
+@@ -876,14 +970,13 @@
+ 	}
+       if (nbyte != (ssize_t)(length-already))
+ 	{
+-	  /* Try again later. */
++	   //  Try again later. 
+ 	  zclient_event (ZCLIENT_READ, zclient);
+ 	  return 0;
+ 	}
+     }
+-
++*/
+   length -= ZEBRA_HEADER_SIZE;
+-
+   if (zclient_debug)
+     zlog_debug("zclient 0x%p command 0x%x \n", zclient, command);
+ 
+@@ -937,9 +1030,9 @@
+       break;
+     }
+ 
+-  if (zclient->sock < 0)
++//  if (zclient->sock < 0)
+     /* Connection was closed during packet processing. */
+-    return -1;
++//    return -1;
+ 
+   /* Register read thread. */
+   stream_reset(zclient->ibuf);
+@@ -996,10 +1089,15 @@
+ {
+   switch (event)
+     {
++    case ZCLIENT_SERV:
++	    zclient->t_read = 
++		    thread_add_read (master, zclient_accept, zclient, zclient->sock);
++	    break;
+     case ZCLIENT_SCHEDULE:
+-      if (! zclient->t_connect)
+-	zclient->t_connect =
+-	  thread_add_event (master, zclient_connect, zclient, 0);
++ //     if (! zclient->t_connect)
++	//zclient->t_connect =
++	 // thread_add_event (master, zclient_connect, zclient, 0);
++	// zclient_connect (zclient);
+       break;
+     case ZCLIENT_CONNECT:
+       if (zclient->fail >= 10)
+@@ -1008,9 +1106,9 @@
+ 	zlog_debug ("zclient connect schedule interval is %d", 
+ 		   zclient->fail < 3 ? 10 : 60);
+       if (! zclient->t_connect)
+-	zclient->t_connect = 
+-	  thread_add_timer (master, zclient_connect, zclient,
+-			    zclient->fail < 3 ? 10 : 60);
++	// zclient->t_connect = 
++	 // thread_add_timer (master, zclient_connect, zclient,
++		//	    zclient->fail < 3 ? 10 : 60);
+       break;
+     case ZCLIENT_READ:
+       zclient->t_read = 
+@@ -1018,3 +1116,41 @@
+       break;
+     }
+ }
++
++/* add by jw */
++FORCES_PAYLOAD *msg_gen(int vPri, int vType, unsigned int fe_id)
++{
++        FORCES_PAYLOAD *send_forces_data = (FORCES_PAYLOAD *)malloc(sizeof(FORCES_PAYLOAD));
++        memset (send_forces_data, 0, sizeof(FORCES_PAYLOAD));
++        send_forces_data->header.message_type = vType;
++        send_forces_data->header.flags.pri = vPri;
++        send_forces_data->header.source_id.TS = 0x01;
++        send_forces_data->header.source_id.sub_id = 0x00000001;
++        send_forces_data->header.dest_id.TS = 0x00;
++        send_forces_data->header.dest_id.sub_id = fe_id;
++        return send_forces_data;
++}
++
++int ce_assoc_setup_req(void)
++{
++	printf("[test...] ce_assoc_setup_req function is call...\n");
++        FORCES_PAYLOAD *send_data;
++        send_data = msg_gen(7, MSG_ASSOCIATION_SETUP, 0);
++        tml_SendMsg(send_data);
++
++//		free(send_data);
++        return 1;
++}
++
++int ce_assoc_setup_resp(unsigned int fe_id)
++{
++        printf("[test...] ce_assoc_setup_resp function is call...\n");
++        FORCES_PAYLOAD *send_data;
++        send_data = msg_gen(7, MSG_ASSOCIATION_SETUP_RESPONSE, fe_id);
++        tml_SendMsg(send_data);
++        printf("[test...] ...\n");
++
++//		free(send_data);
++        return 1;
++}
++/* end of addtion */
+--- ./lib/stream.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/stream.c	2011-10-06 21:54:19.799361485 -0400
+@@ -28,6 +28,18 @@
+ #include "network.h"
+ #include "prefix.h"
+ #include "log.h"
++#include "sys/socket.h"
++#include "table.h"
++#include "zclient.h"
++
++//#include "ospfd/ospf_packet.h"
++/* add by jw */
++//#include "zclient.h"
++/* end of addition */
++
++#define HP_PPID 21
++#define MP_PPID 22
++#define LP_PPID 23
+ 
+ /* Tests whether a position is valid */ 
+ #define GETP_VALID(S,G) \
+@@ -340,7 +352,7 @@
+ u_int32_t
+ stream_getl_from (struct stream *s, size_t from)
+ {
+-  u_int32_t l;
++  u_int16_t l;
+ 
+   STREAM_VERIFY_SANE(s);
+   
+@@ -357,8 +369,69 @@
+   
+   return l;
+ }
++////////////////////////////////////// KT ///////////////////////////////////
++/* Get next long word from the stream. */
++void
++stream_getfl (struct stream *s, struct interface *iptr)
++{
++
++	STREAM_VERIFY_SANE(s);
++
++	if (STREAM_READABLE (s) < sizeof (u_int32_t))
++	{
++		STREAM_BOUND_WARN (s, "get long");
++		return 0;
++	}
++
++	iptr->feid  = s->data[s->getp++] << 8;
++	iptr->feid |= s->data[s->getp++];
++	iptr->ifindex = s->data[s->getp++] << 8;
++	iptr->ifindex |= s->data[s->getp++];
++}
++
++
++u_int32_t
++stream_getil (struct stream *s)
++{
++	  u_int32_t l;
++
++	  STREAM_VERIFY_SANE(s);
++
++	  if (STREAM_READABLE (s) < sizeof (u_int32_t))
++	  {
++		 STREAM_BOUND_WARN (s, "get long");
++	     return 0;
++	  }
++
++	  s->getp++;
++	  s->getp++;
++	  l  = s->data[s->getp++] << 8;
++	  l |= s->data[s->getp++];
++
++	  return l;
++}
+ 
+ u_int32_t
++stream_getfe (struct stream *s)
++{
++   u_int32_t l;
++
++   STREAM_VERIFY_SANE(s);
++
++   if (STREAM_READABLE (s) < sizeof (u_int32_t))
++   {
++	  STREAM_BOUND_WARN (s, "get long");
++	  return 0;
++   }
++   
++   l  = s->data[s->getp++] << 8;
++   l |= s->data[s->getp++];
++
++   return l;
++}
++
++/////////////////////////////////////////////////////////////////////////////
++u_int32_t
+ stream_getl (struct stream *s)
+ {
+   u_int32_t l;
+@@ -533,6 +606,25 @@
+ 
+   return 4;
+ }
++///////////////////////////////////////////// KT /////////////////////////////////////
++/* put long word to the stream */
++void
++stream_putfl (struct stream *s, u_int16_t f, u_int16_t i)
++{
++	STREAM_VERIFY_SANE (s);
++
++	if (STREAM_WRITEABLE (s) < sizeof (u_int16_t))
++	{
++		STREAM_BOUND_WARN (s, "put");
++		return 0;
++	}
++	
++	s->data[s->endp++] = (u_char)(f >> 8);
++	s->data[s->endp++] = (u_char)f;
++	s->data[s->endp++] = (u_char)(i >> 8);
++	s->data[s->endp++] = (u_char)i;
++}
++//////////////////////////////////////////////////////////////////////////////////////
+ 
+ /* Put quad word to the stream. */
+ int
+@@ -740,9 +832,10 @@
+ ssize_t
+ stream_read_try(struct stream *s, int fd, size_t size)
+ {
+-  ssize_t nbytes;
+-
+   STREAM_VERIFY_SANE(s);
++  int nbytes;
++  struct msghdr msg;
++  memset(&msg, 0, sizeof(msg));
+   
+   if (STREAM_WRITEABLE(s) < size)
+     {
+@@ -751,22 +844,93 @@
+          (stream is too small to contain the desired data). */
+       return -1;
+     }
+-
+-  if ((nbytes = read(fd, s->data + s->endp, size)) >= 0)
++  if((nbytes = tml_read(s->data, size)) >= 0)
+     {
+       s->endp += nbytes;
+       return nbytes;
+     }
++
+   /* Error: was it transient (return -2) or fatal (return -1)? */
+-  if (ERRNO_IO_RETRY(errno))
+-    return -2;
+-  zlog_warn("%s: read failed on fd %d: %s", __func__, fd, safe_strerror(errno));
++//  if (ERRNO_IO_RETRY(errno))
++//    return -2;
+   return -1;
+ }
+ 
+-/* Read up to size bytes into the stream from the fd, using recvmsgfrom
+- * whose arguments match the remaining arguments to this function
+- */
++int tml_read(char *s, size_t size)
++{
++	struct tagFORCES_PAYLOAD *vMsg;
++	int vPPID = 0;
++	int n = 0;
++	vMsg = (struct tagFORCES_PAYLOAD *)malloc(sizeof(struct tagFORCES_PAYLOAD));
++	memset(vMsg, 0, sizeof(struct tagFORCES_PAYLOAD));
++	struct msghdr msgh;
++	struct iovec iov;
++	struct stream s_data;
++
++	if((n = tml_RecvMsg(vMsg, &vPPID)) > 0)
++	{
++		switch (vPPID)
++		{
++			case HP_PPID:
++				switch (vMsg->header.message_type)
++				{
++					case MSG_ASSOCIATION_SETUP:
++						// forwarding struct memory allocte when association message receive.
++						forwarding = forwarding_new();
++						memset(forwarding, 0, sizeof(struct forwarding_element));
++						interface_table_init (forwarding);
++
++						temp_fe_id = vMsg->header.source_id.sub_id;
++						forwarding->fe_id = temp_fe_id; // The Fe_id set in forwarding struct
++						select_fe_id = temp_fe_id;
++						ce_assoc_setup_resp(temp_fe_id);
++						// allocate aclient structure.
++				        forwarding->zclientptr = zclient_new();
++						forwarding->zclientptr->sock = forwarding->fe_id;
++						zclient_start();
++						router_id_flag = 0;
++						free(vMsg);
++						return -1;
++					case MSG_ROUTE_CONFIG_RESPONSE:
++						select_fe_id = vMsg->header.source_id.sub_id;
++
++						n = vMsg->TLV_pdu.value.payload.AppData.Length;
++                        			memcpy(s, vMsg->TLV_pdu.value.payload.AppData.Data.data, n);
++					//	msg->msg_iovlen = 0;
++                        			return n;
++					case MSG_OSPF_CONFIG:
++						select_fe_id = vMsg->header.source_id.sub_id;
++    memset (&msgh, 0, sizeof (struct msghdr));
++    memset (&s_data, 0, sizeof (struct stream));
++    msgh.msg_iov = &iov;
++    msgh.msg_iovlen = 1;
++    msgh.msg_control = (caddr_t) vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.msg_control;
++    msgh.msg_controllen = 512;
++    iov.iov_len = MAX_PACKET_SIZE + 1;
++    n = vMsg->TLV_pdu.value.payload.AppData.Length;
++    iov.iov_base = vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data;
++    s_data.data = vMsg->TLV_pdu.value.payload.AppData.Data.msg_header.data;
++    s_data.endp += n;
++    s_data.size = MAX_PACKET_SIZE + 1;
++    ospf_recv_packet_kt (&msgh, &s_data);
++						return -1;
++
++					default:
++						perror("undefined message type. \n");
++						free(vMsg);
++						return -1;
++				}
++			case MP_PPID:
++			case LP_PPID:
++			default:
++				perror("undefined PPID. \n");
++				free(vMsg);
++				return -1;
++		}
++	}
++	free(vMsg);
++	return -1;
++}
+ ssize_t 
+ stream_recvfrom (struct stream *s, int fd, size_t size, int flags,
+                  struct sockaddr *from, socklen_t *fromlen)                     
+@@ -822,9 +986,14 @@
+   iov = &(msgh->msg_iov[0]);
+   iov->iov_base = (s->data + s->endp);
+   iov->iov_len = size;
+-  
+   nbytes = recvmsg (fd, msgh, flags);
+-  
++/*  if((nbytes = tml_read (s->data, size)) > 0)
++  {
++	printf(" received msg header packet from fe \n");
++    if(msgh->msg_iovlen == 0)
++	return -1;    
++  }
++  */
+   if (nbytes > 0)
+     s->endp += nbytes;
+   
+--- ./lib/prefix.c	2009-12-21 05:06:06.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/prefix.c	2011-10-06 21:54:19.532478851 -0400
+@@ -68,6 +68,7 @@
+ int
+ prefix_match (const struct prefix *n, const struct prefix *p)
+ {
++ // printf(" prefix match function call in prefix.c file \n");
+   int offset;
+   int shift;
+ 
+@@ -82,6 +83,7 @@
+   offset = n->prefixlen / PNBBY;
+   shift =  n->prefixlen % PNBBY;
+ 
++
+   if (shift)
+     if (maskbit[shift] & (np[offset] ^ pp[offset]))
+       return 0;
+@@ -89,6 +91,8 @@
+   while (offset--)
+     if (np[offset] != pp[offset])
+       return 0;
++
++
+   return 1;
+ }
+ 
+--- ./lib/zclient.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/zclient.h	2011-10-06 21:54:19.998396380 -0400
+@@ -122,14 +122,14 @@
+ /* Prototypes of zebra client service functions. */
+ extern struct zclient *zclient_new (void);
+ extern void zclient_init (struct zclient *, int);
+-extern int zclient_start (struct zclient *);
++extern int zclient_start ();
+ extern void zclient_stop (struct zclient *);
+ extern void zclient_reset (struct zclient *);
+ extern void zclient_free (struct zclient *);
+-
++static int zclient_connect (struct zclient *);
+ /* Get TCP socket connection to zebra daemon at loopback address. */
+-extern int zclient_socket (void);
+-
++//extern int zclient_socket (void);
++extern int ForCES_ospf_server_socket(void);
+ /* Get unix stream socket connection to zebra daemon at given path. */
+ extern int zclient_socket_un (const char *);
+ 
+@@ -157,6 +157,8 @@
+ extern int zapi_ipv4_route (u_char, struct zclient *, struct prefix_ipv4 *, 
+                             struct zapi_ipv4 *);
+ 
++//////////////////////////////////// KT /////////////////////////////////////////////
++extern void zclient_read_thread_start(struct zclient *);
+ #ifdef HAVE_IPV6
+ /* IPv6 prefix add and delete function prototype. */
+ 
+@@ -181,6 +183,13 @@
+ 
+ extern int zapi_ipv6_route (u_char cmd, struct zclient *zclient, 
+                      struct prefix_ipv6 *p, struct zapi_ipv6 *api);
++
++/* add by jw */
++extern FORCES_PAYLOAD *msg_gen(int vPri, int vType, unsigned int fe_id);
++extern int ce_assoc_setup_req(void);
++extern int ce_assoc_setup_resp(unsigned int fe_id);
++/* end of addition */
++
+ #endif /* HAVE_IPV6 */
+ 
+ #endif /* _ZEBRA_ZCLIENT_H */
+--- ./lib/zebra.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/zebra.h	2011-10-06 21:54:20.007431812 -0400
+@@ -267,6 +267,19 @@
+ #include "zassert.h"
+ #include "str.h"
+ 
++///////////////////////////// KT ////////////////////////////////////////////////
++#include "tml_core.h"
++#include "common.h"
++
++#define MAX_PACKET_SIZE  65535U
++#define CE_ROUTER_ID "192.168.159.128"
++struct ospf* global_ospf;
++unsigned int temp_fe_id;
++unsigned int select_fe_id;
++unsigned int intra_id;
++int router_id_flag;
++pthread_mutex_t sync_mutex;
++/////////////////////////////////////////////////////////////////////////////////
+ 
+ #ifdef HAVE_BROKEN_CMSG_FIRSTHDR
+ /* This bug is present in Solaris 8 and pre-patch Solaris 9 <sys/socket.h>;
+--- ./lib/if.c	2009-12-10 11:23:16.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/if.c	2011-10-06 21:54:19.157501735 -0400
+@@ -115,8 +115,8 @@
+ struct interface *
+ if_create (const char *name, int namelen)
+ {
++	printf(" interface create function call \n");
+   struct interface *ifp;
+-
+   ifp = XCALLOC (MTYPE_IF, sizeof (struct interface));
+   ifp->ifindex = IFINDEX_INTERNAL;
+   
+@@ -182,11 +182,18 @@
+ {
+   struct listnode *node;
+   struct interface *ifp;
++  u_int16_t feindex, ifindex;
++
++  feindex = index >> 16;
++  ifindex = index;
++
+ 
+   for (ALL_LIST_ELEMENTS_RO(iflist, node, ifp))
+     {
+-      if (ifp->ifindex == index)
++      if (ifp->ifindex == ifindex && ifp->feid == feindex)
+ 	return ifp;
++	//if(ifp->ifindex == ifindex)
++		//return ifp;
+     }
+   return NULL;
+ }
+@@ -219,6 +226,8 @@
+   if (name)
+     for (ALL_LIST_ELEMENTS_RO (iflist, node, ifp))
+       {
++	   printf(" 1. interface name : %s \n", name);
++	   printf(" 2. interface name : %s \n", ifp->name);
+         if (strcmp(name, ifp->name) == 0)
+           return ifp;
+       }
+@@ -230,10 +239,8 @@
+ {
+   struct listnode *node;
+   struct interface *ifp;
+-
+   if (namelen > INTERFACE_NAMSIZ)
+     return NULL;
+-
+   for (ALL_LIST_ELEMENTS_RO (iflist, node, ifp))
+     {
+       if (!memcmp(name, ifp->name, namelen) && (ifp->name[namelen] == '\0'))
+@@ -878,3 +885,73 @@
+ 
+   memset (&if_master, 0, sizeof if_master);
+ }
++//////////////////////////// KT /////////////////////////////////////////////
++struct interface *
++if_get_by_name_len_kt(const char *name, unsigned int feid, size_t namelen)
++{
++	  struct interface *ifp;
++
++	  return ((ifp = if_lookup_by_name_len_kt(name, feid, namelen)) != NULL) ? ifp :
++				 if_create_kt(name, feid, namelen);
++}
++
++struct interface *
++if_lookup_by_name_len_kt(const char *name, unsigned int feid, size_t namelen)
++{
++	  struct listnode *node;
++	  struct interface *ifp;
++
++	  if (namelen > INTERFACE_NAMSIZ)
++		  return NULL;
++
++	  for (ALL_LIST_ELEMENTS_RO (iflist, node, ifp))
++	  {
++		  if (!memcmp(name, ifp->name, namelen) && 
++				  (ifp->name[namelen] == '\0') &&
++				  (ifp->feid == feid))
++				return ifp;
++	  }
++	  return NULL;
++}
++
++struct interface *
++if_create_kt (const char *name, unsigned int feid, int namelen)
++{
++	  struct interface *ifp;
++
++	  ifp = XCALLOC (MTYPE_IF, sizeof (struct interface));
++	  ifp->ifindex = IFINDEX_INTERNAL;
++		    
++	  assert (name);
++	  assert (namelen <= INTERFACE_NAMSIZ);	/* Need space for '\0' at end. */
++	  strncpy (ifp->name, name, namelen);
++	  ifp->name[namelen] = '\0';
++	  if (if_lookup_by_name_kt (ifp->name, feid) == NULL)
++			listnode_add_sort (iflist, ifp); // interface add 
++	  else
++		    zlog_err("if_create(%s): corruption detected -- interface with this "
++									  	     "name exists already!", ifp->name);
++	  ifp->connected = list_new ();
++      ifp->connected->del = (void (*) (void *)) connected_free;
++
++	  if (if_master.if_new_hook)
++	  (*if_master.if_new_hook) (ifp);
++
++	  return ifp;
++}
++
++struct interface *
++if_lookup_by_name_kt (const char *name, unsigned int feid)
++{
++	  struct listnode *node;
++	  struct interface *ifp;
++		  
++	  if (name)
++		 for (ALL_LIST_ELEMENTS_RO (iflist, node, ifp))
++		 {
++			  if (strcmp(name, ifp->name) == 0 && ifp->feid == feid)
++					return ifp;
++		 }
++	  return NULL;
++}
++/////////////////////////////////////////////////////////////////////////////
+--- ./lib/sockopt.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/sockopt.c	2011-10-06 21:54:19.712458366 -0400
+@@ -222,6 +222,7 @@
+     case IP_MULTICAST_IF:
+     case IP_ADD_MEMBERSHIP:
+     case IP_DROP_MEMBERSHIP:
++     
+       memset (&mreqn, 0, sizeof(mreqn));
+ 
+       if (mcast_addr)
+@@ -234,8 +235,10 @@
+       
+       ret = setsockopt(sock, IPPROTO_IP, optname,
+ 		       (void *)&mreqn, sizeof(mreqn));
++
+       if ((ret < 0) && (optname == IP_ADD_MEMBERSHIP) && (errno == EADDRINUSE))
+         {
++
+ 	  /* see above: handle possible problem when interface comes back up */
+ 	  char buf[2][INET_ADDRSTRLEN];
+ 	  zlog_info("setsockopt_multicast_ipv4 attempting to drop and "
+--- ./lib/if.h	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./lib/if.h	2011-10-06 21:54:19.173362325 -0400
+@@ -82,7 +82,12 @@
+ 
+   /* Interface index (should be IFINDEX_INTERNAL for non-kernel or
+      deleted interfaces). */
+-  unsigned int ifindex;
++ 
++  unsigned int ifindex:16,
++	       feid:16;
++	   
++ // unsigned int ifindex; 
++ 
+ #define IFINDEX_INTERNAL	0
+ 
+   /* Zebra internal interface status */
+@@ -246,7 +251,12 @@
+ extern struct interface *if_lookup_by_name_len(const char *ifname,
+ 					       size_t namelen);
+ extern struct interface *if_get_by_name_len(const char *ifname, size_t namelen);
+-
++///////////////////////////////////////// KT ////////////////////////////////////////
++extern struct interface *if_get_by_name_len_kt(const char *ifname, unsigned int feid, size_t namelen);
++extern struct interface *if_lookup_by_name_len_kt(const char *ifname, unsigned int feid, size_t namelen);
++extern struct interface *if_create_kt (const char *name, unsigned int feid, int namelen);
++extern struct interface *if_lookup_by_name_kt (const char *ifname, unsigned int feid);
++/////////////////////////////////////////////////////////////////////////////////////
+ 
+ /* Delete the interface, but do not free the structure, and leave it in the
+    interface list.  It is often advisable to leave the pseudo interface 
+--- ./ospf6d/ospf6_message.c	2009-12-09 07:37:12.000000000 -0500
++++ /users/kyehwanl/programming/ForCES.svn.git/intgr_CE/quagga-ce/./ospf6d/ospf6_message.c	2011-10-06 21:54:20.670565466 -0400
+@@ -1352,7 +1352,7 @@
+     }
+ 
+   /* send message */
+-  len = ospf6_sendmsg (src, dst, &oi->interface->ifindex, iovector);
++  //len = ospf6_sendmsg (src, dst, &oi->interface->ifindex, iovector);
+   if (len != ntohs (oh->length))
+     zlog_err ("Could not send entire message");
+ }

@@ -1,0 +1,67 @@
+need to know for running bird for bgpsec operation
+
+(1) in bird.conf, need to locate a proper storage place for keys - pub and priv
+    - also could be written in the source file, bgpd.h.
+    - ASnumber.SKI private keys should be found on a system which operates BIRD
+    - ASnumber.SKI.00  pub kesy also should be found when receiving from a peer.
+
+(2) bird current version, bird-v1.4.5-bgpsec-v0.6, has critical typo for validating bgpsec packet.
+    - located at 
+
+    --- attrs.c.orig        2015-09-02 15:15:41.000000000 -0400
+    +++ attrs.c     2015-09-02 13:21:32.000000000 -0400        
+    @@ -707,7 +707,8 @@ static struct attr_desc bgp_attr_table[] 
+       { .name = NULL },                                                             /* 28 BA_ENTROPY_LABELS */
+       { .name = NULL },                                                             /* 29 BA_LS_ATTRIBUTE */  
+       /* supported */                                           
+    -#ifdef CONFIG_BPGSEC                                        
+    +//#ifdef CONFIG_BPGSEC                                      
+    +#ifdef CONFIG_BGPSEC                                        
+       /* Treated as a special case and checked by bgpsec_decode_attr,
+                       * bgpsec_authenticate, and bgpsec_sign */      
+       { "bgpsec_signature", -1, BAF_OPTIONAL, EAF_TYPE_OPAQUE, 1,                   /* 30 BA_BGPSEC_SIGNATURE */
+
+(3) system halt
+    - on running bgpsec on latest bird, on receiving almost 5000 updates, then system down
+    - following message came from syslog
+
+
+    Sep  2 13:50:09 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                            [35/1894]
+    Sep  2 13:50:09 localhost pubsubd[1538]:    Sub: token:3 emitted:0 failed:0                                     
+    Sep  2 13:50:09 localhost pubsubd[1538]:  Client:127.0.0.1 sock:7 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:50:09 localhost pubsubd[1538]:    Sub: token:1 emitted:0 failed:0                                     
+    Sep  2 13:50:09 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:50:13 localhost rsyslogd-2177: imuxsock lost 813 messages from pid 3313 due to rate-limiting          
+    Sep  2 13:50:13 localhost bird: bgp35: Received: Peer de-configured                                             
+    Sep  2 13:50:13 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:21 localhost rsyslogd-2177: imuxsock lost 2821 messages from pid 3313 due to rate-limiting         
+    Sep  2 13:50:25 localhost bird: bgp35: Received: Connection collision resolution                                
+    Sep  2 13:50:26 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:27 localhost rsyslogd-2177: imuxsock lost 155 messages from pid 3313 due to rate-limiting          
+    Sep  2 13:50:27 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:33 localhost rsyslogd-2177: imuxsock lost 7790 messages from pid 3313 due to rate-limiting         
+    Sep  2 13:50:33 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:39 localhost rsyslogd-2177: imuxsock lost 11016 messages from pid 3313 due to rate-limiting        
+    Sep  2 13:50:39 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:39 localhost pubsubd[1538]: Totals: total:6 current:6 (3) received:0 emitted:0 failed:0            
+    Sep  2 13:50:39 localhost pubsubd[1538]:  Client:127.0.0.1 sock:5 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:50:39 localhost pubsubd[1538]:  Client:127.0.0.1 sock:6 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:1 emitted:0 failed:0                                     
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:3 emitted:0 failed:0                                     
+    Sep  2 13:50:39 localhost pubsubd[1538]:  Client:127.0.0.1 sock:7 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:1 emitted:0 failed:0                                     
+    Sep  2 13:50:39 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:50:45 localhost rsyslogd-2177: imuxsock lost 7832 messages from pid 3313 due to rate-limiting         
+    Sep  2 13:50:45 localhost rsyslogd-2177: imuxsock begins to drop messages from pid 3313 due to rate-limiting    
+    Sep  2 13:50:59 localhost kernel: [70176.404635] nfs: server ops2.emulab2.antd.nist.gov not responding, still tr
+    ying                                                                                                            
+    Sep  2 13:51:09 localhost pubsubd[1538]: Totals: total:6 current:6 (3) received:0 emitted:0 failed:0            
+    Sep  2 13:51:09 localhost pubsubd[1538]:  Client:127.0.0.1 sock:5 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:51:09 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:51:09 localhost pubsubd[1538]:  Client:127.0.0.1 sock:6 received:0 emitted:0 failed:0 (0)             
+    Sep  2 13:51:09 localhost pubsubd[1538]:    Sub: token:1 emitted:0 failed:0                                     
+    Sep  2 13:51:09 localhost pubsubd[1538]:    Sub: token:2 emitted:0 failed:0                                     
+    Sep  2 13:51:09 localhost pubsubd[1538]:    Sub: token:3 emitted:0 failed:0                                     
+        

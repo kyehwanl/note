@@ -1,0 +1,80 @@
+--- ./proto/bgp/attrs.c	2016-09-28 14:25:46.000000000 -0600
++++ ./proto/bgp/attrs.c	2016-10-11 11:35:49.000000000 -0600
+@@ -931,9 +1107,12 @@ bgp_get_attr_len(eattr *a)
+ #ifdef CONFIG_BGPSEC
+ 
+ int bgpsec_is_origination(struct bgp_config *config, struct prefix *nlri_prefix) {
++#if 0
+   int i=0;
+   for(i=0; i < config->bgpsec_orig_px_len; i++) {
+-    if ( (config->bgpsec_orig_px[i].addr == nlri_prefix->addr) &&
++    if (
++        (memcmp(&config->bgpsec_orig_px[i].addr, &nlri_prefix->addr, sizeof(ip_addr)) == 0) &&
++        //(config->bgpsec_orig_px[i].addr == nlri_prefix->addr) &&
+ 	 (config->bgpsec_orig_px[i].len  == nlri_prefix->len) ) {
+       log(L_TRACE "BGPsec Origination Route:  %I/%d = %I/%d",
+ 	  config->bgpsec_orig_px[i].addr, config->bgpsec_orig_px[i].len,
+@@ -942,6 +1121,8 @@ int bgpsec_is_origination(struct bgp_con
+     }
+   }
+   return 0;
++#endif
++      return 1;
+ }
+
+@@ -1011,7 +1192,7 @@ encode_bgpsec_attr(struct  bgp_conn  *co
+ {
+   log(L_TRACE "encode_bgpsec_attr: %d > %d, using NLRI %I/%d\n",
+       conn->bgp->cf->local_as, conn->bgp->cf->remote_as,
+-      (nlri_prefix ? nlri_prefix->addr : 0),
++      (nlri_prefix ? nlri_prefix->addr.addr : 0),
+       (nlri_prefix ? nlri_prefix->len  : 0));
+ 
+   int isOrig = bgpsec_is_origination(conn->bgp->cf , nlri_prefix);
+--- ./proto/bgp/bgp.c	2016-09-28 14:25:46.000000000 -0600
++++ ./proto/bgp/bgp.c	2016-10-11 11:35:49.000000000 -0600
+@@ -1423,6 +1423,8 @@ bgp_check_config(struct bgp_config *c)
+ 	cf_error("BGPsec:: unable to parse bpgsec_key_repo_path");
+       }
+     }
++
++#if 0
+     /* Show Configured Origination Addresses */
+     if (c->bgpsec_orig_px_len > 0) {
+       int i;
+@@ -1432,6 +1434,7 @@ bgp_check_config(struct bgp_config *c)
+ 	log(L_TRACE "BPGPSEC: Adding origination prefix: %s/%d", add_string, c->bgpsec_orig_px[i].len);
+       }
+     }
++#endif
+ 
+   }
+ #endif
+
+--- ./proto/bgp/bgp.h	2016-09-28 14:25:46.000000000 -0600
++++ ./proto/bgp/bgp.h	2016-10-11 11:35:49.000000000 -0600
+@@ -86,7 +86,7 @@ struct bgp_config {
+   int     bgpsec_local_pcount0;           /* sets local pcounts to 0 */
+   int     bgpsec_no_invalid_routes;       /* should invalid routes be dropped */
+   int     bgpsec_orig_px_len;             /* number of origination addresses */
+-  struct prefix bgpsec_orig_px[BGPSEC_MAX_ORIG_PX_ARRAY+1];  /* configured origination addresses */
++  //struct prefix bgpsec_orig_px[BGPSEC_MAX_ORIG_PX_ARRAY+1];  /* configured origination addresses */
+   
+   u32 rr_cluster_id;			/* Route reflector cluster ID, if different from local ID */
+   int rr_client;			/* Whether neighbor is RR client of me */
+
+
+--- config.Y            2016-10-11 11:35:49.000000000 -0600                     
++++ config.Y            2016-09-28 14:25:46.000000000 -0600
+@@ -168,9 +168,9 @@ bgp_proto:
+  | bgp_proto BGPSEC_ORIGINATION_PREFIX prefix ';' {
+      if (BGP_CFG->bgpsec_orig_px_len >= BGPSEC_MAX_ORIG_PX_ARRAY)
+        cf_error("Max number of origination addresses reached: 10");
+-     //BGP_CFG->bgpsec_orig_px[BGP_CFG->bgpsec_orig_px_len].addr = $3.addr;
+-     //BGP_CFG->bgpsec_orig_px[BGP_CFG->bgpsec_orig_px_len].len  = $3.len;
+-     //BGP_CFG->bgpsec_orig_px_len = BGP_CFG->bgpsec_orig_px_len +1;
++     BGP_CFG->bgpsec_orig_px[BGP_CFG->bgpsec_orig_px_len].addr = $3.addr;
++     BGP_CFG->bgpsec_orig_px[BGP_CFG->bgpsec_orig_px_len].len  = $3.len;
++     BGP_CFG->bgpsec_orig_px_len = BGP_CFG->bgpsec_orig_px_len +1;
+    }
+

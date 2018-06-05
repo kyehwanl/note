@@ -1,0 +1,255 @@
+
+
+topology
+========
+
+ node1 --> node2 --> node3
+ 60002     60003     60004
+ prefix: 100.0.0.0/8
+
+
+
+debugging script
+=====================
+
+1. node1 
+
+   A. generated hash from sign() for origin
+
+    Hash(sign):
+    00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+   B. digest value of hash
+    Digest(sign):
+    73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+    97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+
+
+2. node2
+
+
+    A. hash data which was generated during validation process
+    This is based on the update data received from the previous node (node1)
+
+         sca_generateHashMessage (data=0x801d6260, algoID=1 '\001', status=0x801d6264)
+            at srxcryptoapi.c:1430
+        (gdb) x/115bx data->hashMessage [0]->buffer
+        0x801ebe78:     0x00    0x00    0x00    0x00    0xc3    0x04    0x33    0xfa
+        0x801ebe80:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+        0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+        0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+        0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+        0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+        0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+        0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+        0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+        0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+        0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+        0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+        0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+        0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+        0x801ebee8:     0x01    0x08    0x64
+
+
+    B. extract a portion which belongs to the first hash data, (starting from 0x801ebedb to 0x801ebeea)
+       and its digest value follows
+
+        Hash:
+        00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+        Digest:
+        73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+        97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+
+
+    C.  on sign() function, preparing to send the bgpsec update to the next peer, node3.
+
+        Breakpoint 2, sign (bgpsec_data=0xbffff0cc) at bgpsec_openssl.c:746
+        (gdb) x/115bx bgpsec_data ->hashMessage->buffer
+        0x801ebe78:     0x00    0x00    0xea    0x64    0x01    0x00    0x00    0x00
+        0x801ebe80:     0xea    0x63    0xff    0x19    0x31    0x81    0x45    0x8f
+        0x801ebe88:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+        0x801ebe90:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+        0x801ebe98:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+        0x801ebea0:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+        0x801ebea8:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+        0x801ebeb0:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+        0x801ebeb8:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+        0x801ebec0:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+        0x801ebec8:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+        0x801ebed0:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+        0x801ebed8:     0x45    0x00    0x00    0x00    0x00    0xea    0x63    0x01
+        0x801ebee0:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+        0x801ebee8:     0x01    0x08    0x64
+
+        #error1:  - at 0x801ebe7c, was overwritten by memcpy with the value of bgpsec_data->myHost in ine 750.
+                     node2's Path segment overwrites first 6bytes of SKI value of node1
+
+        #error2:  - in Line 761, 
+                    When it calls _createSha256Digest, it should dereference the pointer value of "hashMessage->buffer", 
+                    not the pointer value in the  hashMessageValPtr [0]->hashMessagePtr
+                
+
+
+
+    D. Hash value makes the digest value, which will be sent to the next peer, node3.
+       This hash value should include the signature block of previous node, node1. 
+       But it was missing here. It will eventually lead to fail to validation on the next node, node3.
+
+        Hash(sign):
+        00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64
+
+
+        Digest(sign):
+        73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d
+        97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df
+
+    
+
+3. node3
+
+
+    A. hash data which was generated during validation process
+    This is based on the update data received from the previous node (node2)
+
+        Breakpoint 1, sca_generateHashMessage (data=0x801bea70, algoID=1 '\001', status=0x801bea74) at srxcryptoapi.c:1262
+        (gdb) x/115bx data->hashMessage [0]->hashMessageValPtr [0]->hashMessagePtr
+        0x801e13fb:     0x00    0x00    0xea    0x64    0xc3    0x04    0x33    0xfa
+        0x801e1403:     0x19    0x75    0xff    0x19    0x31    0x81    0x45    0x8f
+        0x801e140b:     0xb9    0x02    0xb5    0x01    0xea    0x97    0x89    0xdc
+        0x801e1413:     0x00    0x47    0x30    0x45    0x02    0x21    0x00    0xdd
+        0x801e141b:     0xe1    0x7e    0xd2    0x8d    0x76    0x79    0x37    0x7d
+        0x801e1423:     0x3e    0x05    0x72    0xc5    0x5f    0x12    0x0c    0xd2
+        0x801e142b:     0xf7    0x80    0x75    0xa2    0x8d    0x74    0x26    0x22
+        0x801e1433:     0x99    0xe6    0xaf    0xbb    0x87    0x8e    0xb3    0x02
+        0x801e143b:     0x20    0x41    0x26    0xbb    0xf0    0xfe    0x02    0x0d
+        0x801e1443:     0xaa    0xa3    0xa7    0x2d    0xc4    0xa0    0x98    0x69
+        0x801e144b:     0x43    0x47    0xab    0x1f    0x09    0x1c    0x94    0x06
+        0x801e1453:     0xd2    0x9c    0xf4    0x0e    0x88    0x1a    0x00    0xf6
+        0x801e145b:     0x45    0x01    0x00    0x00    0x00    0xea    0x63    0x01
+        0x801e1463:     0x00    0x00    0x00    0xea    0x62    0x01    0x00    0x01
+        0x801e146b:     0x01    0x08    0x64
+
+
+
+    B. Hash data comes from the address,0x801e13fb  and its digest value
+        Hash:
+        00 00 ea 64 c3 04 33 fa 19 75 ff 19 31 81 45 8f 
+        b9 02 b5 01 ea 97 89 dc 00 47 30 45 02 21 00 dd 
+        e1 7e d2 8d 76 79 37 7d 3e 05 72 c5 5f 12 0c d2 
+        f7 80 75 a2 8d 74 26 22 99 e6 af bb 87 8e b3 02 
+        20 41 26 bb f0 fe 02 0d aa a3 a7 2d c4 a0 98 69 
+        43 47 ab 1f 09 1c 94 06 d2 9c f4 0e 88 1a 00 f6 
+        45 01 00 00 00 ea 63 01 00 00 00 ea 62 01 00 01 
+        01 08 64 
+
+
+        Digest:
+        a6 d5 3e ff 44 a0 e7 0b 2d ea 60 00 7e 79 79 ae 
+        4a c3 49 7e 82 93 b3 74 41 ab 1d 64 aa 15 55 73 
+
+        VERIFY FAILED
+        [SRxCryptoAPI - WARNING] [validate:644] verify failed and quit: ret:0 idx:0, ecIdx:1
+
+        --> failed because of comparing digest values between 2.D and 3.B
+
+
+    C. first node, node1's hash and digest parsed from 0x801e145e
+
+        Hash:
+        00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 08 64 
+
+
+        Digest:
+        73 59 4c c1 07 77 39 89 36 58 c0 66 ce ec 3b 4d 
+        97 8d 03 6d 7e 08 f1 e5 be fe 6d 22 c5 63 ca df 
+
+        VERIFY SUCCESS
+
+        --> succeeded because of comparing the digest values between (1.B or 2.B) and 3.C, which are identical
+
+
+
+
+
+patch file 
+==========
+
+
+diff --git a/bgpsec_openssl/bgpsec_openssl.c b/bgpsec_openssl/bgpsec_openssl.c
+index bded04b..ebb8d48 100644
+--- a/bgpsec_openssl/bgpsec_openssl.c
++++ b/bgpsec_openssl/bgpsec_openssl.c
+@@ -647,6 +647,11 @@ int validate(SCA_BGPSecValidationData* data)
+                == 1)
+             {
+               retVal = API_VALRESULT_VALID;
++              printf("VERIFY SUCCESS\n");
++            }
++            else
++            {
++              retVal = API_VALRESULT_INVALID; 
++              printf("VERIFY FAILED\n");      
++              break;                          
+             }
+           }
+           else
+@@ -764,13 +769,33 @@ int validate(SCA_BGPSecValidationData* data)
+         u_int32_t* targetAS = (u_int32_t*)buffPtr;
+         *targetAS = bgpsec_data->peerAS;
+         buffPtr += 4; // Move to the path segment
++
++
++        if(origin)
+         memcpy(buffPtr, bgpsec_data->myHost, LEN_SECPATHSEGMENT);
++        else
++          memcpy(bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessagePtr-2,
++              bgpsec_data->myHost, LEN_SECPATHSEGMENT);
+                 
+         u_int16_t sigLen  = ECDSA_size(ec_keys[0]);
+         uint usedLen = 0;
+         u_int8_t* sigBuff = malloc(sigLen);
+         memset (sigBuff, 0, sigLen);
+         
++        u_int8_t *pTmpHashMsgPtr = NULL;
++        u_int16_t iTmpHashMsgLeng = 0;
++
++        if(!origin)
++        {
++          pTmpHashMsgPtr  = bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessagePtr;
++          iTmpHashMsgLeng = bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessageLength;
++
++          bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessagePtr =
++            bgpsec_data->hashMessage->buffer;
++          bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessageLength =
++            bgpsec_data->hashMessage->bufferSize;
++        }
++
+         // Now generate the hash
+         // Temporary space for the generated message digest (hash)
+         u_int8_t hashDigest[SHA256_DIGEST_LENGTH];
+@@ -783,6 +808,13 @@ int validate(SCA_BGPSecValidationData* data)
+         // Use only the first key.                
+         int res = ECDSA_sign(0, hashDigest, SHA256_DIGEST_LENGTH, 
+                                 sigBuff, (unsigned int*)&usedLen, ec_keys[0]);
++
++        if(!origin)
++        {
++          bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessagePtr = pTmpHashMsgPtr;
++          bgpsec_data->hashMessage->hashMessageValPtr[0]->hashMessageLength = iTmpHashMsgLeng;
++        }
++
+         if (res != 1)
+         {
+           myStatus |= API_STATUS_INFO_SIGNATURE;
+
+
+
+
+
+
+

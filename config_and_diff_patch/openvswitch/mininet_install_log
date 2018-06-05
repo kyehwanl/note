@@ -1,0 +1,810 @@
+kyehwanl@n4:/tmp/mininet$ ./util/install.sh -nfv
+Detected Linux distribution: Ubuntu 14.04 trusty amd64
+Ubuntu
+Installing Mininet dependencies
+Reading package lists...
+Building dependency tree...
+Reading state information...
+ethtool is already the newest version.
+gcc is already the newest version.
+help2man is already the newest version.
+make is already the newest version.
+pep8 is already the newest version.
+psmisc is already the newest version.
+pyflakes is already the newest version.
+pylint is already the newest version.
+telnet is already the newest version.
+xterm is already the newest version.
+cgroup-bin is already the newest version.
+iperf is already the newest version.
+socat is already the newest version.
+iproute is already the newest version.
+python-pexpect is already the newest version.
+python-setuptools is already the newest version.
+ssh is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 279 not upgraded.
+Installing Mininet core
+/tmp/mininet /tmp/mininet
+install mnexec /usr/bin
+install mn.1 mnexec.1 /usr/share/man/man1
+python setup.py install
+running install
+running bdist_egg
+running egg_info
+writing requirements to mininet.egg-info/requires.txt
+writing mininet.egg-info/PKG-INFO
+writing top-level names to mininet.egg-info/top_level.txt
+writing dependency_links to mininet.egg-info/dependency_links.txt
+reading manifest file 'mininet.egg-info/SOURCES.txt'
+writing manifest file 'mininet.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/topo.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/moduledeps.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/log.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/net.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/__init__.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/node.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/cli.py -> build/bdist.linux-x86_64/egg/mininet
+creating build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/consoles.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/baresshd.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/clusterdemo.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/treeping64.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/multitest.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/controllers2.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/clustercli.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/linuxrouter.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/nat.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/clusterSanity.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/popen.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/multilink.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/tree1024.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/multiping.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/linearbandwidth.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/__init__.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/controllers.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/controlnet.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/cpu.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/mobility.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/sshd.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/scratchnet.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/simpleperf.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/bind.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/hwintf.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/miniedit.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/clusterperf.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/numberedports.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/intfoptions.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/popenpoll.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/vlanhost.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/cluster.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/natnet.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/multipoll.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/limit.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/emptynet.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/examples/scratchnetuser.py -> build/bdist.linux-x86_64/egg/mininet/examples
+copying build/lib.linux-x86_64-2.7/mininet/util.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/term.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/link.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/topolib.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/clean.py -> build/bdist.linux-x86_64/egg/mininet
+copying build/lib.linux-x86_64-2.7/mininet/nodelib.py -> build/bdist.linux-x86_64/egg/mininet
+byte-compiling build/bdist.linux-x86_64/egg/mininet/topo.py to topo.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/moduledeps.py to moduledeps.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/log.py to log.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/net.py to net.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/__init__.py to __init__.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/node.py to node.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/cli.py to cli.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/consoles.py to consoles.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/baresshd.py to baresshd.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/clusterdemo.py to clusterdemo.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/treeping64.py to treeping64.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/multitest.py to multitest.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/controllers2.py to controllers2.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/clustercli.py to clustercli.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/linuxrouter.py to linuxrouter.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/nat.py to nat.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/clusterSanity.py to clusterSanity.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/popen.py to popen.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/multilink.py to multilink.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/tree1024.py to tree1024.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/multiping.py to multiping.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/linearbandwidth.py to linearbandwidth.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/__init__.py to __init__.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/controllers.py to controllers.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/controlnet.py to controlnet.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/cpu.py to cpu.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/mobility.py to mobility.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/sshd.py to sshd.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/scratchnet.py to scratchnet.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/simpleperf.py to simpleperf.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/bind.py to bind.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/hwintf.py to hwintf.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/miniedit.py to miniedit.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/clusterperf.py to clusterperf.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/numberedports.py to numberedports.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/intfoptions.py to intfoptions.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/popenpoll.py to popenpoll.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/vlanhost.py to vlanhost.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/cluster.py to cluster.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/natnet.py to natnet.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/multipoll.py to multipoll.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/limit.py to limit.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/emptynet.py to emptynet.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/examples/scratchnetuser.py to scratchnetuser.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/util.py to util.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/term.py to term.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/link.py to link.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/topolib.py to topolib.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/clean.py to clean.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mininet/nodelib.py to nodelib.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+installing scripts to build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+running install_scripts
+running build_scripts
+creating build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-2.7/mn -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/mn to 755
+copying mininet.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mininet.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mininet.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mininet.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mininet.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+creating 'dist/mininet-2.3.0d1-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing mininet-2.3.0d1-py2.7.egg
+Removing /usr/local/lib/python2.7/dist-packages/mininet-2.3.0d1-py2.7.egg
+Copying mininet-2.3.0d1-py2.7.egg to /usr/local/lib/python2.7/dist-packages
+mininet 2.3.0d1 is already the active version in easy-install.pth
+Installing mn script to /usr/local/bin
+
+Installed /usr/local/lib/python2.7/dist-packages/mininet-2.3.0d1-py2.7.egg
+Processing dependencies for mininet==2.3.0d1
+Searching for setuptools==3.3
+Best match: setuptools 3.3
+setuptools 3.3 is already the active version in easy-install.pth
+Installing easy_install script to /usr/local/bin
+Installing easy_install-2.7 script to /usr/local/bin
+
+Using /usr/lib/python2.7/dist-packages
+Finished processing dependencies for mininet==2.3.0d1
+/tmp/mininet
+Installing OpenFlow reference implementation...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+autoconf is already the newest version.
+automake is already the newest version.
+gcc is already the newest version.
+libtool is already the newest version.
+make is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 279 not upgraded.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+autotools-dev is already the newest version.
+pkg-config is already the newest version.
+git-core is already the newest version.
+libc6-dev is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 279 not upgraded.
+Cloning into 'openflow'...
+remote: Counting objects: 12217, done.
+remote: Total 12217 (delta 0), reused 0 (delta 0), pack-reused 12217
+Receiving objects: 100% (12217/12217), 8.44 MiB | 14.25 MiB/s, done.
+Resolving deltas: 100% (8346/8346), done.
+Checking connectivity... done.
+patching file controller/controller.c
+configure.ac:42: installing 'build-aux/compile'
+configure.ac:40: installing 'build-aux/install-sh'
+configure.ac:40: installing 'build-aux/missing'
+Makefile.am: installing 'build-aux/depcomp'
+parallel-tests: installing 'build-aux/test-driver'
+checking build number... none
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables...
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking whether gcc understands -c and -o together... yes
+checking for style of include used by make... GNU
+checking dependency style of gcc... gcc3
+checking how to run the C preprocessor... gcc -E
+checking for ranlib... ranlib
+checking for perl... /usr/bin/perl
+checking for grep that handles long lines and -e... /bin/grep
+checking for egrep... /bin/grep -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking minix/config.h usability... no
+checking minix/config.h presence... no
+checking for minix/config.h... no
+checking whether it is safe to define __EXTENSIONS__... yes
+checking for linux/netlink.h... yes
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for dladdr in -ldl... yes
+checking for connect in -lsocket... no
+checking for library containing gethostbyname... none required
+checking whether libc supports hooks for malloc and related functions... yes
+checking for strlcpy... no
+checking net/if_packet.h usability... yes
+checking net/if_packet.h presence... yes
+checking for net/if_packet.h... yes
+checking for special C compiler options needed for large files... no
+checking for _FILE_OFFSET_BITS value needed for large files... no
+checking for strsignal... yes
+checking for dpkg-buildpackage... yes
+checking whether gcc accepts -Wall... yes
+checking whether gcc accepts -Wno-sign-compare... yes
+checking whether gcc accepts -Wpointer-arith... yes
+checking whether gcc accepts -Wdeclaration-after-statement... yes
+checking whether gcc accepts -Wformat-security... yes
+checking whether gcc accepts -Wswitch-enum... yes
+checking whether gcc accepts -Wunused-parameter... yes
+checking whether gcc accepts -Wstrict-aliasing... yes
+checking whether gcc accepts -Wbad-function-cast... yes
+checking whether gcc accepts -Wcast-align... yes
+checking whether gcc accepts -Wstrict-prototypes... yes
+checking whether gcc accepts -Wold-style-definition... yes
+checking whether gcc accepts -Wmissing-prototypes... yes
+checking whether gcc accepts -Wmissing-field-initializers... yes
+checking whether gcc accepts -Wno-override-init... yes
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+make  all-recursive
+make[1]: Entering directory `/tmp/openflow'
+make[2]: Entering directory `/tmp/openflow'
+depbase=`echo lib/backtrace.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/backtrace.o -MD -MP -MF $depbase.Tpo -c -o lib/backtrace.o lib/backtrace.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/backtrace.c: In function ‘get_max_stack’:
+lib/backtrace.c:63:13: warning: use of assignment suppression and length modifier together in gnu_scanf format [-Wformat=]
+             if (sscanf(line, "%*"SCNxPTR"-%"SCNxPTR, &end) != 1) {
+             ^
+lib/backtrace.c: In function ‘stack_low’:
+lib/backtrace.c:98:5: warning: function returns address of local variable [-Wreturn-local-addr]
+     return (uintptr_t) &dummy;
+     ^
+lib/backtrace.c: In function ‘backtrace_capture’:
+lib/backtrace.c:126:5: warning: passing argument 1 of ‘backtrace’ from incompatible pointer type [enabled by default]
+     bt->n_frames = backtrace(bt->frames, BACKTRACE_MAX_FRAMES);
+     ^
+In file included from lib/backtrace.c:41:0:
+/usr/include/execinfo.h:27:12: note: expected ‘void **’ but argument is of type ‘uintptr_t *’
+ extern int backtrace (void **__array, int __size) __nonnull ((1));
+            ^
+lib/backtrace.c: At top level:
+lib/backtrace.c:103:1: warning: ‘in_stack’ defined but not used [-Wunused-function]
+ in_stack(void *p)
+ ^
+depbase=`echo lib/bitmap.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/bitmap.o -MD -MP -MF $depbase.Tpo -c -o lib/bitmap.o lib/bitmap.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/command-line.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/command-line.o -MD -MP -MF $depbase.Tpo -c -o lib/command-line.o lib/command-line.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/csum.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/csum.o -MD -MP -MF $depbase.Tpo -c -o lib/csum.o lib/csum.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/daemon.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/daemon.o -MD -MP -MF $depbase.Tpo -c -o lib/daemon.o lib/daemon.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/daemon.c: In function ‘daemonize’:
+lib/daemon.c:226:18: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+             write(fds[1], &c, 1);
+                  ^
+lib/daemon.c:229:18: warning: ignoring return value of ‘chdir’, declared with attribute warn_unused_result [-Wunused-result]
+             chdir("/");
+                  ^
+depbase=`echo lib/dhcp-client.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/dhcp-client.o -MD -MP -MF $depbase.Tpo -c -o lib/dhcp-client.o lib/dhcp-client.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/dhcp.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/dhcp.o -MD -MP -MF $depbase.Tpo -c -o lib/dhcp.o lib/dhcp.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+(echo '/* -*- mode: c; buffer-read-only: t -*- */' && \
+         echo 'const char ofp_pkgdatadir[] = "/usr/local/share/openflow";' && \
+         echo 'const char ofp_rundir[] = "/usr/local/var/run";' && \
+         echo 'const char ofp_logdir[] = "/usr/local/var/log/openflow";') > lib/dirs.c.tmp
+mv lib/dirs.c.tmp lib/dirs.c
+depbase=`echo lib/dirs.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/dirs.o -MD -MP -MF $depbase.Tpo -c -o lib/dirs.o lib/dirs.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/dynamic-string.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/dynamic-string.o -MD -MP -MF $depbase.Tpo -c -o lib/dynamic-string.o lib/dynamic-string.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/fatal-signal.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/fatal-signal.o -MD -MP -MF $depbase.Tpo -c -o lib/fatal-signal.o lib/fatal-signal.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/fault.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/fault.o -MD -MP -MF $depbase.Tpo -c -o lib/fault.o lib/fault.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/flow.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/flow.o -MD -MP -MF $depbase.Tpo -c -o lib/flow.o lib/flow.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/flow.c: In function ‘pull_arp’:
+lib/flow.c:51:32: warning: unused variable ‘arp’ [-Wunused-variable]
+         struct arp_eth_header *arp = packet->data;
+                                ^
+lib/flow.c: In function ‘flow_extract’:
+lib/flow.c:213:48: warning: initialization from incompatible pointer type [enabled by default]
+             const struct arp_eth_header *arp = pull_arp(&b);
+                                                ^
+depbase=`echo lib/hash.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/hash.o -MD -MP -MF $depbase.Tpo -c -o lib/hash.o lib/hash.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/hmap.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/hmap.o -MD -MP -MF $depbase.Tpo -c -o lib/hmap.o lib/hmap.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/leak-checker.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/leak-checker.o -MD -MP -MF $depbase.Tpo -c -o lib/leak-checker.o lib/leak-checker.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/leak-checker.c: In function ‘get_hooks’:
+lib/leak-checker.c:94:5: warning: ‘__malloc_hook’ is deprecated (declared at /usr/include/malloc.h:153) [-Wdeprecated-declarations]
+     hooks->malloc_hook_func = __malloc_hook;
+     ^
+lib/leak-checker.c:95:5: warning: ‘__realloc_hook’ is deprecated (declared at /usr/include/malloc.h:156) [-Wdeprecated-declarations]
+     hooks->realloc_hook_func = __realloc_hook;
+     ^
+lib/leak-checker.c:96:5: warning: ‘__free_hook’ is deprecated (declared at /usr/include/malloc.h:150) [-Wdeprecated-declarations]
+     hooks->free_hook_func = __free_hook;
+     ^
+lib/leak-checker.c: In function ‘set_hooks’:
+lib/leak-checker.c:102:5: warning: ‘__malloc_hook’ is deprecated (declared at /usr/include/malloc.h:153) [-Wdeprecated-declarations]
+     __malloc_hook = hooks->malloc_hook_func;
+     ^
+lib/leak-checker.c:103:5: warning: ‘__realloc_hook’ is deprecated (declared at /usr/include/malloc.h:156) [-Wdeprecated-declarations]
+     __realloc_hook = hooks->realloc_hook_func;
+     ^
+lib/leak-checker.c:104:5: warning: ‘__free_hook’ is deprecated (declared at /usr/include/malloc.h:150) [-Wdeprecated-declarations]
+     __free_hook = hooks->free_hook_func;
+     ^
+lib/leak-checker.c: In function ‘log_callers’:
+lib/leak-checker.c:161:9: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘uintptr_t’ [-Wformat=]
+         fprintf(file, " 0x%x", backtrace.frames[i]);
+         ^
+depbase=`echo lib/learning-switch.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/learning-switch.o -MD -MP -MF $depbase.Tpo -c -o lib/learning-switch.o lib/learning-switch.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/list.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/list.o -MD -MP -MF $depbase.Tpo -c -o lib/list.o lib/list.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/mac-learning.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/mac-learning.o -MD -MP -MF $depbase.Tpo -c -o lib/mac-learning.o lib/mac-learning.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/netdev.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/netdev.o -MD -MP -MF $depbase.Tpo -c -o lib/netdev.o lib/netdev.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/netdev.c: In function ‘do_remove_qdisc’:
+lib/netdev.c:417:11: warning: ignoring return value of ‘system’, declared with attribute warn_unused_result [-Wunused-result]
+     system(command);
+           ^
+depbase=`echo lib/ofp-print.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/ofp-print.o -MD -MP -MF $depbase.Tpo -c -o lib/ofp-print.o lib/ofp-print.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/ofpbuf.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/ofpbuf.o -MD -MP -MF $depbase.Tpo -c -o lib/ofpbuf.o lib/ofpbuf.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/ofpstat.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/ofpstat.o -MD -MP -MF $depbase.Tpo -c -o lib/ofpstat.o lib/ofpstat.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/pcap.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/pcap.o -MD -MP -MF $depbase.Tpo -c -o lib/pcap.o lib/pcap.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/pcap.c: In function ‘pcap_read’:
+lib/pcap.c:148:13: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 4 has type ‘size_t’ [-Wformat=]
+             VLOG_WARN("bad packet length %"PRIu32" or %"PRIu32" "
+             ^
+depbase=`echo lib/poll-loop.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/poll-loop.o -MD -MP -MF $depbase.Tpo -c -o lib/poll-loop.o lib/poll-loop.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/poll-loop.c: In function ‘log_wakeup’:
+lib/poll-loop.c:140:13: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘uintptr_t’ [-Wformat=]
+             ds_put_format(&ds, " 0x%x", backtrace->frames[i]);
+             ^
+depbase=`echo lib/port-array.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/port-array.o -MD -MP -MF $depbase.Tpo -c -o lib/port-array.o lib/port-array.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/process.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/process.o -MD -MP -MF $depbase.Tpo -c -o lib/process.o lib/process.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/process.c: In function ‘sigchld_handler’:
+lib/process.c:370:10: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+     write(fds[1], "", 1);
+          ^
+lib/process.c: In function ‘process_exited’:
+lib/process.c:266:13: warning: ignoring return value of ‘read’, declared with attribute warn_unused_result [-Wunused-result]
+         read(fds[0], buf, sizeof buf);
+             ^
+depbase=`echo lib/queue.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/queue.o -MD -MP -MF $depbase.Tpo -c -o lib/queue.o lib/queue.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/random.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/random.o -MD -MP -MF $depbase.Tpo -c -o lib/random.o lib/random.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/rconn.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/rconn.o -MD -MP -MF $depbase.Tpo -c -o lib/rconn.o lib/rconn.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/shash.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/shash.o -MD -MP -MF $depbase.Tpo -c -o lib/shash.o lib/shash.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/signals.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/signals.o -MD -MP -MF $depbase.Tpo -c -o lib/signals.o lib/signals.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/signals.c: In function ‘signal_handler’:
+lib/signals.c:142:14: warning: ignoring return value of ‘write’, declared with attribute warn_unused_result [-Wunused-result]
+         write(fds[1], "", 1);
+              ^
+lib/signals.c: In function ‘signal_poll’:
+lib/signals.c:118:9: warning: ignoring return value of ‘read’, declared with attribute warn_unused_result [-Wunused-result]
+     read(fds[0], buf, sizeof buf);
+         ^
+depbase=`echo lib/socket-util.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/socket-util.o -MD -MP -MF $depbase.Tpo -c -o lib/socket-util.o lib/socket-util.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/socket-util.c: In function ‘make_unix_socket’:
+lib/socket-util.c:275:13: warning: implicit declaration of function ‘fchmod’ [-Wimplicit-function-declaration]
+             || fchmod(fd, S_IRWXU)) {
+             ^
+depbase=`echo lib/stp.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/stp.o -MD -MP -MF $depbase.Tpo -c -o lib/stp.o lib/stp.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/svec.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/svec.o -MD -MP -MF $depbase.Tpo -c -o lib/svec.o lib/svec.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/tag.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/tag.o -MD -MP -MF $depbase.Tpo -c -o lib/tag.o lib/tag.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/timeval.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/timeval.o -MD -MP -MF $depbase.Tpo -c -o lib/timeval.o lib/timeval.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/util.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/util.o -MD -MP -MF $depbase.Tpo -c -o lib/util.o lib/util.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vconn-stream.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vconn-stream.o -MD -MP -MF $depbase.Tpo -c -o lib/vconn-stream.o lib/vconn-stream.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vconn-tcp.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vconn-tcp.o -MD -MP -MF $depbase.Tpo -c -o lib/vconn-tcp.o lib/vconn-tcp.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vconn-unix.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vconn-unix.o -MD -MP -MF $depbase.Tpo -c -o lib/vconn-unix.o lib/vconn-unix.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vconn.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vconn.o -MD -MP -MF $depbase.Tpo -c -o lib/vconn.o lib/vconn.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+lib/vconn.c: In function ‘check_ofp_message’:
+lib/vconn.c:1038:9: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘size_t’ [-Wformat=]
+         VLOG_WARN("received %s message of length %"PRIu16" (expected %zu)",
+         ^
+lib/vconn.c: In function ‘check_ofp_message_array’:
+lib/vconn.c:1070:9: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘size_t’ [-Wformat=]
+         VLOG_WARN("received %s message of length %"PRIu16" "
+         ^
+lib/vconn.c:1078:9: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘size_t’ [-Wformat=]
+         VLOG_WARN("received %s message of bad length %"PRIu16": the "
+         ^
+depbase=`echo lib/vlog-socket.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vlog-socket.o -MD -MP -MF $depbase.Tpo -c -o lib/vlog-socket.o lib/vlog-socket.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vlog.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vlog.o -MD -MP -MF $depbase.Tpo -c -o lib/vlog.o lib/vlog.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/dpif.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/dpif.o -MD -MP -MF $depbase.Tpo -c -o lib/dpif.o lib/dpif.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/netlink.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/netlink.o -MD -MP -MF $depbase.Tpo -c -o lib/netlink.o lib/netlink.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo lib/vconn-netlink.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT lib/vconn-netlink.o -MD -MP -MF $depbase.Tpo -c -o lib/vconn-netlink.o lib/vconn-netlink.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+rm -f lib/libopenflow.a
+ar cru lib/libopenflow.a lib/backtrace.o lib/bitmap.o lib/command-line.o lib/csum.o lib/daemon.o lib/dhcp-client.o lib/dhcp.o lib/dirs.o lib/dynamic-string.o lib/fatal-signal.o lib/fault.o lib/flow.o lib/hash.o lib/hmap.o lib/leak-checker.o lib/learning-switch.o lib/list.o lib/mac-learning.o lib/netdev.o lib/ofp-print.o lib/ofpbuf.o lib/ofpstat.o lib/pcap.o lib/poll-loop.o lib/port-array.o lib/process.o lib/queue.o lib/random.o lib/rconn.o lib/shash.o lib/signals.o lib/socket-util.o lib/stp.o lib/svec.o lib/tag.o lib/timeval.o lib/util.o lib/vconn-stream.o lib/vconn-tcp.o lib/vconn-unix.o lib/vconn.o lib/vlog-socket.o lib/vlog.o lib/dpif.o lib/netlink.o lib/vconn-netlink.o
+ranlib lib/libopenflow.a
+depbase=`echo secchan/discovery.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/discovery.o -MD -MP -MF $depbase.Tpo -c -o secchan/discovery.o secchan/discovery.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/emerg-flow.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/emerg-flow.o -MD -MP -MF $depbase.Tpo -c -o secchan/emerg-flow.o secchan/emerg-flow.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/fail-open.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/fail-open.o -MD -MP -MF $depbase.Tpo -c -o secchan/fail-open.o secchan/fail-open.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/failover.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/failover.o -MD -MP -MF $depbase.Tpo -c -o secchan/failover.o secchan/failover.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/in-band.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/in-band.o -MD -MP -MF $depbase.Tpo -c -o secchan/in-band.o secchan/in-band.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/port-watcher.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/port-watcher.o -MD -MP -MF $depbase.Tpo -c -o secchan/port-watcher.o secchan/port-watcher.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/protocol-stat.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/protocol-stat.o -MD -MP -MF $depbase.Tpo -c -o secchan/protocol-stat.o secchan/protocol-stat.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/ratelimit.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/ratelimit.o -MD -MP -MF $depbase.Tpo -c -o secchan/ratelimit.o secchan/ratelimit.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/secchan.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/secchan.o -MD -MP -MF $depbase.Tpo -c -o secchan/secchan.o secchan/secchan.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+secchan/secchan.c: In function ‘usage’:
+secchan/secchan.c:874:12: warning: too many arguments for format [-Wformat-extra-args]
+            ofp_pkgdatadir);
+            ^
+depbase=`echo secchan/status.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/status.o -MD -MP -MF $depbase.Tpo -c -o secchan/status.o secchan/status.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+depbase=`echo secchan/stp-secchan.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT secchan/stp-secchan.o -MD -MP -MF $depbase.Tpo -c -o secchan/stp-secchan.o secchan/stp-secchan.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o secchan/ofprotocol secchan/discovery.o secchan/emerg-flow.o secchan/fail-open.o secchan/failover.o secchan/in-band.o secchan/port-watcher.o secchan/protocol-stat.o secchan/ratelimit.o secchan/secchan.o secchan/status.o secchan/stp-secchan.o lib/libopenflow.a -ldl
+depbase=`echo controller/controller.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT controller/controller.o -MD -MP -MF $depbase.Tpo -c -o controller/controller.o controller/controller.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o controller/controller controller/controller.o lib/libopenflow.a -ldl
+depbase=`echo utilities/vlogconf.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT utilities/vlogconf.o -MD -MP -MF $depbase.Tpo -c -o utilities/vlogconf.o utilities/vlogconf.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o utilities/vlogconf utilities/vlogconf.o lib/libopenflow.a
+depbase=`echo utilities/dpctl.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT utilities/dpctl.o -MD -MP -MF $depbase.Tpo -c -o utilities/dpctl.o utilities/dpctl.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+utilities/dpctl.c: In function ‘do_monitor’:
+utilities/dpctl.c:1308:17: warning: variable ‘name’ set but not used [-Wunused-but-set-variable]
+     const char *name;
+                 ^
+utilities/dpctl.c: In function ‘do_ping’:
+utilities/dpctl.c:1493:20: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘long unsigned int’ [-Wformat=]
+                    + (.001*(end.tv_usec - start.tv_usec)));
+                    ^
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o utilities/dpctl utilities/dpctl.o lib/libopenflow.a -ldl
+depbase=`echo utilities/ofp-discover.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT utilities/ofp-discover.o -MD -MP -MF $depbase.Tpo -c -o utilities/ofp-discover.o utilities/ofp-discover.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o utilities/ofp-discover utilities/ofp-discover.o lib/libopenflow.a
+depbase=`echo utilities/ofp-kill.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT utilities/ofp-kill.o -MD -MP -MF $depbase.Tpo -c -o utilities/ofp-kill.o utilities/ofp-kill.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o utilities/ofp-kill utilities/ofp-kill.o lib/libopenflow.a
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-chain.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-chain.Tpo -c -o udatapath/udatapath_ofdatapath-chain.o `test -f 'udatapath/chain.c' || echo './'`udatapath/chain.c
+mv -f udatapath/.deps/udatapath_ofdatapath-chain.Tpo udatapath/.deps/udatapath_ofdatapath-chain.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-crc32.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-crc32.Tpo -c -o udatapath/udatapath_ofdatapath-crc32.o `test -f 'udatapath/crc32.c' || echo './'`udatapath/crc32.c
+mv -f udatapath/.deps/udatapath_ofdatapath-crc32.Tpo udatapath/.deps/udatapath_ofdatapath-crc32.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-datapath.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-datapath.Tpo -c -o udatapath/udatapath_ofdatapath-datapath.o `test -f 'udatapath/datapath.c' || echo './'`udatapath/datapath.c
+udatapath/datapath.c: In function ‘dump_port_stats’:
+udatapath/datapath.c:1736:34: warning: unused parameter ‘dp’ [-Wunused-parameter]
+ dump_port_stats(struct datapath *dp, struct sw_port *port,
+                                  ^
+mv -f udatapath/.deps/udatapath_ofdatapath-datapath.Tpo udatapath/.deps/udatapath_ofdatapath-datapath.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-dp_act.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-dp_act.Tpo -c -o udatapath/udatapath_ofdatapath-dp_act.o `test -f 'udatapath/dp_act.c' || echo './'`udatapath/dp_act.c
+mv -f udatapath/.deps/udatapath_ofdatapath-dp_act.Tpo udatapath/.deps/udatapath_ofdatapath-dp_act.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-of_ext_msg.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-of_ext_msg.Tpo -c -o udatapath/udatapath_ofdatapath-of_ext_msg.o `test -f 'udatapath/of_ext_msg.c' || echo './'`udatapath/of_ext_msg.c
+mv -f udatapath/.deps/udatapath_ofdatapath-of_ext_msg.Tpo udatapath/.deps/udatapath_ofdatapath-of_ext_msg.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-udatapath.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-udatapath.Tpo -c -o udatapath/udatapath_ofdatapath-udatapath.o `test -f 'udatapath/udatapath.c' || echo './'`udatapath/udatapath.c
+mv -f udatapath/.deps/udatapath_ofdatapath-udatapath.Tpo udatapath/.deps/udatapath_ofdatapath-udatapath.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-private-msg.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-private-msg.Tpo -c -o udatapath/udatapath_ofdatapath-private-msg.o `test -f 'udatapath/private-msg.c' || echo './'`udatapath/private-msg.c
+udatapath/private-msg.c: In function ‘flush_working’:
+udatapath/private-msg.c:56:6: warning: variable ‘num_deleted’ set but not used [-Wunused-but-set-variable]
+  int num_deleted = 0;
+      ^
+udatapath/private-msg.c: In function ‘do_protection’:
+udatapath/private-msg.c:103:6: warning: variable ‘error’ set but not used [-Wunused-but-set-variable]
+  int error = 0;
+      ^
+mv -f udatapath/.deps/udatapath_ofdatapath-private-msg.Tpo udatapath/.deps/udatapath_ofdatapath-private-msg.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-switch-flow.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-switch-flow.Tpo -c -o udatapath/udatapath_ofdatapath-switch-flow.o `test -f 'udatapath/switch-flow.c' || echo './'`udatapath/switch-flow.c
+mv -f udatapath/.deps/udatapath_ofdatapath-switch-flow.Tpo udatapath/.deps/udatapath_ofdatapath-switch-flow.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-table-hash.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-table-hash.Tpo -c -o udatapath/udatapath_ofdatapath-table-hash.o `test -f 'udatapath/table-hash.c' || echo './'`udatapath/table-hash.c
+mv -f udatapath/.deps/udatapath_ofdatapath-table-hash.Tpo udatapath/.deps/udatapath_ofdatapath-table-hash.Po
+gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib    -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT udatapath/udatapath_ofdatapath-table-linear.o -MD -MP -MF udatapath/.deps/udatapath_ofdatapath-table-linear.Tpo -c -o udatapath/udatapath_ofdatapath-table-linear.o `test -f 'udatapath/table-linear.c' || echo './'`udatapath/table-linear.c
+mv -f udatapath/.deps/udatapath_ofdatapath-table-linear.Tpo udatapath/.deps/udatapath_ofdatapath-table-linear.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o udatapath/ofdatapath udatapath/udatapath_ofdatapath-chain.o udatapath/udatapath_ofdatapath-crc32.o udatapath/udatapath_ofdatapath-datapath.o udatapath/udatapath_ofdatapath-dp_act.o udatapath/udatapath_ofdatapath-of_ext_msg.o udatapath/udatapath_ofdatapath-udatapath.o udatapath/udatapath_ofdatapath-private-msg.o udatapath/udatapath_ofdatapath-switch-flow.o udatapath/udatapath_ofdatapath-table-hash.o udatapath/udatapath_ofdatapath-table-linear.o lib/libopenflow.a  -ldl
+depbase=`echo tests/test-flows.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-flows.o -MD -MP -MF $depbase.Tpo -c -o tests/test-flows.o tests/test-flows.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-flows tests/test-flows.o lib/libopenflow.a
+depbase=`echo tests/test-hmap.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-hmap.o -MD -MP -MF $depbase.Tpo -c -o tests/test-hmap.o tests/test-hmap.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-hmap tests/test-hmap.o lib/libopenflow.a
+depbase=`echo tests/test-list.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-list.o -MD -MP -MF $depbase.Tpo -c -o tests/test-list.o tests/test-list.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-list tests/test-list.o lib/libopenflow.a
+depbase=`echo tests/test-type-props.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-type-props.o -MD -MP -MF $depbase.Tpo -c -o tests/test-type-props.o tests/test-type-props.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-type-props tests/test-type-props.o
+depbase=`echo tests/test-dhcp-client.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-dhcp-client.o -MD -MP -MF $depbase.Tpo -c -o tests/test-dhcp-client.o tests/test-dhcp-client.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-dhcp-client tests/test-dhcp-client.o lib/libopenflow.a -ldl
+depbase=`echo tests/test-stp.o | sed 's|[^/]*$|.deps/&|;s|\.o$||'`;\
+        gcc -DHAVE_CONFIG_H -I.   -g -I ./include -I ./lib   -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -MT tests/test-stp.o -MD -MP -MF $depbase.Tpo -c -o tests/test-stp.o tests/test-stp.c &&\
+        mv -f $depbase.Tpo $depbase.Po
+gcc -Wstrict-prototypes  -g -O2 -Wall -Wno-sign-compare -Wpointer-arith -Wdeclaration-after-statement -Wformat-security -Wswitch-enum -Wunused-parameter -Wstrict-aliasing -Wbad-function-cast -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-field-initializers -Wno-override-init -export-dynamic  -o tests/test-stp tests/test-stp.o lib/libopenflow.a
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-pki.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-pki
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-pki-cgi.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-pki-cgi
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-parse-leaks.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-parse-leaks
+/usr/bin/perl ./soexpand.pl -I. < secchan/ofprotocol.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > secchan/ofprotocol.8
+/usr/bin/perl ./soexpand.pl -I. < controller/controller.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > controller/controller.8
+/usr/bin/perl ./soexpand.pl -I. < utilities/dpctl.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/dpctl.8
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-discover.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-discover.8
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-kill.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-kill.8
+/usr/bin/perl ./soexpand.pl -I. < utilities/ofp-pki.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/ofp-pki.8
+/usr/bin/perl ./soexpand.pl -I. < utilities/vlogconf.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > utilities/vlogconf.8
+/usr/bin/perl ./soexpand.pl -I. < udatapath/ofdatapath.8.in | \
+            sed -e 's,[@]LOGDIR[@],/usr/local/var/log/openflow,g' \
+                -e 's,[@]PKIDIR[@],/usr/local/share/openflow/pki,g' \
+                -e 's,[@]RUNDIR[@],/usr/local/var/run,g' \
+                -e 's,[@]pkgdatadir[@],/usr/local/share/openflow,g' \
+                -e 's,[@]PERL[@],/usr/bin/perl,g' > udatapath/ofdatapath.8
+make[2]: Leaving directory `/tmp/openflow'
+make[1]: Leaving directory `/tmp/openflow'
+make[1]: Entering directory `/tmp/openflow'
+make[2]: Entering directory `/tmp/openflow'
+ /bin/mkdir -p '/usr/local/bin'
+  /usr/bin/install -c secchan/ofprotocol controller/controller utilities/vlogconf utilities/dpctl utilities/ofp-discover utilities/ofp-kill udatapath/ofdatapath '/usr/local/bin'
+ /bin/mkdir -p '/usr/local/bin'
+ /usr/bin/install -c utilities/ofp-pki '/usr/local/bin'
+/bin/mkdir -p /usr/local/var/run
+/bin/mkdir -p /usr/local/share/openflow/pki
+/bin/mkdir -p /usr/local/var/log/openflow
+ /bin/mkdir -p '/usr/local/share/openflow/commands'
+ /usr/bin/install -c secchan/commands/reboot '/usr/local/share/openflow/commands'
+ /bin/mkdir -p '/usr/local/share/man/man8'
+ /usr/bin/install -c -m 644 secchan/ofprotocol.8 controller/controller.8 utilities/dpctl.8 utilities/ofp-discover.8 utilities/ofp-kill.8 utilities/ofp-pki.8 utilities/vlogconf.8 udatapath/ofdatapath.8 '/usr/local/share/man/man8'
+make[2]: Leaving directory `/tmp/openflow'
+make[1]: Leaving directory `/tmp/openflow'
+Installing Open vSwitch...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following extra packages will be installed:
+  openvswitch-common
+Suggested packages:
+  openvswitch-datapath-module
+The following NEW packages will be installed:
+  openvswitch-common openvswitch-switch
+0 upgraded, 2 newly installed, 0 to remove and 279 not upgraded.
+Need to get 0 B/1,307 kB of archives.
+After this operation, 6,266 kB of additional disk space will be used.
+Selecting previously unselected package openvswitch-common.
+(Reading database ... 103863 files and directories currently installed.)
+Preparing to unpack .../openvswitch-common_2.0.2-0ubuntu0.14.04.3_amd64.deb ...
+Unpacking openvswitch-common (2.0.2-0ubuntu0.14.04.3) ...
+Selecting previously unselected package openvswitch-switch.
+Preparing to unpack .../openvswitch-switch_2.0.2-0ubuntu0.14.04.3_amd64.deb ...
+Unpacking openvswitch-switch (2.0.2-0ubuntu0.14.04.3) ...
+Processing triggers for man-db (2.6.7.1-1) ...
+Processing triggers for ureadahead (0.100.0-16) ...
+Setting up openvswitch-common (2.0.2-0ubuntu0.14.04.3) ...
+Setting up openvswitch-switch (2.0.2-0ubuntu0.14.04.3) ...
+openvswitch-switch start/running
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following extra packages will be installed:
+  openvswitch-pki
+The following NEW packages will be installed:
+  openvswitch-controller openvswitch-pki
+0 upgraded, 2 newly installed, 0 to remove and 279 not upgraded.
+Need to get 0 B/283 kB of archives.
+After this operation, 959 kB of additional disk space will be used.
+Selecting previously unselected package openvswitch-pki.
+(Reading database ... 103943 files and directories currently installed.)
+Preparing to unpack .../openvswitch-pki_2.0.2-0ubuntu0.14.04.3_all.deb ...
+Unpacking openvswitch-pki (2.0.2-0ubuntu0.14.04.3) ...
+Selecting previously unselected package openvswitch-controller.
+Preparing to unpack .../openvswitch-controller_2.0.2-0ubuntu0.14.04.3_amd64.deb ...
+Unpacking openvswitch-controller (2.0.2-0ubuntu0.14.04.3) ...
+Processing triggers for man-db (2.6.7.1-1) ...
+Processing triggers for ureadahead (0.100.0-16) ...
+Setting up openvswitch-pki (2.0.2-0ubuntu0.14.04.3) ...
+Creating controllerca...
+Creating switchca...
+Setting up openvswitch-controller (2.0.2-0ubuntu0.14.04.3) ...
+ * Starting ovs-controller  ovs-controller
+2016-09-23T19:52:47Z|00001|stream_ssl|INFO|Trusting CA cert from /etc/openvswitch-controller/cacert.pem (/C=US/ST=CA/O=Open vSwitch/OU=switchca/CN=OVS switchca CA Certificate (2016 Sep 23 15:52:46)) (fingerprint 5a:4d:64:9d:f6:ff:4e:1d:2b:16:20:41:2b:1c:d9:5a:bd:6f:a3:c3)
+   ...done.
+ * Stopping ovs-controller ovs-controller
+   ...done.
+Stopped running controller
+update-rc.d: warning:  start runlevel arguments (none) do not match openvswitch-controller Default-Start values (2 3 4 5)
+update-rc.d: warning:  stop runlevel arguments (none) do not match openvswitch-controller Default-Stop values (0 1 6)
+ Disabling system startup links for /etc/init.d/openvswitch-controller ...
+ Removing any system startup links for /etc/init.d/openvswitch-controller ...
+   /etc/rc0.d/K20openvswitch-controller
+   /etc/rc1.d/K20openvswitch-controller
+   /etc/rc2.d/S20openvswitch-controller
+   /etc/rc3.d/S20openvswitch-controller
+   /etc/rc4.d/S20openvswitch-controller
+   /etc/rc5.d/S20openvswitch-controller
+   /etc/rc6.d/K20openvswitch-controller
+ Adding system startup for /etc/init.d/openvswitch-controller ...
+   /etc/rc0.d/K20openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc1.d/K20openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc6.d/K20openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc2.d/K80openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc3.d/K80openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc4.d/K80openvswitch-controller -> ../init.d/openvswitch-controller
+   /etc/rc5.d/K80openvswitch-controller -> ../init.d/openvswitch-controller

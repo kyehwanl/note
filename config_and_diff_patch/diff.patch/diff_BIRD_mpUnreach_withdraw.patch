@@ -1,0 +1,37 @@
+diff --git a/proto/bgp/attrs.c b/proto/bgp/attrs.c
+index 408812a..0958c0a 100644
+--- a/proto/bgp/attrs.c
++++ b/proto/bgp/attrs.c
+@@ -900,6 +901,7 @@ bgp_check_unreach_nlri(struct bgp_proto *p UNUSED, byte *a UNUSED, int len UNUSE
+ #if defined(IPV6) || defined(CONFIG_BGPSEC)
+   p->mp_unreach_start = a;
+   p->mp_unreach_len = len;
++  return 0;
+ #endif
+   return IGNORE;
+ }
+diff --git a/proto/bgp/packets.c b/proto/bgp/packets.c
+index 7214ee3..7086196 100644
+--- a/proto/bgp/packets.c
++++ b/proto/bgp/packets.c
+@@ -1665,6 +1666,20 @@ bgp_do_rx_update(struct bgp_conn *conn,
+     }
+ #endif
+ #if !defined(IPV6)
++    if ( p->mp_unreach_start || 0 != p->mp_unreach_len )  {
++      int mp_unreach_len  = p->mp_unreach_len;
++      byte *mp_unreach    =  p->mp_unreach_start;
++      mp_unreach +=3;     // skip offset bytes -AFI, SAFI
++      mp_unreach_len -=3; // skip offset bytes -AFI, SAFI
++
++      /* Withdraw routes */
++      while (mp_unreach_len > 0) {
++        DECODE_PREFIX(mp_unreach, mp_unreach_len);
++        DBG("Withdraw (mp_unreach) %I/%d\n", prefix, pxlen);
++
++        bgp_rte_withdraw(p, prefix, pxlen, path_id, &last_id, &src);
++      }
++    }
+   }
+ #endif
+ 

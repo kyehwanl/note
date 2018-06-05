@@ -1,0 +1,1011 @@
+
+ Docker Swarm Setting
+======================
+(source: https://docs.docker.com/network/network-tutorial-overlay/#walkthrough)
+
+
+1. CREATE THE SWARM
+--------------------
+
+  (1) On master. initialize the swarm. If the host only has one network interface, the --advertise-addr flag is optional
+
+      [root@vmware-011 tmp]# docker swarm init 
+        Swarm initialized: current node (u3yjuywidhizuszvd4tusayn7) is now a manager.
+
+        --advertise-addr 192.168.99.121 : in case of multiple addresses
+
+
+      * To add a worker to this swarm, run the following command:
+          docker swarm join --token SWMTKN-1-38ru7o4k28n1c3pes1qxtvpvttc78dl06s2fjxbp9dv9ltmfxz-5f0tbvvz4drp6w5rbm478daca 10.0.50.11:2377
+
+      * To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions
+
+
+      *** <CAUTION> *** 
+        (Issue) firewall should allow the port 2377, otherwise, worker host will experience,
+                'Error response from daemon: rpc error: code = 14 desc = grpc: the connection is unavailable'
+      
+        (Solution) 
+        1. [root@vmware-011 tmp]# systemctl stop firewalld
+        2. [root@vmware-011 srx]# iptables -I INPUT 2 -p tcp -m state --state NEW -m tcp --dport 2377 -j ACCEPT
+
+
+
+  (2) On worker-1(another host), join the swarm. If the host only has one network interface, the --advertise-addr flag is optional
+
+      [root@vmware-005 kyehwanl]# docker swarm join --token SWMTKN-1-38ru7o4k28n1c3pes1qxtvpvttc78dl06s2fjxbp9dv9ltmfxz-5f0tbvvz4drp6w5rbm478daca 10.0.50.11:2377
+      This node joined a swarm as a worker. 
+
+
+
+  (3) On manager, list all the nodes. This command can only be done from a manager 
+      ('*' marks as a manager host)
+
+      [root@vmware-011 tmp]# docker node ls
+      ID                            HOSTNAME                   STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+      76ujp9e518ah5aczcvicwv7fh     vmware-005.antd.nist.gov   Ready               Active                                  1.13.1
+      u3yjuywidhizuszvd4tusayn7 *   vmware-011.antd.nist.gov   Ready               Active              Leader              18.03.0-ce
+
+
+      [root@vmware-011 tmp]# docker node ls --filter role=manager
+      ID                            HOSTNAME                   STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+      u3yjuywidhizuszvd4tusayn7 *   vmware-011.antd.nist.gov   Ready               Active              Leader              18.03.0-ce
+
+
+
+  (4) List the Docker networks on manager and  worker-1 and 
+      notice that each of them now has an overlay network called ingress and 
+      a bridge network called docker_gwbridge. 
+      Only the listing for manager is shown here:
+
+
+      [root@vmware-011 tmp]# docker network ls
+      NETWORK ID          NAME                DRIVER              SCOPE
+      84acb0df412f        bridge              bridge              local
+      00d1fb556787        docker_gwbridge     bridge              local
+      310c3fab01f1        host                host                local
+      qasbq8386c4u        ingress             overlay             swarm
+      74b9bf454a58        none                null                local
+
+        The docker_gwbridge connects the ingress network to the Docker host’s network interface 
+        so that traffic can flow to and from swarm managers and workers. 
+        If you create swarm services and do not specify a network, they are connected to the ingress network. 
+        It is recommended that you use separate overlay networks for each application or group of applications 
+        which will work together. In the next procedure, you will create two overlay networks and connect a 
+        service to each of them.
+
+
+      [root@vmware-005 kyehwanl]# docker network ls
+      NETWORK ID          NAME                DRIVER              SCOPE
+      bbf47fc79b5a        bridge              bridge              local
+      3e13dd93aab5        docker_gwbridge     bridge              local
+      eefe54a061d5        host                host                local
+      qasbq8386c4u        ingress             overlay             swarm
+      xfilmfgy3ufu        nginx-net           overlay             swarm
+      b9610206e877        none                null                local
+
+
+
+2. CREATE THE SERVICES
+-----------------------
+
+  (1) On manager, create a new overlay network called nginx-net
+
+      [root@vmware-011 tmp]# docker network create -d overlay nginx-net
+      xfilmfgy3ufuwpyimnex90uti
+    
+
+  (2) On manager, create a 5-replica Nginx service connected to nginx-net. 
+      The service will publish port 80 to the outside world. All of the service task containers can 
+      communicate with each other without opening any ports
+
+      [root@vmware-011 tmp]# docker service create --name my-nginx \
+                            --publish target=80,published=80 \
+                            --replicas=5  \
+                            --network nginx-net nginx  
+      jfy929fdnl5l8kr3gl8odszmy
+      overall progress: 5 out of 5 tasks 
+      1/5: running   [==================================================>] 
+      2/5: running   [==================================================>] 
+      3/5: running   [==================================================>] 
+      4/5: running   [==================================================>] 
+      5/5: running   [==================================================>] 
+      verify: Service converged 
+
+        The default publish mode of ingress, which is used when you do not specify a mode for the --publish flag, 
+        means that if you browse to port 80 on manager, worker-1, or worker-2, you will be connected to port 80 
+        on one of the 5 service tasks, even if no tasks are currently running on the node you browse to. 
+        If you want to publish the port using host mode, you can add mode=host to the --publish output. 
+        However, you should also use --mode global instead of --replicas=5 in this case, since only one service 
+        task can bind a given port on a given node.
+
+
+
+  (3) Run docker service ls to monitor the progress of service bring-up, which may take a few seconds.
+
+      [root@vmware-011 tmp]# docker service ls
+      ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+      jfy929fdnl5l        my-nginx            replicated          5/5                 nginx:latest        *:80->80/tcp
+
+
+      [root@vmware-011 tmp]# docker ps
+      CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+      d1a20655cf1a        nginx:latest        "nginx -g 'daemon of…"   3 minutes ago       Up 3 minutes        80/tcp                   my-nginx.3.qfmbxn9xowznadhag2u7jph0j
+      cf28398f9a36        nginx:latest        "nginx -g 'daemon of…"   3 minutes ago       Up 3 minutes        80/tcp                   my-nginx.2.y1r6c8z43ss2uuqu5mnoct48x
+      c6a3cac76999        nginx:latest        "nginx -g 'daemon of…"   3 minutes ago       Up 3 minutes        80/tcp                   my-nginx.5.8nfsb6lu3l50ruuay172a9gub
+      989a2dfaa42c        registry:2          "/entrypoint.sh /etc…"   7 weeks ago         Up 2 weeks          0.0.0.0:5000->5000/tcp   registry
+
+      [root@vmware-005 kyehwanl]# docker ps
+      CONTAINER ID        IMAGE                                                                           COMMAND                  CREATED             STATUS              PORTS                NAMES
+      bd7ce30cb6d1        nginx@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884   "nginx -g 'daemon ..."   3 minutes ago       Up 3 minutes        80/tcp               my-nginx.1.9yves1kmzm1vvty2by0m1bnd5
+      370b59223e9f        nginx@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884   "nginx -g 'daemon ..."   3 minutes ago       Up 3 minutes        80/tcp               my-nginx.4.yqxfl3h0ks4no3nhirjfp74g5
+
+
+
+
+  (4) Clean up the service and the networks. 
+        From manager, run the following commands. The manager will direct the workers to remove the networks automatically
+
+        $ docker service rm my-nginx
+        $ docker network rm nginx-net 
+
+
+
+        [root@vmware-011 tmp]# docker service ls
+        ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+        jfy929fdnl5l        my-nginx            replicated          5/5                 nginx:latest        *:80->80/tcp
+
+        [root@vmware-011 tmp]# docker service rm my-nginx
+        my-nginx
+
+        [root@vmware-011 tmp]# docker service ls
+        ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+
+        [root@vmware-011 tmp]# docker ps
+        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+        989a2dfaa42c        registry:2          "/entrypoint.sh /etc…"   7 weeks ago         Up 2 weeks          0.0.0.0:5000->5000/tcp   registry
+
+        [root@vmware-011 tmp]# docker network ls
+        NETWORK ID          NAME                DRIVER              SCOPE
+        84acb0df412f        bridge              bridge              local
+        00d1fb556787        docker_gwbridge     bridge              local
+        310c3fab01f1        host                host                local
+        qasbq8386c4u        ingress             overlay             swarm
+        xfilmfgy3ufu        nginx-net           overlay             swarm
+        74b9bf454a58        none                null                local
+
+        [root@vmware-011 tmp]# docker network rm nginx-net
+        nginx-net
+
+        [root@vmware-011 tmp]# docker network ls
+        NETWORK ID          NAME                DRIVER              SCOPE
+        84acb0df412f        bridge              bridge              local
+        00d1fb556787        docker_gwbridge     bridge              local
+        310c3fab01f1        host                host                local
+        qasbq8386c4u        ingress             overlay             swarm
+        74b9bf454a58        none                null                local
+
+
+
+
+        [root@vmware-005 kyehwanl]# docker ps
+        CONTAINER ID        IMAGE                                                                           COMMAND                  CREATED             STATUS              PORTS                NAMES
+        bd7ce30cb6d1        nginx@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884   "nginx -g 'daemon ..."   About an hour ago   Up About an hour    80/tcp               my-nginx.1.9yves1kmzm1vvty2by0m1bnd5
+        370b59223e9f        nginx@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884   "nginx -g 'daemon ..."   About an hour ago   Up About an hour    80/tcp               my-nginx.4.yqxfl3h0ks4no3nhirjfp74g5
+
+        [root@vmware-005 kyehwanl]# docker network rm nginx-net
+        Error response from daemon: network nginx-net has active endpoints
+
+        [root@vmware-005 kyehwanl]# docker stop bd7c
+        bd7c
+        [root@vmware-005 kyehwanl]# docker stop 370b
+        370b
+
+        [root@vmware-005 kyehwanl]# docker ps
+        CONTAINER ID        IMAGE                       COMMAND             CREATED             STATUS              PORTS                NAMES
+
+
+        [root@vmware-005 kyehwanl]# docker network rm nginx-net
+        Error response from daemon: network nginx-net not found
+        [root@vmware-005 kyehwanl]# docker network ls
+        NETWORK ID          NAME                DRIVER              SCOPE
+        bbf47fc79b5a        bridge              bridge              local
+        3e13dd93aab5        docker_gwbridge     bridge              local
+        eefe54a061d5        host                host                local
+        b9610206e877        none                null                local
+
+
+
+        * Leave
+        "docker swarm leave" to leave this swarm and join another one
+
+
+
+
+  (5) Inspect the nginx-net network on master and worker-1. 
+        Remember that you did not need to create it manually on worker-1 because Docker created it for you. 
+        The output will be long, but notice the Containers and Peers sections. Containers lists all service 
+        tasks (or standalone containers) connected to the overlay network from that host.
+
+
+        [root@vmware-011 tmp]# docker service inspect my-nginx
+        [
+            {
+                "ID": "jfy929fdnl5l8kr3gl8odszmy",
+                "Version": {
+                    "Index": 21
+                },
+                "CreatedAt": "2018-05-01T16:11:43.336780253Z",
+                "UpdatedAt": "2018-05-01T16:11:43.338853617Z",
+                "Spec": {
+                    "Name": "my-nginx",
+                    "Labels": {},
+                    "TaskTemplate": {
+                        "ContainerSpec": {
+                            "Image": "nginx:latest@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884",
+                            "StopGracePeriod": 10000000000,
+                            "DNSConfig": {},
+                            "Isolation": "default"
+                        },
+                        "Resources": {
+                            "Limits": {},
+                            "Reservations": {}
+                        },
+                        "RestartPolicy": {
+                            "Condition": "any",
+                            "Delay": 5000000000,
+                            "MaxAttempts": 0
+                        },
+                        "Placement": {
+                            "Platforms": [
+                                {
+                                    "Architecture": "amd64",
+                                    "OS": "linux"
+                                },
+                                {
+                                    "OS": "linux"
+                                },
+                                {
+                                    "Architecture": "arm64",
+                                    "OS": "linux"
+                                },
+                                {
+                                    "Architecture": "386",
+                                    "OS": "linux"
+                                },
+                                {
+                                    "Architecture": "ppc64le",
+                                    "OS": "linux"
+                                },
+                                {
+                                    "Architecture": "s390x",
+                                    "OS": "linux"
+                                }
+                            ]
+                        },
+                        "Networks": [
+                            {
+                                "Target": "xfilmfgy3ufuwpyimnex90uti"
+                            }
+                        ],
+                        "ForceUpdate": 0,
+                        "Runtime": "container"
+                    },
+                    "Mode": {
+                        "Replicated": {
+                            "Replicas": 5
+                        }
+                    },
+                    "UpdateConfig": {
+                        "Parallelism": 1,
+                        "FailureAction": "pause",
+                        "Monitor": 5000000000,
+                        "MaxFailureRatio": 0,
+                        "Order": "stop-first"
+                    },
+                    "RollbackConfig": {
+                        "Parallelism": 1,
+                        "FailureAction": "pause",
+                        "Monitor": 5000000000,
+                        "MaxFailureRatio": 0,
+                        "Order": "stop-first"
+                    },
+                    "EndpointSpec": {
+                        "Mode": "vip",
+                        "Ports": [
+                            {
+                                "Protocol": "tcp",
+                                "TargetPort": 80,
+                                "PublishedPort": 80,
+                                "PublishMode": "ingress"
+                            }
+                        ]
+                    }
+                },
+                "Endpoint": {
+                    "Spec": {
+                        "Mode": "vip",
+                        "Ports": [
+                            {
+                                "Protocol": "tcp",
+                                "TargetPort": 80,
+                                "PublishedPort": 80,
+                                "PublishMode": "ingress"
+                            }
+                        ]
+                    },
+                    "Ports": [
+                        {
+                            "Protocol": "tcp",
+                            "TargetPort": 80,
+                            "PublishedPort": 80,
+                            "PublishMode": "ingress"
+                        }
+                    ],
+                    "VirtualIPs": [
+                        {
+                            "NetworkID": "qasbq8386c4upumsrt47rvnjr",
+                            "Addr": "10.255.0.4/16"
+                        },
+                        {
+                            "NetworkID": "xfilmfgy3ufuwpyimnex90uti",
+                            "Addr": "10.0.0.4/24"
+                        }
+                    ]
+                }
+            }
+        ]
+
+
+
+        [root@vmware-011 tmp]# docker inspect d1a2
+        [
+            {
+                "Id": "d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a",
+                "Created": "2018-05-01T16:11:43.530341554Z",
+                "Path": "nginx",
+                "Args": [
+                    "-g",
+                    "daemon off;"
+                ],
+                "State": {
+                    "Status": "running",
+                    "Running": true,
+                    "Paused": false,
+                    "Restarting": false,
+                    "OOMKilled": false,
+                    "Dead": false,
+                    "Pid": 27999,
+                    "ExitCode": 0,
+                    "Error": "",
+                    "StartedAt": "2018-05-01T16:11:45.030507773Z",
+                    "FinishedAt": "0001-01-01T00:00:00Z"
+                },
+                "Image": "sha256:ae513a47849c895a155ddfb868d6ba247f60240ec8495482eca74c4a2c13a881",
+                "ResolvConfPath": "/var/lib/docker/containers/d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a/resolv.conf",
+                "HostnamePath": "/var/lib/docker/containers/d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a/hostname",
+                "HostsPath": "/var/lib/docker/containers/d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a/hosts",
+                "LogPath": "/var/lib/docker/containers/d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a/d1a20655cf1a5988c2b37587912260739407e2628cad70c1bf84db2f14e07e2a-json.log",
+                "Name": "/my-nginx.3.qfmbxn9xowznadhag2u7jph0j",
+                "RestartCount": 0,
+                "Driver": "devicemapper",
+                "Platform": "linux",
+                "MountLabel": "",
+                "ProcessLabel": "",
+                "AppArmorProfile": "",
+                "ExecIDs": null,
+                "HostConfig": {
+                    "Binds": null,
+                    "ContainerIDFile": "",
+                    "LogConfig": {
+                        "Type": "json-file",
+                        "Config": {}
+                    },
+                    "NetworkMode": "default",
+                    "PortBindings": {},
+                    "RestartPolicy": {
+                        "Name": "",
+                        "MaximumRetryCount": 0
+                    },
+                    "AutoRemove": false,
+                    "VolumeDriver": "",
+                    "VolumesFrom": null,
+                    "CapAdd": null,
+                    "CapDrop": null,
+                    "Dns": null,
+                    "DnsOptions": null,
+                    "DnsSearch": null,
+                    "ExtraHosts": null,
+                    "GroupAdd": null,
+                    "IpcMode": "shareable",
+                    "Cgroup": "",
+                    "Links": null,
+                    "OomScoreAdj": 0,
+                    "PidMode": "",
+                    "Privileged": false,
+                    "PublishAllPorts": false,
+                    "ReadonlyRootfs": false,
+                    "SecurityOpt": null,
+                    "UTSMode": "",
+                    "UsernsMode": "",
+                    "ShmSize": 67108864,
+                    "Runtime": "runc",
+                    "ConsoleSize": [
+                        0,
+                        0
+                    ],
+                    "Isolation": "default",
+                    "CpuShares": 0,
+                    "Memory": 0,
+                    "NanoCpus": 0,
+                    "CgroupParent": "",
+                    "BlkioWeight": 0,
+                    "BlkioWeightDevice": null,
+                    "BlkioDeviceReadBps": null,
+                    "BlkioDeviceWriteBps": null,
+                    "BlkioDeviceReadIOps": null,
+                    "BlkioDeviceWriteIOps": null,
+                    "CpuPeriod": 0,
+                    "CpuQuota": 0,
+                    "CpuRealtimePeriod": 0,
+                    "CpuRealtimeRuntime": 0,
+                    "CpusetCpus": "",
+                    "CpusetMems": "",
+                    "Devices": null,
+                    "DeviceCgroupRules": null,
+                    "DiskQuota": 0,
+                    "KernelMemory": 0,
+                    "MemoryReservation": 0,
+                    "MemorySwap": 0,
+                    "MemorySwappiness": null,
+                    "OomKillDisable": false,
+                    "PidsLimit": 0,
+                    "Ulimits": null,
+                    "CpuCount": 0,
+                    "CpuPercent": 0,
+                    "IOMaximumIOps": 0,
+                    "IOMaximumBandwidth": 0
+                },
+                "GraphDriver": {
+                    "Data": {
+                        "DeviceId": "2877",
+                        "DeviceName": "docker-8:3-1749084-97ab3a8804b1315d58fb3487b355d0a5a40c1db8a1cd11dd231264655ce1422b",
+                        "DeviceSize": "10737418240"
+                    },
+                    "Name": "devicemapper"
+                },
+                "Mounts": [],
+                "Config": {
+                    "Hostname": "d1a20655cf1a",
+                    "Domainname": "",
+                    "User": "",
+                    "AttachStdin": false,
+                    "AttachStdout": false,
+                    "AttachStderr": false,
+                    "ExposedPorts": {
+                        "80/tcp": {}
+                    },
+                    "Tty": false,
+                    "OpenStdin": false,
+                    "StdinOnce": false,
+                    "Env": [
+                        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                        "NGINX_VERSION=1.13.12-1~stretch",
+                        "NJS_VERSION=1.13.12.0.2.0-1~stretch"
+                    ],
+                    "Cmd": [
+                        "nginx",
+                        "-g",
+                        "daemon off;"
+                    ],
+                    "ArgsEscaped": true,
+                    "Image": "nginx:latest@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884",
+                    "Volumes": null,
+                    "WorkingDir": "",
+                    "Entrypoint": null,
+                    "OnBuild": null,
+                    "Labels": {
+                        "com.docker.swarm.node.id": "u3yjuywidhizuszvd4tusayn7",
+                        "com.docker.swarm.service.id": "jfy929fdnl5l8kr3gl8odszmy",
+                        "com.docker.swarm.service.name": "my-nginx",
+                        "com.docker.swarm.task": "",
+                        "com.docker.swarm.task.id": "qfmbxn9xowznadhag2u7jph0j",
+                        "com.docker.swarm.task.name": "my-nginx.3.qfmbxn9xowznadhag2u7jph0j",
+                        "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+                    },
+                    "StopSignal": "SIGTERM"
+                },
+                "NetworkSettings": {
+                    "Bridge": "",
+                    "SandboxID": "8de1539717fa5877548f6cf211b42e08232b19f0c5e7ffcf6474312931277c54",
+                    "HairpinMode": false,
+                    "LinkLocalIPv6Address": "",
+                    "LinkLocalIPv6PrefixLen": 0,
+                    "Ports": {
+                        "80/tcp": null
+                    },
+                    "SandboxKey": "/var/run/docker/netns/8de1539717fa",
+                    "SecondaryIPAddresses": null,
+                    "SecondaryIPv6Addresses": null,
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "MacAddress": "",
+                    "Networks": {
+                        "ingress": {
+                            "IPAMConfig": {
+                                "IPv4Address": "10.255.0.7"
+                            },
+                            "Links": null,
+                            "Aliases": [
+                                "d1a20655cf1a"
+                            ],
+                            "NetworkID": "qasbq8386c4upumsrt47rvnjr",
+                            "EndpointID": "2a6c5f47e037822f737041e9e6cf9bbfd89e5104daa5138e4cdb02dd1cee5c40",
+                            "Gateway": "",
+                            "IPAddress": "10.255.0.7",
+                            "IPPrefixLen": 16,
+                            "IPv6Gateway": "",
+                            "GlobalIPv6Address": "",
+                            "GlobalIPv6PrefixLen": 0,
+                            "MacAddress": "02:42:0a:ff:00:07",
+                            "DriverOpts": null
+                        },
+                        "nginx-net": {
+                            "IPAMConfig": {
+                                "IPv4Address": "10.0.0.7"
+                            },
+                            "Links": null,
+                            "Aliases": [
+                                "d1a20655cf1a"
+                            ],
+                            "NetworkID": "xfilmfgy3ufuwpyimnex90uti",
+                            "EndpointID": "c2936988a52969417bf656ba5dc35b62db8975bc15b80b1b317d88a328b4854b",
+                            "Gateway": "",
+                            "IPAddress": "10.0.0.7",
+                            "IPPrefixLen": 24,
+                            "IPv6Gateway": "",
+                            "GlobalIPv6Address": "",
+                            "GlobalIPv6PrefixLen": 0,
+                            "MacAddress": "02:42:0a:00:00:07",
+                            "DriverOpts": null
+                        }
+                    }
+                }
+            }
+        ]
+
+
+
+        [root@vmware-005 kyehwanl]# docker inspect bd7c
+        [
+            {
+                "Id": "bd7ce30cb6d1755939aeaaa66110bc0e44629ba6b6996d5b11b4753d3d27a362",
+                "Created": "2018-05-01T16:11:48.886414291Z",
+                "Path": "nginx",
+                "Args": [
+                    "-g",
+                    "daemon off;"
+                ],
+                "State": {
+                    "Status": "running",
+                    "Running": true,
+                    "Paused": false,
+                    "Restarting": false,
+                    "OOMKilled": false,
+                    "Dead": false,
+                    "Pid": 32066,
+                    "ExitCode": 0,
+                    "Error": "",
+                    "StartedAt": "2018-05-01T16:11:50.165209706Z",
+                    "FinishedAt": "0001-01-01T00:00:00Z"
+                },
+                "Image": "sha256:ae513a47849c895a155ddfb868d6ba247f60240ec8495482eca74c4a2c13a881",
+                "ResolvConfPath": "/var/lib/docker/containers/bd7ce30cb6d1755939aeaaa66110bc0e44629ba6b6996d5b11b4753d3d27a362/resolv.conf",
+                "HostnamePath": "/var/lib/docker/containers/bd7ce30cb6d1755939aeaaa66110bc0e44629ba6b6996d5b11b4753d3d27a362/hostname",
+                "HostsPath": "/var/lib/docker/containers/bd7ce30cb6d1755939aeaaa66110bc0e44629ba6b6996d5b11b4753d3d27a362/hosts",
+                "LogPath": "",
+                "Name": "/my-nginx.1.9yves1kmzm1vvty2by0m1bnd5",
+                "RestartCount": 0,
+                "Driver": "devicemapper",
+                "MountLabel": "",
+                "ProcessLabel": "",
+                "AppArmorProfile": "",
+                "ExecIDs": null,
+                "HostConfig": {
+                    "Binds": null,
+                    "ContainerIDFile": "",
+                    "LogConfig": {
+                        "Type": "journald",
+                        "Config": {}
+                    },
+                    "NetworkMode": "default",
+                    "PortBindings": {},
+                    "RestartPolicy": {
+                        "Name": "",
+                        "MaximumRetryCount": 0
+                    },
+                    "AutoRemove": false,
+                    "VolumeDriver": "",
+                    "VolumesFrom": null,
+                    "CapAdd": null,
+                    "CapDrop": null,
+                    "Dns": null,
+                    "DnsOptions": null,
+                    "DnsSearch": null,
+                    "ExtraHosts": null,
+                    "GroupAdd": null,
+                    "IpcMode": "",
+                    "Cgroup": "",
+                    "Links": null,
+                    "OomScoreAdj": 0,
+                    "PidMode": "",
+                    "Privileged": false,
+                    "PublishAllPorts": false,
+                    "ReadonlyRootfs": false,
+                    "SecurityOpt": null,
+                    "UTSMode": "",
+                    "UsernsMode": "",
+                    "ShmSize": 67108864,
+                    "Runtime": "docker-runc",
+                    "ConsoleSize": [
+                        0,
+                        0
+                    ],
+                    "Isolation": "",
+                    "CpuShares": 0,
+                    "Memory": 0,
+                    "NanoCpus": 0,
+                    "CgroupParent": "",
+                    "BlkioWeight": 0,
+                    "BlkioWeightDevice": null,
+                    "BlkioDeviceReadBps": null,
+                    "BlkioDeviceWriteBps": null,
+                    "BlkioDeviceReadIOps": null,
+                    "BlkioDeviceWriteIOps": null,
+                    "CpuPeriod": 0,
+                    "CpuQuota": 0,
+                    "CpuRealtimePeriod": 0,
+                    "CpuRealtimeRuntime": 0,
+                    "CpusetCpus": "",
+                    "CpusetMems": "",
+                    "Devices": null,
+                    "DiskQuota": 0,
+                    "KernelMemory": 0,
+                    "MemoryReservation": 0,
+                    "MemorySwap": 0,
+                    "MemorySwappiness": -1,
+                    "OomKillDisable": false,
+                    "PidsLimit": 0,
+                    "Ulimits": null,
+                    "CpuCount": 0,
+                    "CpuPercent": 0,
+                    "IOMaximumIOps": 0,
+                    "IOMaximumBandwidth": 0
+                },
+                "GraphDriver": {
+                    "Name": "devicemapper",
+                    "Data": {
+                        "DeviceId": "207",
+                        "DeviceName": "docker-8:3-403365968-d91769467c419331302dde58c8c7a91822b8a40d20033590a83cf111014cd3fc",
+                        "DeviceSize": "10737418240"
+                    }
+                },
+                "Mounts": [],
+                "Config": {
+                    "Hostname": "bd7ce30cb6d1",
+                    "Domainname": "",
+                    "User": "",
+                    "AttachStdin": false,
+                    "AttachStdout": false,
+                    "AttachStderr": false,
+                    "ExposedPorts": {
+                        "80/tcp": {}
+                    },
+                    "Tty": false,
+                    "OpenStdin": false,
+                    "StdinOnce": false,
+                    "Env": [
+                        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                        "NGINX_VERSION=1.13.12-1~stretch",
+                        "NJS_VERSION=1.13.12.0.2.0-1~stretch"
+                    ],
+                    "Cmd": [
+                        "nginx",
+                        "-g",
+                        "daemon off;"
+                    ],
+                    "ArgsEscaped": true,
+                    "Image": "nginx@sha256:0fb320e2a1b1620b4905facb3447e3d84ad36da0b2c8aa8fe3a5a81d1187b884",
+                    "Volumes": null,
+                    "WorkingDir": "",
+                    "Entrypoint": null,
+                    "OnBuild": null,
+                    "Labels": {
+                        "com.docker.swarm.node.id": "76ujp9e518ah5aczcvicwv7fh",
+                        "com.docker.swarm.service.id": "jfy929fdnl5l8kr3gl8odszmy",
+                        "com.docker.swarm.service.name": "my-nginx",
+                        "com.docker.swarm.task": "",
+                        "com.docker.swarm.task.id": "9yves1kmzm1vvty2by0m1bnd5",
+                        "com.docker.swarm.task.name": "my-nginx.1.9yves1kmzm1vvty2by0m1bnd5",
+                        "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+                    },
+                    "StopSignal": "SIGTERM"
+                },
+                "NetworkSettings": {
+                    "Bridge": "",
+                    "SandboxID": "6e9fbd72135f157a8d6362303e13ccbc801782c3110f036526fc7e7242024254",
+                    "HairpinMode": false,
+                    "LinkLocalIPv6Address": "",
+                    "LinkLocalIPv6PrefixLen": 0,
+                    "Ports": {
+                        "80/tcp": null
+                    },
+                    "SandboxKey": "/var/run/docker/netns/6e9fbd72135f",
+                    "SecondaryIPAddresses": null,
+                    "SecondaryIPv6Addresses": null,
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "MacAddress": "",
+                    "Networks": {
+                        "ingress": {
+                            "IPAMConfig": {
+                                "IPv4Address": "10.255.0.10"
+                            },
+                            "Links": null,
+                            "Aliases": [
+                                "bd7ce30cb6d1"
+                            ],
+                            "NetworkID": "qasbq8386c4upumsrt47rvnjr",
+                            "EndpointID": "ece07f1464a3d85c894d939f99aeca9e3d899cb5a5d257b8a1529a41c8932559",
+                            "Gateway": "",
+                            "IPAddress": "10.255.0.10",
+                            "IPPrefixLen": 16,
+                            "IPv6Gateway": "",
+                            "GlobalIPv6Address": "",
+                            "GlobalIPv6PrefixLen": 0,
+                            "MacAddress": "02:42:0a:ff:00:0a"
+                        },
+                        "nginx-net": {
+                            "IPAMConfig": {
+                                "IPv4Address": "10.0.0.10"
+                            },
+                            "Links": null,
+                            "Aliases": [
+                                "bd7ce30cb6d1"
+                            ],
+                            "NetworkID": "xfilmfgy3ufuwpyimnex90uti",
+                            "EndpointID": "a8e04dc97d65997b194e67f27073fbbc04336af121b882044af361b06036a32a",
+                            "Gateway": "",
+                            "IPAddress": "10.0.0.10",
+                            "IPPrefixLen": 24,
+                            "IPv6Gateway": "",
+                            "GlobalIPv6Address": "",
+                            "GlobalIPv6PrefixLen": 0,
+                            "MacAddress": "02:42:0a:00:00:0a"
+                        }
+                    }
+                }
+            }
+        ]
+
+
+
+
+
+3. TEST with SRx
+-----------------
+
+  (1)  ip address
+    # docker network inspect srx-net
+    
+
+  (2) service create with mount option
+     * If mount src is '/opt/project/docker_test/srx` in vmware-011, this will also apply to vmware-005 with 
+       mount src path
+
+      PWD=/opt/project/docker_test/srx
+
+
+  (3) testing conditions and commands
+
+    <in vmware-011>
+
+
+      [root@vmware-011 srx]# pwd
+      /opt/project/docker_test/srx        
+      [root@vmware-011 srx]# ll
+      total 72
+      -rw-r--r--  1 root     root    210 Mar  1 15:41 bgpd.conf
+      -rw-r--r--  1 root     root    845 Apr 26 12:51 bgpd.conf.bs1
+      -rw-r--r--  1 kyehwanl admin  2007 May  1 15:56 Dockerfile
+      -rw-r--r--  1 kyehwanl admin  2001 Apr 30 12:36 Dockerfile~
+      -rw-r--r--  1 kyehwanl admin  2032 May  1 15:56 Dockerfile-devel
+      -rw-r--r--  1 kyehwanl admin  2025 Apr 27 11:35 Dockerfile-devel~
+      -rw-r--r--  1 kyehwanl admin  1210 Apr 27 11:30 Dockerfile-devel2
+      -rw-r--r--  1 kyehwanl admin  1151 Apr 27 11:28 Dockerfile-devel2~
+      -rw-r--r--  1 kyehwanl admin   343 Feb 28 15:56 Dockerfile-ref1
+
+      [root@vmware-011 srx]# docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server
+      qrkcwwfplr114p8xjd9lz4zl5
+      overall progress: 3 out of 3 tasks
+      1/3: running   [==================================================>]
+      2/3: running   [==================================================>]
+      3/3: running   [==================================================>]
+      verify: Service converged
+
+      [root@vmware-011 srx]# docker service ls
+      ID                  NAME                MODE                REPLICAS            IMAGE                        PORTS
+      qrkcwwfplr11        srx_test1           replicated          3/3                 10.0.50.11:5000/srx:latest   *:179->179/tcp
+
+      [root@vmware-011 srx]# docker service ps srx_test1
+      ID                  NAME                IMAGE                        NODE                       DESIRED STATE       CURRENT STATE            ERROR               PORTS
+      b1qhha7quu7i        srx_test1.1         10.0.50.11:5000/srx:latest   vmware-005.antd.nist.gov   Running             Running 51 seconds ago
+      zvgtoumrf7cp        srx_test1.2         10.0.50.11:5000/srx:latest   vmware-011.antd.nist.gov   Running             Running 21 seconds ago
+      2k42vzetnhlj        srx_test1.3         10.0.50.11:5000/srx:latest   vmware-011.antd.nist.gov   Running             Running 21 seconds ago
+
+
+      [root@vmware-011 srx]# docker ps
+      CONTAINER ID        IMAGE                        COMMAND                  CREATED              STATUS              PORTS                    NAMES
+      531f6e8c83c6        10.0.50.11:5000/srx:latest   "srx_server"             About a minute ago   Up About a minute   179/tcp, 2605/tcp        srx_test1.3.2k42vzetnhlj1bgiogal8m80j
+      c1e33c3a43f6        10.0.50.11:5000/srx:latest   "srx_server"             About a minute ago   Up About a minute   179/tcp, 2605/tcp        srx_test1.2.zvgtoumrf7cpl7eaio3gkbxo6
+
+
+      [root@vmware-011 docker_test]# docker exec -it c1 /bin/bash
+      [root@c1e33c3a43f6 /]# ll /etc/quagga/
+      total 72
+      -rw-r--r--  1 root  root    210 Mar  1 20:41 bgpd.conf
+      -rw-r--r--  1 root  root    845 Apr 26 16:51 bgpd.conf.bs1
+      -rw-r--r--  1 40021   1000 2007 May  1 19:56 Dockerfile
+      -rw-r--r--  1 40021   1000 2001 Apr 30 16:36 Dockerfile~
+      -rw-r--r--  1 40021   1000 2032 May  1 19:56 Dockerfile-devel
+      -rw-r--r--  1 40021   1000 2025 Apr 27 15:35 Dockerfile-devel~
+      ...
+
+
+
+    <whereas, vmware-005>
+
+      [root@vmware-005 srx]# pwd
+      /opt/project/docker_test/srx
+      [root@vmware-005 srx]# ll
+      total 4
+      -rw-r--r-- 1 root root 209 May  1 15:34 bgpd.conf
+
+
+      [root@vmware-005 srx]# docker ps
+      CONTAINER ID        IMAGE                                                                                         COMMAND             CREATED             STATUS              PORTS                NAMES                           
+      c63ad0b34c27        10.0.50.11:5000/srx@sha256:2efa6cb266bd473459264681f5ab16b5286a0d7feffb7007c0d0b0fc3920034d   "srx_server"        2 minutes ago       Up 2 minutes        179/tcp, 2605/tcp    srx_test1.1.b1qhha7quu7iuuuxwkinbsr1w
+
+      [root@vmware-005 srx]# docker exec -it c6 /bin/bash
+      [root@c63ad0b34c27 /]# ll /etc/quagga/
+      total 4
+      -rw-r--r-- 1 root root 209 May  1 19:34 bgpd.conf
+
+
+
+      "docker swarm leave" to leave this swarm and join another one
+
+
+
+
+4. Docker Swarm Experiment example
+-----------------------------------
+
+
+
+(1) create overlay network
+
+    [root@vmware-011 srx]# docker network create -d overlay srx-net
+    o0n5b2c4jnz1x8sogmjrui5fi
+
+    <CAUTION> firewall setting might prohibit from interconnection between overlay network
+        --> disable firewalld temporarily
+
+
+
+(2) create service
+
+    docker service create   --name srx_test1 \
+                            --mount dst=/etc/quagga/,src=$PWD,type=bind \
+                            --mount src=$PWD/keys/,dst=/var/lib/bgpsec-keys/,type=bind \
+                            --publish target=179,published=179 \
+                            --replicas=5 \
+                            --network srx-net \
+                            10.0.50.11:5000/srx-swarm
+
+    [root@vmware-011 srx]# docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --mount src=$PWD/keys/,dst=/var/lib/bgpsec-keys/,type=bind --publish target=179,published=179 --replicas=4 --network srx-
+    net 10.0.50.11:5000/srx-swarm
+    zfa1e6iewq1gz5zx77jo6xatc
+    overall progress: 4 out of 4 tasks
+    1/4: running   [==================================================>]
+    2/4: running   [==================================================>]
+    3/4: running   [==================================================>]
+    4/4: running   [==================================================>]
+    verify: Service converged
+
+    [root@vmware-011 srx]# docker ps
+    CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                    NAMES
+    7a8ef3b752ce        10.0.50.11:5000/srx-swarm:latest   "sleep infinity"         9 seconds ago       Up 8 seconds        179/tcp, 2605/tcp        srx_test1.3.3ezfqvszb5prgo4endehg0wnu
+    7f7cb0d3a580        10.0.50.11:5000/srx-swarm:latest   "sleep infinity"         9 seconds ago       Up 8 seconds        179/tcp, 2605/tcp        srx_test1.1.8p75gtdskq7xkrh8nw1rdly6b
+
+
+
+(3) status - connections and IP address allocation
+
+    [root@vmware-011 srx]# docker service ps srx_test1
+    ID                  NAME                IMAGE                              NODE                       DESIRED STATE       CURRENT STATE            ERROR               PORTS
+    8p75gtdskq7x        srx_test1.1         10.0.50.11:5000/srx-swarm:latest   vmware-011.antd.nist.gov   Running             Running 28 seconds ago
+    jtarnt1rlomv        srx_test1.2         10.0.50.11:5000/srx-swarm:latest   vmware-005.antd.nist.gov   Running             Running 28 seconds ago
+    3ezfqvszb5pr        srx_test1.3         10.0.50.11:5000/srx-swarm:latest   vmware-011.antd.nist.gov   Running             Running 28 seconds ago
+    puxqf8cfwyfb        srx_test1.4         10.0.50.11:5000/srx-swarm:latest   vmware-005.antd.nist.gov   Running             Running 28 seconds ago
+
+    [root@vmware-011 srx]# docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+    /srx_test1.3.3ezfqvszb5prgo4endehg0wnu - 10.255.0.710.0.0.7
+    /srx_test1.1.8p75gtdskq7xkrh8nw1rdly6b - 10.255.0.510.0.0.5
+
+
+
+(4) Dockerfile and build
+
+  * Dockerfile name: Dockerfile-srxswarm
+
+      FROM centos:latest
+      MAINTAINER "Kyehwan Lee" 
+      ENV container docker
+
+      ################## BEGIN INSTALLATION ######################
+      # Install Quagga, Telnet, and TCPDump
+      RUN yum -y install wget libconfig openssl net-snmp telnet less strace
+      ##################### INSTALLATION END #####################
+
+      ################## BEGIN CONFIGURATION ######################
+      # Use the sample configurations as our production configs
+      # COPY babeld.conf /etc/quagga/babeld.conf
+      RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm
+      RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm
+      RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-0.5.1.0-1.el7.centos.x86_64.rpm
+      RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm
+      RUN rpm -ivh srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm
+      RUN rpm -ivh srx-0.5.1.0-1.el7.centos.x86_64.rpm
+      RUN rpm -ivh srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm
+      RUN rpm -ivh quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm
+
+      EXPOSE 2605 179
+      #WORKDIR /opt/project/docker_test/srx
+      COPY bgpd.conf /etc/quagga/bgpd.conf
+      #VOLUME ["/opt/project/docker_test/srx"]
+
+      #ENTRYPOINT ["bgpd", "-u", "root"]
+      #CMD ["-f", "/etc/quagga/bgpd.conf"]
+      CMD ["sleep", "infinity"]
+      #CMD bgpd -u root
+      #CMD ["/bin/bash"]
+
+      ############# DOCKER RUN command example #####################################
+      # docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx
+      ##############################################################################
+
+
+
+  * build
+
+    [root@vmware-011 srx]# docker build -f ./Dockerfile-srxswarm -t srx-swarm .
+
+
+  * tagging and push into registry
+
+    [root@vmware-011 srx]# docker tag srx-swarm 10.0.50.11:5000/srx-swarm 
+    [root@vmware-011 srx]# docker push 10.0.50.11:5000/srx-swarm 
+
+
+

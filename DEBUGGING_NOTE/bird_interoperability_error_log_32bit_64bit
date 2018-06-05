@@ -1,0 +1,914 @@
+Starting program: /users/kyehwanl/srx_test1/test2/bgpd -f /users/kyehwanl/srx_test1/node1/bgpd.conf -i /tmp/bgpd.pid
+[Thread debugging using libthread_db enabled]
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+Router key: #0, algorithm-id: 1, ski: 'C30433FA1975FF193181458FB902B501EA9789DC' successfully installed!
+2016/10/03 17:10:36 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+2016/10/03 17:10:36 BGP: Request to connect to SRx server
+2016/10/03 17:10:36 BGP: Connect to SRx server node5:17900
+2016/10/03 17:10:36 BGP: Connection to SRx-server succeeded
+2016/10/03 17:10:36 BGP: *** Received SRx Synchronization Request! ***
+
+2016/10/03 17:10:39 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+2016/10/03 17:10:39 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+2016/10/03 17:10:39 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/03 17:10:39 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+2016/10/03 17:10:39 BGP: [BGPSEC] peer Capability SEND set
+2016/10/03 17:10:39 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/03 17:10:39 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+2016/10/03 17:10:39 BGP: [BGPSEC] peer Capability RECV set
+2016/10/03 17:10:39 BGP: 10.1.1.3 unrecognized capability code: 70 - ignored
+2016/10/03 17:10:39 BGP: [BGPSEC] startp:0x801f0bb3 length:103 total:106
+2016/10/03 17:10:39 BGP: [IN] 0x801fc760 -  startp: 0x801f0c1d-- getp:0 endp:103 -- endp(startp+length):0x801f0c84 length:103
+2016/10/03 17:10:39 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/03 17:10:39 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/03 17:10:39 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 95
+2016/10/03 17:10:39 BGP: [IN]    signature --> 1, Length: 70
+2016/10/03 17:10:39 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801fc570
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc570 seg:0x801fc7d0 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc570 seg:0x801fc7d0
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fc940]->bgpsecPath_Attr:0x801fc570 PathSeg:0x801fc7d0 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.4.4/30
+2016/10/03 17:10:39 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x801fc940 aspath:0x801fc8c8 (attr interned) bpgsec:0x801fc570
+2016/10/03 17:10:39 BGP: [BGPSEC] [as_segment:0x801fc8a8] as_segment_length:1 aspath_refcnt: 2
+
+30 44 02 20 4c e1 d1 e5 c7 e9 ab 0f 14 31 7a a5
+d5 21 46 a8 af 1f e1 98 ca ce 97 83 83 06 6d d4
+e4 e1 e5 f3 02 20 28 b5 14 2e 31 94 b6 cc 7c 67
+cf 53 84 cb b5 ee 43 17 d5 ff 42 12 79 c8 93 bf
+ec 9f 34 bc bf c7  - from[print_signature]
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc570 seg:0x801fc7d0 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc570 seg:0x801fc7d0
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fc940]->bgpsecPath_Attr:0x801fc570 PathSeg:0x801fc7d0 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.4.4/30...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+2016/10/03 17:10:39 BGP: [BGPSEC] startp:0x801f0bb3 length:104 total:107
+2016/10/03 17:10:39 BGP: [IN] 0x80207120 -  startp: 0x801f0c1e-- getp:0 endp:104 -- endp(startp+length):0x801f0c86 length:104
+2016/10/03 17:10:39 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/03 17:10:39 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/03 17:10:39 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/03 17:10:39 BGP: [IN]    signature --> 1, Length: 71
+2016/10/03 17:10:39 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801fcb38
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fcb38 seg:0x801fcb50 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fcb38 seg:0x801fcb50
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80207290]->bgpsecPath_Attr:0x801fcb38 PathSeg:0x801fcb50 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.4.68/30
+2016/10/03 17:10:39 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x80207290 aspath:0x801fc8c8 (attr interned) bpgsec:0x801fcb38
+2016/10/03 17:10:39 BGP: [BGPSEC] [as_segment:0x801fc8a8] as_segment_length:1 aspath_refcnt: 3
+
+30 45 02 20 17 5a 16 ba f1 5a 4d 7a 64 ea 47 52
+74 0e 49 88 a1 a2 63 64 05 84 e2 70 5c 4f fb 0d
+76 ae af b7 02 21 00 ed ac d4 4f 44 59 0c b9 22
+cb 8e 0a f8 24 79 33 dd ae d9 1e 13 3f 9d 68 e4
+f1 fc a9 cc 96 8d 68  - from[print_signature]
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020e190 seg:0x8020e1a8 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020e190 seg:0x8020e1a8
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020a6b0]->bgpsecPath_Attr:0x8020e190 PathSeg:0x8020e1a8 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.4/30...duplicate ignored
+2016/10/03 17:10:39 BGP: [BGPSEC] startp:0x801f0bb3 length:104 total:107
+2016/10/03 17:10:39 BGP: [IN] 0x8020e708 -  startp: 0x801f0c1e-- getp:0 endp:104 -- endp(startp+length):0x801f0c86 length:104
+2016/10/03 17:10:39 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/03 17:10:39 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/03 17:10:39 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/03 17:10:39 BGP: [IN]    signature --> 1, Length: 71
+2016/10/03 17:10:39 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020dd30
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020dd30 seg:0x8020dcd0 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020dd30 seg:0x8020dcd0
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020d388]->bgpsecPath_Attr:0x8020dd30 PathSeg:0x8020dcd0 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.68/30
+2016/10/03 17:10:39 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020d388 aspath:0x801fc8c8 (attr interned) bpgsec:0x8020dd30
+2016/10/03 17:10:39 BGP: [BGPSEC] [as_segment:0x801fc8a8] as_segment_length:1 aspath_refcnt: 30
+
+30 45 02 20 35 22 a5 f6 af 0a 62 43 c5 e1 4a 92
+7a 95 67 6f 67 76 be 2b ab b3 98 ed 55 1e b3 e8
+88 fa 59 6e 02 21 00 94 42 c3 16 64 90 08 fe a7
+b9 61 10 09 93 f2 6c 3b 34 63 50 54 dc 3a fd 4e
+a5 6d a9 bc c6 4c b8  - from[print_signature]
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020dd30 seg:0x8020dcd0 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020dd30 seg:0x8020dcd0
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020d388]->bgpsecPath_Attr:0x8020dd30 PathSeg:0x8020dcd0 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.68/30...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+2016/10/03 17:10:39 BGP: [BGPSEC] startp:0x801f0bb3 length:105 total:108
+2016/10/03 17:10:39 BGP: [IN] 0x8020ead0 -  startp: 0x801f0c1f-- getp:0 endp:105 -- endp(startp+length):0x801f0c88 length:105
+2016/10/03 17:10:39 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/03 17:10:39 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/03 17:10:39 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 97
+2016/10/03 17:10:39 BGP: [IN]    signature --> 1, Length: 72
+2016/10/03 17:10:39 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020ea30
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020ea30 seg:0x8020ea48 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020ea30 seg:0x8020ea48
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020aa50]->bgpsecPath_Attr:0x8020ea30 PathSeg:0x8020ea48 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.132/30
+2016/10/03 17:10:39 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020aa50 aspath:0x801fc8c8 (attr interned) bpgsec:0x8020ea30
+2016/10/03 17:10:39 BGP: [BGPSEC] [as_segment:0x801fc8a8] as_segment_length:1 aspath_refcnt: 31
+
+30 46 02 21 00 dc 24 dc 1f ef 26 4c f1 bc 01 87
+39 3c 84 ff b5 74 3f 43 1f 49 aa ba 8d 65 25 0f
+34 8c 3b 15 52 02 21 00 a8 ad e4 66 38 f6 88 4f
+ae 99 e8 7b 64 68 87 b9 97 ce e5 ec 93 eb 31 4c
+fd af a5 31 c0 69 43 71  - from[print_signature]
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020ea30 seg:0x8020ea48 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020ea30 seg:0x8020ea48
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020aa50]->bgpsecPath_Attr:0x8020ea30 PathSeg:0x8020ea48 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.132/30...duplicate ignored
+2016/10/03 17:10:39 BGP: [BGPSEC] startp:0x801f0bb3 length:103 total:106
+2016/10/03 17:10:39 BGP: [IN] 0x8020efd8 -  startp: 0x801f0c1d-- getp:0 endp:103 -- endp(startp+length):0x801f0c84 length:103
+2016/10/03 17:10:39 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/03 17:10:39 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/03 17:10:39 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 95
+2016/10/03 17:10:39 BGP: [IN]    signature --> 1, Length: 70
+2016/10/03 17:10:39 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020f5f8
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020f5f8 seg:0x8020f048 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020f5f8 seg:0x8020f048
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020ece8]->bgpsecPath_Attr:0x8020f5f8 PathSeg:0x8020f048 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.196/30
+2016/10/03 17:10:39 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020ece8 aspath:0x801fc8c8 (attr interned) bpgsec:0x8020f5f8
+2016/10/03 17:10:39 BGP: [BGPSEC] [as_segment:0x801fc8a8] as_segment_length:1 aspath_refcnt: 32
+
+30 44 02 20 54 d6 da 0b fe 3b e8 0b a1 88 ca d8
+9f 3f 41 23 08 36 d4 74 d5 d1 56 a8 9d f4 f7 3d
+96 ce 57 83 02 20 07 90 4a 56 ab 81 c0 52 35 d4
+a5 c2 4d a4 7e 58 79 89 6f a1 3b 4f 02 d8 cb 84
+a6 c5 09 6c 05 33  - from[print_signature]
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020f5f8 seg:0x8020f048 AS:60003
+2016/10/03 17:10:39 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020f5f8 seg:0x8020f048
+2016/10/03 17:10:39 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020ece8]->bgpsecPath_Attr:0x8020f5f8 PathSeg:0x8020f048 AS:60003
+2016/10/03 17:10:39 BGP: 10.1.1.3 rcvd 20.0.3.196/30...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+*** glibc detected *** /users/kyehwanl/srx_test1/test2/bgpd: free(): invalid next size (normal): 0x8020ebe0 ***
+======= Backtrace: =========
+/lib/libc.so.6(+0x4d276af2)[0xb7c41af2]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2(CRYPTO_free+0x32)[0xb7e1cd2a]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2(ec_wNAF_mul+0x2c3)[0xb7e215d3]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2(EC_POINT_mul+0xa4)[0xb7e20e54]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2(+0x8dccd)[0xb7e58ccd]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2(ECDSA_verify+0x74)[0xb7e59b14]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxBGPSecOpenSSL.so(validate+0x273)[0xb7a41f35]
+/users/kyehwanl/srx_test1/test2/bgpd(+0x12070)[0x80012070]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4(processVerifyNotify+0xf0)[0xb7f11270]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4(+0x5fa4)[0xb7f11fa4]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4(receivePackets+0x16e)[0xb7f13b1e]
+/users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4(processPackets+0x47)[0xb7f12027]
+/users/kyehwanl/srx_test1/test2/bgpd(respawnReceivePacket+0x50)[0x8002a7dd]
+/users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0(thread_call+0x7e)[0xb7fa1ee5]
+/users/kyehwanl/srx_test1/test2/bgpd(main+0x498)[0x8000ce02]
+/lib/libc.so.6(__libc_start_main+0xf3)[0xb7be93f3]
+/users/kyehwanl/srx_test1/test2/bgpd(+0xc2d1)[0x8000c2d1]
+======= Memory map: ========
+80000000-800df000 r-xp 00000000 00:24 373323706  /users/kyehwanl/srx_test1/test2/qsrx3/bgpd/.libs/bgpd
+800df000-800f1000 rw-p 000de000 00:24 373323706  /users/kyehwanl/srx_test1/test2/qsrx3/bgpd/.libs/bgpd
+800f1000-8021d000 rw-p 00000000 00:00 0          [heap]
+b79c7000-b79e3000 r-xp 00000000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b79e3000-b79e4000 rw-p 0001b000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b79f3000-b7b2c000 r-xp 00000000 00:24 372689073  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7b2c000-b7b2e000 rw-p 00138000 00:24 372689073  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7b2e000-b7b52000 rw-p 00000000 00:00 0
+b7b52000-b7b5d000 r-xp 00000000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5d000-b7b5e000 r--p 0000a000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5e000-b7b5f000 rw-p 0000b000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5f000-b7b61000 rw-p 00000000 00:00 0
+b7b61000-b7b7d000 r-xp 00000000 08:02 378015     /lib/libtinfo.so.5.8
+b7b7d000-b7b80000 rw-p 0001b000 08:02 378015     /lib/libtinfo.so.5.8
+b7b80000-b7bca000 r-xp 00000000 08:02 381157     /lib/libfreebl3.so
+b7bca000-b7bcb000 r--p 00049000 08:02 381157     /lib/libfreebl3.so
+b7bcb000-b7bcc000 rw-p 0004a000 08:02 381157     /lib/libfreebl3.so
+b7bcc000-b7bd0000 rw-p 00000000 00:00 0
+b7bd0000-b7d55000 r-xp 00000000 08:02 377467     /lib/libc-2.14.1.so
+b7d55000-b7d56000 ---p 00185000 08:02 377467     /lib/libc-2.14.1.so
+b7d56000-b7d58000 r--p 00185000 08:02 377467     /lib/libc-2.14.1.so
+b7d58000-b7d59000 rw-p 00187000 08:02 377467     /lib/libc-2.14.1.so
+b7d59000-b7d5c000 rw-p 00000000 00:00 0
+b7d5c000-b7d63000 r-xp 00000000 08:02 377776     /lib/librt-2.14.1.so
+b7d63000-b7d64000 r--p 00006000 08:02 377776     /lib/librt-2.14.1.so
+b7d64000-b7d65000 rw-p 00007000 08:02 377776     /lib/librt-2.14.1.so
+b7d65000-b7d66000 rw-p 00000000 00:00 0
+b7d66000-b7d70000 r-xp 00000000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7d70000-b7d71000 rw-p 00009000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7d71000-b7d74000 r-xp 00000000 08:02 377469     /lib/libdl-2.14.1.so
+b7d74000-b7d75000 r--p 00002000 08:02 377469     /lib/libdl-2.14.1.so
+b7d75000-b7d76000 rw-p 00003000 08:02 377469     /lib/libdl-2.14.1.so
+b7d76000-b7dac000 r-xp 00000000 08:02 378266     /lib/libreadline.so.6.2
+b7dac000-b7db0000 rw-p 00036000 08:02 378266     /lib/libreadline.so.6.2
+b7db0000-b7db1000 rw-p 00000000 00:00 0
+b7db1000-b7dc7000 r-xp 00000000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc7000-b7dc8000 r--p 00015000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc8000-b7dc9000 rw-p 00016000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc9000-b7dcb000 rw-p 00000000 00:00 0
+b7dcb000-b7f06000 r-xp 00000000 00:24 372689093  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7f06000-b7f08000 rw-p 0013a000 00:24 372689093  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7f08000-b7f0c000 rw-p 00000000 00:00 0
+b7f0c000-b7f1e000 r-xp 00000000 00:24 372689102  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4.0.1
+b7f1e000-b7f1f000 rw-p 00011000 00:24 372689102  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4.0.1
+b7f1f000-b7f20000 rw-p 00000000 00:00 0
+b7f20000-b7f27000 r-xp 00000000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f27000-b7f28000 r--p 00007000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f28000-b7f29000 rw-p 00008000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f29000-b7f50000 rw-p 00000000 00:00 0
+b7f50000-b7f78000 r-xp 00000000 08:02 378197     /lib/libm-2.14.1.so
+b7f78000-b7f79000 r--p 00028000 08:02 378197     /lib/libm-2.14.1.so
+b7f79000-b7f7a000 rw-p 00029000 08:02 378197     /lib/libm-2.14.1.so
+b7f87000-b7f89000 rw-p 00000000 00:00 0
+b7f89000-b7fd7000 r-xp 00000000 00:24 372689112  /users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0.0.0
+b7fd7000-b7fdb000 rw-p 0004e000 00:24 372689112  /users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0.0.0
+b7fdb000-b7fdf000 rw-p 00000000 00:00 0
+b7fdf000-b7fe0000 r-xp 00000000 00:00 0          [vdso]
+b7fe0000-b7ffe000 r-xp 00000000 08:02 377465     /lib/ld-2.14.1.so
+b7ffe000-b7fff000 r--p 0001d000 08:02 377465     /lib/ld-2.14.1.so
+b7fff000-b8000000 rw-p 0001e000 08:02 377465     /lib/ld-2.14.1.so
+bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]
+
+Program received signal SIGABRT, Aborted.
+0xb7fdf424 in __kernel_vsyscall ()
+Missing separate debuginfos, use: debuginfo-install srx-0.3.0.1-1.fc15.i686
+(gdb) bt
+#0  0xb7fdf424 in __kernel_vsyscall ()
+#1  0xb7bfe0ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0xb7bffa25 in __GI_abort () at abort.c:93
+#3  0xb7c3ac0a in __libc_message (do_abort=2, fmt=0xb7d1e234 "*** glibc detected *** %s: %s: 0x%s ***\n") at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0xb7c41af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0x8020ebe0) at malloc.c:6283
+#5  0xb7e1cd2a in CRYPTO_free (str=0x8020ebe0) at mem.c:395
+#6  0xb7e215d3 in ec_wNAF_mul () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#7  0xb7e20e54 in EC_POINT_mul () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#8  0xb7e58ccd in ecdsa_do_verify () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#9  0xb7e59b14 in ECDSA_verify () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#10 0xb7a41f35 in validate (data=0x8020aa80) at bgpsec_openssl.c:612
+#11 0x80012070 in handleSRxValidationResult (updateID=330223059, localID=16, valType=VRT_BOTH, roaResult=3 '\003', bgpsecResult=3 '\003', bgpRouter=0x801e4530) at bgpd.c:2443
+#12 0xb7f11270 in processVerifyNotify (hdr=0x8020f260, proxy=0x801efea8) at client/srx_api.c:1093
+#13 0xb7f11fa4 in dispatchPackets (packet=0x8020f260, proxyPtr=0x801efea8) at client/srx_api.c:1262
+#14 0xb7f13b1e in receivePackets (fdPtr=0x801eff18, dispatcher=0xb7f11ed0 <dispatchPackets>, pHandler=0x801efea8, pHandlerType=PHT_PROXY) at util/packet.c:215
+#15 0xb7f12027 in processPackets (proxy=0x801efea8) at client/srx_api.c:1303
+#16 0x8002a7dd in respawnReceivePacket (t=0xbffff4bc) at bgp_route.c:205
+#17 0xb7fa1ee5 in thread_call (thread=0xbffff4bc) at thread.c:1258
+#18 0x8000ce02 in main (argc=5, argv=0xbffff5f4) at bgp_main.c:470
+
+
+
+
+
+
+
+
+
+
+
+Starting program: /users/kyehwanl/srx_test1/test2/bgpd -f /users/kyehwanl/srx_test1/node1/bgpd.conf -i /tmp/bgpd.pid
+[Thread debugging using libthread_db enabled]
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+Router key: #0, algorithm-id: 1, ski: 'C30433FA1975FF193181458FB902B501EA9789DC' successfully installed!
+2016/10/13 01:16:19 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+2016/10/13 01:16:19 BGP: Request to connect to SRx server
+2016/10/13 01:16:19 BGP: Connect to SRx server node5:17900
+2016/10/13 01:16:19 BGP: Connection to SRx-server succeeded
+2016/10/13 01:16:19 BGP: *** Received SRx Synchronization Request! ***
+
+2016/10/13 01:16:25 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+2016/10/13 01:16:25 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+2016/10/13 01:16:25 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/13 01:16:25 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+2016/10/13 01:16:25 BGP: [BGPSEC] peer Capability SEND set
+2016/10/13 01:16:25 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/13 01:16:25 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+2016/10/13 01:16:25 BGP: [BGPSEC] peer Capability RECV set
+2016/10/13 01:16:25 BGP: 10.1.1.3 unrecognized capability code: 70 - ignored
+2016/10/13 01:16:25 BGP: [BGPSEC] startp:0x801f0bb2 length:104 total:107
+2016/10/13 01:16:25 BGP: [IN] 0x801fc848 -  startp: 0x801f0c1d-- getp:0 endp:104 -- endp(startp+length):0x801f0c85 length:104
+2016/10/13 01:16:25 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/13 01:16:25 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/13 01:16:25 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/13 01:16:25 BGP: [IN]    signature --> 1, Length: 71
+2016/10/13 01:16:25 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801fc8b8
+2016/10/13 01:16:25 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc8b8 seg:0x801fc8d0 AS:60003
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc8b8 seg:0x801fc8d0
+2016/10/13 01:16:25 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fca68]->bgpsecPath_Attr:0x801fc8b8 PathSeg:0x801fc8d0 AS:60003
+2016/10/13 01:16:25 BGP: 10.1.1.3 rcvd 20.0.4.0/24
+2016/10/13 01:16:25 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x801fca68 aspath:0x801fc9f0 (attr interned) bpgsec:0x801fc8b8
+2016/10/13 01:16:25 BGP: [BGPSEC] [as_segment:0x801fc9a8] as_segment_length:1 aspath_refcnt: 2
+
+30 45 02 21 00 c7 df 3d ac 02 70 97 03 80 44 0d
+25 9e cb e5 33 9d fa 23 e8 53 fd 22 ef 88 27 c8
+0c 83 8c f7 b9 02 20 66 95 21 37 21 fa 80 e2 b2
+ee 46 9d ac 79 64 47 59 54 c5 14 8e b3 0d 5f e0
+49 d6 18 04 1f e1 4f  - from[print_signature]
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc8b8 seg:0x801fc8d0 AS:60003
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc8b8 seg:0x801fc8d0
+2016/10/13 01:16:25 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fca68]->bgpsecPath_Attr:0x801fc8b8 PathSeg:0x801fc8d0 AS:60003
+2016/10/13 01:16:25 BGP: 10.1.1.3 rcvd 20.0.4.0/24...duplicate ignored
+2016/10/13 01:16:25 BGP: [BGPSEC] startp:0x801f0bb2 length:103 total:106
+2016/10/13 01:16:25 BGP: [IN] 0x80206f08 -  startp: 0x801f0c1c-- getp:0 endp:103 -- endp(startp+length):0x801f0c83 length:103
+2016/10/13 01:16:25 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/13 01:16:25 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/13 01:16:25 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 95
+2016/10/13 01:16:25 BGP: [IN]    signature --> 1, Length: 70
+2016/10/13 01:16:25 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x80206f78
+2016/10/13 01:16:25 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x80206f78 seg:0x80206f90 AS:60003
+2016/10/13 01:16:25 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x80206f78 seg:0x80206f90
+2016/10/13 01:16:25 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80207150]->bgpsecPath_Attr:0x80206f78 PathSeg:0x80206f90 AS:60003
+2016/10/13 01:16:25 BGP: 10.1.1.3 rcvd 20.0.5.0/24
+2016/10/13 01:16:25 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x80207150 aspath:0x801fc9f0 (attr interned) bpgsec:0x80206f78
+2016/10/13 01:16:25 BGP: [BGPSEC] [as_segment:0x801fc9a8] as_segment_length:1 aspath_refcnt: 3
+
+30 44 02 20 73 99 32 fd 52 c3 4c a9 b8 4b 22 f3
+4f 02 1e d0 6a 8b 04 60 22 c9 ee c3 90 ec f1 8f
+21 71 d6 74 02 20 40 b2 f2 58 67 66 9c 05 62 a4
+af 78 b3 d9 bc f6 aa fb 5e ee 05 e4 28 39 bf f1
+7d f7 79 6d 95 93  - from[print_signature]
+2016/10/13 01:18:19 BGP: [BGPSEC] startp:0x801f0bb2 length:103 total:106
+2016/10/13 01:18:19 BGP: [IN] 0x8020b3e0 -  startp: 0x801f0c1c-- getp:0 endp:103 -- endp(startp+length):0x801f0c83 length:103
+2016/10/13 01:18:19 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/13 01:18:19 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/13 01:18:19 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 95
+2016/10/13 01:18:19 BGP: [IN]    signature --> 1, Length: 70
+2016/10/13 01:18:19 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020b2a0
+2016/10/13 01:18:19 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/13 01:18:19 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020b2a0 seg:0x8020b358 AS:60003
+2016/10/13 01:18:19 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020b2a0 seg:0x8020b358
+2016/10/13 01:18:19 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020b5b0]->bgpsecPath_Attr:0x8020b2a0 PathSeg:0x8020b358 AS:60003
+2016/10/13 01:18:19 BGP: 10.1.1.3 rcvd 20.0.10.0/24
+2016/10/13 01:18:19 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020b5b0 aspath:0x802089b8 (attr interned) bpgsec:0x8020b2a0
+2016/10/13 01:18:19 BGP: [BGPSEC] [as_segment:0x80208a88] as_segment_length:1 aspath_refcnt: 11
+
+30 44 02 20 20 c3 0f 4f 54 df fd 2d d0 50 5e a4
+d4 b9 7f e2 97 09 71 72 a1 c4 1a 36 35 87 cd f8
+5f c3 27 d0 02 20 1e 90 7a 26 0a dc 01 be de 60
+71 24 67 a1 7b ed b1 a4 34 0a 10 91 20 ce e0 1b
+64 a4 aa 97 d5 c5  - from[print_signature]
+2016/10/13 01:18:19 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020b2a0 seg:0x8020b358 AS:60003
+2016/10/13 01:18:19 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020b2a0 seg:0x8020b358
+2016/10/13 01:18:19 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020b5b0]->bgpsecPath_Attr:0x8020b2a0 PathSeg:0x8020b358 AS:60003
+2016/10/13 01:18:19 BGP: 10.1.1.3 rcvd 20.0.10.0/24...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+[SRxCryptoAPI - INFO] validate start
+2016/10/13 01:18:20 BGP: [BGPSEC] update packet couter: 0
+2016/10/13 01:18:41 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+2016/10/13 01:18:41 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+2016/10/13 01:18:41 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/13 01:18:41 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+2016/10/13 01:18:41 BGP: [BGPSEC] peer Capability SEND set
+2016/10/13 01:18:41 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/13 01:18:41 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+2016/10/13 01:18:41 BGP: [BGPSEC] peer Capability RECV set
+2016/10/13 01:18:41 BGP: 10.1.1.3 unrecognized capability code: 70 - ignored
+2016/10/13 01:18:41 BGP: [BGPSEC] startp:0x801f0bb2 length:104 total:107
+2016/10/13 01:18:41 BGP: [IN] 0x802080a0 -  startp: 0x801f0c1d-- getp:0 endp:104 -- endp(startp+length):0x801f0c85 length:104
+2016/10/13 01:18:41 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/13 01:18:41 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/13 01:18:41 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/13 01:18:41 BGP: [IN]    signature --> 1, Length: 71
+2016/10/13 01:18:41 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x80208110
+2016/10/13 01:18:41 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/13 01:18:41 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x80208110 seg:0x80208128 AS:60003
+2016/10/13 01:18:41 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x80208110 seg:0x80208128
+2016/10/13 01:18:41 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020af58]->bgpsecPath_Attr:0x80208110 PathSeg:0x80208128 AS:60003
+2016/10/13 01:18:41 BGP: 10.1.1.3 rcvd 20.0.4.0/24
+2016/10/13 01:18:41 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020af58 aspath:0x80209218 (attr interned) bpgsec:0x80208110
+2016/10/13 01:18:41 BGP: [BGPSEC] [as_segment:0x802078c8] as_segment_length:1 aspath_refcnt: 2
+
+30 45 02 20 73 bd 33 36 c0 49 89 93 ba f8 49 87
+95 06 99 4b e7 91 e4 59 00 12 13 64 b7 a3 ce 19
+83 a1 31 c2 02 21 00 af 07 d8 3d 52 92 5f 0a 2d
+22 9a 2b 75 08 36 8c f2 bc 9d e1 61 a8 3f bb a1
+5b 5b 1f 7c ae 5c 31  - from[print_signature]
+2016/10/13 01:18:41 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x80208110 seg:0x80208128 AS:60003
+2016/10/13 01:18:41 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x80208110 seg:0x80208128
+2016/10/13 01:18:41 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020af58]->bgpsecPath_Attr:0x80208110 PathSeg:0x80208128 AS:60003
+2016/10/13 01:18:41 BGP: 10.1.1.3 rcvd 20.0.4.0/24...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+2016/10/13 01:18:41 BGP: [BGPSEC] startp:0x801f0bb2 length:105 total:108
+2016/10/13 01:18:41 BGP: [IN] 0x802084a0 -  startp: 0x801f0c1e-- getp:0 endp:105 -- endp(startp+length):0x801f0c87 length:105
+2016/10/13 01:18:41 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/13 01:18:41 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/13 01:18:41 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 97
+2016/10/13 01:18:41 BGP: [IN]    signature --> 1, Length: 72
+2016/10/13 01:18:41 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x802071d0
+*** glibc detected *** /users/kyehwanl/srx_test1/test2/bgpd: free(): invalid next size (fast): 0x80208528 ***
+======= Backtrace: =========
+/lib/libc.so.6(+0x4d276af2)[0xb7c41af2]
+/users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0(zfree+0x2a)[0xb7fa3322]
+/users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0(stream_free+0x34)[0xb7fa9405]
+/users/kyehwanl/srx_test1/test2/bgpd(+0x247d4)[0x800247d4]
+/users/kyehwanl/srx_test1/test2/bgpd(+0x24cf9)[0x80024cf9]
+/users/kyehwanl/srx_test1/test2/bgpd(+0x25259)[0x80025259]
+/users/kyehwanl/srx_test1/test2/bgpd(+0x53a32)[0x80053a32]
+/users/kyehwanl/srx_test1/test2/bgpd(bgp_read+0x501)[0x80055be2]
+/users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0(thread_call+0x7e)[0xb7fa1ee5]
+/users/kyehwanl/srx_test1/test2/bgpd(main+0x498)[0x8000ce02]
+/lib/libc.so.6(__libc_start_main+0xf3)[0xb7be93f3]
+/users/kyehwanl/srx_test1/test2/bgpd(+0xc2d1)[0x8000c2d1]
+======= Memory map: ========
+80000000-800df000 r-xp 00000000 00:24 373323706  /users/kyehwanl/srx_test1/test2/qsrx3/bgpd/.libs/bgpd
+800df000-800f1000 rw-p 000de000 00:24 373323706  /users/kyehwanl/srx_test1/test2/qsrx3/bgpd/.libs/bgpd
+800f1000-8021d000 rw-p 00000000 00:00 0          [heap]
+b79c7000-b79e3000 r-xp 00000000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b79e3000-b79e4000 rw-p 0001b000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b79f3000-b7b2c000 r-xp 00000000 00:24 372689073  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7b2c000-b7b2e000 rw-p 00138000 00:24 372689073  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7b2e000-b7b52000 rw-p 00000000 00:00 0
+b7b52000-b7b5d000 r-xp 00000000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5d000-b7b5e000 r--p 0000a000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5e000-b7b5f000 rw-p 0000b000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7b5f000-b7b61000 rw-p 00000000 00:00 0
+b7b61000-b7b7d000 r-xp 00000000 08:02 378015     /lib/libtinfo.so.5.8
+b7b7d000-b7b80000 rw-p 0001b000 08:02 378015     /lib/libtinfo.so.5.8
+b7b80000-b7bca000 r-xp 00000000 08:02 381157     /lib/libfreebl3.so
+b7bca000-b7bcb000 r--p 00049000 08:02 381157     /lib/libfreebl3.so
+b7bcb000-b7bcc000 rw-p 0004a000 08:02 381157     /lib/libfreebl3.so
+b7bcc000-b7bd0000 rw-p 00000000 00:00 0
+b7bd0000-b7d55000 r-xp 00000000 08:02 377467     /lib/libc-2.14.1.so
+b7d55000-b7d56000 ---p 00185000 08:02 377467     /lib/libc-2.14.1.so
+b7d56000-b7d58000 r--p 00185000 08:02 377467     /lib/libc-2.14.1.so
+b7d58000-b7d59000 rw-p 00187000 08:02 377467     /lib/libc-2.14.1.so
+b7d59000-b7d5c000 rw-p 00000000 00:00 0
+b7d5c000-b7d63000 r-xp 00000000 08:02 377776     /lib/librt-2.14.1.so
+b7d63000-b7d64000 r--p 00006000 08:02 377776     /lib/librt-2.14.1.so
+b7d64000-b7d65000 rw-p 00007000 08:02 377776     /lib/librt-2.14.1.so
+b7d65000-b7d66000 rw-p 00000000 00:00 0
+b7d66000-b7d70000 r-xp 00000000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7d70000-b7d71000 rw-p 00009000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7d71000-b7d74000 r-xp 00000000 08:02 377469     /lib/libdl-2.14.1.so
+b7d74000-b7d75000 r--p 00002000 08:02 377469     /lib/libdl-2.14.1.so
+b7d75000-b7d76000 rw-p 00003000 08:02 377469     /lib/libdl-2.14.1.so
+b7d76000-b7dac000 r-xp 00000000 08:02 378266     /lib/libreadline.so.6.2
+b7dac000-b7db0000 rw-p 00036000 08:02 378266     /lib/libreadline.so.6.2
+b7db0000-b7db1000 rw-p 00000000 00:00 0
+b7db1000-b7dc7000 r-xp 00000000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc7000-b7dc8000 r--p 00015000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc8000-b7dc9000 rw-p 00016000 08:02 377500     /lib/libpthread-2.14.1.so
+b7dc9000-b7dcb000 rw-p 00000000 00:00 0
+b7dcb000-b7f06000 r-xp 00000000 00:24 372689093  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7f06000-b7f08000 rw-p 0013a000 00:24 372689093  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7f08000-b7f0c000 rw-p 00000000 00:00 0
+b7f0c000-b7f1e000 r-xp 00000000 00:24 372689102  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4.0.1
+b7f1e000-b7f1f000 rw-p 00011000 00:24 372689102  /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxProxy.so.4.0.1
+b7f1f000-b7f20000 rw-p 00000000 00:00 0
+b7f20000-b7f27000 r-xp 00000000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f27000-b7f28000 r--p 00007000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f28000-b7f29000 rw-p 00008000 08:02 278557     /lib/libcrypt-2.14.1.so
+b7f29000-b7f50000 rw-p 00000000 00:00 0
+b7f50000-b7f78000 r-xp 00000000 08:02 378197     /lib/libm-2.14.1.so
+b7f78000-b7f79000 r--p 00028000 08:02 378197     /lib/libm-2.14.1.so
+b7f79000-b7f7a000 rw-p 00029000 08:02 378197     /lib/libm-2.14.1.so
+b7f87000-b7f89000 rw-p 00000000 00:00 0
+b7f89000-b7fd7000 r-xp 00000000 00:24 372689112  /users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0.0.0
+b7fd7000-b7fdb000 rw-p 0004e000 00:24 372689112  /users/kyehwanl/srx_test1/test2/_inst/lib/libzebra.so.0.0.0
+b7fdb000-b7fdf000 rw-p 00000000 00:00 0
+b7fdf000-b7fe0000 r-xp 00000000 00:00 0          [vdso]
+b7fe0000-b7ffe000 r-xp 00000000 08:02 377465     /lib/ld-2.14.1.so
+b7ffe000-b7fff000 r--p 0001d000 08:02 377465     /lib/ld-2.14.1.so
+b7fff000-b8000000 rw-p 0001e000 08:02 377465     /lib/ld-2.14.1.so
+bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]
+
+Program received signal SIGABRT, Aborted.
+0xb7fdf424 in __kernel_vsyscall ()
+(gdb) bt
+#0  0xb7fdf424 in __kernel_vsyscall ()
+#1  0xb7bfe0ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0xb7bffa25 in __GI_abort () at abort.c:93
+#3  0xb7c3ac0a in __libc_message (do_abort=2, fmt=0xb7d1e234 "*** glibc detected *** %s: %s: 0x%s ***\n") at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0xb7c41af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0x80208528) at malloc.c:6283
+#5  0xb7fa3322 in zfree (type=18, ptr=0x80208528) at memory.c:132
+#6  0xb7fa9405 in stream_free (s=0x80208528) at stream.c:125
+#7  0x800247d4 in srx_convert_to_aspath (attr=0xbffff2a4, peer=0x801f0198) at bgp_attr.c:1866
+#8  0x80024cf9 in bgp_attr_bgpsec (args=0xbfffd170) at bgp_attr.c:2013
+#9  0x80025259 in bgp_attr_parse (peer=0x801f0198, attr=0xbffff2a4, size=135, mp_update=0xbffff238, mp_withdraw=0xbffff22c) at bgp_attr.c:2206
+#10 0x80053a32 in bgp_update_receive (peer=0x801f0198, size=143) at bgp_packet.c:1851
+#11 0x80055be2 in bgp_read (thread=0xbffff4bc) at bgp_packet.c:2737
+#12 0xb7fa1ee5 in thread_call (thread=0xbffff4bc) at thread.c:1258
+#13 0x8000ce02 in main (argc=5, argv=0xbffff5f4) at bgp_main.c:470
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Starting program: /users/kyehwanl/srx_test1/test2/bgpd -f /users/kyehwanl/srx_test1/node1/bgpd.conf -i /tmp/bgpd.pid
+[Thread debugging using libthread_db enabled]
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/test2/_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+Router key: #0, algorithm-id: 1, ski: 'C30433FA1975FF193181458FB902B501EA9789DC' successfully installed!
+2016/10/12 17:24:52 BGP: BGPd (+SRx) 0.4.2.1 starting: vty@2605, bgp@<all>:179
+2016/10/12 17:24:52 BGP: Request to connect to SRx server
+2016/10/12 17:24:52 BGP: Connect to SRx server node5:17900
+2016/10/12 17:24:52 BGP: Connection to SRx-server succeeded
+2016/10/12 17:24:52 BGP: *** Received SRx Synchronization Request! ***
+
+2016/10/12 17:24:59 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set
+2016/10/12 17:24:59 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set
+2016/10/12 17:24:59 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/12 17:24:59 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:08 afi:01
+2016/10/12 17:24:59 BGP: [BGPSEC] peer Capability SEND set
+2016/10/12 17:24:59 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+2016/10/12 17:24:59 BGP: [BGPSEC] 10.1.1.3 capability code: 72 length:3 version_dir:00 afi:01
+2016/10/12 17:24:59 BGP: [BGPSEC] peer Capability RECV set
+2016/10/12 17:24:59 BGP: 10.1.1.3 unrecognized capability code: 70 - ignored
+2016/10/12 17:24:59 BGP: [BGPSEC] startp:0x801f0bb3 length:104 total:107
+2016/10/12 17:24:59 BGP: [IN] 0x801fc768 -  startp: 0x801f0c1e-- getp:0 endp:104 -- endp(startp+length):0x801f0c86 length:104
+2016/10/12 17:24:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/12 17:24:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/12 17:24:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/12 17:24:59 BGP: [IN]    signature --> 1, Length: 71
+2016/10/12 17:24:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801fc7d8
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc7d8 seg:0x801fc7f0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc7d8 seg:0x801fc7f0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fc988]->bgpsecPath_Attr:0x801fc7d8 PathSeg:0x801fc7f0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.4.4/30
+2016/10/12 17:24:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x801fc988 aspath:0x801fc910 (attr interned) bpgsec:0x801fc7d8
+2016/10/12 17:24:59 BGP: [BGPSEC] [as_segment:0x801fc8c8] as_segment_length:1 aspath_refcnt: 2
+
+30 45 02 20 27 e8 7e c2 9e 6c f5 41 be 7e c1 0c
+0a 59 ae e2 f4 7e d4 20 7b 87 ca 4d 9a a1 f2 32
+9d 5a 45 8c 02 21 00 e2 e8 c2 ba 1f b2 ca b4 46
+09 fc 60 20 43 f5 b0 e4 dd 9c ce 0a 68 b1 53 eb
+16 fb 0d 9b 5c 3c af  - from[print_signature]
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fc7d8 seg:0x801fc7f0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fc7d8 seg:0x801fc7f0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x801fc988]->bgpsecPath_Attr:0x801fc7d8 PathSeg:0x801fc7f0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.4.4/30...duplicate ignored
+2016/10/12 17:24:59 BGP: [BGPSEC] startp:0x801f0bb3 length:105 total:108
+2016/10/12 17:24:59 BGP: [IN] 0x80206e40 -  startp: 0x801f0c1f-- getp:0 endp:105 -- endp(startp+length):0x801f0c88 length:105
+2016/10/12 17:24:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/12 17:24:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/12 17:24:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 97
+2016/10/12 17:24:59 BGP: [IN]    signature --> 1, Length: 72
+2016/10/12 17:24:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x801fcd68
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fcd68 seg:0x80206eb0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fcd68 seg:0x80206eb0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80207070]->bgpsecPath_Attr:0x801fcd68 PathSeg:0x80206eb0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.4.68/30
+2016/10/12 17:24:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x80207070 aspath:0x801fc910 (attr interned) bpgsec:0x801fcd68
+2016/10/12 17:24:59 BGP: [BGPSEC] [as_segment:0x801fc8c8] as_segment_length:1 aspath_refcnt: 3
+
+30 46 02 21 00 92 a5 5e 5b 8b 58 db cd 0a 78 19
+fb c8 4b be 57 12 b1 cd ef 79 71 c2 af fc ef 7a
+f9 5b c6 dd 56 02 21 00 fd 4e 40 96 fb e2 af a9
+17 7c 5d 51 51 fe 09 67 ff e5 14 58 74 e4 15 af
+12 0e fb 15 0d b4 df 71  - from[print_signature]
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x801fcd68 seg:0x80206eb0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x801fcd68 seg:0x80206eb0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80207070]->bgpsecPath_Attr:0x801fcd68 PathSeg:0x80206eb0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.4.68/30...duplicate ignored
+2016/10/12 17:24:59 BGP: [BGPSEC] startp:0x801f0bb3 length:104 total:107
+2016/10/12 17:24:59 BGP: [IN] 0x80207208 -  startp: 0x801f0c1e-- getp:0 endp:104 -- endp(startp+length):0x801f0c86 length:104
+2016/10/12 17:24:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/12 17:24:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/12 17:24:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/12 17:24:59 BGP: [IN]    signature --> 1, Length: 71
+2016/10/12 17:24:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x80206fb8
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x80206fb8 seg:0x80207278 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x80206fb8 seg:0x80207278
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80207438]->bgpsecPath_Attr:0x80206fb8 PathSeg:0x80207278 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.4.132/30
+2016/10/12 17:24:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x80207438 aspath:0x801fc910 (attr interned) bpgsec:0x80206fb8
+2016/10/12 17:24:59 BGP: [BGPSEC] [as_segment:0x801fc8c8] as_segment_length:1 aspath_refcnt: 4
+
+30 45 02 21 00 a4 b5 8a ec 47 1a 1e e8 1e 86 a8
+13 d1 5e 43 d0 6d 26 98 17 d3 fe c3 aa 0f 86 c6
+b5 29 bc d2 49 02 20 4a 07 d0 20 89 27 94 c4 4f
+8a 39 87 99 92 73 40 df d9 de c4 81 e3 3b 4b 1e
+7c 6c e7 e8 92 71 6d  - from[print_signature]
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020bf20 seg:0x8020c018 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020bf20 seg:0x8020c018
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020c1b0]->bgpsecPath_Attr:0x8020bf20 PathSeg:0x8020c018 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.1.68/30...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+2016/10/12 17:24:59 BGP: [BGPSEC] startp:0x801f0bb3 length:105 total:108
+2016/10/12 17:24:59 BGP: [IN] 0x8020cfa8 -  startp: 0x801f0c1f-- getp:0 endp:105 -- endp(startp+length):0x801f0c88 length:105
+2016/10/12 17:24:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/12 17:24:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/12 17:24:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 97
+2016/10/12 17:24:59 BGP: [IN]    signature --> 1, Length: 72
+2016/10/12 17:24:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020c3b8
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020c3b8 seg:0x8020c3d0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020c3b8 seg:0x8020c3d0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80209568]->bgpsecPath_Attr:0x8020c3b8 PathSeg:0x8020c3d0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.1.132/30
+2016/10/12 17:24:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x80209568 aspath:0x801fc910 (attr interned) bpgsec:0x8020c3b8
+2016/10/12 17:24:59 BGP: [BGPSEC] [as_segment:0x801fc8c8] as_segment_length:1 aspath_refcnt: 23
+
+30 46 02 21 00 80 a3 0d f8 11 bb c8 9f f4 3f 38
+94 a5 eb a6 22 71 12 55 bc 32 6b cc 24 63 c2 e4
+19 12 d1 76 23 02 21 00 ea e9 ea 43 d9 1b 47 ba
+23 65 8f 3e a9 19 63 4f 72 76 dd 4b a6 a9 7e ce
+72 5f 80 f6 a1 0d 11 71  - from[print_signature]
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020c3b8 seg:0x8020c3d0 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020c3b8 seg:0x8020c3d0
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x80209568]->bgpsecPath_Attr:0x8020c3b8 PathSeg:0x8020c3d0 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.1.132/30...duplicate ignored
+2016/10/12 17:24:59 BGP: [BGPSEC] startp:0x801f0bb3 length:104 total:107
+2016/10/12 17:24:59 BGP: [IN] 0x8020c538 -  startp: 0x801f0c1e-- getp:0 endp:104 -- endp(startp+length):0x801f0c86 length:104
+2016/10/12 17:24:59 BGP: [IN] peer as:60003 peer->local_as:60002 Secure_Path Len:8
+2016/10/12 17:24:59 BGP: [IN]  Secure_Path segment --> 1 AS:60003
+2016/10/12 17:24:59 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+2016/10/12 17:24:59 BGP: [IN]    signature --> 1, Length: 71
+2016/10/12 17:24:59 BGP: [IN]  bgpsec_parse: return value(final bpa): 0x8020d4c0
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd UPDATE w/ attr: nexthop 10.1.1.3, origin i, path 60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020d4c0 seg:0x8020d460 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020d4c0 seg:0x8020d460
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020c8b0]->bgpsecPath_Attr:0x8020d4c0 PathSeg:0x8020d460 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.1.196/30
+2016/10/12 17:24:59 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0x8020c8b0 aspath:0x801fc910 (attr interned) bpgsec:0x8020d4c0
+2016/10/12 17:24:59 BGP: [BGPSEC] [as_segment:0x801fc8c8] as_segment_length:1 aspath_refcnt: 24
+
+30 45 02 21 00 b6 cb 81 3c 5c 90 30 1c d1 98 d5
+e4 93 36 47 ec 45 59 34 40 1a 22 0f ea fe 9d a9
+5e 8f ab e4 2a 02 20 5b 45 a2 95 d9 15 d5 52 3f
+34 bc 36 6e 2a 50 cc a2 d0 61 67 d4 4a 56 46 61
+7b 10 d3 53 68 51 4d  - from[print_signature]
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] orig[0xbffff2a4]->bgpsecPathAttr:0x8020d4c0 seg:0x8020d460 AS:60003
+2016/10/12 17:24:59 BGP: [BGPSEC] [bgp_attr_dup] new[0xbfffb0a0]->bgpsecPathAttr:0x8020d4c0 seg:0x8020d460
+2016/10/12 17:24:59 BGP: [BGPSEC] AFTER find(attrhash...): attr[0x8020c8b0]->bgpsecPath_Attr:0x8020d4c0 PathSeg:0x8020d460 AS:60003
+2016/10/12 17:24:59 BGP: 10.1.1.3 rcvd 20.0.1.196/30...duplicate ignored
+[SRxCryptoAPI - INFO] validate start
+*** glibc detected *** /users/kyehwanl/srx_test1/test2/bgpd: corrupted double-linked list: 0x8020d410 ***
+^C
+Program received signal SIGINT, Interrupt.
+0xb7fdf424 in __kernel_vsyscall ()
+(gdb) bt
+#0  0xb7fdf424 in __kernel_vsyscall ()
+#1  0xb7cb9092 in __lll_lock_wait_private () at ../nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S:98
+#2  0xb7c47102 in _L_lock_10199 () from /lib/libc.so.6
+#3  0xb7c4544c in __GI___libc_malloc (bytes=19) at malloc.c:3657
+#4  0xb7fe8166 in local_strdup (s=0xb79ef302 "/lib/libgcc_s.so.1") at dl-load.c:162
+#5  _dl_map_object (loader=0xb7fff8f8, name=<optimized out>, type=2, trace_mode=0, mode=-1879048191, nsid=0) at dl-load.c:2243
+#6  0xb7ff257d in dl_open_worker (a=0xbfffe5dc) at dl-open.c:226
+#7  0xb7feea0f in _dl_catch_error (objname=0xbfffe600, errstring=0xbfffe604, mallocedp=0xbfffe60b, operate=0xb7ff2420 <dl_open_worker>, args=0xbfffe5dc) at dl-error.c:178
+#8  0xb7ff2cb6 in _dl_open (file=0xb7d1aea5 "libgcc_s.so.1", mode=-2147483647, caller_dlopen=0x0, nsid=-2, argc=5, argv=0xbffff5f4, env=0xbffff60c) at dl-open.c:569
+#9  0xb7ce7e12 in do_dlopen (ptr=0xbfffe740) at dl-libc.c:86
+#10 0xb7feea0f in _dl_catch_error (objname=0xbfffe74c, errstring=0xbfffe750, mallocedp=0xbfffe757, operate=0xb7ce7db0 <do_dlopen>, args=0xbfffe740) at dl-error.c:178
+#11 0xb7ce7f3b in dlerror_run (args=0xbfffe740, operate=0xb7ce7db0 <do_dlopen>) at dl-libc.c:47
+#12 __GI___libc_dlopen_mode (name=0xb7d1aea5 "libgcc_s.so.1", mode=-2147483647) at dl-libc.c:160
+#13 0xb7cbf778 in init () at ../sysdeps/i386/backtrace.c:44
+#14 0xb7dbc72e in pthread_once () at ../nptl/sysdeps/unix/sysv/linux/i386/pthread_once.S:122
+#15 0xb7cbf9e5 in __GI___backtrace (array=0xbfffed2c, size=64) at ../sysdeps/i386/backtrace.c:121
+#16 0xb7c3ac20 in __libc_message (do_abort=2, fmt=0xb7d1e234 "*** glibc detected *** %s: %s: 0x%s ***\n") at ../sysdeps/unix/sysv/linux/libc_fatal.c:178
+#17 0xb7c41af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0x8020d410) at malloc.c:6283
+#18 0xb7c43c26 in _int_malloc (av=0xb7d593e0, bytes=40) at malloc.c:4636
+#19 0xb7c45455 in __GI___libc_malloc (bytes=40) at malloc.c:3660
+#20 0xb7e1c4da in default_malloc_ex (num=40, file=0xb7ed88d5 "bn_lib.c", line=336) at mem.c:79
+#21 0xb7e1ca12 in CRYPTO_malloc (num=40, file=0xb7ed88d5 "bn_lib.c", line=336) at mem.c:306
+#22 0xb7e4ae1c in bn_expand_internal () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#23 0xb7e4b359 in bn_expand2 () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#24 0xb7e4a9e7 in BN_uadd () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#25 0xb7e9abab in BN_mod_inverse () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#26 0xb7e58ac0 in ecdsa_do_verify () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#27 0xb7e59b14 in ECDSA_verify () from /users/kyehwanl/srx_test1/test2/_inst/lib/srx/libSRxCryptoAPI.so.2
+#28 0xb7a41f35 in validate (data=0x80209598) at bgpsec_openssl.c:612
+#29 0x80012070 in handleSRxValidationResult (updateID=3047693068, localID=11, valType=VRT_BOTH, roaResult=3 '\003', bgpsecResult=3 '\003', bgpRouter=0x801e4530) at bgpd.c:2443
+#30 0xb7f11270 in processVerifyNotify (hdr=0x8020ca78, proxy=0x801efea8) at client/srx_api.c:1093
+#31 0xb7f11fa4 in dispatchPackets (packet=0x8020ca78, proxyPtr=0x801efea8) at client/srx_api.c:1262
+#32 0xb7f13b1e in receivePackets (fdPtr=0x801eff18, dispatcher=0xb7f11ed0 <dispatchPackets>, pHandler=0x801efea8, pHandlerType=PHT_PROXY) at util/packet.c:215
+#33 0xb7f12027 in processPackets (proxy=0x801efea8) at client/srx_api.c:1303
+#34 0x8002a7dd in respawnReceivePacket (t=0xbffff4bc) at bgp_route.c:205
+#35 0xb7fa1ee5 in thread_call (thread=0xbffff4bc) at thread.c:1258
+#36 0x8000ce02 in main (argc=5, argv=0xbffff5f4) at bgp_main.c:470
+
+
+
+
+
+
+
+
+
+
+
+
+BGPSEC1 x86_64 bit machine
+===========================
+
+
+On 64 machine, QuaggaSRx crash was hard to be found, 
+64bit mahcine seems to have a stable and plenty of memory pool than 32bit machine, I guess.
+But, after quite long times of receiving, it also eventually goes to crash.
+
+
+
+bgpsec2 [75]{~}-> sudo gdb --args ~/srx_test1/deploy_test3/qsrx/bgpd/.libs/bgpd -i /tmp/bgpd.pid -f ~/srx_test1/deploy_test3/_inst/etc/bgpd.BGPSEC.bs2.conf
+GNU gdb (GDB) Red Hat Enterprise Linux (7.2-75.el6)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.                                                                                                                                                                                                              This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:                                                                                                                                                                                                   <http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /users/kyehwanl/srx_test1/deploy_test3/qsrx/bgpd/.libs/bgpd...done.
+(gdb) r
+Starting program: /users/kyehwanl/srx_test1/deploy_test3/qsrx/bgpd/.libs/bgpd -i /tmp/bgpd.pid -f /users/kyehwanl/srx_test1/deploy_test3/_inst/etc/bgpd.BGPSEC.bs2.conf                                                                       [Thread debugging using libthread_db enabled]
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!                                                                                                                                                                                   [SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/srx_test1/deploy_test3/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/srx_test1/deploy_test3/api/../_inst/etc//srxcryptoapi.conf"                                                                                                                     [SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/srx_test1/deploy_test3/api/keys/"                                                                                                                                                           [SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!                                                                                                                                                               [SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/srx_test1/deploy_test3/api/keys/ski-list.txt;PRIV:/users/kyehwanl/srx_test1/deploy_test3/api/keys/priv-ski-list.txt'
++--------------------------------------------------------------+                                                                                                                                                                              | API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |                                                                                                                                                                              | against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |                                                                                                                                                                              | This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |                                                                                                                                                                              +--------------------------------------------------------------+
+Router key: #0, algorithm-id: 1, ski: '45CAD0AC44F77EFAA94602E9984305215BF47DCD' successfully installed!                                                                                                                                      *** glibc detected *** /users/kyehwanl/srx_test1/deploy_test3/qsrx/bgpd/.libs/bgpd: corrupted double-linked list: 0x00007fffe9ab1000 ***
+*** glibc detected *** /users/kyehwanl/srx_test1/deploy_test3/qsrx/bgpd/.libs/bgpd: corrupted double-linked list: 0x00007fffe9ab1000 ***
+^C
+Program received signal SIGINT, Interrupt.                                                                                                                                                                                                    0x00007ffff4e18d2b in pthread_once () from /lib64/libpthread.so.0
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.149.el6_6.9.x86_64 keyutils-libs-1.4-5.el6.x86_64 krb5-libs-1.10.3-37.el6_6.x86_64 libcom_err-1.41.12-21.el6.x86_64 libconfig-1.3.2-1.1.el6.x86_64 libselinux-2.0.94-5.8.el6.x86_64 ncurses-libs-5.7-3.20090208.el6.x86_64 nss-softokn-freebl-3.14.3-22.el6_6.x86_64 openssl-1.0.1e-30.el6.9.x86_64 readline-6.0-4.el6.x86_64 zlib-1.2.3-29.el6.x86_64
+(gdb) bt
+#0  0x00007ffff4e18d2b in pthread_once () from /lib64/libpthread.so.0
+#1  0x00007ffff60bb954 in backtrace () from /lib64/libc.so.6                                                                                                                                                                                  #2  0x00007ffff602d54b in __libc_message () from /lib64/libc.so.6
+#3  0x00007ffff6032e66 in malloc_printerr () from /lib64/libc.so.6                                                                                                                                                                            #4  0x00007ffff6036caa in _int_malloc () from /lib64/libc.so.6
+#5  0x00007ffff6037346 in calloc () from /lib64/libc.so.6                                                                                                                                                                                     #6  0x00007ffff7d33ddf in _dl_new_object () from /lib64/ld-linux-x86-64.so.2
+#7  0x00007ffff7d301de in _dl_map_object_from_fd () from /lib64/ld-linux-x86-64.so.2                                                                                                                                                          #8  0x00007ffff7d3139a in _dl_map_object () from /lib64/ld-linux-x86-64.so.2
+#9  0x00007ffff7d3bb05 in dl_open_worker () from /lib64/ld-linux-x86-64.so.2                                                                                                                                                                  #10 0x00007ffff7d37266 in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2
+#11 0x00007ffff7d3b5aa in _dl_open () from /lib64/ld-linux-x86-64.so.2                                                                                                                                                                        #12 0x00007ffff60e3bd0 in do_dlopen () from /lib64/libc.so.6
+#13 0x00007ffff7d37266 in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2                                                                                                                                                                 #14 0x00007ffff60e3d27 in __libc_dlopen_mode () from /lib64/libc.so.6
+#15 0x00007ffff60bb825 in init () from /lib64/libc.so.6                                                                                                                                                                                       #16 0x00007ffff4e18d33 in pthread_once () from /lib64/libpthread.so.0
+#17 0x00007ffff60bb954 in backtrace () from /lib64/libc.so.6                                                                                                                                                                                  #18 0x00007ffff602d54b in __libc_message () from /lib64/libc.so.6
+#19 0x00007ffff6032e66 in malloc_printerr () from /lib64/libc.so.6                                                                                                                                                                            #20 0x00007ffff6036caa in _int_malloc () from /lib64/libc.so.6
+#21 0x00007ffff60376b1 in malloc () from /lib64/libc.so.6                                                                                                                                                                                     #22 0x00007ffff7f85763 in srx_create_bgpsec_data (bgp=0x7ffff837ee10, info=0x7fffe9ab0ec0, defResult=0x7fffe9ab0d40,
+    doRegisterLocalID=<value optimized out>) at bgp_route.c:2873                                                                                                                                                                              #23 verify_update (bgp=0x7ffff837ee10, info=0x7fffe9ab0ec0, defResult=0x7fffe9ab0d40,
+    doRegisterLocalID=<value optimized out>) at bgp_route.c:3020                                                                                                                                                                              #24 0x00007ffff7f894cc in bgp_update_main (peer=0x7ffff8395f30, p=<value optimized out>, attr=0x7fffffffde01, afi=1,
+    safi=1 '\001', type=9, sub_type=0, prd=0x0, tag=0x0, soft_reconfig=0) at bgp_route.c:3407                                                                                                                                                 #25 0x00007ffff7f89691 in bgp_update (peer=0x7ffff8395f30, p=0x7fffffffbdf0, attr=0x7fffffffdec0, afi=1,
+    safi=1 '\001', type=9, sub_type=0, prd=0x0, tag=0x0, soft_reconfig=0) at bgp_route.c:3452                                                                                                                                                 #26 0x00007ffff7f898c6 in bgp_nlri_parse (peer=0x7ffff8395f30, attr=0x7fffffffdec0, packet=0x7fffffffdf70)
+    at bgp_route.c:4218                                                                                                                                                                                                                       #27 0x00007ffff7f917fd in bgp_update_receive (peer=0x7ffff8395f30, size=<value optimized out>) at bgp_packet.c:1917
+#28 0x00007ffff7f932eb in bgp_read (thread=<value optimized out>) at bgp_packet.c:2737                                                                                                                                                        #29 0x00007ffff7aefd3b in thread_call (thread=0x7fffffffe2b0) at thread.c:1258
+#30 0x00007ffff7f675b2 in main (argc=5, argv=0x7fffffffe468) at bgp_main.c:470
+(gdb)                                                                                                                                                                                                                                         [
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,692 @@
+
+0. 현재 사용가능한 NIST svn server
+==================================
+ https://is1.antd.nist.gov/svn/proj-bgp/
+ https://is1.antd.nist.gov/svn/users/kyehwanl
+
+
+1. 확인
+svn --version
+
+1.1 설치
+yum install subversion                      # Fedora
+sudo apt-get install subversion    # Ubuntu
+
+2. 저장소 생성 및 초기화
+mkdir /home/svnroot
+svnadmin create --fs-type fsfs /home/svnroot/myproject
+
+3. 접근
+svn [command] svn+ssh://[id]@[address]/home/svnroot/myproject
+svn [command] svn+http://[address]/svn/myproject
+
+3.1 ssh를 이용한 서버설정
+groupadd svn
+useradd satgat -g svn   #계정을 svn그룹으로 생성, (if 'ubuntu' -> adduser)
+passwd satgat
+chown root.svn /home/svnroot/myproject -R
+chmod g+w /home/svnroot/myproject -R
+
+-verification
+svn info svn+ssh://satgat@localhost/home/svnroot/myproject
+
+3.2 http를 이용한 서버설정
+
+3.2.1 Fedora 
+- httpd 설치 및 계정설정
+yum install httpd mod_dav_svn                      
+chown apache /home/svnroot/myproject -R
+chmod u+w /home/svnroot/myproject -R
+
+3.2.2 for Ubuntu
+sudo apt-get install apache2 libapache2-svn    #ubuntu
+sudo chown www-data /home/svnroot/myproject -R
+sudo chmod u+w /home/svnroot/myproject -R
+
+
+-  웹서버 설정파일 추가
+/etc/httpd/conf.d/subversion.conf
+<location /svn> 
+ DAV svn 
+ SVNPath /home/svnroot 
+ AuthType Basic
+ AuthName "My Project"
+ AuthUserFile /etc/svn-passwd
+ Require valid-user
+</location>
+
+- subversion웹 계정추가 및 설정
+htpasswd -nd [id]
+
+- 패스워드 설정후 [subversion id]:[passwd]로 나오는것을 /etc/svn-passwd파일에 채움
+(for example, /etc/svn-passwd)
+satgat:.zG0qCf6u1ATM
+udong:0UiaK9zAM6ORI
+
+- 웹서버 동작
+service httpd restart
+sudo /etc/init.d/apache2 restart  #Ubuntu
+
+-확인
+svn info http://localhost/svn/myproject
+
+- 'store-plaintext-passwords'에러 발생시
+~/.subversion/server파일에서 [global] filed,
+store-plaintext-passwords = no 를 주석해제
+
+4. 프로젝트 진행
+
+4.1 set configuration variable
+~/.bash_profile,
+export SVN_EDITOR=vim 추가
+
+4.2 Directory Structures Recommended by Subversion (by using 'svn mkdir' command under the reporitory)
+|
+|-- branches
+|-- tags
+`-- trunk
+
+(1) 'svn mkdir': directory structure without a working directory:
+
+    $ svn mkdir --parents -m" Creating basic directory structure" \
+        svn://my_repo/trunk svn://my_repo/branches svn://my_repo/tags
+
+(2) Or, checkout a copy of the repository in into a working directory and do everything from there:
+
+    $ svn co svn://my_repo workingdir
+    $ cd workingdir
+    $ svn mkdir trunk tags branches
+    $ svn commit -m"Creating basic directory structure"
+
+ * list - svn ls -R svn://my_repo
+
+
+4.3 import - 프로젝트 서버에 등록
+svn import project_dir http://localhost/svn/myproject
+svn import project_dir svn+ssh://satgat@localhost/home/svnroot/myproject
+    <사용예> 밑쪽의 예시 자료 참고
+
+
+4.4 checkout - 프로젝트 파일 가져오기
+svn checkout http://localhost/svn/myproject (or svn co ...)
+svn checkout http://localhost/svn/myproject/[certain dir]
+
+
+
+*** <More Practical Example>
+============================
+-- import & list
+[node1]$ svn import quaggasrx-0.4.2.1 svn+ssh://localhost/users/kyehwanl/svnroot/myproject/quaggasrx/trunk 
+[node1]$ svn list svn+ssh://localhost/users/kyehwanl/svnroot/myproject/quaggasrx
+trunk/
+
+-- checkout
+[node1]$ svn checkout svn+ssh://localhost/users/kyehwanl/svnroot/myproject/quaggasrx/trunk qsrx
+[node2]$ svn checkout svn+ssh://node1/users/kyehwanl/svnroot/myproject/quaggasrx/trunk qsrx
+
+
+
+4.5 commit - 변경된 내용 저장소(repository)에 반영
+svn commit or svn ci
+svn commit -m "vim을 사용하지않은 간단한 메시지 로그에 남겨짐"
+
+
+4.7 update - 저장소의 최신내용 작업 디렉토리에 반영
+svn update or svn up
+svn update -r 2    (리비전 2로 파일들 변경)
+svn update -r 1 trunk/main/main.c trunk/memo (revision 1의 특정파일들로 변경)
+
+4.8 log - 리비전별 확인
+svn log
+svn log trunk/main/main.c
+svn log -r 2
+svn log -r 1:3                              #rev.1 to 3
+
+
+4.9 diff - 변경된 명령 비교
+(cf.) 
+HEAD - 현재 저장소의 리비전
+BASE - 현재 작업하고 있는 작업 사본을 꺼내온 리비전
+
+svn diff                        #현재 작업중인 모든파일과 BASE비교
+svn diff -r HEAD     #현재 작업중인 모든파일과 HEAD비교
+svn diff -r 2             #현재 작업중인 모든파일과 rev.2 비교
+svn diff -r 2:3    # compare rev.2 to rev.3
+svn diff -r 2:BASE   # rev.2 and BASE
+svn diff -r 2:HEAD main.c       # rev.2 와 HEAD의 main.c 파일비교
+
+-- vimdiff 사용하여 비교하려면 
+echo -e '#!/bin/sh\n' > /usr/local/bin/svndiff-vim.sh
+echo -e 'vimdiff "$6" "$7" ' >> /usr/local/bin/svndiff-vim.sh
+chmod 755 /usr/local/bin/svndiff-vim.sh
+~/.subversion/config파일에 [helpers]필드에 다음라인을 추가
+diff-cmd = svndiff-vim.sh
+
+-- meld를 사용해 비교
+yum install meld
+echo -e '#!/bin/sh\n' > /usr/local/bin/svndiff-meld.sh
+echo -e 'meld "$6" "$7" ' >> /usr/local/bin/svndiff-meld.sh
+chmod 755 /usr/local/bin/svndiff-meld.sh
+~/.subversion/config파일에 [helpers]필드에 다음라인을 추가
+diff-cmd = svndiff-meld.sh
+
+
+4.10 blame - 라인단위 작성자 확인
+svn blame main.c
+svn blame -r 3 main.c
+
+
+4.11 status - 작업디렉토리 상태 확인
+svn status or svn stat
+(cf.) BASE리비전에서 바뀌지 않은 것은 표시하지 않음
+
+-맨 앞에 붙은 prefix
+' '  :수정되지 않음
+'A' : 버전관리 대상에 더해짐
+'C' : 충돌 collision
+'D' : 버전관리 대상에서 제거됨
+'I' : 무시됨
+'M': 수정됨
+'?' : 버전관리 대상이 아님
+'!' : 지워짐
+
+
+4.12 add & delete - 파일이나 디렉토리 버전관리 대상에 추가 및 제거
+svn add test1.c test2.c                         # test1.c test2.c를 버전 관리대상에 추가
+svn delete(or del) Config.mk        # Config.mk 버전관리 대상에서 제거
+
+!! svn add or delete후에는 commit을 해야 repository에 반영됨
+
+  -- add all files
+  svn add --force * --auto-props --parents --depth infinity -q
+  svn add `svn status . | grep "^?" | awk '{print $2}'`
+  svn status | grep '?' | sed 's/^.* /svn add /' | bash
+
+
+
+4.13 rename - 파일 or 디렉토리명 변경
+svn rename(or ren) Rules.mk aaa.mk                 #Rules.mk를 aaa.mk로 변경
+
+!! svn ren 후에는 commit을 해야 repository에 반영됨
+
+
+
+4.14 lock/unlock 명령으로 파일잠금 및 해제(자신만 수정하고 싶을때)
+svn lock include/diary.h                    # include/diary.h 파일을  잠금
+svn unlock --force                                # 강제 해제
+
+!! svn lock/unlock 후에는 commit을 해야 repository에 반영됨
+
+
+
+4.15 revert - 파일 이전 상태로 되돌리기
+svn revert Makefile                 #Makefile을 원래대로 되돌림
+svn merge -r 1944:1943          # rollback r1944 to r1943
+
+  (TroubleShoot) if 'svn: Merge source required' shows, then 
+                svn merge -r 1944:1943 https://svn/repo/address
+
+svn merge --dry-run -rHEAD:PREV https://example.com/svn/myproject/trunk
+
+
+(don't miss dot & minus sign)
+ svn merge -c -N .          : rolls back changes made in revision N, using a reverse merge 
+ svn merge -r N:N-1 .       : rolling back N and previous of N
+ svn merge -r HIGH:LOW-1 .  : rolling back multiple changes
+
+
+       
+
+
+4.16 export - 버전정보 제외한 프로젝트 파일만 가져옴
+-받아오게 되면 디렉토리마다  .svn디렉토리가 있는데, 이는 subversion이 버전을 관리하기 위한 메타정보들어있다. 릴리즈할때는 필요없으므로 
+이를 제외한 순수 소스만 릴리즈할때 필요하다
+
+svn export http://localhost/svn/myproject release-0.1              # repository의 최신 프로젝트 파일들을 release-0.1로 export
+svn export -r 2 http://localhost/svn/myproject release-0.1         # repository의 rev.2 프로젝트 파일들을 release-0.1로 export
+svn export myproject release-0.1                                           # checkout한 myproject 프로젝트를 release-0.1로 export
+
+(cf.) find myproject -name .svn -exec rm -rf {} \;          #subversion관리정보를 모두 지우는 동일한 효과
+
+
+
+4.17 copy - branch하기
+- 버전관리를 위해 trunk의 소스를 branch해서 테스트하거나 mergy한다
+
+4.17.1 일반적 방법
+- branch만들고 repo.에 반영
+svn copy trunk branches/test-branch
+svn commit
+
+- 브랜치트리 받아와서 작업
+svn checkout http://localhost/svn/myproject/branches/test-branch
+
+-이후 commit하면 test-branch에 반영 --> revision번호도 변경
+
+
+4.17.2 웹에서 바로하기
+svn copy https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/quagga-srx/trunk https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/quagga-srx/branches/0.4.0.4_QuaggaSRx_cryptolib -m “Message”
+
+
+4.18 mergy - 머지하기
+- 머지하기 위해서는 리비전 번호를 알아두는 것이 중요
+
+(if r4에서 test-branch를 받아와서 commit후 현재 r5가 되었다면)
+svn mergy -r 4:HEAD http://localhost/svn/myproject/branches/test-branch  # r4에서 저장소에 있는 최신 리비전까지
+or
+svn mergy -r 4:5 http://localhost/svn/myproject/branches/test-branch        # r4에서 r5까지 test-branch에서 있었던 변경을 trunk에 적용
+
+
+
+4.19 tagging by 'copy'
+- 특정시점의 프로젝트 파일을 태킹함. 나중에 해당 시점의 프로젝트 파일을 다시 보고자 할때 유용
+svn copy trunk tags/release-0.1
+svn commit
+
+
+4.20 cleanup - 작업사본 정리
+- 충돌해서 현재 처리중인 svn명령을 강제로 종료할때 
+ collision으로 잘못하면 작업사본 디렉토리에 잠금파일이 생성될수 있다. 이를 없애줌
+svn cleanup
+
+
+4.21 dump / load - 백업 및 복구
+- 저장소(repository)자체를 백업. tar.gz를 사용하지 않는다
+- 저장소에서 다음 명령을 내린다
+svnadmin dump myproject > myproject.backup   #backup
+svnadmin load myproject < myproject.backup    #restoration
+
+
+
+
+
+5. Tip & Etc
+
+5.1 암호 입력 없이 사용
+5.1.1 http, svnserve방식: ~/.subversion/server 파일에 다음 라인을 추가
+.....
+store-passwords = yes
+store-plaintext-passwords = yes
+.....
+
+5.1.2 ssh방식
+ssh gen-rsa command를 이용하여 자동로그인 사용 
+
+
+
+
+5.2 충돌관리 - conflict
+svn update를 했을경우 충돌이 생기게 되면 메뉴를 통해 키워드를 입력하여 충돌을 해결하도록 나타나는데,
+충돌을 해결하기 전까지는 commit을 하지 못한다.
+두 사용자(satgat, udong)가 memo.c파일을 열고 내용의 같은 부분을 commit했을때 같은 부분이 서로 상이하다면 충돌발생
+
+-(example) 충돌이 발생하는 경우:
+ (0) 두 사용자가 각각 checkout해서 각각의 작업디렉토리에 프로젝트 파일을 받아왔다면,
+ (1) udong사용자가 memo.c파일에 sleep(1);을 추가하고 commit --> repo.는 udong사용자가 commit한 내용으로 됨
+ (2) satgat사용자는 wait(10);을 추가할때, 역시 udong사용자가 수정한 부분과 동일한 부분을 수정하고 commit을 시도 
+--> subversion 프로세서가 memo.c가 만료되었기때문에 업데이트하라는 메지시를 내고 commit 실패되었다고 나타냄( '(0)'에서 satgat이 받아온 시점의 HEAD의 memo.c와 BASE의 관리정보가 달라지게 됨) : 아직은 충돌상태가 아님
+ (3) 이 상황에서 satgat이 'svn update' 명령을 내리기 되면, 두 내용의 같이 부분이 충돌해 충돌 메시지가 발생
+ (4) 최신 버전 svn은 충돌상황에서 친절하게 키워드들을 눌러 충돌을 해결하라고 알려준다. 
+ (5) p를 눌러 충돌상황을 해결하지 않고 그냥 넘어가게 되면 memo.c  memo.c.r5  memo.c.r6  memo.c.mine이 생성된다
+
+- memo.c                : 충돌이 난 파일. 내부에 충돌 정보 들어있음
+- memo.c.r5     : 현재 작업 파일의 저장소 BASE 파일
+- memo.c.r6     : 저장소에 있는 최신버전 HEAD 파일
+- memo.c.mine   : 현재 작업자가 작업하고 있는 파일  
+
+5.2.1 자신이 작성한 내용을 버리고 저장소에 있는 최신 버전 HEAD 파일 내용으로 충돌을 해결할 경우
+ cp -f memo.c.r6 memo.c             #저장소 HEAD내용으로 memo.c파일을 덮음
+ rm -rf memo.c.r5 memo.c.r6 memo.c.mine
+
+5.2.2 자신이 작성한 내용으로 충돌을 해결하고자 하는 경우
+ cp -f memo.c.mine memo.c          # 자신이 작성한 내용으로 memo.c 파일을 덮음
+ rm -rf memo.c.r5 memo.c.r6 memo.c.mine
+
+5.2.3 문제가 복잡해서 충돌을 manually 수작업으로 직접해결할 경우
+ vi memo.c          # 직접수정
+ rm -rf memo.c.r5 memo.c.r6 memo.c.mine
+
+ - 이때 충돌이 발생한 memo.c를 열어보면,
+.....
+<<<<<<<<<<<<< .mine      <-- 사용자 satsat의 작업내용
+    wait(10);        
+
+===================
+    sleep(1);        
+
+>>>>>>>>>>>>>> .r6         <-- repo. (HEAD)의 최신내용
+......
+
+- 충돌내용을 참고해 수정하고 memo.c.r5  memo.c.r6  memo.c.mine을 지워주고 commit하면 됨
+
+
+(cf.) example (4)에서 나타나는 키워드
+- p     : 다음에 시도
+- df    : diff-full, 머지된 부분을 출력해 보여주고 p를 입력해 넘어갈지 바로 해결할지 결정가능
+- e     : 충돌된 소스 파일을 수정하도록 editor띄움 
+- mc   : mine-conflict, 자신의 작성내용(.mine)으로 충돌 상황을 해결 --> same as (5.2.2)
+- tc    : theirs-conflict, repo. HEAD의 내용으로 해결 --> same as (5.2.1)
+- s      : show all, 모든 선택가능 옵션을 보여줌
+
+
+
+
+
+출처: "유닉스 리눅스 프로그래밍 필수 유틸리티 개정판", 2010, 백정우, 한빛미디어.
+
+
+(cf.)
+http://ilovett.com/blog/projects/setting-up-subversion
+
+
+
+
+
+ETC
+
+web server에서 branch 하는 방법
+
+- svn checkout https://ls2/svn/users/kyehwanl/mkbrdata/
+    (현재 svn server -- https://is1.antd.nist.gov/svn/users/ 으로 바뀜)
+- cd mkbrdata 
+- svn copy trunk/ branch1
+- svn commit 
+
+그리고 web site를 확인해보면 revision이 갱신됨.
+
+
+
+
+새로운 디렉토리 만들고 repository에 반영
+- svn mkdir <dir> 
+- svn commit
+
+
+
+
+svn diff 활용
+[kyehwan2@antl ForCES]$ svn diff -r 22:27 -x -p 
+Index: branches/intgr_CE/quagga-ce/ospfd/.ospf_packet.c.swn
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: branches/intgr_CE/quagga-ce/ospfd/ospf_packet.c
+===================================================================
+--- branches/intgr_CE/quagga-ce/ospfd/ospf_packet.c     (revision 22)
++++ branches/intgr_CE/quagga-ce/ospfd/ospf_packet.c     (revision 27)
+@@ -687,6 +687,8 @@ ospf_write (struct thread *thread)
+   iov[1].iov_base = STREAM_PNT (op->s);
+   iov[1].iov_len = op->length;
+ 
++
++
+   /* Sadly we can not rely on kernels to fragment packets because of either
+    * IP_HDRINCL and/or multicast destination being set.
+    */
+@@ -2192,12 +2194,10 @@ ospf_recv_packet_kt (struct msghdr *msgh, struct s
+   ip_len = ip_len + (iph->ip_hl << 2);
+ #endif
+   
++  printf(" check 1 (line 2195 in ospf_packet.c) \n"); 
+   ifindex = getsockopt_ifindex (AF_INET, msgh);
+ 
+-  printf(" ifindex : %d (line 2197 in ospf_packet.c) \n", ifindex);
+-
+- // ifp = if_lookup_by_index (ifindex);
+-
++  printf(" check 2 (line 2198 in ospf_packet.c) \n");
+   for(tempforwarding = FE_table.FE_table_head->next_FE;
+       tempforwarding != FE_table.FE_table_tail;
+          tempforwarding = tempforwarding->next_FE)
+@@ -2208,6 +2208,8 @@ ospf_recv_packet_kt (struct msghdr *msgh, struct s
+          }
+   }
+ 
++  printf(" check 3 (line 2209 in ospf_packet.c) \n");
++
+   ospf_read_jw (ifp, ibuf); 
+ }
+ ////////////////////////////////////////////////////////////////////////////
+Index: branches/intgr_CE/quagga-ce/ospfd/ospf_network.c
+===================================================================
+--- branches/intgr_CE/quagga-ce/ospfd/ospf_network.c    (revision 22)
++++ branches/intgr_CE/quagga-ce/ospfd/ospf_network.c    (revision 27)
+@@ -17,7 +17,7 @@
+  * You should have received a copy of the GNU General Public License
+  * along with GNU Zebra; see the file COPYING.  If not, write to the Free
+  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+- * 02111-1307, USA. hi.
++ * 02111-1307, USA.
+  */
+ 
+ #include <zebra.h>
+[kyehwan2@antl ForCES]$
+
+
+
+-- svn blame
+
+[kyehwan2@antl ForCES]$ svn blame -r 27 branches/intgr_CE/quagga-ce/ospfd/ospf_network.c
+
+    24  qmffhdn55  * You should have received a copy of the GNU General Public License
+    24  qmffhdn55  * along with GNU Zebra; see the file COPYING.  If not, write to the Free
+    24  qmffhdn55  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+    24  qmffhdn55  * 02111-1307, USA.
+    24  qmffhdn55  */
+    24  qmffhdn55 
+    24  qmffhdn55 #include <zebra.h>
+
+
+
+-- svn  서버에 있는 것을 지울때
+
+ls2.antd [530]{.../testing/kyehwanl}-> svn delete ./*
+D         Makefile
+D         mkbrdata
+D         mkbrdata_32
+D         mkbrdata.h
+D         util_fn.h
+ls2.antd [531]{.../testing/kyehwanl}-> svn commit
+
+Log message unchanged or not specified
+(a)bort, (c)ontinue, (e)dit:
+c
+Deleting       Makefile
+Deleting       mkbrdata
+Deleting       mkbrdata.h
+Deleting       mkbrdata_32
+Deleting       util_fn.h
+
+Committed revision 6.
+
+
+
+
+
+
+-- svn copy from trunk into a certain branch
+
+svn copy https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/srx-server/trunk https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/srx-server/branches/0.2.0_120_srx_autoconf
+
+
+
+
+
+-- remove REPOSITORY or a certain revision
+
+http://stackoverflow.com/questions/8910077/svn-completely-remove-revision-from-svn-server
+You have to dump the repository and then reload it, skipping over the revision you no longer want. (r120 in your example)
+To do this, use the svnadmin dump command, followed by the svnadmin load command.
+example:
+svnadmin dump c:\svn\my_repo -r0:119 > repo.dump
+svnadmin load c:\svn\my_new_repo < repo.dump
+
+
+-- svn import
+
+사용중 다른 디렉토리를 등록, 삭제하여 svn에서 버전관리를 하고 싶을경우
+
+#현재 디렉토리내용
+bgp2 [511]{.../proj-antd/svn}-> ll
+total 4.0K
+drwxr-x--- 6 kyehwanl issmg 4.0K Jun 13 15:55 ForCES/
+
+
+# 디렉토리, 파일을 만들고 
+bgp2 [512]{.../proj-antd/svn}-> mkdir program-kyehwan
+bgp2 [513]{.../proj-antd/svn}-> touch program-kyehwan/test.c
+
+#import시킴
+bgp2 [514]{.../proj-antd/svn}-> svn import program-kyehwan http://165.229.185.246/svn/ -m 'test import'            
+Adding         program-kyehwan/test.c
+
+Committed revision 31.
+
+# import시킬때 디렉토리 이름을 달리주면( k → K), 나중에 svn update해서 갱신했을 경우 server측에는 바뀐이름으로 들어간다
+bgp2 [516]{.../proj-antd/svn}-> svn import program-kyehwan http://165.229.185.246/svn/program-Kyehwan -m 'test import' 
+Adding         program-kyehwan/test.c
+
+Committed revision 32.
+
+bgp2 [517]{.../proj-antd/svn}-> svn update
+A    test.c
+A    program-Kyehwan
+A    program-Kyehwan/test.c
+Updated to revision 32.
+
+bgp2 [518]{.../proj-antd/svn}-> ll
+total 12K
+drwxr-x--- 6 kyehwanl issmg 4.0K Jun 13 15:55 ForCES/
+drwxr-x--- 2 kyehwanl issmg 4.0K Jun 15 16:18 program-kyehwan/
+drwxr-x--- 3 kyehwanl issmg 4.0K Jun 15 16:20 program-Kyehwan/
+-rw-r----- 1 kyehwanl issmg    0 Jun 15 16:20 test.c
+
+
+# svn 관리대상에서 지울려고 하면 소문자k 디렉토리는 관리대상이 아니고 local이기때문에 svn관리대상이 아니라는 메시지가 나온다
+bgp2 [519]{.../proj-antd/svn}-> svn rm test.c program-kyehwan/
+D         test.c
+svn: Use --force to override this restriction
+svn: 'program-kyehwan' is not under version control
+bgp2 [520]{.../proj-antd/svn}-> svn commit -m 'del'
+Deleting       test.c
+
+Committed revision 33.
+
+
+<예시자료>
+ 
+ 
+svnadmin create --fs-type fsfs /users/kyehwanl/server_test/svnroot/bgp-srx
+svn info svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/
+svn list svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/
+svn mkdir svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/quagga-srx/
+svn mkdir svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/quagga-srx/trunk
+svn mkdir svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/quagga-srx/braches
+svn import /tmp/svntest/quagga-srx/ svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/quagga-srx/trunk
+#지정된 디렉토리인 quagga-srx은 저장되지 않음을 주의
+    # svn import svn+ssh://node1/users/kyehwanl/server_test/svnroot/bgp-srx/quagga-srx/trunk → 현재 경로의 디렉토리와 파일이 import된다
+
+
+
+
+
+-- SSL/TLS Error with a Subversion (SVN) client
+
+For the newest versions of the Apache server (from version 2.2.13 on Fedora 12, in the my case), the SSL-enabledWebDAV mode of Subversion now refuses to serve the (Subversion) client when the host name in the URL sent by that latter is not the same as the host name served by the Apache server, even though both host names point to the same IP address.
+
+Following is the typical error sent back by the Subversion server (Apache in WebDAV mode): 
+
+
+$ svn up
+svn: OPTIONS of 'https://svn.olddomain.com/svn/my-svnroot/myproject': SSL handshake failed: SSL error: A TLS warning alert has been received. (https://svn.olddomain.com)
+
+
+
+The solution, in that case, is to re-set the repository of the Subversion client, according to the host name known by the Apache server.
+
+$ svn switch --relocate https://svn.olddomain.com https://svn.newdomain.com
+
+
+
+
+
+
+http://ariejan.net/2007/07/04/how-to-resolve-subversion-conflicts
+
+How to resolve Subversion Conflicts
+04 Jul 2007
+Tweet
+If there's more than one person working on a project, chances are (although slim) that at some point two developers work on the same piece of code and check it in. To clarify, let me give you an example.
+The repository is currently at revision 5 and contains a file named 'README'. Revision 5 of that file contains a single line: 'This is a README file'.
+Now, both you and your colleague check out r5 and edit README. Your colleague changes the line to 'This is a documentation file' and commits it back to the repository, which is bumped to revision 6.
+You're an island, and have no clue about the new revision being created. You just happily write away and change the README file to: 'This is fun stuff!'.
+When you commit your changes, you'll get an error message:
+$ svn commit -m "Updated README"
+Sending    README
+Transmitting file data .svn: Commit failed (details follow):
+svn: Out of date: '/myproject/README'
+This is good. Subversion has detected that the file you want to commit has changed since you last updated it. Update the file to get it up-to-date again.
+$ svn update
+C   README
+Updated to revision 6.
+The 'C' indicates there is a conflict with the README file, and Subversion does not know how to solve this. You are called in to help.
+If you now take a look at README, you'll notice that there are several markers that indicate what parts of the code are conflicting. You can easily see what you changed, and what has changed in the repository:
+<<<<<<< .mine
+This is fun stuff!
+=======
+This is a documentation file
+>>>>>>> .r6
+What are your options?
+You have three options for resolving the conflict. Whatever you choose, make sure you confer with your colleague on the matter.
+1. Scrap your changes, and go with the current work from your colleague.
+This is the easiest solution. All you have to do is revert the changes you made, and update your working copy:
+$ svn revert README
+Reverted 'README'
+$ svn update README
+At revision 6.
+2. Keep your changes, and dump whatever your colleague did.
+Performing a simple 'ls' will show you that there are four files related to this conflict:
+README – the original with markers
+README.mine – your version
+README.r5 – the original your worked with
+README.r6 – the most update version from your colleague
+To check in your changes, copy your version over the original and tell Subversion you have resolved the conflict.
+$ cp README.mine README
+$ svn resolved README
+Resolved conflicted state of 'README'
+The 'resolved' command will clean up all the special files that were generated.
+3. Merge both version to a new version
+If you choose this option, you will have to manually edit README. Remove the markers and add whatever you need to add here.
+Subversion won't let you commit this file, so you'll have to mark it as 'resolved' as we saw during option 2:
+$ svn resolved README
+Resolved conflicted state of 'README'
+Before you rush ahead
+With option 1, you're done. With options 2 and 3 there is some more work to do, because you didn't commit your changes yet. Because we're dealing with conflicts here, I recommend you don't just commit to your repository, but follow a slightly different route.
+First, update your working copy (again) to make sure you have all the latest, and are not trying to check in any more conflicting code. If any conflicts pop-up, fix these first.
+Now, run your tests to make sure everything is working as it should.
+When all is clear, commit your changes to your repository as you normally would.
+Done. Problem solved.
+
+
+
+
+Subversion: commit only modified files
+======================================
+  find . -name '*.xml' -print0 | xargs -0 svn ci
+  svn status | egrep '^M.*\.[ch]$' | sed -e 's/^. *//' > tmp.txt && svn ci --targets tmp.txt
+  svn status > tmp.txt && $EDITOR tmp.txt && sed -e 's/^. *//' < tmp.txt > tmp2.txt && svn ci --targets tmp2.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

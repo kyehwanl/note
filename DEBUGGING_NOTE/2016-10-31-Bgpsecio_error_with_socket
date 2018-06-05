@@ -1,0 +1,37 @@
+
+<BGPSECIO socket error >
+
+
+1. Description
+==============
+
+(1) After a certain amount of update generating and sending to QuaggaSRx,
+    it has terminated its connection from bgpsecio with the following logs;
+
+
+  [kyehwanl@node1 bio]$ ./bgpsecio -f ./bgpsecio.cfg.100k 
+  Starting bgpsecio 0.2.0.5...
+  [SRxCryptoAPI - INFO] Extension for private key not set. Set 'der' as key-file extension!
+  [SRxCryptoAPI - INFO] Extension for public key (X509 cert) not set. Set 'cert' as cert-file extension!
+  WARNING: Seems to be a stale connection - Abort!
+  NOTIFICATION: Could not establish the session 64 <=> 32!
+  Done.
+
+
+(2) afterwards, debugging with gdb and running
+     --> same result, and couldn't see the stopping point in the code
+        
+
+  Starting bgpsecio 0.2.0.5...
+  [SRxCryptoAPI - INFO] Extension for private key not set. Set 'der' as key-file extension!
+  [SRxCryptoAPI - INFO] Extension for public key (X509 cert) not set. Set 'cert' as cert-file extension!
+  [New Thread 0xb7e9ab70 (LWP 15908)]
+  [New Thread 0xb7699b70 (LWP 15909)]
+  BGP-receiver thread created!
+  ERROR: Socket to AS 32 broke!
+  [Thread 0xb7699b70 (LWP 15909) exited]
+  [Thread 0xb7e9ab70 (LWP 15908) exited]
+  Done.
+  [Inferior 1 (process 15905) exited normally]
+  Missing separate debuginfos, use: debuginfo-install srx-0.3.0.1-1.fc15.i686
+  (gdb) 

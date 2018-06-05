@@ -1,0 +1,57 @@
+#!/bin/sh
+srx_server_node=10.0.30.101
+case "$1" in 
+  node1 | Node1 ) 
+    echo open $1 2605
+    router_id=60002
+    ;;
+  node3 | Node3 ) 
+    echo open $1 2605
+    router_id=60004
+    ;;
+  node5 | Node5 ) 
+    echo open $1 2605
+    router_id=60006
+    ;;
+  node01 | Node01 ) 
+    echo open 10.0.30.75 2605
+    router_id=60012
+    ;;
+  node02 | Node02 ) 
+    echo open 10.0.30.82 2605
+    router_id=60013
+    ;;
+  node03 | Node03 ) 
+    echo open 10.0.30.84 2605
+    router_id=60014
+    ;;
+  node04 | Node04 ) 
+    echo open 10.0.30.70 2605
+    router_id=60015
+    ;;
+  node05 | Node05 ) 
+    echo open 10.0.30.72 2605
+    router_id=60016
+    ;;
+  node06 | Node06 ) 
+    echo open 10.0.30.67 2605
+    router_id=60017
+    ;;
+  * ) 
+    echo open $1 2605
+    srx_server_node=node5
+    ;;
+esac
+
+sleep 1
+echo zebra
+sleep 1
+echo en
+sleep 1
+echo conf t
+sleep 1
+echo router bgp $router_id
+sleep 1
+echo srx connect $srx_server_node 17900
+sleep 1
+echo exit

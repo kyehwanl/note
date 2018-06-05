@@ -1,0 +1,226 @@
+
+Network Namespace - Host Sharing Internet Connection using NAT
+==============================================================
+(http://blogs.igalia.com/dpino/2016/04/10/network-namespaces/)
+
+
+1. iptable clear with -F (flush all)
+
+    # iptables -F
+    # iptables -L
+    Chain INPUT (policy ACCEPT)
+    target     prot opt source               destination
+
+    Chain FORWARD (policy DROP)
+    target     prot opt source               destination
+
+    Chain OUTPUT (policy ACCEPT)
+    target     prot opt source               destination
+    ...
+
+    Chain OUTPUT_direct (0 references)
+    target     prot opt source               destination
+
+
+2. basic network namespace configuration
+
+ 2.1 host side
+
+    # ip netns
+    # ip netns add ns1
+    # ip link add v-eth1 type veth peer name v-peer1
+    # ip link set v-peer1 netns ns1
+    # ip addr add 10.1.1.1/24 dev v-eth1
+    # ip link set v-eth1 up
+
+ 2.2 ns side
+
+    # ip netns exec ns1 ip addr add 10.1.1.2/24 dev v-peer1
+    # ip netns exec ns1 ip link set v-peer1 up
+    # ip netns exec ns1 ip link set lo up
+    # ip netns exec ns1 ip route add default via 10.1.1.1
+
+
+
+
+3. NAT configuration
+
+        (eno16777984: host's NIC for internet connection
+         eno16777984: inet 10.0.50.5 netmask 255.255.255.0)
+
+    # echo 1 > /proc/sys/net/ipv4/ip_forward
+    # iptables -P FORWARD DROP  (-P: policy <chain> <target>)
+    # iptables -F FORWARD       (-F: flush : deleting all the rules)
+    # iptables -t nat -F
+    # iptables -t nat -A POSTROUTING -s 10.1.1.0/255.255.255.0 -o eno16777984 -j MASQUERADE 
+    # iptables -A FORWARD -i eno16777984 -o v-eth1 -j ACCEPT    
+    # iptables -A FORWARD -o eno16777984 -i v-eth1 -j ACCEPT    
+
+
+
+4. Test 
+    # ip netns exec ns1 ping 8.8.8.8
+    PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+    64 bytes from 8.8.8.8: icmp_seq=1 ttl=38 time=14.1 ms
+    64 bytes from 8.8.8.8: icmp_seq=2 ttl=38 time=13.9 ms
+    64 bytes from 8.8.8.8: icmp_seq=3 ttl=38 time=15.8 ms
+    --- 8.8.8.8 ping statistics ---
+    3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+    rtt min/avg/max/mdev = 13.980/14.667/15.888/0.876 ms
+
+
+
+
+5. in case of using Bridge
+
+  -- just replace the ethernet interface with the bridge interface (br1)
+    
+    # iptables -P FORWARD DROP
+    # iptables -F FORWARD
+    # iptables -t nat -F
+    # iptables -t nat -A POSTROUTING -s 10.1.1.0/255.255.255.0 -o eno16777984 -j MASQUERADE 
+    # iptables -A FORWARD -i eno16777984 -o br1 -j ACCEPT                                   
+    # iptables -A FORWARD -o eno16777984 -i br1 -j ACCEPT
+
+ -- configure ip route setting inside each ns
+
+    # ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1> \"")
+    ns1> ip route add default via 10.1.1.1
+
+    ns1> ping 8.8.8.8 -c 2
+    PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+    64 bytes from 8.8.8.8: icmp_seq=1 ttl=39 time=14.7 ms
+    64 bytes from 8.8.8.8: icmp_seq=2 ttl=39 time=35.3 ms
+    --- 8.8.8.8 ping statistics ---
+    2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+    rtt min/avg/max/mdev = 14.725/25.031/35.337/10.306 ms
+
+
+
+6. in order to use ICMP 'ping' from outside
+
+  -- a client from outside needs to have 'ip route setting'
+
+    example)
+    [root@vmware-011 bgpd]# ip route add 10.1.1.2 via 10.0.50.5 
+    [root@vmware-011 bgpd]# route -n
+    Kernel IP routing table
+    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+    0.0.0.0         10.0.50.200     0.0.0.0         UG    100    0        0 eno16777984
+    10.0.50.0       0.0.0.0         255.255.255.0   U     100    0        0 eno16777984
+    10.1.1.1        10.0.50.5       255.255.255.255 UGH   0      0        0 eno16777984
+    10.1.1.2        10.0.50.5       255.255.255.255 UGH   0      0        0 eno16777984
+    192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
+
+    [root@vmware-011 bgpd]# ping 10.1.1.2 -c 3
+    PING 10.1.1.2 (10.1.1.2) 56(84) bytes of data.
+    64 bytes from 10.1.1.2: icmp_seq=1 ttl=63 time=0.196 ms
+    64 bytes from 10.1.1.2: icmp_seq=2 ttl=63 time=0.152 ms
+    64 bytes from 10.1.1.2: icmp_seq=3 ttl=63 time=0.178 ms
+
+    --- 10.1.1.2 ping statistics ---
+    3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+    rtt min/avg/max/mdev = 0.152/0.175/0.196/0.021 ms
+
+
+
+  -- server side
+
+    (1) bridge side
+
+    [root@vmware-005 kyehwanl]# tcpdump -i br1 host 10.0.50.11        
+    tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+    listening on br1, link-type EN10MB (Ethernet), capture size 65535 bytes
+    12:52:19.668709 IP vmware-011.antd.nist.gov > 10.1.1.2: ICMP echo request, id 13924, seq 1, length 64
+    12:52:19.668754 IP 10.1.1.2 > vmware-011.antd.nist.gov: ICMP echo reply, id 13924, seq 1, length 64
+    12:52:20.669045 IP vmware-011.antd.nist.gov > 10.1.1.2: ICMP echo request, id 13924, seq 2, length 64
+    12:52:20.669087 IP 10.1.1.2 > vmware-011.antd.nist.gov: ICMP echo reply, id 13924, seq 2, length 64
+    ^C
+    4 packets captured
+    4 packets received by filter
+    0 packets dropped by kernel
+
+
+
+    (2) inside netns
+
+    [root@vmware-005 kyehwanl]# ip netns exec ns0 bash
+    [root@vmware-005 kyehwanl]# ifconfig
+    lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+            inet 127.0.0.1  netmask 255.0.0.0
+            inet6 ::1  prefixlen 128  scopeid 0x10<host>
+            loop  txqueuelen 1  (Local Loopback)
+            RX packets 20  bytes 1000 (1000.0 B)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 20  bytes 1000 (1000.0 B)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+    veth1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 10.1.1.2  netmask 255.255.255.0  broadcast 10.1.1.255
+            inet6 fe80::bcc3:efff:fe36:32d8  prefixlen 64  scopeid 0x20<link>
+            ether be:c3:ef:36:32:d8  txqueuelen 1000  (Ethernet)
+            RX packets 313  bytes 23855 (23.2 KiB)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 280  bytes 19497 (19.0 KiB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+    [root@vmware-005 kyehwanl]# tcpdump -i veth1 host 10.0.50.11
+    tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+    listening on veth1, link-type EN10MB (Ethernet), capture size 65535 bytes
+    12:59:04.558911 IP vmware-011.antd.nist.gov > vmware-005.antd.nist.gov: ICMP echo request, id 13990, seq 1, length 64
+    12:59:04.558940 IP vmware-005.antd.nist.gov > vmware-011.antd.nist.gov: ICMP echo reply, id 13990, seq 1, length 64
+    12:59:05.559053 IP vmware-011.antd.nist.gov > vmware-005.antd.nist.gov: ICMP echo request, id 13990, seq 2, length 64
+    12:59:05.559070 IP vmware-005.antd.nist.gov > vmware-011.antd.nist.gov: ICMP echo reply, id 13990, seq 2, length 64
+    12:59:06.559062 IP vmware-011.antd.nist.gov > vmware-005.antd.nist.gov: ICMP echo request, id 13990, seq 3, length 64
+    12:59:06.559084 IP vmware-005.antd.nist.gov > vmware-011.antd.nist.gov: ICMP echo reply, id 13990, seq 3, length 64
+
+
+
+
+
+
+
+7. Connect External BGPd as an observer
+
+  -- connect another bgpd to obtain fully loaded bgp prefix
+  -- disable firewall on external side might be needed
+
+  (1) external bgpd
+   configure neighbor setting with the target's real IP
+
+   <from bgpd.conf.ext>
+   router bgp 65011
+   bgp router-id 10.0.50.11
+   neighbor 10.0.50.5 remote-as 60001
+
+
+
+  (2) internal base within bridge 
+  possible to directly connect bgp terminal with 'telnet ip 2605' and add neighbor info
+
+   <from bgpd.conf.base>
+   router bgp 60001
+   bgp router-id 10.1.1.1
+   neighbor 10.0.50.11 remote-as 65011
+   neighbor 10.1.1.2 remote-as 60002
+   ...
+  
+
+
+
+8. DNS setting 
+  (ref. http://man7.org/linux/man-pages/man8/ip-netns.8.html)
+
+  -- netns side
+
+  (1) create  /etc/netns/<namespace-name>/resolv.conf
+  (2) fill in resolv.conf file with the host's DNS information (/etc/resolv.conf)
+
+
+
+
+
+
+
+
+

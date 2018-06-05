@@ -1,0 +1,206 @@
+
+
+Distributed Validation: When received a new update from a peer
+===============================================================
+
+
+1. QSRx:
+
+    <bgp_route.c>
+    verify_update 
+    srx_create_bgpsec_data : prepare BGPSecData using attr->bgpsec_validationData
+                            memcpy(bgpsec->bgpsec_path_attr, attr->bgpsec_validationData->bgpsec_path_attr,size)
+
+    <srx_api.c>
+    verifyUpdate
+    createV4Request --> copy whole bgpsec attribute with memcpy(pduPtr, bgpsec->bgpsec_path_attr, attrLength)
+    sendPacketToServer: call SRx server to request a validation
+
+    (cf) attr->bgpsec_validationData->bgpsec_path_attr == (BGPSecData*)->bgpsec_path_attr 
+
+
+2. SRx server:
+
+    <receiver thread>
+    handlePacket 
+    processValidationRequest(,,SRXRPOXY_BasicHeader_VerifyRequest* hdr)
+    queueCommand
+
+    <command process thread>
+    handleCommands
+    _processUpdateValidation(, CommandQueueItem* item)
+    srxCAPI->validate(&valdata)
+
+
+
+
+
+Previous case(validation called from QSRx - NonDistributed version)
+===================================================================
+
+    bgp_attr_bgpsec(): prepare validation data
+        SCA_BGPSecValidationData* valdata = attr->bgpsec_validationData;
+        ptr = valdata->bgpsec_path_attr + 3 or 4
+        stream_get(ptr, peer->ibuf, length);
+
+
+    handleSRxValidationResult(): request call for validation
+        bgp->srxCAPI->validate(info->attr->bgpsec_validationData
+
+
+
+
+
+
+in case of signing update
+=========================
+
+1. QSRx:
+
+    bgp_update_packet    <bgp_packet.c>
+    bgp_packet_attribute <bgp_attr.c>
+    signBGPSecPathAttr   <bgp_validate.c> 
+                : prepare signing data
+                  scaSignData.hashMessage = attr->bgpsec_validationData->hashMessage[BLOCK_0];
+
+        bgp->srxCAPI->sign(&scaSignData) 
+
+        <srxcryptoapi lib>
+        sign
+
+    constructBGPSecPathAttribute
+    bgp_write
+
+
+
+
+
+
+ ** Where hashMessage[0] comes from ??
+
+ in bgp_validate.c:892, regarding to hashMessage pointer
+ // The idea here is that if we have no hash message, the API needs to generate 
+ // it. Now lets make sure the API has all information needed to do so.
+
+ --> hash_generation function in srxcryptoapi lib will make
+
+ First in SRx server, 
+    processValidationRequest(,,SRXRPOXY_BasicHeader_VerifyRequest* hdr)
+    _processUpdateValidation(, CommandQueueItem* item)
+
+    where,
+    hdr --> item -->
+    SRXPROXY_VERIFY_V4_REQUEST* v4 = (SRXPROXY_VERIFY_V4_REQUEST*)item->data;
+    ((BGPSecData)bgpsecData).bgpsec_path_attr = valPtr + (bgpsecData.numberHops * 4);
+    ((SCA_BGPSecValidationData)valdata).bgpsec_path_attr = bgpsecData.bgpsec_path_attr;
+
+    HERE, valdata has the pointer of hashMessage[] inside
+        typedef struct
+          ...
+          SCA_HashMessage*  hashMessage[2];
+        } SCA_BGPSecValidationData;        
+
+    srxCAPI->validate(&valdata)
+
+
+ Whereas, 
+    QSRx's validation in bgpd.c::handleSRxValidationResult(),
+        bgp->srxCAPI->validate(info->attr->bgpsec_validationData);
+    
+
+
+ Then, bgpsec_openssl.c in srxcrypto lib,
+    validate(SCA_BGPSecValidationData* data)
+    sca_generateHashMessage(data,,) 
+
+        data->hashMessage[BLOCK_0] = malloc(sizeof(SCA_HashMessage));
+        data->hashMessage[BLOCK_0]->hashMessageValPtr = malloc(sizeof(u_int8_t*) * segments);
+        data->hashMessage[BLOCK_0]->hashMessageValPtr[segment]->signaturePtr = buffPtr;
+        data->hashMessage[BLOCK_0]->hashMessageValPtr[segment]->hashMessagePtr = buffPtr;
+        data->hashMessage[BLOCK_0]->hashMessageValPtr[segment]->hashMessageLength = size-used;
+
+
+    --> therefore, a pointer of hashMessage will be stored into data which was passed to sca_generateHashMessage
+
+
+
+
+  <CHECK point1> for Distributed Mode
+  compare pointers between data in sca_generateHashMessage and the pointer which scaSignData passed over in QSRx
+  at the 2nd node
+
+  Result: DIFF because different machine and process as well
+
+
+  <CHECK point2> for non-Distributed mode
+  compare pointers between 
+          scaSignData which was passed over in QSRx and 
+          info->attr->bgpsec_validationData at bgp->srxCAPI->validate(info->attr->bgpsec_validationData)
+          at the 2nd node
+
+  Result: SAME
+
+
+
+ <Possible Solution 1>
+ in Distributed Mode, what about using attr->bgpsec_validationData for reconstruction to sign 
+ multiple stacks of path attributes
+
+
+
+
+
+
+
+
+
+SOLUTION
+========
+
+diff --git a/bgpd/bgp_validate.c b/bgpd/bgp_validate.c
+index f186fd5..252ccd8 100644
+--- a/bgpd/bgp_validate.c
++++ b/bgpd/bgp_validate.c
+@@ -928,8 +928,15 @@ SCA_Signature* signBGPSecPathAttr(struct bgp* bgp, struct peer* peer,
+   // Get the hash Message, if it was received and already validated, the
+   // hashMessage will not be NULL. If it is null, the signature algorithm
+   // assumes it is an origination.
+-  scaSignData.hashMessage = attr->bgpsec_validationData->hashMessage[BLOCK_0];
+   scaSignData.signature   = NULL;
++#if defined (DISTRIBUTED_EVALUATION)
++  /* hash message for Distribution version */
++  if (!tmpData) // in case, only if not origin for now
++    sca_generateHashMessage(attr->bgpsec_validationData,
++        SCA_ECDSA_ALGORITHM, &attr->bgpsec_validationData->status);
++#endif /* DISTRIBUTED_EVALUATION*/
++  scaSignData.hashMessage = attr->bgpsec_validationData->hashMessage[BLOCK_0];
++
+ 
+   // Now do the signing. If it fails, cleanup what needs to be clean up
+   // and return 0
+@@ -952,6 +959,7 @@ SCA_Signature* signBGPSecPathAttr(struct bgp* bgp, struct peer* peer,
+     return 0;
+   }
+ 
++#if !defined (DISTRIBUTED_EVALUATION)
+   if (attr->bgpsec_validationData->hashMessage[BLOCK_0] != scaSignData.hashMessage)
+   {
+     if (attr->bgpsec_validationData->hashMessage[BLOCK_0] != NULL)
+@@ -973,6 +981,7 @@ SCA_Signature* signBGPSecPathAttr(struct bgp* bgp, struct peer* peer,
+       freeSCA_HashMessage(scaSignData.hashMessage);
+     }
+   }
++#endif /* DISTRIBUTED_EVALUATION*/
+ 
+   if (tmpData)
+   {
+
+
+
+
+
+
+
+
+
+

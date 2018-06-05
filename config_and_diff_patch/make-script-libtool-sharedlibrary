@@ -1,0 +1,8 @@
+
+#! /bin/sh 
+set -x
+/bin/sh /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o util_time_measure.lo util_time_measure.c
+/bin/sh /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_util.la util_time_measure.lo -lrt -rpath `pwd`
+
+# main program compile
+# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs

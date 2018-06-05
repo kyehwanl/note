@@ -1,0 +1,75 @@
+
+
+When the connection established with SRxServer, which has a connection with rpkirtr_srv.
+Starting QuaggaSRx-0.4.2.3(current version) and receiving 100,000 prefix updates from node1(sender). After finished to receive all updates from sending peer, restart sender's process again and resend all the updates to the receiver, then the srx server which is connected to the receiver has crashed and terminiated.
+
+It is likely to happen at the collison detection function as the error logs appeared.
+
+Following are the logs when crash happened.
+
+
+1. in bgpd
+===========
+
+[02/24/17 11:59.57] Failure during sending update request (error=104)!
+
+
+2. in srx server
+================
+
+...
+pdate cache!
+   NOTE [02/24/17 11:59.34] Deletion request for update [0x00000000] from client [0x00] failed, update not found in update cache!
+   NOTE [02/24/17 11:59.34] Deletion request for update [0x00000000] from client [0x00] failed, update not found in update cache!
+   NOTE [02/24/17 11:59.34] Deletion request for update [0x00000000] from client [0x00] failed, update not found in update cache!
+   NOTE [02/24/17 11:59.34] Deletion request for update [0x00000000] from client [0x00] failed, update not found in update cache!
+   NOTE [02/24/17 11:59.34] Deletion request for update [0x00000000] from client [0x00] failed, update not found in update cache!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x5AA71473] but was changed to a collision free ID [0x5AA71474]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x4DDC0030] but was changed to a collision free ID [0x4DDC0031]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x2897087C] but was changed to a collision free ID [0x2897087D]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0xAAF4746E] but was changed to a collision free ID [0xAAF4746F]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0xBD8F602D] but was changed to a collision free ID [0xBD8F602E]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x6CB1BA44] but was changed to a collision free ID [0x6CB1BA45]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x880EA09C] but was changed to a collision free ID [0x880EA09D]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x9F75B4DF] but was changed to a collision free ID [0x9F75B4E0]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0x4E4B6EB6] but was changed to a collision free ID [0x4E4B6EB7]!
+   NOTE [02/24/17 11:59.42] UpdateID collision detected!!. The original update ID could have been [0xE52D342A] but was changed to a collision free ID [0xE52D342B]!
+
+Program received signal SIGSEGV, Segmentation fault.
+
+
+
+
+3. gdb analysis
+================
+
+[Switching to Thread 0xb769ab70 (LWP 20774)]
+0x0805a46a in detectCollision (self=0x8071f60, updateID=0xb769a2cc, prefix=0xb22a1d18, asn=60002,
+    bgpsecData=0xb769a2bc) at server/update_cache.c:1180
+1180              collision = (data[idx] != cEntry->blob[idx]);
+Missing separate debuginfos, use: debuginfo-install srx-0.3.0.1-1.fc15.i686
+(gdb) l
+1175
+1176            idx = 0;
+1177            // Now check the data blob - only if  not already collided
+1178            while (!collision && idx < dataLength)
+1179            {
+1180              collision = (data[idx] != cEntry->blob[idx]);
+1181              idx++;
+1182            }
+1183          }
+1184        }
+(gdb) p idx
+$1 = 0
+(gdb) p data[0]
+$2 = 0 '\000'
+(gdb) p cEntry ->blob[0]
+Cannot access memory at address 0x1
+(gdb) p cEntry
+$3 = (CacheEntry *) 0xb4f0ffd0
+
+
+
+
+--> it seems that cEntry->blob[0] has non-address value in it and it tried to access 0x00 and crash.
+

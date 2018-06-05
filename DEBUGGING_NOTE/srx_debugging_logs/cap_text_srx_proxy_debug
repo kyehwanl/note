@@ -1,0 +1,84 @@
+(gdb) x/28x pdu
+0x7fffffff55f0:	0x01018303	0x1c000000	0x1d000303	0x200d030a
+0x7fffffff5600:	0xe5000000	0x04000000	0x000000e5	0x00002aaa
+0x7fffffff5610:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffff5620:	0x00000000	0x00000000	0x00000000	0x00000018
+0x7fffffff5630:	0xffff55f0	0x00007fff	0x00000040	0x00000000
+0x7fffffff5640:	0xffff5610	0x00007fff	0xffff56c0	0x000000e5
+0x7fffffff5650:	0xac43bc70	0x00002aaa	0xac43bc50	0x00002aaa
+
+
+(gdb) graph display (SRXPROXY_VERIFY_V4_REQUEST*)pdu
+(gdb) graph display *((SRXPROXY_VERIFY_V4_REQUEST*)pdu) dependent on 13
+(gdb) graph display /d *((SRXPROXY_VERIFY_V4_REQUEST*)pdu) dependent on 14
+(gdb) graph undisplay 15
+(gdb) graph display /x *((SRXPROXY_VERIFY_V4_REQUEST*)pdu) dependent on 14
+(gdb) graph undisplay 14
+
+
+
+
+2011/09/16 00:12:00 BGP: BGPd (+SRx) 0.99.16 starting: vty@2605, bgp@<all>:179
+2011/09/16 00:12:00 BGP: Import timer expired.
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] Timer (start timer expire).
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] BGP_Start (Idle->Connect)
+2011/09/16 00:12:04 BGP: 129.6.140.229 [Event] Connect start to 129.6.140.229 fd 14
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] Non blocking connect waiting result
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] TCP_connection_open (Connect->OpenSent)
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] Receive_OPEN_message (OpenSent->OpenConfirm)
+2011/09/16 00:12:04 BGP: 129.6.140.229 sending KEEPALIVE
+2011/09/16 00:12:04 BGP: 129.6.140.229 KEEPALIVE rcvd
+2011/09/16 00:12:04 BGP: 129.6.140.229 [FSM] Receive_KEEPALIVE_message (OpenConfirm->Established)
+2011/09/16 00:12:04 BGP: 129.6.140.229 sending KEEPALIVE
+2011/09/16 00:12:04 BGP: 129.6.140.229 KEEPALIVE rcvd
+2011/09/16 00:12:05 BGP: 129.6.140.229 [FSM] Timer (routeadv timer expire)
+2011/09/16 00:12:05 BGP: 129.6.140.229 rcvd UPDATE w/ attr: nexthop 129.6.140.229, origin i, metric 0, path 229
+2011/09/16 00:12:05 BGP: 129.6.140.229 rcvd 10.0.0.0/8
+WAIT FOR RESULT of 0x00000000
+KH_type: 83,  hdr[1]: 83
+,  hdr->reserved1:0383
+receipt:83 KH_type:83
+RECEIPT! 0x6D5D5572
+HANDLER NOTIFIED FOR RECEIPT OF 0x6D5D5572
+BACK FROM WAIT FOR RESULT of 0x6D5D5572
+2011/09/16 00:12:05 BGP: Update [0x6D5D5572] registered!
+2011/09/16 00:12:05 BGP: Setting 'Ignore' flag for update [0x6D5D5572]!
+KH_type: 01,  hdr[1]: 01
+,  hdr->reserved1:0101
+2011/09/16 00:12:05 BGP: 129.6.140.229 rcvd 10.3.13.32/29
+receipt:01 KH_type:01
+NO RECEIPT! 0x6D5D5572
+2011/09/16 00:12:05 BGP: SRx Validation result (Origin): Update [0x6D5D5572], 1
+2011/09/16 00:12:05 BGP: Remove 'Ignore' flag for update [0x6D5D5572]!
+WAIT FOR RESULT of 0x00000000
+KH_type: 83,  hdr[1]: 83
+,  hdr->reserved1:0383
+receipt:83 KH_type:83
+RECEIPT! 0xA036B60F
+HANDLER NOTIFIED FOR RECEIPT OF 0xA036B60F
+BACK FROM WAIT FOR RESULT of 0xA036B60F
+2011/09/16 00:12:05 BGP: Update [0xA036B60F] registered!
+2011/09/16 00:12:05 BGP: Setting 'Ignore' flag for update [0xA036B60F]!
+2011/09/16 00:12:05 BGP: 129.6.140.229 rcvd 10.3.13.32/28
+WAIT FOR RESULT of 0x00000000
+KH_type: 01,  hdr[1]: 01
+,  hdr->reserved1:0101
+receipt:01 KH_type:01
+NO RECEIPT! 0xA036B60F
+2011/09/16 00:12:05 BGP: SRx Validation result (Origin): Update [0xA036B60F], 1
+2011/09/16 00:12:05 BGP: Remove 'Ignore' flag for update [0xA036B60F]!
+KH_type: 83,  hdr[1]: 83
+,  hdr->reserved1:0383
+receipt:83 KH_type:83
+RECEIPT! 0xC457DBC6
+HANDLER NOTIFIED FOR RECEIPT OF 0xC457DBC6
+KH_type: 01,  hdr[1]: 01
+,  hdr->reserved1:0101
+receipt:01 KH_type:01
+NO RECEIPT! 0xC457DBC6
+2011/09/16 00:12:05 BGP: Yield and allow update [0xC457DBC6] to be registered!
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x40a00940 (LWP 4427)]
+0x00002aaaabb09265 in raise () from /lib64/libc.so.6
+(gdb) 

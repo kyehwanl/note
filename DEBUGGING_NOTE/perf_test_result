@@ -1,0 +1,35 @@
+
+validation:
+
+tara - 
+
+1. single hop validation
+(1) only validation  elapsed time during g_api->validte()
+103.41 us  / 1000 signing
+9670.24 ops/s
+
+(2) whole parsing function
+548.7 us
+1822.48 ops/s
+
+
+
+2. multihop validation
+
+(1) only validation call
+118.04 us
+8471.7 ops/s
+
+(2) whole parsing function
+918.31 us
+1088.95 ops/s
+
+
+
+3. OpenSSL signing operation
+(1) sign_with_key staring - ending
+378.75 us
+
+(2) ECDSA_sign
+363.25 us
+

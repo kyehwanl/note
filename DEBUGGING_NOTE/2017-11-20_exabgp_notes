@@ -1,0 +1,68 @@
+
+
+
+1. update calling procedure analysis
+====================================
+
+1.1. important clue
+-------------------
+
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(537)_main()
+-> new_routes.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(269)new_update()
+-> for message in update.messages(self.negotiated):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(128)messages()
+-> attr = self.attributes.pack(negotiated,True)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(196)pack()
+-> message += default[code](local_asn,peer_asn).pack(negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(173)<lambda>()
+-> Attribute.CODE.ORIGIN: lambda l,r: Origin(Origin.IGP),
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/origin.py(27)__init__()
+-> self.packed = self._attribute(packed if packed else chr(origin))
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(157)_attribute()
+-> if flag & Attribute.Flag.OPTIONAL and not value:
+
+
+
+ (*) look for the procedure of update
+
+
+
+
+1.2. basic attribute
+--------------------
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(173)<lambda>()
+-> Attribute.CODE.ORIGIN: lambda l,r: Origin(Origin.IGP),
+(Pdb) l
+168                     peer_asn = negotiated.peer_as
+169  
+170                     message = ''
+171  
+172                     default = {
+173  ->                         Attribute.CODE.ORIGIN: lambda l,r: Origin(Origin.IGP),
+174                             Attribute.CODE.AS_PATH: lambda l,r: ASPath([],[]) if l == r else ASPath([local_asn,],[]),
+175                             Attribute.CODE.LOCAL_PREF: lambda l,r: LocalPreference(100) if l == r else NOTHING,
+176                     }
+
+
+
+ Origin --> calls origin._attribute() 
+ ASPath --> calls ASPath._attribute()
+ ...etc

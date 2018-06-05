@@ -1,0 +1,355 @@
+
+
+Openvswitch QoS Queue Basic Setup
+=================================
+
+
+>>> Purpose
+This document helps us understand how QoS works in OpenVSwitch. 
+This document can be used as a warming up before a good tutorial(URL is shown below at References) 
+to create a floodlight module to handle QoS. 
+ 
+>>> Reference
+- How to create QoS Service Module
+- man ovs-vsctl (Quality of Service (QoS) section)
+
+>>> Outline
+QoS is the service to differentiate delivery service. 
+In some packets, it is delivered at high speed, but others can be delivered at lower speed. 
+Based on my understanding, key essence of QoS at OpenVSwitch is to create queues with different speed, and put packets into different queues depending on QoS policy. 
+
+This document does not handle all of them, but just taste how to configure OpenVSwitch for QoS. 
+In detail. we just create a queue with low speed, and QoS use the queue. 
+We expect transfer rate is reduced (2Mbps) as a result. 
+
+Though this does not show all deployment of QoS, it can be a starting point of QoS. 
+For more detail, please refer to a Reference URL (above).
+
+>>> Steps
+- IPerf test (check speed)
+- Create a qos with a low-speed queue
+- IPerf test (check speed)
+*** Appendix
+- Some useful commands for qos.
+
+>>> Environment
+- SDN network (I do not use mininet)
+  host1 - OVS - ... - OVS - host2
+- OS: Ubuntu 12.04
+
+>>> IPerf test 
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49038
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-10.3 sec   116 MBytes  94.1 Mbits/sec
+
+*** To open 5001 port, use following commands in Receiver 
+(if you see "no connection..." message)
+[root@host2 ~]# iptables -I INPUT -p tcp -j ACCEPT --dport=5001
+[root@host2 ~]# iptables -L INPUT
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:commplex-link  // <-- 5001 port
+:
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49038 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec   116 MBytes  96.5 Mbits/sec       // <-- current maxium speed
+
+>>> Choose a port in any switch on path
+root@ovs-edge-app1:~# ovs-vsctl show
+b03d92f0-bd5d-4a32-bc37-3542873b2e79
+    Bridge "br0"
+        Controller "tcp:192.168.1.1:6633"
+            is_connected: true
+        fail_mode: secure
+        Port "eth1"
+            Interface "eth1"
+        Port "vnet1"
+            Interface "vnet1"
+        Port "br0"
+            Interface "br0"
+                type: internal
+
+*** Here, I choose eth1 that are on data path from host1 to host2. You can use any port that is on data path. 
+
+>>> Create a qos with a low-speed queue (at any switch on path)
+Following command does ..
+1) create a queue(q0)
+q0 (2 Mbps): --id=@q0 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+
+2) create a qos (newqos) and connect a queue into the qos
+--id=@newqos create qos type=linux-htb queues=0=@q0
+
+3) connect a created qos (newqos) to a existing port (eth1)
+set port eth1 qos=@newqos
+
+Thus, port(eth1) -- qos(newqos) -- queue(q1)
+
+root@switch:~# ovs-vsctl set port eth1 qos=@newqos -- --id=@newqos create qos type=linux-htb queues=0=@q0 -- --id=@q0 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+ea9aa386-8558-4df6-84dc-55b50eb795a1
+340c74b1-7dc4-4959-b8c5-4d25c463556c
+root@switch:~# ovs-vsctl list port eth1
+_uuid               : 0fb256d5-df68-4d1a-8b56-74bdd0b4482a
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [737c5011-97cc-4c11-9370-07b845e94294]
+lacp                : []
+mac                 : []
+name                : "eth1"
+other_config        : {}
+qos                 : ea9aa386-8558-4df6-84dc-55b50eb795a1    // added qos
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+
+root@switch:~# ovs-vsctl list qos
+_uuid               : ea9aa386-8558-4df6-84dc-55b50eb795a1
+external_ids        : {}
+other_config        : {}
+queues              : {0=340c74b1-7dc4-4959-b8c5-4d25c463556c}  // added queue
+type                : linux-htb
+
+root@switch:~# ovs-vsctl list queue
+_uuid               : 340c74b1-7dc4-4959-b8c5-4d25c463556c
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="2000000", min-rate="2000000"}  // 2 Mbps
+root@switch:~# 
+
+>>> IPerf test (check speed) again
+- receiver
+[root@host2 ~]# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.2.15 port 5001 connected with 192.168.2.11 port 49039
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-14.2 sec  3.25 MBytes  1.91 Mbits/sec    // <-- now, reduced to about 2 Mbps
+
+- sender
+[root@host1 ~]# iperf -c host2 -p 5001
+------------------------------------------------------------
+Client connecting to host2, TCP port 5001
+TCP window size: 22.9 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.2.11 port 49039 connected with 192.168.2.15 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.3 sec  3.25 MBytes  2.65 Mbits/sec    // <-- now, reduced to about 2 Mbps
+
+>>> Discussion
+Here, we used just a queue. With multiple queues in a qos, we can handle packets for different services.  
+That is, high-serviced packets are forwared to high-speed queue. 
+For more information, again you may want to refer a Reference URL (above at reference section)
+
+Now, you may want to disconnect qos from a port and remove queue and qos, then want to test speed again. For commands to remove, please see following appendix.
+
+>>> Appendix: Some useful commands for qos.
+Here, I show just screen captures related to qos. 
+
+- create a qos
+root@switch:~# ovs-vsctl create qos type=linux-htb
+26477113-cad7-4ba6-8210-a2e71d808134
+root@switch:~# ovs-vsctl list qos
+_uuid               : 26477113-cad7-4ba6-8210-a2e71d808134
+external_ids        : {}
+other_config        : {}
+queues              : {}
+type                : linux-htb
+
+*** To remove qos, use following commands.
+root@switch:~# ovs-vsctl --all destroy qos
+
+- create a qos (specifying max-rate)
+root@switch:~# ovs-vsctl create qos type=linux-htb other-config:max-rate=1000000000
+e9187f85-333f-49db-bd15-183f76745f4d
+root@switch:~# ovs-vsctl list qos
+_uuid               : e9187f85-333f-49db-bd15-183f76745f4d
+external_ids        : {}
+other_config        : {max-rate="1000000000"}
+queues              : {}
+type                : linux-htb
+root@switch:~# ovs-vsctl --all destroy qos
+root@switch:~# ovs-vsctl list qos
+
+- create a qos and a queue (for the qos)
+root@switch:~# ovs-vsctl create qos type=linux-htb other-config:max-rate=1000000000 queues=0=@q0 -- --id=@q0 create queue other-config:min-rate=5000000 other-config:max-rate=5000000
+0d6a738e-0597-4290-8c98-4c5593b1ca1f
+8453ca2d-4931-4d55-b0f5-51b30c825d63
+root@switch:~# ovs-vsctl list qos
+_uuid               : 0d6a738e-0597-4290-8c98-4c5593b1ca1f
+external_ids        : {}
+other_config        : {max-rate="1000000000"}
+queues              : {0=8453ca2d-4931-4d55-b0f5-51b30c825d63}
+type                : linux-htb
+root@switch:~# ovs-vsctl list queue
+_uuid               : 8453ca2d-4931-4d55-b0f5-51b30c825d63
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="5000000", min-rate="5000000"}
+
+root@switch:~# ovs-vsctl destroy qos 0d6a738e-0597-4290-8c98-4c5593b1ca1f    // <-- UUID
+root@switch:~# ovs-vsctl list qos
+root@switch:~# ovs-vsctl list queue
+_uuid               : 8453ca2d-4931-4d55-b0f5-51b30c825d63
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="5000000", min-rate="5000000"}
+root@switch:~# ovs-vsctl destroy queue 8453ca2d-4931-4d55-b0f5-51b30c825d63    // <-- UUID
+root@switch:~# ovs-vsctl list queue
+
+*** or
+> ovs-vsctl --all destroy qos
+> ovs-vsctl --all destroy queue
+
+- create a qos and two queues(for the qos)
+root@switch:~# ovs-vsctl create qos type=linux-htb other-config:max-rate=1000000000 queues=0=@q0,1=@q1 -- --id=@q0 create queue other-config:min-rate=1000000000 other-config:max-rate=1000000000 -- --id=@q1 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+5e4d4e8e-5ed8-41c6-845d-c177cc443daf
+511a5c4e-ee79-4af7-a911-a43b18a79bbb
+13350643-4441-4bd4-9a64-b6e9f62310cb
+root@switch:~# ovs-vsctl list qos
+_uuid               : 5e4d4e8e-5ed8-41c6-845d-c177cc443daf
+external_ids        : {}
+other_config        : {max-rate="1000000000"}
+queues              : {0=511a5c4e-ee79-4af7-a911-a43b18a79bbb, 1=13350643-4441-4bd4-9a64-b6e9f62310cb}
+type                : linux-htb
+root@switch:~# ovs-vsctl list queue
+_uuid               : 511a5c4e-ee79-4af7-a911-a43b18a79bbb
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="1000000000", min-rate="1000000000"}
+
+_uuid               : 13350643-4441-4bd4-9a64-b6e9f62310cb
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="2000000", min-rate="2000000"}
+
+- create a qos and connect to a port
+root@switch:~# ovs-vsctl set port eth1 qos=@newqos -- --id=@newqos create qos type=linux-htb
+9c776df4-6113-44d2-853d-c2791fb180ac
+root@switch:~# ovs-vsctl list port eth1
+_uuid               : 0fb256d5-df68-4d1a-8b56-74bdd0b4482a
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [737c5011-97cc-4c11-9370-07b845e94294]
+lacp                : []
+mac                 : []
+name                : "eth1"
+other_config        : {}
+qos                 : 9c776df4-6113-44d2-853d-c2791fb180ac   // <-- qos
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+root@switch:~# ovs-vsctl list qos
+_uuid               : 9c776df4-6113-44d2-853d-c2791fb180ac
+external_ids        : {}
+other_config        : {}
+queues              : {}
+type                : linux-htb
+
+root@switch:~# ovs-vsctl clear port eth1 qos
+root@switch:~# ovs-vsctl list port eth1
+_uuid               : 0fb256d5-df68-4d1a-8b56-74bdd0b4482a
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [737c5011-97cc-4c11-9370-07b845e94294]
+lacp                : []
+mac                 : []
+name                : "eth1"
+other_config        : {}
+qos                 : []              // <-- clear qos
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+root@switch:~# ovs-vsctl list qos
+_uuid               : 9c776df4-6113-44d2-853d-c2791fb180ac
+external_ids        : {}
+other_config        : {}
+queues              : {}
+type                : linux-htb
+root@switch:~# ovs-vsctl --all destroy qos
+root@switch:~# ovs-vsctl list qos
+
+- create a qos and two queues(for the qos) and connect the qos into a port
+Following command does ..
+1) create two queues (q1, q2)
+q1 (1000 Mbps): --id=@q0 create queue other-config:min-rate=1000000000 other-config:max-rate=100000000 
+q2 (2 Mbps): --id=@q1 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+
+2) create a qos (newqos) and connect two queues into the qos
+--id=@newqos create qos type=linux-htb queues=0=@q0,1=@q1
+
+3) connect a created qos (newqos) to a existing port (eth1)
+set port eth1 qos=@newqos
+
+Thus, port(eth1) -- qos(newqos) -- queues(q1,q2)
+
+root@switch:~# ovs-vsctl set port eth1 qos=@newqos -- --id=@newqos create qos type=linux-htb queues=0=@q0,1=@q1 -- --id=@q0 create queue other-config:min-rate=1000000000 other-config:max-rate=100000000 -- --id=@q1 create queue other-config:min-rate=2000000 other-config:max-rate=2000000
+cad117b3-7ef8-4884-b946-1360b510ebbc
+ec0ccbcd-c772-49e8-a970-3b1f67e564d4
+4b9ad7d3-a171-4abb-96e1-92bc7634d444
+root@switch:~# ovs-vsctl list port eth1
+_uuid               : 0fb256d5-df68-4d1a-8b56-74bdd0b4482a
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [737c5011-97cc-4c11-9370-07b845e94294]
+lacp                : []
+mac                 : []
+name                : "eth1"
+other_config        : {}
+qos                 : cad117b3-7ef8-4884-b946-1360b510ebbc
+statistics          : {}
+status              : {}
+tag                 : []
+trunks              : []
+vlan_mode           : []
+root@switch:~# ovs-vsctl list qos
+_uuid               : cad117b3-7ef8-4884-b946-1360b510ebbc
+external_ids        : {}
+other_config        : {}
+queues              : {0=ec0ccbcd-c772-49e8-a970-3b1f67e564d4, 1=4b9ad7d3-a171-4abb-96e1-92bc7634d444}
+type                : linux-htb
+root@switch:~# ovs-vsctl list queue
+_uuid               : ec0ccbcd-c772-49e8-a970-3b1f67e564d4
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="100000000", min-rate="1000000000"}
+
+_uuid               : 4b9ad7d3-a171-4abb-96e1-92bc7634d444
+dscp                : []
+external_ids        : {}
+other_config        : {max-rate="2000000", min-rate="2000000"}

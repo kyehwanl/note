@@ -1,0 +1,65 @@
+RECEIPT! 0x6930C2CC
+HANDLER NOTIFIED FOR RECEIPT OF 0x6930C2CC
+BACK FROM WAIT FOR RESULT of 0x6930C2CC
+2011/09/21 15:39:31 BGP: Update [0x6930C2CC] registered!
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0x6930C2CC]!
+2011/09/21 15:39:31 BGP: 129.6.141.34 rcvd 10.2.167.192/28
+WAIT FOR RESULT of 0x00000000
+NO RECEIPT! 0x6930C2CC
+2011/09/21 15:39:31 BGP: SRx Validation result (Origin): Update [0x6930C2CC], 2
+RECEIPT! 0x0D51AF05
+HANDLER NOTIFIED FOR RECEIPT OF 0x0D51AF05
+BACK FROM WAIT FOR RESULT of 0x0D51AF05
+2011/09/21 15:39:31 BGP: Update [0x0D51AF05] registered!
+NO RECEIPT! 0x0D51AF05
+2011/09/21 15:39:31 BGP: SRx Validation result (Origin): Update [0x0D51AF05], 2
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0x0D51AF05]!
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0x0D51AF05]!
+2011/09/21 15:39:31 BGP: 129.6.141.34 rcvd 10.2.167.192/27
+WAIT FOR RESULT of 0x00000000
+RECEIPT! 0x1A2ABB46
+HANDLER NOTIFIED FOR RECEIPT OF 0x1A2ABB46
+BACK FROM WAIT FOR RESULT of 0x1A2ABB46
+2011/09/21 15:39:31 BGP: Update [0x1A2ABB46] registered!
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0x1A2ABB46]!
+2011/09/21 15:39:31 BGP: 129.6.141.34 rcvd 10.2.167.192/26
+WAIT FOR RESULT of 0x00000000
+NO RECEIPT! 0x1A2ABB46
+2011/09/21 15:39:31 BGP: SRx Validation result (Origin): Update [0x1A2ABB46], 2
+RECEIPT! 0x23A78783
+HANDLER NOTIFIED FOR RECEIPT OF 0x23A78783
+BACK FROM WAIT FOR RESULT of 0x23A78783
+2011/09/21 15:39:31 BGP: Update [0x23A78783] registered!
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0x23A78783]!
+NO RECEIPT! 0x23A78783
+2011/09/21 15:39:31 BGP: 129.6.141.34 rcvd 10.2.167.188/30
+2011/09/21 15:39:31 BGP: SRx Validation result (Origin): Update [0x23A78783], 2
+WAIT FOR RESULT of 0x00000000
+RECEIPT! 0xA637F599
+HANDLER NOTIFIED FOR RECEIPT OF 0xA637F599
+BACK FROM WAIT FOR RESULT of 0xA637F599
+2011/09/21 15:39:31 BGP: Update [0xA637F599] registered!
+2011/09/21 15:39:31 BGP: Setting 'Ignore' flag for update [0xA637F599]!
+2011/09/21 15:39:31 BGP: 129.6.141.34 rcvd 10.2.167.184/30
+WAIT FOR RESULT of 0x00000000
+NO RECEIPT! 0xA637F599
+2011/09/21 15:39:31 BGP: SRx Validation result (Origin): Update [0xA637F599], 2
+RECEIPT! 0x77092FF0
+HANDLER NOTIFIED FOR RECEIPT OF 0x77092FF0
+NO RECEIPT! 0x77092FF0
+2011/09/21 15:39:31 BGP: Yield and allow update [0x77092FF0] to be registered!
+BGP: Received signal 11 at 1316633971 (si_addr 0x6882); aborting...
+Backtrace for 12 stack frames:
+/srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(zlog_backtrace_sigsafe+0x2f)[0x7f95a8f73f4c]
+/srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(zlog_signal+0x21e)[0x7f95a8f74497]
+/srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(+0x3358e)[0x7f95a8f7c58e]
+/lib64/libpthread.so.0(+0x36a1c0eeb0)[0x7f95a88b2eb0]
+/lib64/libpthread.so.0(raise+0x2b)[0x7f95a88b2d8b]
+/srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x1b93b)[0x7f95a93dd93b]
+/srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x605fd)[0x7f95a94225fd]
+/srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x60831)[0x7f95a9422831]
+/srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x637f2)[0x7f95a94257f2]
+/srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x62f10)[0x7f95a9424f10]
+/lib64/libpthread.so.0(+0x36a1c06ccb)[0x7f95a88aaccb]
+/lib64/libc.so.6(clone+0x6d)[0x7f95a81a9c2d]
+ls10.antd [121]{.../quagga-0.99.16/bgpd}->

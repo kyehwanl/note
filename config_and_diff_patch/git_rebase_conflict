@@ -1,0 +1,382 @@
+
+[git] rebase 할때 conflict 발생에 따른 도식화 설명
+
+
+I. 정상적 경우
+
+<intro>
+Git rebase를 했을경우 충돌(conflict)이 발생하게 되면 
+git mergetool 커맨드를 이용해서 git config에 설정된 vimdiff툴을 이용해서 merge하려는 작업을 시작하게 된다
+
+여기서 각각의 과정들을 알아보자
+
+
+<Condition.1>
+bgpd/bgpd.c의 아래와 같은 부분을 수정하고자 하다가 conflict 발생
+
+#if defined(__TIME_MEASURE__)
+#include "srx/srx_common.h"
+#endif
+
+
+
+<Condition.2>
+
+1. Master, unpacking의 소스 → 아예 지워버렸다 (REMOTE)
+
+------------------------------
+------------------------------
+------------------------------
+
+
+2. rebuild 브랜치의 소스 → 가운데 부분이 주석 처리 (//) 되었다 (REMOTE)
+
+#if defined(__TIME_MEASURE__)
+//#include "srx/srx_common.h"
+#endif
+
+
+3. (BASE)가 되는 index 844dacb는 원래의 소스라인을 가지고 있다
+
+#if defined(__TIME_MEASURE__)
+#include "srx/srx_common.h"
+#endif
+
+
+
+
+<진행상황>
+
+
+** rebase를 쓰는 이유를 간단히 생각해보면, 종종 이전의 index에서 수정할 것을 발견후 수정하고 
+** 최근의 index(위의 경우 rebuild)에도 반영하기 위해 Rebae작업을 해주는것이다
+** 시간상으로 unpacking이 예전것이고 rebuild가 최근 작업인데, 예전 index의 수정을 최근 index에도 반영하기 위한 수단
+
+
+(0) Initial status
+
+[kyehwanl@node1 qsrx]$ git lgodb
+* 3a60740 (HEAD, rebuild) improve bgpsec_path_attr_cmp to compare
+* fe90fbf remove bgpsec intern block from attribute hashing
+* 844dacb (unpacking, master) BGPv4 unpacking enabled + measure1 rebased
+
+(1) git co master 로 간후 
+(2) bgpd/bgpd.c에서 위와 같이 수정후 commit
+(3) 아래와 같은 index구조를 가짐
+
+[kyehwanl@node1 bgpd]$ git lgodb
+* 34a70f2 (HEAD, unpacking, master) added measure until path validation done
+| * 3a60740 (rebuild) improve bgpsec_path_attr_cmp to compare   
+| * fe90fbf remove bgpsec intern block from attribute hashing
+|/  
+* 844dacb BGPv4 unpacking enabled + measure1 rebased
+
+
+(4) git rebase rebuild → rebuild index에 HEAD의 수정사항을 반영하기 위해서 rebase를 시행 
+(5) REMOTE bgpd.c와 LOCAL의 bgpd.c간의 conflict 발생
+
+** 참고로 rebase 에서 index를 바라보는 관점은 BASE, REMOTE, LOCAL로 나뉜다
+** rebase의 원리를 생각해보면 알수 있는데, rebase는 일단 통합하기위한 대상으로 checkout후(rebuild) → HEAD 가 rebuild가 됨
+** 현재 index (master)와의 공통되는 index(BASE)로 부터 그 차이점을 하나씩 적용해 나가는 원리이다.
+
+
+(6) 아래는 conflict 난 후의 index구조
+여기서 중요한 것은 HEAD의 위치가 rebuild에 있다!!
+따라서 rebase 커맨드의 target이 LOCAL로 되었고, 커맨드를 시작했던 index가 REMOTE가 되었다
+
+[kyehwanl@node1 bgpd]$ git lgodb
+* 34a70f2 (unpacking, master) added measure until path validation done  ⇐ REMOTE
+| * 3a60740 (HEAD, rebuild) improve bgpsec_path_attr_cmp to compare     ⇐ LOCAL
+| * fe90fbf remove bgpsec intern block from attribute hashing
+|/  
+* 844dacb BGPv4 unpacking enabled + measure1 rebased                    ⇐ BASE
+
+
+
+(7) git mergetool
+
+그러면 아래 세 임시 파일과 
+bgpd.c.LOCAL.17679.c 
+bgpd.c.BASE.17679.c
+bgpd.c.REMOTE.17679.c
+
+bgpd.c파일이 하단에 열리는 것을 vimdiff에서 확인할수 있다
+
+임시 파일을 참조로 하단에 있는 bgpd.c를 수정해서 저장후
+
+(8) git rebase --continue 커맨드로 계속진행한다
+
+[kyehwanl@node1 qsrx]$ git rebase --continue
+Applying: added measure until path validation done
+
+[kyehwanl@node1 qsrx]$ git lgodb
+* 0dfc5d2 (HEAD, master) added measure until path validation done
+* 3a60740 (rebuild) improve bgpsec_path_attr_cmp to compare
+* fe90fbf remove bgpsec intern block from attribute hashing
+| * 34a70f2 (unpacking) added measure until path validation done
+|/  
+* 844dacb BGPv4 unpacking enabled + measure1 rebased
+
+(참고로)여기서 unpacking으로 co후 git merge master를 하면 master와 unpacking이 동일 index를 가지게 할 수 있다
+
+
+(9) 일련의 merge과정을 거친후 index구조는 아래와 같다
+
+[kyehwanl@node1 qsrx]$ git lgodb
+* 0dfc5d2 (HEAD, unpacking, master) added measure until path validation done
+* 3a60740 (rebuild) improve bgpsec_path_attr_cmp to compare
+* fe90fbf remove bgpsec intern block from attribute hashing
+* 844dacb BGPv4 unpacking enabled + measure1 rebased
+
+
+(10) 만약 또 다른 파일이 conflict가 발생하면 위의 과정을 다시 하고
+아예 취소하고 싶을때는 --abort를 한다
+
+
+
+
+II. 모두 수정후 git rebase --continue를 했지만 오류가 난 경우 (git 자체 버그)
+
+이 과정이 까다롭다!!
+원인은 git 의 bug가 있다
+
+(condition)
+[kyehwanl@node1 qsrx2-2]$ git lgodb
+* bfaca60 (HEAD, delegation) delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+| * c5cfc6d (measure3) measure point added (inherited from measure2)
+| * 06d433a delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+|/  
+| * de834b0 (measure2) added measure point until path validation done which came from srx server response
+|/  
+* 96aa750 (rebuild) improve bgpsec_path_attr_cmp to compare
+
+bgpd.c와 bgp_route.c 두 파일에 conflict가 난다
+
+(purpose) measure3를 HEAD위로 올리고 싶어서 rebase를 쓸려고 한다
+
+
+
+1. Chapter I. 의 conflict resolve과정을 제대로 했지만 결국 아래와 같은 메시지를 받는 경우
+
+[kyehwanl@node1 qsrx2]$ git rebase --continue
+Applying: delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+No changes - did you forget to use 'git add'?
+If there is nothing left to stage, chances are that something else
+already introduced the same changes; you might want to skip this patch.
+
+When you have resolved this problem run "git rebase --continue".
+If you would prefer to skip this patch, instead run "git rebase --skip".
+To check out the original branch and stop rebasing run "git rebase --abort".
+
+[kyehwanl@node1 qsrx2]$ git st
+# Not currently on any branch.
+git add를 하라고 해서 해봤지만 아무런 것도 고쳐진것이 없다!!!
+
+
+
+
+2. 여러 경우의 solution이 있을수 있지만 간단한 것부터
+
+
+(1) 복수개의 파일을 고칠경우 case1
+  A. 일단 처음것은 수정한후
+  B. 두번째 or 마지막것을 수정하지 않고 바로 quit한다
+→ 그럼 다음과 같은 질문을 볼수 있다
+
+bgpd/bgp_route.c seems unchanged.
+Was the merge successful? [y/n] y
+
+  C. ‘y’로 conflict가 제대로 머지가 되었다고 답한 후,
+  D. git rebase --contiune를 통해서 전체 procedure를 완성시킨다 (제일중요!!)
+
+[kyehwanl@node1 qsrx2-4]$ git rebase --continue
+Applying: delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+Applying: measure point added (inherited from measure2)
+Using index info to reconstruct a base tree...
+Falling back to patching base and 3-way merge...
+Auto-merging bgpd/bgpd.c
+
+
+[kyehwanl@node1 qsrx2-4]$ gg
+* fab8f78 (HEAD, measure3) measure point added (inherited from measure2)
+* be6bd28 delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+* bfaca60 (delegation) delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+| * de834b0 (measure2) added measure point until path validation done which came from srx server response
+|/  
+* 96aa750 (rebuild) improve bgpsec_path_attr_cmp to compare
+
+        → 그래서 일단 rebase는 완성되었다
+
+  E. 이후 bgp_route.c에 가서 “<<<<<< HEAD” 구문들 수정해주고 다시 commit(--amend)해주면 된다
+
+
+  F. rebase로 인해 중복된 indext를 제거하고 싶을 경우는 rebase -i를 이용해서 squash 해주자 ( → git reset을 이용하는 trick도 있음, 책 Pro Git참조)
+위에서 be6bd28 를 없애주고 싶다면,
+git rebase -i delegation → 항상 제거하고 싶은 index +1 아래까지 를 적는다
+
+pick be6bd28 delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+pick fab8f78 measure point added (inherited from measure2)
+
+
+이것의 의미는 현재 delegation을 HEAD로 하고 있고, 여기서 be6bd28의 index를 골라서(pick) 적용을 시키고, 
+그후 fab8f78을 또 골라서(pick) 적용을 시킨다는 의미.
+원래 rebase가 가지는 의미가 ‘git rebase <desired base>’이므로 desired base를 먼저 BASE로 해서 거기에 diff를 한것들을
+적용시키는 원리이기 때문이다.
+
+[kyehwanl@node1 qsrx2-4]$ git rebase -i delegation
+# Rebase bfaca60..fab8f78 onto bfaca60
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
+
+
+여기서 파란색으로 하이라이트된 부분의 ‘pick’을 s로 바꿔준다
+
+pick be6bd28 delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+s fab8f78 measure point added (inherited from measure2)
+
+
+-저장하고 나오면, 이제 log를 위한 주석을 넣는 부분이 있다
+
+# This is a combination of 2 commits.
+# The first commit's message is:
+
+delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+
+# This is the 2nd commit message:
+
+measure point added (inherited from measure2)
+
+
+- 여기서 2nd commit message를 남겨놓고 first를 지우면 git log를 했을 경우 두번째만 남게되어 보인다
+
+[detached HEAD 07538e7] measure point added (inherited from measure2)
+ 2 files changed, 33 insertions(+), 1 deletions(-)
+Successfully rebased and updated refs/heads/measure3.
+
+
+[kyehwanl@node1 qsrx2-4]$ gg
+* 07538e7 (HEAD, measure3) measure point added (inherited from measure2)
+* bfaca60 (delegation) delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+| * de834b0 (measure2) added measure point until path validation done which came from srx server response
+|/  
+* 96aa750 (rebuild) improve bgpsec_path_attr_cmp to compare
+
+
+
+(2) 복수개의 파일을 고칠경우 case2
+A. 처음파일을 수정하지 않고 빠져나오면서, 아래의 질문에 ‘y’로 응답하고 나오고
+bgpd/bgp_route.c seems unchanged.
+Was the merge successful? [y/n] y
+
+B. 다음 파일들은 원래 conflict resolution과정들처럼 제대로 해준다
+C. 이하는 (1)과 동일
+
+
+(3) 한 개의 파일을 고칠경우 
+A. 제대로 conflict resolution을 따랐는데 git자체의 bug로 인해서 merge가 제대로 되지 않을 경우에만
+(2)의 경우처럼 처음파일을 수정하지 않고 빠져나오면서, 질문에 ‘y’로 응답하고 나와서 처리하자
+
+
+
+(4) Principle
+
+Rebae의 원칙은 BASE가 되는 파일들이 수정되고 그것이 commit되는 과정이므로
+일단 git rebase --continue가 되게끔 <<<<<< HEAD 등의 code 삽입문들을 나중에 수정하더라도
+Merge가 되게끔 해주는 것이 원리이다
+
+
+A. 둘다 고치지 않고 나온경우
+
+bgpd/bgp_route.c seems unchanged.
+Was the merge successful? [y/n] y
+[kyehwanl@node1 qsrx2-5]$ git st
+# Not currently on any branch.
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#       modified:   bgpd/bgp_route.c
+#       modified:   bgpd/bgpd.c
+
+
+** 만약 어느 파일이 add가 안되어 있다고 하는 메시지가 나오면 정상적으로 git add후 git rebase --continue를 하자
+
+[kyehwanl@node1 qsrx2-5]$ git rebase --continue
+Applying: delegation bgpsec validation to the srx_server ( Lazy evaludation for bgpsec )
+Applying: measure point added (inherited from measure2)
+Using index info to reconstruct a base tree...
+Falling back to patching base and 3-way merge...
+Auto-merging bgpd/bgpd.c
+
+
+
+
+B. meta file들이 남은 경우
+[kyehwanl@node1 qsrx2-2]$ git st
+# On branch measure3
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       bgpd/bgp_route.c.BACKUP.6922.c
+#       bgpd/bgp_route.c.BASE.6922.c
+#       bgpd/bgp_route.c.LOCAL.6922.c
+#       bgpd/bgp_route.c.REMOTE.6922.c
+
+→ 얘네들은 무시해주자 없애줘도 될것같음. 원본(bgp_route.c)만 제대로 수정되어서 add되었다면 ok
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

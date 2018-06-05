@@ -1,0 +1,99 @@
+--- old/quagga-srx/quagga-0.99.16-srx-0.2/bgpd/bgp_route.c	2011-10-01 04:19:13.000000000 -0400
++++ new/quagga-srx/quagga-0.99.16-srx-0.2/bgpd/bgp_route.c	2011-10-06 02:57:28.179539441 -0400
+@@ -2598,7 +2598,7 @@
+           info->updateID = valResult->updateID;
+           bgp_info_register (bgp->info_hash, info,info->updateID);
+ 
+-	  srx_api_sem_post(bgp->srxProxy, 1);
++	  srx_api_sem_post(bgp->srxProxy, method);
+ 
+ 	  zlog_debug("Update [0x%08X] registered!", info->updateID);
+         }
+--- old/quagga-srx/srx-server-0.2.0/src/client/Makefile.am	2011-10-02 07:39:57.000000000 -0400
++++ new/quagga-srx/srx-server-0.2.0/src/client/Makefile.am	2011-10-06 03:06:27.243580858 -0400
+@@ -52,13 +52,13 @@
+ includes:
+ 	@if [ ! -d $(INC_OUT) ]; then \
+ 		mkdir $(INC_OUT); \
++	fi
+ 		echo Copying and modifing 'srx headers'; \
+ 		perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/client/srx_api.h > $(INC_OUT)/srx_api.h; \
+ 		perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/shared/srx_defs.h > $(INC_OUT)/srx_defs.h; \
+ 		perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/util/prefix.h > $(INC_OUT)/prefix.h; \
+ 		perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/util/slist.h > $(INC_OUT)/slist.h; \
+-		perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/util/types.h > $(INC_OUT)/types.h; \
+-	fi
++	perl -n -e 's/(\#include\s+")[a-z]+/\1srx/; print $$_;' < $(top_srcdir)/util/types.h > $(INC_OUT)/types.h; 
+ 	-cp $(EXTRAS_INCLUDE_DIR)/uthash.h $(INC_OUT) 
+ 
+ all-local: includes
+@@ -73,7 +73,7 @@
+ 
+ install-exec-hook: 
+ 	@echo "------- Later MOVE client/srx to quaagga/srx -------"
+-#	cp -rf $(INC_OUT) $(pkgincludedir)
++	-cp -rf $(INC_OUT)/* $(pkgincludedir)
+ 
+ uninstall-hook:
+ 	@echo "------- uninstall user data -------"
+--- old/quagga-srx/srx-server-0.2.0/src/client/srx_api.c	2011-10-02 13:24:56.000000000 -0400
++++ new/quagga-srx/srx-server-0.2.0/src/client/srx_api.c	2011-10-06 03:02:09.290451863 -0400
+@@ -639,9 +639,11 @@
+   } while( i_semval != 0);
+ #endif
+ 
++#if 0
+   sem_getvalue(&connHandler->sem_transx, &i_semval);
+   if( i_semval == 0 && connHandler->sem_transx.__size[0]==0)
+       sem_post(&connHandler->sem_transx); // V operation
++#endif
+ 
+ 
+   // NOW GOTO SLEEP AND WAIT FOR THE RECEIPT IF NECESSARY
+@@ -958,12 +960,22 @@
+ }
+ 
+ 
+-int srx_api_sem_post(SRxProxy* proxy, int flag)
++int srx_api_sem_post(SRxProxy* proxy, SRxVerifyFlag method)
+ {
++    int i_semval;
+     ClientConnectionHandler* connHandler = 
+ 	(ClientConnectionHandler*)proxy->connHandler;  
+-    if(flag ==1)
++
++    if ((pthread_self() == connHandler->recvThread)
++	    && ((method & SRX_FLAG_REQUEST_RECEIPT) != 0))
++	method &= ~SRX_FLAG_REQUEST_RECEIPT;
++
++    if ((method & SRX_FLAG_REQUEST_RECEIPT) != 0)
+     {
++	sem_getvalue(&connHandler->sem_transx, &i_semval);
++	if( i_semval == 0 && connHandler->sem_transx.__size[0]==0)
++	    sem_post(&connHandler->sem_transx); // V operation
++
+ 	//sem_post(&connHandler->sem_crit_sec); // V operation 
+ 	return 0;
+     }
+--- old/quagga-srx/srx-server-0.2.0/src/client/client_connection_handler.c	2011-10-01 03:58:54.000000000 -0400
++++ new/quagga-srx/srx-server-0.2.0/src/client/client_connection_handler.c	2011-10-06 02:22:19.324066008 -0400
+@@ -125,7 +125,7 @@
+   self->srxProxy          = srxProxy;
+ 
+   // binary counter semaphore: inter-process shared: no,  inital value: 0 
+-  iSemState = sem_init(&self->sem_transx, 0, 0); 
++  iSemState = sem_init(&self->sem_transx, 0, 1); 
+   if(iSemState != 0) 
+   {
+     RAISE_ERROR("%s Failed to create the semaphore", errPrefix);
+--- old/quagga-srx/srx-server-0.2.0/src/client/srx_api.h	2011-09-27 01:45:12.000000000 -0400
++++ new/quagga-srx/srx-server-0.2.0/src/client/srx_api.h	2011-10-06 03:01:08.473151290 -0400
+@@ -242,7 +242,7 @@
+                 uint16_t algorithm, uint32_t prependCounter, uint32_t peerAS);
+ 
+ /* KH define */
+-int srx_api_sem_post(SRxProxy* proxy, int flag);
++int srx_api_sem_post(SRxProxy* proxy, SRxVerifyFlag flag);
+ 
+ #ifdef __cplusplus
+ }

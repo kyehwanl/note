@@ -1,0 +1,191 @@
+ts1.antd [220]{.../srx/src}-> make
+make -C util
+make[1]: Entering directory `/srx/AS50/srx/src/util'
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c socket.c -o socket.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c socket.c  -fPIC -DPIC -o .libs/socket.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c socket.c -o socket.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c log.c -o log.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c log.c  -fPIC -DPIC -o .libs/log.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c log.c -o log.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c client_socket.c -o client_socket.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c client_socket.c  -fPIC -DPIC -o .libs/client_socket.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c client_socket.c -o client_socket.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c rwlock.c -o rwlock.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c rwlock.c  -fPIC -DPIC -o .libs/rwlock.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c rwlock.c -o rwlock.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c packet.c -o packet.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c packet.c  -fPIC -DPIC -o .libs/packet.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c packet.c -o packet.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c str.c -o str.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c str.c  -fPIC -DPIC -o .libs/str.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c str.c -o str.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c slist.c -o slist.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c slist.c  -fPIC -DPIC -o .libs/slist.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c slist.c -o slist.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c mutex.c -o mutex.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c mutex.c  -fPIC -DPIC -o .libs/mutex.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c mutex.c -o mutex.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c server_socket.c -o server_socket.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c server_socket.c  -fPIC -DPIC -o .libs/server_socket.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c server_socket.c -o server_socket.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c plugin.c -o plugin.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c plugin.c  -fPIC -DPIC -o .libs/plugin.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c plugin.c -o plugin.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c debug.c -o debug.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c debug.c  -fPIC -DPIC -o .libs/debug.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c debug.c -o debug.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c timer.c -o timer.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c timer.c  -fPIC -DPIC -o .libs/timer.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c timer.c -o timer.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c prefix.c -o prefix.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c prefix.c  -fPIC -DPIC -o .libs/prefix.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c prefix.c -o prefix.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c multi_client_socket.c -o multi_client_socket.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c multi_client_socket.c  -fPIC -DPIC -o .libs/multi_client_socket.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c multi_client_socket.c -o multi_client_socket.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c xml_out.c -o xml_out.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c xml_out.c  -fPIC -DPIC -o .libs/xml_out.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c xml_out.c -o xml_out.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c directory.c -o directory.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c directory.c  -fPIC -DPIC -o .libs/directory.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c directory.c -o directory.o >/dev/null 2>&1
+libtool --tag=CC --mode=link cc -o libutil.la socket.lo log.lo client_socket.lo rwlock.lo packet.lo str.lo slist.lo mutex.lo server_socket.lo plugin.lo debug.lo timer.lo prefix.lo multi_client_socket.lo xml_out.lo directory.lo
+libtool: link: ar cru .libs/libutil.a .libs/socket.o .libs/log.o .libs/client_socket.o .libs/rwlock.o .libs/packet.o .libs/str.o .libs/slist.o .libs/mutex.o .libs/server_socket.o .libs/plugin.o .libs/debug.o .libs/timer.o .libs/prefix.o .libs/multi_client_socket.o .libs/xml_out.o .libs/directory.o 
+libtool: link: ranlib .libs/libutil.a
+libtool: link: ( cd ".libs" && rm -f "libutil.la" && ln -s "../libutil.la" "libutil.la" )
+make[1]: Leaving directory `/srx/AS50/srx/src/util'
+make -C shared
+make[1]: Entering directory `/srx/AS50/srx/src/shared'
+cc -ggdb -I..//../extras/local/include -I../ -c crc32.c -o crc32.o
+cc -ggdb -I..//../extras/local/include -I../ -c srx_packets.c -o srx_packets.o
+cc -ggdb -I..//../extras/local/include -I../ -c srx_identifier.c -o srx_identifier.o
+make[1]: Leaving directory `/srx/AS50/srx/src/shared'
+make -C client
+make[1]: Entering directory `/srx/AS50/srx/src/client'
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c srx_api.c -o srx_api.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c srx_api.c  -fPIC -DPIC -o .libs/srx_api.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c srx_api.c -o srx_api.o >/dev/null 2>&1
+libtool --tag=CC --mode=compile cc -ggdb -I..//../extras/local/include -I../ -c client_connection_handler.c -o client_connection_handler.lo
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c client_connection_handler.c  -fPIC -DPIC -o .libs/client_connection_handler.o
+libtool: compile:  cc -ggdb -I..//../extras/local/include -I../ -c client_connection_handler.c -o client_connection_handler.o >/dev/null 2>&1
+libtool --tag=CC --mode=link cc -o libsrx.la srx_api.lo client_connection_handler.lo ..//shared/srx_packets.lo ..//shared/srx_identifier.lo ..//shared/crc32.lo ..//util/libutil.la
+libtool: link: (cd .libs/libsrx.lax/libutil.a && ar x "/srx/AS50/srx/src/client/..//util/.libs/libutil.a")
+libtool: link: ar cru .libs/libsrx.a .libs/srx_api.o .libs/client_connection_handler.o ..//shared/.libs/srx_packets.o ..//shared/.libs/srx_identifier.o ..//shared/.libs/crc32.o   .libs/libsrx.lax/libutil.a/client_socket.o .libs/libsrx.lax/libutil.a/debug.o .libs/libsrx.lax/libutil.a/directory.o .libs/libsrx.lax/libutil.a/log.o .libs/libsrx.lax/libutil.a/multi_client_socket.o .libs/libsrx.lax/libutil.a/mutex.o .libs/libsrx.lax/libutil.a/packet.o .libs/libsrx.lax/libutil.a/plugin.o .libs/libsrx.lax/libutil.a/prefix.o .libs/libsrx.lax/libutil.a/rwlock.o .libs/libsrx.lax/libutil.a/server_socket.o .libs/libsrx.lax/libutil.a/slist.o .libs/libsrx.lax/libutil.a/socket.o .libs/libsrx.lax/libutil.a/str.o .libs/libsrx.lax/libutil.a/timer.o .libs/libsrx.lax/libutil.a/xml_out.o 
+libtool: link: ranlib .libs/libsrx.a
+libtool: link: rm -fr .libs/libsrx.lax
+libtool: link: ( cd ".libs" && rm -f "libsrx.la" && ln -s "../libsrx.la" "libsrx.la" )
+Copying and modifing ..//client/srx_api.h
+Copying and modifing ..//shared/srx_defs.h
+Copying and modifing ..//util/prefix.h
+Copying and modifing ..//util/slist.h
+Copying and modifing ..//util/types.h
+make[1]: Leaving directory `/srx/AS50/srx/src/client'
+make -C server
+make[1]: Entering directory `/srx/AS50/srx/src/server'
+cc -ggdb -I..//../extras/local/include -I../ -c rpki_router_client.c -o rpki_router_client.o
+cc -ggdb -I..//../extras/local/include -I../ -c key_cache.c -o key_cache.o
+cc -ggdb -I..//../extras/local/include -I../ -c update_cache.c -o update_cache.o
+cc -ggdb -I..//../extras/local/include -I../ -c server_connection_handler.c -o server_connection_handler.o
+cc -ggdb -I..//../extras/local/include -I../ -c prefix_cache.c -o prefix_cache.o
+cc -ggdb -I..//../extras/local/include -I../ -c command_handler.c -o command_handler.o
+cc -ggdb -I..//../extras/local/include -I../ -c command_queue.c -o command_queue.o
+cc -ggdb -I..//../extras/local/include -I../ -c console.c -o console.o
+cc -ggdb -I..//../extras/local/include -I../ -c main.c -o main.o
+cc -ggdb -I..//../extras/local/include -I../ -c configuration.c -o configuration.o
+cc -ggdb -I..//../extras/local/include -I../ -c srx_packet_sender.c -o srx_packet_sender.o
+cc -ggdb -I..//../extras/local/include -I../ -c rpki_handler.c -o rpki_handler.o
+cc -ggdb -I..//../extras/local/include -I../ -c bgpsec_handler.c -o bgpsec_handler.o
+libtool --tag=CC --mode=link cc -o srx_server -L..//../extras/local/lib -lpthread -lconfig -lpatricia rpki_router_client.o key_cache.o update_cache.o server_connection_handler.o prefix_cache.o command_handler.o command_queue.o console.o main.o configuration.o srx_packet_sender.o rpki_handler.o bgpsec_handler.o ..//util/libutil.la ..//shared/srx_packets.lo ..//shared/srx_identifier.lo ..//shared/crc32.lo
+libtool: link: cc -o srx_server rpki_router_client.o key_cache.o update_cache.o server_connection_handler.o prefix_cache.o command_handler.o command_queue.o console.o main.o configuration.o srx_packet_sender.o rpki_handler.o bgpsec_handler.o ..//shared/.libs/srx_packets.o ..//shared/.libs/srx_identifier.o ..//shared/.libs/crc32.o  -L/srx/AS50/srx/extras/local/lib -lpthread -lconfig /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so ..//util/.libs/libutil.a  -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+make[1]: Leaving directory `/srx/AS50/srx/src/server'
+make -C tools
+make[1]: Entering directory `/srx/AS50/srx/src/tools'
+cc -ggdb -I..//../extras/local/include -I../ -c rpkirtr_dump.c -o rpkirtr_dump.o
+libtool --tag=CC --mode=link cc -o rpkirtr_dump -lpthread rpkirtr_dump.o ..//server/rpki_router_client.o ..//util/libutil.la
+libtool: link: cc -o rpkirtr_dump rpkirtr_dump.o ..//server/rpki_router_client.o  -lpthread ..//util/.libs/libutil.a
+cc -ggdb -I..//../extras/local/include -I../ -c rpkirtr_svr.c -o rpkirtr_svr.o
+libtool --tag=CC --mode=link cc -o rpkirtr_svr -lpthread -lreadline -lncurses rpkirtr_svr.o ..//util/libutil.la
+libtool: link: cc -o rpkirtr_svr rpkirtr_svr.o  -lpthread -lreadline -lncurses ..//util/.libs/libutil.a
+make[1]: Leaving directory `/srx/AS50/srx/src/tools'
+make -C tests
+make[1]: Entering directory `/srx/AS50/srx/src/tests'
+make -C client
+make[2]: Entering directory `/srx/AS50/srx/src/tests/client'
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_srx_api.c -o user_srx_api.o
+libtool --tag=CC --mode=link cc -o user_srx_api -lpthread -lreadline -lncurses user_srx_api.o ../..//client/libsrx.la ../..//util/libutil.la ../..//shared/srx_identifier.lo ../..//shared/crc32.lo
+libtool: link: cc -o user_srx_api user_srx_api.o ../..//shared/.libs/srx_identifier.o ../..//shared/.libs/crc32.o  -lpthread -lreadline -lncurses ../..//client/.libs/libsrx.a ../..//util/.libs/libutil.a 
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_client_connection_handler.c -o user_client_connection_handler.o
+libtool --tag=CC --mode=link cc -o user_client_connection_handler -lpthread user_client_connection_handler.o ../..//client/client_connection_handler.lo ../..//util/libutil.la
+libtool: link: cc -o user_client_connection_handler user_client_connection_handler.o ../..//client/.libs/client_connection_handler.o  -lpthread ../..//util/.libs/libutil.a 
+make[2]: Leaving directory `/srx/AS50/srx/src/tests/client'
+make -C extras
+make[2]: Entering directory `/srx/AS50/srx/src/tests/extras'
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_patricia.c -o test_patricia.o
+libtool --tag=CC --mode=link cc -o test_patricia -L../..//../extras/local/lib -lpatricia test_patricia.o ../..//util/libutil.la
+libtool: link: cc -o test_patricia test_patricia.o  -L/srx/AS50/srx/extras/local/lib /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so ../..//util/.libs/libutil.a -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_uthash.c -o test_uthash.o
+libtool --tag=CC --mode=link cc -o test_uthash test_uthash.o ../..//util/libutil.la
+libtool: link: cc -o test_uthash test_uthash.o  ../..//util/.libs/libutil.a
+make[2]: Leaving directory `/srx/AS50/srx/src/tests/extras'
+make -C server
+make[2]: Entering directory `/srx/AS50/srx/src/tests/server'
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_rpki_handler.c -o test_rpki_handler.o
+libtool --tag=CC --mode=link cc -o test_rpki_handler -lpthread test_rpki_handler.o ../..//server/prefix_cache.o ../..//server/rpki_handler.o ../..//server/update_cache.o ../..//server/rpki_router_client.o ../..//util/libutil.la ../..//../extras/local/lib/libpatricia.la
+libtool: link: cc -o test_rpki_handler test_rpki_handler.o ../..//server/prefix_cache.o ../..//server/rpki_handler.o ../..//server/update_cache.o ../..//server/rpki_router_client.o  -lpthread ../..//util/.libs/libutil.a /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_prefix_cache.c -o user_prefix_cache.o
+libtool --tag=CC --mode=link cc -o user_prefix_cache -lpthread -lreadline -lncurses user_prefix_cache.o ../..//server/prefix_cache.o ../..//server/update_cache.o ../..//util/libutil.la ../..//../extras/local/lib/libpatricia.la
+libtool: link: cc -o user_prefix_cache user_prefix_cache.o ../..//server/prefix_cache.o ../..//server/update_cache.o  -lpthread -lreadline -lncurses ../..//util/.libs/libutil.a /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_configuration.c -o test_configuration.o
+libtool --tag=CC --mode=link cc -o test_configuration -L../..//../extras/local/lib -lconfig test_configuration.o ../..//server/configuration.o ../..//util/libutil.la
+libtool: link: cc -o test_configuration test_configuration.o ../..//server/configuration.o  -L/srx/AS50/srx/extras/local/lib -lconfig ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_update_cache.c -o test_update_cache.o
+libtool --tag=CC --mode=link cc -o test_update_cache -lpthread test_update_cache.o ../..//server/update_cache.o ../..//util/libutil.la
+libtool: link: cc -o test_update_cache test_update_cache.o ../..//server/update_cache.o  -lpthread ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_command_queue.c -o test_command_queue.o
+libtool --tag=CC --mode=link cc -o test_command_queue -lpthread test_command_queue.o ../..//server/command_queue.o ../..//util/libutil.la
+libtool: link: cc -o test_command_queue test_command_queue.o ../..//server/command_queue.o  -lpthread ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_prefix_cache.c -o test_prefix_cache.o
+libtool --tag=CC --mode=link cc -o test_prefix_cache -lpthread test_prefix_cache.o ../..//server/prefix_cache.o ../..//server/update_cache.o ../..//util/libutil.la ../..//../extras/local/lib/libpatricia.la
+libtool: link: cc -o test_prefix_cache test_prefix_cache.o ../..//server/prefix_cache.o ../..//server/update_cache.o  -lpthread ../..//util/.libs/libutil.a /srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib/libpatricia.so -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib -Wl,-rpath -Wl,/srx/AS50/srx/extras/src/Net-Patricia-1.15/libpatricia/../../../local/lib
+make[2]: Leaving directory `/srx/AS50/srx/src/tests/server'
+make -C util
+make[2]: Entering directory `/srx/AS50/srx/src/tests/util'
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_log.c -o user_log.o
+cc   user_log.o ../..//util/log.o   -o user_log
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_timer.c -o test_timer.o
+libtool --tag=CC --mode=link cc -o test_timer test_timer.o ../..//util/libutil.la
+libtool: link: cc -o test_timer test_timer.o  ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_prefix.c -o test_prefix.o
+cc   test_prefix.o ../..//util/prefix.o ../..//util/log.o   -o test_prefix
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_str.c -o test_str.o
+cc   test_str.o ../..//util/str.o   -o test_str
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_client_socket.c -o test_client_socket.o
+libtool --tag=CC --mode=link cc -o test_client_socket test_client_socket.o ../..//util/libutil.la
+libtool: link: cc -o test_client_socket test_client_socket.o  ../..//util/.libs/libutil.a
+libtool --tag=CC --mode=link cc -ggdb -I../..//../extras/local/include -I../../ -DPORT=1024 \
+        -o user_server_socket user_server_socket.c -lpthread ../..//util/libutil.la
+libtool: link: cc -ggdb -I../..//../extras/local/include -I../../ -DPORT=1024 -o user_server_socket user_server_socket.c  -lpthread ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_debug.c -o user_debug.o
+cc   user_debug.o ../..//util/debug.o   -o user_debug
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_multi_client_socket.c -o test_multi_client_socket.o
+libtool --tag=CC --mode=link cc -o test_multi_client_socket -lpthread test_multi_client_socket.o ../..//util/libutil.la
+libtool: link: cc -o test_multi_client_socket test_multi_client_socket.o  -lpthread ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c user_xml_out.c -o user_xml_out.o
+libtool --tag=CC --mode=link cc -o user_xml_out user_xml_out.o ../..//util/libutil.la
+libtool: link: cc -o user_xml_out user_xml_out.o  ../..//util/.libs/libutil.a
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_debug.c -o test_debug.o
+cc   test_debug.o ../..//util/debug.o   -o test_debug
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_slist.c -o test_slist.o
+cc   test_slist.o ../..//util/slist.o ../..//util/log.o   -o test_slist
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_directory.c -o test_directory.o
+cc   test_directory.o ../..//util/directory.o   -o test_directory
+cc -ggdb -I../..//../extras/local/include -I../../ -c test_plugin.c -o test_plugin.o
+cc -ggdb -I../..//../extras/local/include -I../../ -o demo_plugin.plugin -fPIC -shared demo_plugin.c
+libtool --tag=CC --mode=link cc -o test_plugin test_plugin.o -ldl ../..//util/libutil.la
+libtool: link: cc -o test_plugin test_plugin.o  -ldl ../..//util/.libs/libutil.a
+libtool --tag=CC --mode=link cc -ggdb -I../..//../extras/local/include -I../../ -DPORT=2048 -DMULTI \
+        -o user_server_socket-multi user_server_socket.c -lpthread ../..//util/libutil.la
+libtool: link: cc -ggdb -I../..//../extras/local/include -I../../ -DPORT=2048 -DMULTI -o user_server_socket-multi user_server_socket.c  -lpthread ../..//util/.libs/libutil.a
+make[2]: Leaving directory `/srx/AS50/srx/src/tests/util'
+make[1]: Leaving directory `/srx/AS50/srx/src/tests'
+ts1.antd [221]{.../srx/src}-> 

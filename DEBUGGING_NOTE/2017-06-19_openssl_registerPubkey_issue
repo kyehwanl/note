@@ -1,0 +1,1689 @@
+
+
+
+=============
+1. error case
+=============
+
+(gdb) bt
+#0  0xb7fff424 in __kernel_vsyscall ()
+#1  0x4d2330ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0x4d234a25 in __GI_abort () at abort.c:93
+#3  0x4d26fc0a in __libc_message (do_abort=2, fmt=0x4d353234 "*** glibc detected *** %s: %s: 0x%s ***\n")
+    at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0x4d276af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0xb6b014e8) at malloc.c:6283
+#5  0xb7ed6158 in CRYPTO_free (str=0xb6b014e8) at mem.c:439
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+#8  0xb7ed75cd in BN_CTX_free (ctx=0xb6b01048) at bn_ctx.c:250
+#9  0xb7eda110 in ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+#10 0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#11 0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#12 0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#15 0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#17 0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#18 0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#19 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#20 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002, 
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>, 
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#21 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#22 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#23 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#24 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#25 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==============
+2. normal case
+==============
+
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095                                                    [29/19637]
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80769a8, generator=0x80778b0, order=0x8077650, cofactor=0x8077638) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7ed527b in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:198
+#5  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub", 
+    key=0xbfffed49) at crypto_imple.c:330
+#6  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#7  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#8  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false, 
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#9  0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcrypto
+api/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#10 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#11 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80773c0, generator=0x8077cb8, order=0x80775e8, cofactor=0x8076bb8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7edfa59 in EC_KEY_new_by_curve_name (nid=415) at ec_key.c:98
+#5  0xb7ed5309 in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:208
+#6  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub", 
+    key=0xbfffed49) at crypto_imple.c:330
+#7  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#8  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#9  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false, 
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#10 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcrypto
+api/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#11 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#12 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x8076178, generator=0x8077cb8, order=0x8076500, cofactor=0x80764e8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0x8076c00) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0x8077a98, pubkey=0x80762a0) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0x80762a0) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xbfffec44, length=91) at x_pubkey.c:308
+#9  0xb7d3efd1 in _ks_convertKey (keyData=0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", 
+    keyLength=91, isPrivate=false, status=0xbfffec8a) at key_storage.c:140
+#10 0xb7d3f511 in _ks_createKS_Element (key=0xbfffed49, convert=true, isPrivate=false, status=0xbfffecde) at key_storage.c:337
+#11 0xb7d401df in ks_storeKey (storage=0x8074278, key=0xbfffed49, status=0xbfffed46, convert=true) at key_storage.c:848
+#12 0xb7d3da49 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false, 
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:219
+#13 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcrypto
+api/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#14 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#15 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 1 public keys)!
+[New Thread 0xb7ceab70 (LWP 27243)]
+[New Thread 0xb74e9b70 (LWP 27245)]
+[Switching to Thread 0xb7ceab70 (LWP 27243)]
+
+
+
+
+
+
+
+
+
+
+
+
+=====================
+3. Raw Debugging Data
+=====================
+
+0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#7  0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#8  0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#9  0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#10 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) up
+#1  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+(gdb) p xpk
+$5 = (X509_PUBKEY *) 0xb6b00568
+(gdb) p *xpk
+$6 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) down
+#0  X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:134
+(gdb) down
+Bottom (innermost) frame selected; you cannot go down.
+(gdb) p *key
+$7 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) n
+(gdb) p ret
+$8 = (EVP_PKEY *) 0xb6b00658
+(gdb) n
+[New Thread 0xb6affb70 (LWP 27148)]
+
+Program received signal SIGABRT, Aborted.
+0xb7fff424 in __kernel_vsyscall ()
+(gdb)
+(gdb) bt
+#0  0xb7fff424 in __kernel_vsyscall ()
+#1  0x4d2330ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0x4d234a25 in __GI_abort () at abort.c:93
+#3  0x4d26fc0a in __libc_message (do_abort=2, fmt=0x4d353234 "*** glibc detected *** %s: %s: 0x%s ***\n")
+    at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0x4d276af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0xb6b014e8) at malloc.c:6283
+#5  0xb7ed6158 in CRYPTO_free (str=0xb6b014e8) at mem.c:439
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+#8  0xb7ed75cd in BN_CTX_free (ctx=0xb6b01048) at bn_ctx.c:250
+#9  0xb7eda110 in ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+#10 0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#11 0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#12 0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#15 0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#17 0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#18 0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#19 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#20 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#21 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#22 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#23 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#24 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#25 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) up 15
+#15 0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+153             if (!ret->ameth->pub_decode(ret, key)) {
+(gdb) up
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+194         pktmp = X509_PUBKEY_get(xpk);
+(gdb) down 2
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) p *pkey
+$9 = {type = 408, save_type = 408, references = 1, ameth = 0xb7fc9540, engine = 0x0, pkey = {ptr = 0x0, rsa = 0x0, dsa = 0x0,
+    dh = 0x0, ec = 0x0}, save_parameters = 1, attributes = 0x0}
+(gdb) p *pubkey
+$10 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) f
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) p ptype
+$11 = 6
+(gdb) p pval
+$12 = (void *) 0xb6b005e0
+(gdb) p p
+$13 = (
+    const unsigned char *) 0xb6b00610 "\004\326\323'\354l\367\005\200\215̀\017\227\364\237JZ\360\377w\020\327\336\323\022\214\275\374\034\022Y\222J\213\n\364{\377l5\237AM\344\vM\037\215W\234\301\300\326G\276\064\216>\356\006՟", <incomplete sequence \363>
+(gdb) p *p
+$14 = 4 '\004'
+(gdb) p &p
+$15 = (const unsigned char **) 0xb7ce9f4c
+(gdb) f
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) p pubkey
+$16 = (X509_PUBKEY *) 0xb6b00568
+(gdb) p *pubkey
+$17 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) p pubkey->public_key
+$18 = (ASN1_BIT_STRING *) 0xb6b00588
+(gdb) p pubkey->public_key->length
+$19 = 65
+(gdb) up 2
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+194         pktmp = X509_PUBKEY_get(xpk);
+(gdb) down 3
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+164             group = EC_GROUP_new_by_curve_name(OBJ_obj2nid(poid));
+(gdb) up
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) p p
+$20 = (
+    const unsigned char *) 0xb6b00610 "\004\326\323'\354l\367\005\200\215̀\017\227\364\237JZ\360\377w\020\327\336\323\022\214\275\374\034\022Y\222J\213\n\364{\377l5\237AM\344\vM\037\215W\234\301\300\326G\276\064\216>\356\006՟", <incomplete sequence \363>
+(gdb) x/65bx p
+0xb6b00610:     0x04    0xd6    0xd3    0x27    0xec    0x6c    0xf7    0x05
+0xb6b00618:     0x80    0x8d    0xcd    0x80    0x0f    0x97    0xf4    0x9f
+0xb6b00620:     0x4a    0x5a    0xf0    0xff    0x77    0x10    0xd7    0xde
+0xb6b00628:     0xd3    0x12    0x8c    0xbd    0xfc    0x1c    0x12    0x59
+0xb6b00630:     0x92    0x4a    0x8b    0x0a    0xf4    0x7b    0xff    0x6c
+0xb6b00638:     0x35    0x9f    0x41    0x4d    0xe4    0x0b    0x4d    0x1f
+0xb6b00640:     0x8d    0x57    0x9c    0xc1    0xc0    0xd6    0x47    0xbe
+0xb6b00648:     0x34    0x8e    0x3e    0xee    0x06    0xd5    0x9f    0x29
+0xb6b00650:     0xf3
+(gdb) f
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) p ptype
+$21 = 6
+(gdb) p pval
+$22 = (void *) 0xb6b005e0
+(gdb) p palg
+$23 = (X509_ALGOR *) 0xb6b00578
+(gdb) p *palg
+$24 = {algorithm = 0xb6b005a0, parameter = 0xb6b005d0}
+(gdb) p palg->parameter ->value
+$25 = {ptr = 0xb6b005e0 "", boolean = -1229978144, asn1_string = 0xb6b005e0, object = 0xb6b005e0, integer = 0xb6b005e0,
+  enumerated = 0xb6b005e0, bit_string = 0xb6b005e0, octet_string = 0xb6b005e0, printablestring = 0xb6b005e0, t61string = 0xb6b005e0,
+  ia5string = 0xb6b005e0, generalstring = 0xb6b005e0, bmpstring = 0xb6b005e0, universalstring = 0xb6b005e0, utctime = 0xb6b005e0,
+  generalizedtime = 0xb6b005e0, visiblestring = 0xb6b005e0, utf8string = 0xb6b005e0, set = 0xb6b005e0, sequence = 0xb6b005e0,
+  asn1_value = 0xb6b005e0}
+(gdb) p palg->parameter ->value .ptr
+$26 = 0xb6b005e0 ""
+(gdb) p palg->parameter ->value .asn1_string
+$27 = (ASN1_STRING *) 0xb6b005e0
+(gdb) p *palg->parameter ->value .asn1_string
+$28 = {length = 0, type = 0, data = 0x0, flags = 8}
+(gdb) p *palg->parameter ->value .bit_string
+$29 = {length = 0, type = 0, data = 0x0, flags = 8}
+(gdb) down
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+164             group = EC_GROUP_new_by_curve_name(OBJ_obj2nid(poid));
+(gdb) l
+159              */
+160             if ((eckey = EC_KEY_new()) == NULL) {
+161                 ECerr(EC_F_ECKEY_TYPE2PARAM, ERR_R_MALLOC_FAILURE);
+162                 goto ecerr;
+163             }
+164             group = EC_GROUP_new_by_curve_name(OBJ_obj2nid(poid));
+165             if (group == NULL)
+166                 goto ecerr;
+167             EC_GROUP_set_asn1_flag(group, OPENSSL_EC_NAMED_CURVE);
+168             if (EC_KEY_set_group(eckey, group) == 0)
+(gdb) p eckey
+$30 = (EC_KEY *) 0xb6b00680
+(gdb) p group
+$31 = (EC_GROUP *) 0xb7fc9540
+(gdb) bt
+#0  0xb7fff424 in __kernel_vsyscall ()
+#1  0x4d2330ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0x4d234a25 in __GI_abort () at abort.c:93
+#3  0x4d26fc0a in __libc_message (do_abort=2, fmt=0x4d353234 "*** glibc detected *** %s: %s: 0x%s ***\n")
+    at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0x4d276af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0xb6b014e8) at malloc.c:6283
+#5  0xb7ed6158 in CRYPTO_free (str=0xb6b014e8) at mem.c:439
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+#8  0xb7ed75cd in BN_CTX_free (ctx=0xb6b01048) at bn_ctx.c:250
+#9  0xb7eda110 in ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+#10 0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#11 0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#12 0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#15 0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#17 0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#18 0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#19 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#20 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#21 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#22 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#23 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#24 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#25 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) p pval
+$32 = (void *) 0xb6b005e0
+(gdb) p *poid
+$33 = {sn = 0x0, ln = 0x0, nid = 0, length = 8, data = 0xb6b00600 "*\206H\316=\003\001\a", flags = 9}
+(gdb) p poid->data
+$34 = (const unsigned char *) 0xb6b00600 "*\206H\316=\003\001\a"
+(gdb) x/20bx poid->data
+0xb6b00600:     0x2a    0x86    0x48    0xce    0x3d    0x03    0x01    0x07
+0xb6b00608:     0x00    0x00    0x00    0x00    0x4d    0x00    0x00    0x00
+0xb6b00610:     0x04    0xd6    0xd3    0x27
+(gdb) f
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+164             group = EC_GROUP_new_by_curve_name(OBJ_obj2nid(poid));
+(gdb) down
+#12 0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+3174                ret = ec_group_new_from_data(curve_list[i]);
+(gdb) l
+3169        if (nid <= 0)
+3170            return NULL;
+3171
+3172        for (i = 0; i < curve_list_length; i++)
+3173            if (curve_list[i].nid == nid) {
+3174                ret = ec_group_new_from_data(curve_list[i]);
+3175                break;
+3176            }
+3177
+3178        if (ret == NULL) {
+(gdb) p curve_list
+$35 = {{nid = 704, data = 0xb7fb23a0, meth = 0, comment = 0xb7fb5a50 "SECG/WTLS curve over a 112 bit prime field"}, {nid = 705,
+    data = 0xb7fb2420, meth = 0, comment = 0xb7fb5a7c "SECG curve over a 112 bit prime field"}, {nid = 706, data = 0xb7fb24a0,
+    meth = 0, comment = 0xb7fb5aa4 "SECG curve over a 128 bit prime field"}, {nid = 707, data = 0xb7fb2540, meth = 0,
+    comment = 0xb7fb5aa4 "SECG curve over a 128 bit prime field"}, {nid = 708, data = 0xb7fb25e0, meth = 0,
+    comment = 0xb7fb5acc "SECG curve over a 160 bit prime field"}, {nid = 709, data = 0xb7fb2680, meth = 0,
+    comment = 0xb7fb5acc "SECG curve over a 160 bit prime field"}, {nid = 710, data = 0xb7fb2740, meth = 0,
+    comment = 0xb7fb5af4 "SECG/WTLS curve over a 160 bit prime field"}, {nid = 711, data = 0xb7fb2800, meth = 0,
+    comment = 0xb7fb5b20 "SECG curve over a 192 bit prime field"}, {nid = 712, data = 0xb7fb28a0, meth = 0,
+    comment = 0xb7fb5b48 "SECG curve over a 224 bit prime field"}, {nid = 713, data = 0xb7fb1a80, meth = 0,
+    comment = 0xb7fb5b70 "NIST/SECG curve over a 224 bit prime field"}, {nid = 714, data = 0xb7fb2960, meth = 0,
+    comment = 0xb7fb5b9c "SECG curve over a 256 bit prime field"}, {nid = 715, data = 0xb7fb1b60, meth = 0,
+    comment = 0xb7fb5bc4 "NIST/SECG curve over a 384 bit prime field"}, {nid = 716, data = 0xb7fb1cc0, meth = 0,
+    comment = 0xb7fb5bf0 "NIST/SECG curve over a 521 bit prime field"}, {nid = 409, data = 0xb7fb19c0, meth = 0,
+    comment = 0xb7fb5c1c "NIST/X9.62/SECG curve over a 192 bit prime field"}, {nid = 410, data = 0xb7fb1e80, meth = 0,
+    comment = 0xb7fb5c50 "X9.62 curve over a 192 bit prime field"}, {nid = 411, data = 0xb7fb1f40, meth = 0,
+    comment = 0xb7fb5c50 "X9.62 curve over a 192 bit prime field"}, {nid = 412, data = 0xb7fb2000, meth = 0,
+    comment = 0xb7fb5c78 "X9.62 curve over a 239 bit prime field"}, {nid = 413, data = 0xb7fb20e0, meth = 0,
+    comment = 0xb7fb5c78 "X9.62 curve over a 239 bit prime field"}, {nid = 414, data = 0xb7fb21c0, meth = 0,
+    comment = 0xb7fb5c78 "X9.62 curve over a 239 bit prime field"}, {nid = 415, data = 0xb7fb22a0, meth = 0,
+    comment = 0xb7fb5ca0 "X9.62/SECG curve over a 256 bit prime field"}, {nid = 717, data = 0xb7fb2c20, meth = 0,
+    comment = 0xb7fb5ccc "SECG curve over a 113 bit binary field"}, {nid = 718, data = 0xb7fb2ca0, meth = 0,
+    comment = 0xb7fb5ccc "SECG curve over a 113 bit binary field"}, {nid = 719, data = 0xb7fb2d20, meth = 0,
+    comment = 0xb7fb5cf4 "SECG/WTLS curve over a 131 bit binary field"}, {nid = 720, data = 0xb7fb2dc0, meth = 0,
+    comment = 0xb7fb5d20 "SECG curve over a 131 bit binary field"}, {nid = 721, data = 0xb7fb2e60, meth = 0,
+    comment = 0xb7fb5d48 "NIST/SECG/WTLS curve over a 163 bit binary field"}, {nid = 722, data = 0xb7fb2f00, meth = 0,
+    comment = 0xb7fb5d7c "SECG curve over a 163 bit binary field"}, {nid = 723, data = 0xb7fb2fa0, meth = 0,
+    comment = 0xb7fb5da4 "NIST/SECG curve over a 163 bit binary field"}, {nid = 724, data = 0xb7fb3040, meth = 0,
+    comment = 0xb7fb5dd0 "SECG curve over a 193 bit binary field"}, {nid = 725, data = 0xb7fb3100, meth = 0,
+    comment = 0xb7fb5dd0 "SECG curve over a 193 bit binary field"}, {nid = 726, data = 0xb7fb31c0, meth = 0,
+    comment = 0xb7fb5df8 "NIST/SECG/WTLS curve over a 233 bit binary field"}, {nid = 727, data = 0xb7fb32a0, meth = 0,
+    comment = 0xb7fb5df8 "NIST/SECG/WTLS curve over a 233 bit binary field"}, {nid = 728, data = 0xb7fb3380, meth = 0,
+    comment = 0xb7fb5e2c "SECG curve over a 239 bit binary field"}, {nid = 729, data = 0xb7fb3460, meth = 0,
+    comment = 0xb7fb5e54 "NIST/SECG curve over a 283 bit binary field"}, {nid = 730, data = 0xb7fb3560, meth = 0,
+    comment = 0xb7fb5e54 "NIST/SECG curve over a 283 bit binary field"}, {nid = 731, data = 0xb7fb3660, meth = 0,
+    comment = 0xb7fb5e80 "NIST/SECG curve over a 409 bit binary field"}, {nid = 732, data = 0xb7fb37c0, meth = 0,
+    comment = 0xb7fb5e80 "NIST/SECG curve over a 409 bit binary field"}, {nid = 733, data = 0xb7fb3920, meth = 0,
+    comment = 0xb7fb5eac "NIST/SECG curve over a 571 bit binary field"}, {nid = 734, data = 0xb7fb3ae0, meth = 0,
+    comment = 0xb7fb5eac "NIST/SECG curve over a 571 bit binary field"}, {nid = 684, data = 0xb7fb3cc0, meth = 0,
+    comment = 0xb7fb5ed8 "X9.62 curve over a 163 bit binary field"}, {nid = 685, data = 0xb7fb3d80, meth = 0,
+    comment = 0xb7fb5ed8 "X9.62 curve over a 163 bit binary field"}, {nid = 686, data = 0xb7fb3e40, meth = 0,
+    comment = 0xb7fb5ed8 "X9.62 curve over a 163 bit binary field"}, {nid = 687, data = 0xb7fb3f00, meth = 0,
+    comment = 0xb7fb5f00 "X9.62 curve over a 176 bit binary field"}, {nid = 688, data = 0xb7fb3fa0, meth = 0,
+    comment = 0xb7fb5f28 "X9.62 curve over a 191 bit binary field"}, {nid = 689, data = 0xb7fb4060, meth = 0,
+    comment = 0xb7fb5f28 "X9.62 curve over a 191 bit binary field"}, {nid = 690, data = 0xb7fb4120, meth = 0,
+    comment = 0xb7fb5f28 "X9.62 curve over a 191 bit binary field"}, {nid = 693, data = 0xb7fb41e0, meth = 0,
+    comment = 0xb7fb5f50 "X9.62 curve over a 208 bit binary field"}, {nid = 694, data = 0xb7fb42a0, meth = 0,
+    comment = 0xb7fb5f78 "X9.62 curve over a 239 bit binary field"}, {nid = 695, data = 0xb7fb4380, meth = 0,
+    comment = 0xb7fb5f78 "X9.62 curve over a 239 bit binary field"}, {nid = 696, data = 0xb7fb4460, meth = 0,
+    comment = 0xb7fb5f78 "X9.62 curve over a 239 bit binary field"}, {nid = 699, data = 0xb7fb4540, meth = 0,
+    comment = 0xb7fb5fa0 "X9.62 curve over a 272 bit binary field"}, {nid = 700, data = 0xb7fb4640, meth = 0,
+    comment = 0xb7fb5fc8 "X9.62 curve over a 304 bit binary field"}, {nid = 701, data = 0xb7fb4740, meth = 0,
+    comment = 0xb7fb5ff0 "X9.62 curve over a 359 bit binary field"}, {nid = 702, data = 0xb7fb4880, meth = 0,
+    comment = 0xb7fb6018 "X9.62 curve over a 368 bit binary field"}, {nid = 703, data = 0xb7fb49c0, meth = 0,
+    comment = 0xb7fb6040 "X9.62 curve over a 431 bit binary field"}, {nid = 735, data = 0xb7fb4b20, meth = 0,
+    comment = 0xb7fb6068 "WTLS curve over a 113 bit binary field"}, {nid = 736, data = 0xb7fb2e60, meth = 0,
+    comment = 0xb7fb5d48 "NIST/SECG/WTLS curve over a 163 bit binary field"}, {nid = 737, data = 0xb7fb2c20, meth = 0,
+    comment = 0xb7fb5ccc "SECG curve over a 113 bit binary field"}, {nid = 738, data = 0xb7fb3cc0, meth = 0,
+    comment = 0xb7fb5ed8 "X9.62 curve over a 163 bit binary field"}, {nid = 739, data = 0xb7fb23a0, meth = 0,
+    comment = 0xb7fb5a50 "SECG/WTLS curve over a 112 bit prime field"}, {nid = 740, data = 0xb7fb2740, meth = 0,
+    comment = 0xb7fb5af4 "SECG/WTLS curve over a 160 bit prime field"}, {nid = 741, data = 0xb7fb2a40, meth = 0,
+    comment = 0xb7fb6090 "WTLS curve over a 112 bit prime field"}, {nid = 742, data = 0xb7fb2ac0, meth = 0,
+    comment = 0xb7fb60b8 "WTLS curve over a 160 bit prime field"}, {nid = 743, data = 0xb7fb31c0, meth = 0,
+    comment = 0xb7fb5df8 "NIST/SECG/WTLS curve over a 233 bit binary field"}, {nid = 744, data = 0xb7fb32a0, meth = 0,
+    comment = 0xb7fb5df8 "NIST/SECG/WTLS curve over a 233 bit binary field"}, {nid = 745, data = 0xb7fb2b60, meth = 0,
+    comment = 0xb7fb60e0 "WTLS curvs over a 224 bit prime field"}, {nid = 749, data = 0xb7fb4ba0, meth = 0,
+    comment = 0xb7fb6108 "\n\tIPSec/IKE/Oakley curve #3 over a 155 bit binary field.\n\tNot suitable for ECDSA.\n\tQuestionable extension field!"}, {nid = 750, data = 0xb7fb4c40, meth = 0,
+    comment = 0xb7fb617c "\n\tIPSec/IKE/Oakley curve #4 over a 185 bit binary field.\n\tNot suitable for ECDSA.\n\tQuestionable extension field!"}, {nid = 921, data = 0xb7fb4ce0, meth = 0, comment = 0xb7fb61f0 "RFC 5639 curve over a 160 bit prime field"}, {
+    nid = 922, data = 0xb7fb4d80, meth = 0, comment = 0xb7fb61f0 "RFC 5639 curve over a 160 bit prime field"}, {nid = 923,
+    data = 0xb7fb4e20, meth = 0, comment = 0xb7fb621c "RFC 5639 curve over a 192 bit prime field"}, {nid = 924, data = 0xb7fb4ec0,
+    meth = 0, comment = 0xb7fb621c "RFC 5639 curve over a 192 bit prime field"}, {nid = 925, data = 0xb7fb4f60, meth = 0,
+    comment = 0xb7fb6248 "RFC 5639 curve over a 224 bit prime field"}, {nid = 926, data = 0xb7fb5020, meth = 0,
+    comment = 0xb7fb6248 "RFC 5639 curve over a 224 bit prime field"}, {nid = 927, data = 0xb7fb50e0, meth = 0,
+    comment = 0xb7fb6274 "RFC 5639 curve over a 256 bit prime field"}, {nid = 928, data = 0xb7fb51c0, meth = 0,
+    comment = 0xb7fb6274 "RFC 5639 curve over a 256 bit prime field"}, {nid = 929, data = 0xb7fb52a0, meth = 0,
+    comment = 0xb7fb62a0 "RFC 5639 curve over a 320 bit prime field"}, {nid = 930, data = 0xb7fb53a0, meth = 0,
+    comment = 0xb7fb62a0 "RFC 5639 curve over a 320 bit prime field"}, {nid = 931, data = 0xb7fb54a0, meth = 0,
+---Type <return> to continue, or q <return> to quit---q
+comment = 0xb7fb62cc "Quit
+(gdb) p nid
+$36 = 415
+(gdb) l
+3179            ECerr(EC_F_EC_GROUP_NEW_BY_CURVE_NAME, EC_R_UNKNOWN_GROUP);
+3180            return NULL;
+3181        }
+3182
+3183        EC_GROUP_set_curve_name(ret, nid);
+3184
+3185        return ret;
+3186    }
+3187
+3188    size_t EC_get_builtin_curves(EC_builtin_curve *r, size_t nitems)
+(gdb) p i
+$37 = 19
+(gdb) down
+#11 0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+3125        if (!EC_GROUP_set_generator(group, P, order, x)) {
+(gdb) down
+#10 0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+326         ec_precompute_mont_data(group);
+(gdb) p group
+$38 = (EC_GROUP *) 0xb6b00798
+(gdb) p down
+No symbol "down" in current context.
+(gdb) down
+#9  0xb7eda110 in ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+1125            BN_CTX_free(ctx);
+(gdb) p ret
+$39 = 1
+(gdb) p group->asn1_flag&~0x7fffffff
+$40 = -2147483648
+(gdb) p group
+$41 = (EC_GROUP *) 0xb6b00798
+(gdb) p *group
+$42 = {meth = 0xb7fd0ec0, generator = 0xb6b00f68, order = {d = 0xb6b01020, top = 8, dmax = 8, neg = 0, flags = 0}, cofactor = {
+    d = 0xb6b00af0, top = 1, dmax = 1, neg = 0, flags = 0}, curve_name = 0, asn1_flag = -2147483648,
+  asn1_form = POINT_CONVERSION_UNCOMPRESSED, seed = 0x0, seed_len = 0, extra_data = 0x0, field = {d = 0xb6b00dc0, top = 8, dmax = 8,
+    neg = 0, flags = 0}, poly = {0, 0, 0, 0, 0, 0}, a = {d = 0xb6b00de8, top = 8, dmax = 8, neg = 0, flags = 0}, b = {
+    d = 0xb6b00e10, top = 8, dmax = 8, neg = 0, flags = 0}, a_is_minus3 = 1, field_data1 = 0xb6b00850, field_data2 = 0xb6b00c08,
+  field_mod_func = 0, mont_data = 0xb6b01078}
+(gdb) p/x group->asn1_flag&~0x7fffffff
+$43 = 0x80000000
+(gdb) p/x !group->asn1_flag&~0x7fffffff
+$44 = 0x0
+(gdb) p group->mont_data
+$45 = (BN_MONT_CTX *) 0xb6b01078
+(gdb) p ctx
+$46 = (BN_CTX *) 0xb6b01048
+(gdb) p group->order
+$47 = {d = 0xb6b01020, top = 8, dmax = 8, neg = 0, flags = 0}
+(gdb) bt
+#0  0xb7fff424 in __kernel_vsyscall ()
+#1  0x4d2330ef in __GI_raise (sig=6) at ../nptl/sysdeps/unix/sysv/linux/raise.c:64
+#2  0x4d234a25 in __GI_abort () at abort.c:93
+#3  0x4d26fc0a in __libc_message (do_abort=2, fmt=0x4d353234 "*** glibc detected *** %s: %s: 0x%s ***\n")
+    at ../sysdeps/unix/sysv/linux/libc_fatal.c:198
+#4  0x4d276af2 in malloc_printerr (action=<optimized out>, str=<optimized out>, ptr=0xb6b014e8) at malloc.c:6283
+#5  0xb7ed6158 in CRYPTO_free (str=0xb6b014e8) at mem.c:439
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+#8  0xb7ed75cd in BN_CTX_free (ctx=0xb6b01048) at bn_ctx.c:250
+#9  0xb7eda110 in ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+#10 0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#11 0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#12 0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#13 0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#14 0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#15 0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#16 0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#17 0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#18 0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#19 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#20 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#21 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#22 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#23 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#24 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#25 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) p ret
+$48 = 1
+(gdb) p ctx
+$49 = (BN_CTX *) 0xb6b01048
+(gdb) p *ctx
+$50 = {pool = {head = 0xb6b01150, current = 0x0, tail = 0xb6b01150, used = 0, size = 16}, stack = {indexes = 0xb6b010c8, depth = 0,
+    size = 32}, used = 0, err_stack = 0, too_many = 0}
+(gdb) p ctx->pool
+$51 = {head = 0xb6b01150, current = 0x0, tail = 0xb6b01150, used = 0, size = 16}
+(gdb) p ctx->pool->head
+$52 = (BN_POOL_ITEM *) 0xb6b01150
+(gdb) p *ctx->pool->head
+$53 = {vals = {{d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0xb6b014e8, top = 0, dmax = 10, neg = 0, flags = 0}, {
+      d = 0xb6b01460, top = 10, dmax = 20, neg = 0, flags = 0}, {d = 0xb6b01430, top = 9, dmax = 10, neg = 0, flags = 0}, {
+      d = 0xb6b014b8, top = 9, dmax = 11, neg = 0, flags = 0}, {d = 0xb6b00b60, top = 0, dmax = 1, neg = 0, flags = 0}, {
+      d = 0xb6b01368, top = 3, dmax = 4, neg = 1, flags = 0}, {d = 0xb6b012c8, top = 0, dmax = 1, neg = 0, flags = 0}, {
+      d = 0xb6b01350, top = 0, dmax = 4, neg = 0, flags = 0}, {d = 0xb6b01330, top = 4, dmax = 6, neg = 0, flags = 0}, {
+      d = 0xb6b01318, top = 3, dmax = 4, neg = 0, flags = 0}, {d = 0xb6b012e8, top = 1, dmax = 3, neg = 1, flags = 0}, {d = 0x0,
+      top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0,
+      neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}}, prev = 0x0, next = 0x0}
+(gdb) down
+#8  0xb7ed75cd in BN_CTX_free (ctx=0xb6b01048) at bn_ctx.c:250
+250         BN_POOL_finish(&ctx->pool);
+(gdb) down
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+374                     BN_clear_free(bn);
+(gdb) p bn
+$54 = (BIGNUM *) 0xb6b01164
+(gdb) p p->head->vals
+$55 = {{d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0xb6b014e8, top = 0, dmax = 10, neg = 0, flags = 0}, {d = 0xb6b01460,
+    top = 10, dmax = 20, neg = 0, flags = 0}, {d = 0xb6b01430, top = 9, dmax = 10, neg = 0, flags = 0}, {d = 0xb6b014b8, top = 9,
+    dmax = 11, neg = 0, flags = 0}, {d = 0xb6b00b60, top = 0, dmax = 1, neg = 0, flags = 0}, {d = 0xb6b01368, top = 3, dmax = 4,
+    neg = 1, flags = 0}, {d = 0xb6b012c8, top = 0, dmax = 1, neg = 0, flags = 0}, {d = 0xb6b01350, top = 0, dmax = 4, neg = 0,
+    flags = 0}, {d = 0xb6b01330, top = 4, dmax = 6, neg = 0, flags = 0}, {d = 0xb6b01318, top = 3, dmax = 4, neg = 0, flags = 0}, {
+    d = 0xb6b012e8, top = 1, dmax = 3, neg = 1, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0,
+    dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0,
+    flags = 0}}
+(gdb) p p->head
+$56 = (BN_POOL_ITEM *) 0xb6b01150
+(gdb) p *p->head
+$57 = {vals = {{d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0xb6b014e8, top = 0, dmax = 10, neg = 0, flags = 0}, {
+      d = 0xb6b01460, top = 10, dmax = 20, neg = 0, flags = 0}, {d = 0xb6b01430, top = 9, dmax = 10, neg = 0, flags = 0}, {
+      d = 0xb6b014b8, top = 9, dmax = 11, neg = 0, flags = 0}, {d = 0xb6b00b60, top = 0, dmax = 1, neg = 0, flags = 0}, {
+      d = 0xb6b01368, top = 3, dmax = 4, neg = 1, flags = 0}, {d = 0xb6b012c8, top = 0, dmax = 1, neg = 0, flags = 0}, {
+      d = 0xb6b01350, top = 0, dmax = 4, neg = 0, flags = 0}, {d = 0xb6b01330, top = 4, dmax = 6, neg = 0, flags = 0}, {
+      d = 0xb6b01318, top = 3, dmax = 4, neg = 0, flags = 0}, {d = 0xb6b012e8, top = 1, dmax = 3, neg = 1, flags = 0}, {d = 0x0,
+      top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0,
+      neg = 0, flags = 0}, {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}}, prev = 0x0, next = 0x0}
+(gdb) down
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+237                 OPENSSL_free(a->d);
+(gdb) p a
+$58 = (BIGNUM *) 0xb6b01164
+(gdb) p &p->head->vals
+No symbol "p" in current context.
+(gdb) p p->head->vals
+No symbol "p" in current context.
+(gdb) up
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+374                     BN_clear_free(bn);
+(gdb) p &p->head->vals
+$59 = (BIGNUM (*)[16]) 0xb6b01150
+(gdb) p &p->head->vals[1]
+$60 = (BIGNUM *) 0xb6b01164
+(gdb) p p->head->vals[1]
+$61 = {d = 0xb6b014e8, top = 0, dmax = 10, neg = 0, flags = 0}
+(gdb) p p->head->vals[0]
+$62 = {d = 0x0, top = 0, dmax = 0, neg = 0, flags = 0}
+(gdb) f
+#7  0xb7ed796e in BN_POOL_finish (p=0xb6b01048) at bn_ctx.c:374
+374                     BN_clear_free(bn);
+(gdb) down
+#6  0xb7f04ff3 in BN_clear_free (a=0xb6b01164) at bn_lib.c:237
+237                 OPENSSL_free(a->d);
+(gdb) p a
+$63 = (BIGNUM *) 0xb6b01164
+(gdb) p *a
+$64 = {d = 0xb6b014e8, top = 0, dmax = 10, neg = 0, flags = 0}
+(gdb) p *a->d
+$65 = 0
+(gdb) p a->d
+$66 = (unsigned int *) 0xb6b014e8
+(gdb) p *a->d
+$67 = 0
+(gdb) i b
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0xb7d3eb8a in _registerKey at bgpsec_openssl.c:912
+        breakpoint already hit 1 time
+(gdb) p ec_precompute_mont_data
+$68 = {int (EC_GROUP *)} 0xb7eda02c <ec_precompute_mont_data>
+(gdb) b ec_precompute_mont_data
+Breakpoint 3 at 0xb7eda02c: file ec_lib.c, line 1095. (2 locations)
+(gdb) i b
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0xb7d3eb8a in _registerKey at bgpsec_openssl.c:912
+        breakpoint already hit 1 time
+3       breakpoint     keep y   <MULTIPLE>
+3.1                         y     0xb7eda02c in ec_precompute_mont_data at ec_lib.c:1095
+3.2                         y     0xb7d6c780 in ec_precompute_mont_data at ec_lib.c:1095
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+[Thread debugging using libthread_db enabled]
+Start SRx Server Version 0.4.1.0 (16:18:49)
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 0 public keys)!
+[New Thread 0xb7ceab70 (LWP 27206)]
+[New Thread 0xb74e9b70 (LWP 27208)]
+[Switching to Thread 0xb7ceab70 (LWP 27206)]
+
+Breakpoint 2, _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:912
+warning: Source file is more recent than executable.
+912       u_int8_t retVal = API_FAILURE;
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+1095    {
+(gdb) -
+   +--ec_lib.c-----------------------------------------------------------------------------------------------------------------------+
+   |1071        if (group->meth->precompute_mult != 0)                                                                               |
+   |1072            return group->meth->precompute_mult(group, ctx);                                                                 |
+   |1073        else                                                                                                                 |
+   |1074            return 1;               /* nothing to do, so report success */                                                   |
+   |1075    }                                                                                                                        |
+   |1076                                                                                                                             |
+   |1077    int EC_GROUP_have_precompute_mult(const EC_GROUP *group)                                                                 |
+   |1078    {                                                                                                                        |
+   |1079        if (group->meth->mul == 0)                                                                                           |
+   |1080            /* use default */                                                                                                |
+   |1081            return ec_wNAF_have_precompute_mult(group);                                                                      |
+   |1082                                                                                                                             |
+   |1083        if (group->meth->have_precompute_mult != 0)                                                                          |
+   |1084            return group->meth->have_precompute_mult(group);                                                                 |
+   |1085        else                                                                                                                 |
+   |1086            return 0;               /* cannot tell whether precomputation has                                                |
+   |1087                                     * been performed */                                                                     |
+   |1088    }                                                                                                                        |
+   |1089                                                                                                                             |
+   |1090    /*                                                                                                                       |
+   |1091     * ec_precompute_mont_data sets |group->mont_data| from |group->order| and                                               |
+   |1092     * returns one on success. On error it returns zero.                                                                     |
+   |1093     */                                                                                                                      |
+   |1094    int ec_precompute_mont_data(EC_GROUP *group)                                                                             |
+B+>|1095    {                                                                                                                        |
+   |1096        BN_CTX *ctx = BN_CTX_new();                                                                                          |
+   |1097        int ret = 0;                                                                                                         |
+   |1098                                                                                                                             |
+   |1099        if (!EC_GROUP_VERSION(group))                                                                                        |
+   |1100            goto err;                                                                                                        |
+   |1101                                                                                                                             |
+   |1102        if (group->mont_data) {                                                                                              |
+   |1103            BN_MONT_CTX_free(group->mont_data);                                                                              |
+   |1104            group->mont_data = NULL;                                                                                         |
+   |1105        }                                                                                                                    |
+   |1106                                                                                                                             |
+   |1107        if (ctx == NULL)                                                                                                     |
+   |1108            goto err;                                                                                                        |
+   |1109                                                                                                                             |
+   |1110        group->mont_data = BN_MONT_CTX_new();                                                                                |
+   |1111        if (!group->mont_data)                                                                                               |
+   |1112            goto err;                                                                                                        |
+   |1113                                                                                                                             |
+   |1114        if (!BN_MONT_CTX_set(group->mont_data, &group->order, ctx)) {                                                        |
+   |1115            BN_MONT_CTX_free(group->mont_data);                                                                              |
+   |1116            group->mont_data = NULL;                                                                                         |
+   |1117            goto err;                                                                                                        |
+   |1118        }                                                                                                                    |
+   |1119                                                                                                                             |
+   |1120        ret = 1;                                                                                                             |
+   +---------------------------------------------------------------------------------------------------------------------------------+
+multi-thre Thread 0xb7cea In: ec_precompute_mont_data                                                       Line: 1095 PC: 0xb7eda02c
+0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#7  0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#8  0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#9  0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#10 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) up
+#1  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+(gdb) p xpk
+$5 = (X509_PUBKEY *) 0xb6b00568
+(gdb) p *xpk
+$6 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) down
+#0  X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:134
+(gdb) down
+Bottom (innermost) frame selected; you cannot go down.
+(gdb) p *key
+$7 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) n
+(gdb) p ret
+$8 = (EVP_PKEY *) 0xb6b00658
+(gdb) n
+[New Thread 0xb6affb70 (LWP 27148)]
+
+Program received signal SIGABRT, Aborted.
+0xb7fff424 in __kernel_vsyscall ()
+(gdb)
+   +--ec_lib.c-----------------------------------------------------------------------------------------------------------------------+
+   |1096        BN_CTX *ctx = BN_CTX_new();                                                                                          |
+   |1097        int ret = 0;                                                                                                         |
+   |1098                                                                                                                             |
+   |1099        if (!EC_GROUP_VERSION(group))                                                                                        |
+   |1100            goto err;                                                                                                        |
+   |1101                                                                                                                             |
+   |1102        if (group->mont_data) {                                                                                              |
+   |1103            BN_MONT_CTX_free(group->mont_data);                                                                              |
+   |1104            group->mont_data = NULL;                                                                                         |
+   |1105        }                                                                                                                    |
+   |1106                                                                                                                             |
+   |1107        if (ctx == NULL)                                                                                                     |
+   |1108            goto err;                                                                                                        |
+   |1109                                                                                                                             |
+   |1110        group->mont_data = BN_MONT_CTX_new();                                                                                |
+   |1111        if (!group->mont_data)                                                                                               |
+   |1112            goto err;                                                                                                        |
+   |1113                                                                                                                             |
+   |1114        if (!BN_MONT_CTX_set(group->mont_data, &group->order, ctx)) {                                                        |
+   |1115            BN_MONT_CTX_free(group->mont_data);                                                                              |
+   |1116            group->mont_data = NULL;                                                                                         |
+   |1117            goto err;                                                                                                        |
+   |1118        }                                                                                                                    |
+   |1119                                                                                                                             |
+   |1120        ret = 1;                                                                                                             |
+   |1121                                                                                                                             |
+   |1122     err:                                                                                                                    |
+   |1123                                                                                                                             |
+   |1124        if (ctx)                                                                                                             |
+  >|1125            BN_CTX_free(ctx);                                                                                                |
+   |1126        return ret;                                                                                                          |
+   |1127    }                                                                                                                        |
+   |1128                                                                                                                             |
+   |1129                                                                                                                             |
+   |1130                                                                                                                             |
+   |1131                                                                                                                             |
+   |1132                                                                                                                             |
+   |1133                                                                                                                             |
+   |1134                                                                                                                             |
+   |1135                                                                                                                             |
+   |1136                                                                                                                             |
+   |1137                                                                                                                             |
+   |1138                                                                                                                             |
+   |1139                                                                                                                             |
+   |1140                                                                                                                             |
+   |1141                                                                                                                             |
+   |1142                                                                                                                             |
+   |1143                                                                                                                             |
+   |1144                                                                                                                             |
+   |1145                                                                                                                             |
+   +---------------------------------------------------------------------------------------------------------------------------------+
+multi-thre Thread 0xb7cea In: ec_precompute_mont_data                                                       Line: 1125 PC: 0xb7eda104
+#8  0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#9  0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#10 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) up
+#1  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+(gdb) p xpk
+$5 = (X509_PUBKEY *) 0xb6b00568
+(gdb) p *xpk
+$6 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) down
+#0  X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:134
+(gdb) down
+Bottom (innermost) frame selected; you cannot go down.
+(gdb) p *key
+$7 = {algor = 0xb6b00578, public_key = 0xb6b00588, pkey = 0x0}
+(gdb) n
+(gdb) p ret
+$8 = (EVP_PKEY *) 0xb6b00658
+(gdb) n
+[New Thread 0xb6affb70 (LWP 27148)]
+
+Program received signal SIGABRT, Aborted.
+0xb7fff424 in __kernel_vsyscall ()
+(gdb) n
+[New Thread 0xb6affb70 (LWP 27209)]
+(gdb)
+(gdb) f
+#0  ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1125
+1125            BN_CTX_free(ctx);
+(gdb) n
+*** glibc detected *** /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server: free(): invalid next size (fast): 0xb6b014e8 ***
+======= Backtrace: =========
+/lib/libc.so.6[0x4d276af2]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(CRYPTO_free+0x32)[0xb7ed6158]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(BN_clear_free+0x50)[0xb7f04ff3]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x5796e)[0xb7ed796e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(BN_CTX_free+0x25)[0xb7ed75cd]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(ec_precompute_mont_data+0xe4)[0xb7eda110]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(EC_GROUP_set_generator+0x124)[0xb7ed8556]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x5c531)[0xb7edc531]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(EC_GROUP_new_by_curve_name+0x65)[0xb7edc6e6]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x8cf0e)[0xb7f0cf0e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x8d02c)[0xb7f0d02c]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(X509_PUBKEY_get+0x12d)[0xb7f309e0]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(d2i_PUBKEY+0x3d)[0xb7f30b73]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(d2i_EC_PUBKEY+0x29)[0xb7f30e99]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxBGPSecOpenSSL.so(+0x53c56)[0xb7d3ec56]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxBGPSecOpenSSL.so(registerPublicKey+0x20)[0xb7d3ed3e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x80540d3]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x805451b]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x805495c]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x8054b8a]
+/lib/libpthread.so.0[0x4d3a0a2e]
+/lib/libc.so.6(clone+0x5e)[0x4d2df81e]
+======= Memory map: ========
+08048000-08071000 r-xp 00000000 00:24 376902767  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+08071000-08072000 rw-p 00028000 00:24 376902767  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+08072000-08095000 rw-p 00000000 00:00 0          [heap]
+4d1e3000-4d201000 r-xp 00000000 08:02 377465     /lib/ld-2.14.1.so
+4d201000-4d202000 r--p 0001d000 08:02 377465     /lib/ld-2.14.1.so
+4d202000-4d203000 rw-p 0001e000 08:02 377465     /lib/ld-2.14.1.so
+4d205000-4d38a000 r-xp 00000000 08:02 377467     /lib/libc-2.14.1.so
+4d38a000-4d38b000 ---p 00185000 08:02 377467     /lib/libc-2.14.1.so
+4d38b000-4d38d000 r--p 00185000 08:02 377467     /lib/libc-2.14.1.so
+4d38d000-4d38e000 rw-p 00187000 08:02 377467     /lib/libc-2.14.1.so
+4d38e000-4d391000 rw-p 00000000 00:00 0
+4d393000-4d396000 r-xp 00000000 08:02 377469     /lib/libdl-2.14.1.so
+4d396000-4d397000 r--p 00002000 08:02 377469     /lib/libdl-2.14.1.so
+4d397000-4d398000 rw-p 00003000 08:02 377469     /lib/libdl-2.14.1.so
+4d39a000-4d3b0000 r-xp 00000000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b0000-4d3b1000 r--p 00015000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b1000-4d3b2000 rw-p 00016000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b2000-4d3b4000 rw-p 00000000 00:00 0
+4d3b6000-4d3bd000 r-xp 00000000 08:02 377776     /lib/librt-2.14.1.so
+4d3bd000-4d3be000 r--p 00006000 08:02 377776     /lib/librt-2.14.1.so
+4d3be000-4d3bf000 rw-p 00007000 08:02 377776     /lib/librt-2.14.1.so
+4d560000-4d57c000 r-xp 00000000 08:02 378015     /lib/libtinfo.so.5.8
+4d57c000-4d57f000 rw-p 0001b000 08:02 378015     /lib/libtinfo.so.5.8
+4d60f000-4d645000 r-xp 00000000 08:02 378266     /lib/libreadline.so.6.2
+4d645000-4d649000 rw-p 00036000 08:02 378266     /lib/libreadline.so.6.2
+4d649000-4d64a000 rw-p 00000000 00:00 0
+4ee01000-4ee1d000 r-xp 00000000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+4ee1d000-4ee1e000 rw-p 0001b000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b62ff000-b6300000 ---p 00000000 00:00 0
+b6300000-b6b00000 rw-p 00000000 00:00 0
+b6b00000-b6b21000 rw-p 00000000 00:00 0
+b6b21000-b6c00000 ---p 00000000 00:00 0
+b6ce8000-b6ce9000 rw-p 00000000 00:00 0
+b6ce9000-b6cea000 ---p 00000000 00:00 0
+b6cea000-b74ea000 rw-p 00000000 00:00 0
+b74ea000-b74eb000 ---p 00000000 00:00 0
+b74eb000-b7ceb000 rw-p 00000000 00:00 0
+b7ceb000-b7e5f000 r-xp 00000000 00:24 376973318  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7e5f000-b7e61000 rw-p 00174000 00:24 376973318  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7e61000-b7e66000 rw-p 00000000 00:00 0
+b7e66000-b7e70000 r-xp 00000000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7e70000-b7e71000 rw-p 00009000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7e71000-b7e72000 rw-p 00000000 00:00 0
+b7e72000-b7e7d000 r-xp 00000000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7d000-b7e7e000 r--p 0000a000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7e000-b7e7f000 rw-p 0000b000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7f000-b7e80000 rw-p 00000000 00:00 0
+b7e80000-b7ff6000 r-xp 00000000 00:24 376973734  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7ff6000-b7ff8000 rw-p 00175000 00:24 376973734  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7ff8000-b7ffc000 rw-p 00000000 00:00 0
+b7ffc000-b7ffd000 r-xp 00000000 00:24 376667189  /users/kyehwanl/Programming/time-measure/tm-library/tm_rdtsc/.libs/libtm_rdtsc.so.0.0.0
+b7ffd000-b7ffe000 rw-p 00000000 00:24 376667189  /users/kyehwanl/Programming/time-measure/tm-library/tm_rdtsc/.libs/libtm_rdtsc.so.0.0.0
+b7ffe000-b7fff000 rw-p 00000000 00:00 0
+b7fff000-b8000000 r-xp 00000000 00:00 0          [vdso]
+bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]
+Program received signal SIGABRT, Aborted.
+0xb7fff424 in __kernel_vsyscall ()
+(gdb)
+Single stepping until exit from function __kernel_vsyscall,
+which has no line number information.
+[Thread 0xb74e9b70 (LWP 27208) exited]
+[Thread 0xb7ceab70 (LWP 27206) exited]
+Couldn't get registers: No such process.
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+[Thread 0xb7ceab70 (LWP 27206) exited]
+Couldn't get registers: No such process.
+(gdb) r
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+Warning:
+Cannot insert breakpoint -214.
+Error accessing memory address 0x4d39f880: Input/output error.
+Cannot insert breakpoint -215.
+Error accessing memory address 0x4d39f890: Input/output error.
+
+(gdb) y
+Undefined command: "y".  Try "help".
+(gdb)
+(gdb) bt
+#0  0x4d1e4250 in _start () from /lib/ld-linux.so.2
+Backtrace stopped: Not enough registers or memory available to unwind further
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+[Thread debugging using libthread_db enabled]
+Start SRx Server Version 0.4.1.0 (16:18:49)
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80769a8, generator=0x80778b0, order=0x8077650, cofactor=0x8077638) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7ed527b in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:198
+#5  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub",
+    key=0xbfffed49) at crypto_imple.c:330
+#6  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#7  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#8  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#9  0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#10 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#11 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80773c0, generator=0x8077cb8, order=0x80775e8, cofactor=0x8076bb8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7edfa59 in EC_KEY_new_by_curve_name (nid=415) at ec_key.c:98
+#5  0xb7ed5309 in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:208
+#6  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub",
+    key=0xbfffed49) at crypto_imple.c:330
+#7  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#8  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#9  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#10 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#11 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#12 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+1095    {
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 1 public keys)!
+[New Thread 0xb7ceab70 (LWP 27232)]
+[New Thread 0xb74e9b70 (LWP 27234)]
+[Switching to Thread 0xb7ceab70 (LWP 27232)]
+
+Breakpoint 2, _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:912
+warning: Source file is more recent than executable.
+912       u_int8_t retVal = API_FAILURE;
+(gdb) bt
+#0  _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:912
+#1  0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#2  0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#3  0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#4  0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#5  0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#6  0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#7  0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#9  0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#10 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#11 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#12 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#13 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#14 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#15 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#16 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) c
+Continuing.
+*** glibc detected *** /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server: free(): invalid next size (fast): 0xb6b014e8 ***
+[New Thread 0xb6affb70 (LWP 27236)]
+======= Backtrace: =========
+/lib/libc.so.6[0x4d276af2]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(CRYPTO_free+0x32)[0xb7ed6158]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(BN_clear_free+0x50)[0xb7f04ff3]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x5796e)[0xb7ed796e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(BN_CTX_free+0x25)[0xb7ed75cd]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(ec_precompute_mont_data+0xe4)[0xb7eda110]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(EC_GROUP_set_generator+0x124)[0xb7ed8556]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x5c531)[0xb7edc531]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(EC_GROUP_new_by_curve_name+0x65)[0xb7edc6e6]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x8cf0e)[0xb7f0cf0e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(+0x8d02c)[0xb7f0d02c]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(X509_PUBKEY_get+0x12d)[0xb7f309e0]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(d2i_PUBKEY+0x3d)[0xb7f30b73]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxCryptoAPI.so.2(d2i_EC_PUBKEY+0x29)[0xb7f30e99]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxBGPSecOpenSSL.so(+0x53c56)[0xb7d3ec56]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/lib/srx/libSRxBGPSecOpenSSL.so(registerPublicKey+0x20)[0xb7d3ed3e]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x80540d3]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x805451b]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x805495c]
+/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server[0x8054b8a]
+/lib/libpthread.so.0[0x4d3a0a2e]
+/lib/libc.so.6(clone+0x5e)[0x4d2df81e]
+======= Memory map: ========
+08048000-08071000 r-xp 00000000 00:24 376902767  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+08071000-08072000 rw-p 00028000 00:24 376902767  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+08072000-08095000 rw-p 00000000 00:00 0          [heap]
+4d1e3000-4d201000 r-xp 00000000 08:02 377465     /lib/ld-2.14.1.so
+4d201000-4d202000 r--p 0001d000 08:02 377465     /lib/ld-2.14.1.so
+4d202000-4d203000 rw-p 0001e000 08:02 377465     /lib/ld-2.14.1.so
+4d205000-4d38a000 r-xp 00000000 08:02 377467     /lib/libc-2.14.1.so
+4d38a000-4d38b000 ---p 00185000 08:02 377467     /lib/libc-2.14.1.so
+4d38b000-4d38d000 r--p 00185000 08:02 377467     /lib/libc-2.14.1.so
+4d38d000-4d38e000 rw-p 00187000 08:02 377467     /lib/libc-2.14.1.so
+4d38e000-4d391000 rw-p 00000000 00:00 0
+4d393000-4d396000 r-xp 00000000 08:02 377469     /lib/libdl-2.14.1.so
+4d396000-4d397000 r--p 00002000 08:02 377469     /lib/libdl-2.14.1.so
+4d397000-4d398000 rw-p 00003000 08:02 377469     /lib/libdl-2.14.1.so
+4d39a000-4d3b0000 r-xp 00000000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b0000-4d3b1000 r--p 00015000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b1000-4d3b2000 rw-p 00016000 08:02 377500     /lib/libpthread-2.14.1.so
+4d3b2000-4d3b4000 rw-p 00000000 00:00 0
+4d3b6000-4d3bd000 r-xp 00000000 08:02 377776     /lib/librt-2.14.1.so
+4d3bd000-4d3be000 r--p 00006000 08:02 377776     /lib/librt-2.14.1.so
+4d3be000-4d3bf000 rw-p 00007000 08:02 377776     /lib/librt-2.14.1.so
+4d560000-4d57c000 r-xp 00000000 08:02 378015     /lib/libtinfo.so.5.8
+4d57c000-4d57f000 rw-p 0001b000 08:02 378015     /lib/libtinfo.so.5.8
+4d60f000-4d645000 r-xp 00000000 08:02 378266     /lib/libreadline.so.6.2
+4d645000-4d649000 rw-p 00036000 08:02 378266     /lib/libreadline.so.6.2
+4d649000-4d64a000 rw-p 00000000 00:00 0
+4ee01000-4ee1d000 r-xp 00000000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+4ee1d000-4ee1e000 rw-p 0001b000 08:02 378442     /lib/libgcc_s-4.6.3-20120306.so.1
+b62ff000-b6300000 ---p 00000000 00:00 0
+b6300000-b6b00000 rw-p 00000000 00:00 0
+b6b00000-b6b21000 rw-p 00000000 00:00 0
+b6b21000-b6c00000 ---p 00000000 00:00 0
+b6ce8000-b6ce9000 rw-p 00000000 00:00 0
+b6ce9000-b6cea000 ---p 00000000 00:00 0
+b6cea000-b74ea000 rw-p 00000000 00:00 0
+b74ea000-b74eb000 ---p 00000000 00:00 0
+b74eb000-b7ceb000 rw-p 00000000 00:00 0
+b7ceb000-b7e5f000 r-xp 00000000 00:24 376973318  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7e5f000-b7e61000 rw-p 00174000 00:24 376973318  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so.2.0.0
+b7e61000-b7e66000 rw-p 00000000 00:00 0
+b7e66000-b7e70000 r-xp 00000000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7e70000-b7e71000 rw-p 00009000 08:02 308209     /usr/local/lib/libconfig.so.9.0.1
+b7e71000-b7e72000 rw-p 00000000 00:00 0
+b7e72000-b7e7d000 r-xp 00000000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7d000-b7e7e000 r--p 0000a000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7e000-b7e7f000 rw-p 0000b000 08:02 378455     /lib/libnss_files-2.14.1.so
+b7e7f000-b7e80000 rw-p 00000000 00:00 0
+b7e80000-b7ff6000 r-xp 00000000 00:24 376973734  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7ff6000-b7ff8000 rw-p 00175000 00:24 376973734  /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so.2.0.0
+b7ff8000-b7ffc000 rw-p 00000000 00:00 0
+b7ffc000-b7ffd000 r-xp 00000000 00:24 376667189  /users/kyehwanl/Programming/time-measure/tm-library/tm_rdtsc/.libs/libtm_rdtsc.so.0.0.0
+b7ffd000-b7ffe000 rw-p 00000000 00:24 376667189  /users/kyehwanl/Programming/time-measure/tm-library/tm_rdtsc/.libs/libtm_rdtsc.so.0.0.0
+Program received signal SIGABRT, Aborted.
+0xb7fff424 in __kernel_vsyscall ()
+(gdb) i b
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0xb7d3eb8a in _registerKey at bgpsec_openssl.c:912
+        breakpoint already hit 1 time
+3       breakpoint     keep y   <MULTIPLE>
+        breakpoint already hit 4 times
+3.1                         y     0xb7eda02c in ec_precompute_mont_data at ec_lib.c:1095
+3.2                         y     0xb7d6c780 in ec_precompute_mont_data at ec_lib.c:1095
+(gdb) b srxCryptoInit
+Breakpoint 4 at 0xb7ed3581: file srxcryptoapi.c, line 820.
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+[Thread debugging using libthread_db enabled]
+Start SRx Server Version 0.4.1.0 (16:18:49)
+
+Breakpoint 4, srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:820
+820       int               retVal           = API_FAILURE;
+(gdb) bt
+#0  srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:820
+#1  0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+1095    {
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+1095    {
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+1095    {
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 1 public keys)!
+[New Thread 0xb7ceab70 (LWP 27238)]
+[New Thread 0xb74e9b70 (LWP 27240)]
+[Switching to Thread 0xb7ceab70 (LWP 27238)]
+
+Breakpoint 2, _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:912
+warning: Source file is more recent than executable.
+912       u_int8_t retVal = API_FAILURE;
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+1095    {
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+[Thread debugging using libthread_db enabled]
+Start SRx Server Version 0.4.1.0 (16:18:49)
+
+Breakpoint 4, srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:820
+820       int               retVal           = API_FAILURE;
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80769a8, generator=0x80778b0, order=0x8077650, cofactor=0x8077638) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7ed527b in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:198
+#5  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub",
+    key=0xbfffed49) at crypto_imple.c:330
+#6  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#7  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#8  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#9  0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#10 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#11 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80773c0, generator=0x8077cb8, order=0x80775e8, cofactor=0x8076bb8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7edfa59 in EC_KEY_new_by_curve_name (nid=415) at ec_key.c:98
+#5  0xb7ed5309 in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:208
+#6  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub",
+    key=0xbfffed49) at crypto_imple.c:330
+#7  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#8  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#9  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#10 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#11 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#12 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x8076178, generator=0x8077cb8, order=0x8076500, cofactor=0x80764e8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0x8076c00) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0x8077a98, pubkey=0x80762a0) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0x80762a0) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xbfffec44, length=91) at x_pubkey.c:308
+#9  0xb7d3efd1 in _ks_convertKey (keyData=0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B",
+    keyLength=91, isPrivate=false, status=0xbfffec8a) at key_storage.c:140
+#10 0xb7d3f511 in _ks_createKS_Element (key=0xbfffed49, convert=true, isPrivate=false, status=0xbfffecde) at key_storage.c:337
+#11 0xb7d401df in ks_storeKey (storage=0x8074278, key=0xbfffed49, status=0xbfffed46, convert=true) at key_storage.c:848
+#12 0xb7d3da49 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:219
+#13 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#14 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#15 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 1 public keys)!
+[New Thread 0xb7ceab70 (LWP 27243)]
+[New Thread 0xb74e9b70 (LWP 27245)]
+[Switching to Thread 0xb7ceab70 (LWP 27243)]
+
+Breakpoint 2, _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:912
+warning: Source file is more recent than executable.
+912       u_int8_t retVal = API_FAILURE;
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0xb6b00798) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0xb6b00798, generator=0xb6b00e38, order=0xb6b00bd8, cofactor=0xb6b00bc0)
+    at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0xb6b005e0) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0xb6b00658, pubkey=0xb6b00568) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0xb6b00568) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xb7ce9fe4, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xb7cea020, length=91) at x_pubkey.c:308
+#9  0xb7d3ec56 in _registerKey (key=0xb6b004e0, status=0xb7cea0f4, isPrivate=false) at bgpsec_openssl.c:1007
+#10 0xb7d3ed3e in registerPublicKey (key=0xb6b004e0, status=0xb7cea0f4) at bgpsec_openssl.c:1079
+#11 0x080540d3 in handleRouterKey (valCacheID=0, session_id=0, isAnn=true, asn=60002,
+    ski=0xb7cea1a2 "\303\004\063\372\031u\377\031\061\201E\217\271\002\265\001", <incomplete sequence \334>,
+    keyInfo=0xb7cea147 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B", rpkiHandler=0x80725e0)
+    at server/rpki_handler.c:240
+#12 0x0805451b in processPDURouterKey (client=0x8072608, hdr=0xb6b00468) at server/rpki_router_client.c:212
+#13 0x0805495c in receivePDUs (client=0x8072608, returnAterEndOfData=false) at server/rpki_router_client.c:399
+#14 0x08054b8a in manageConnection (clientPtr=0x8072608) at server/rpki_router_client.c:478
+#15 0x4d3a0a2e in start_thread (arg=0xb7ceab70) at pthread_create.c:305
+#16 0x4d2df81e in clone () at ../sysdeps/unix/sysv/linux/i386/clone.S:133
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/srx/src/.libs/srx_server
+[Thread debugging using libthread_db enabled]
+Start SRx Server Version 0.4.1.0 (16:18:49)
+
+Breakpoint 4, srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:820
+820       int               retVal           = API_FAILURE;
+(gdb) c
+Continuing.
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80769a8) at ec_lib.c:1095
+1095    {
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x80773c0) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x80773c0, generator=0x8077cb8, order=0x80775e8, cofactor=0x8076bb8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7edfa59 in EC_KEY_new_by_curve_name (nid=415) at ec_key.c:98
+#5  0xb7ed5309 in _getPublicKey (cert=0x8076418, key=0xbfffed49, curveID=415) at crypto_imple.c:208
+#6  0xb7ed5629 in _loadPubKey (
+    fName=0xbfffdcac "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys//C3/0433/FA1975FF193181458FB902B501EA9789DC.pub",
+    key=0xbfffed49) at crypto_imple.c:330
+#7  0xb7ed5850 in impl_loadKey (key=0xbfffed49, fPrivate=false, fileExt=0xb7ff85aa "pub") at crypto_imple.c:423
+#8  0xb7ed3efb in sca_loadKey (key=0xbfffed49, fPrivate=false, status=0xbfffed46) at srxcryptoapi.c:1198
+#9  0xb7d3d9a2 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:204
+#10 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#11 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#12 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) c
+Continuing.
+
+Breakpoint 3, ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+1095    {
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x8076178, generator=0x8077cb8, order=0x8076500, cofactor=0x80764e8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0x8076c00) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0x8077a98, pubkey=0x80762a0) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0x80762a0) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xbfffec44, length=91) at x_pubkey.c:308
+#9  0xb7d3efd1 in _ks_convertKey (keyData=0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B",
+    keyLength=91, isPrivate=false, status=0xbfffec8a) at key_storage.c:140
+#10 0xb7d3f511 in _ks_createKS_Element (key=0xbfffed49, convert=true, isPrivate=false, status=0xbfffecde) at key_storage.c:337
+#11 0xb7d401df in ks_storeKey (storage=0x8074278, key=0xbfffed49, status=0xbfffed46, convert=true) at key_storage.c:848
+#12 0xb7d3da49 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:219
+#13 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#14 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#15 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) up
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x8076178, generator=0x8077cb8, order=0x8076500, cofactor=0x80764e8) at ec_lib.c:326
+326         ec_precompute_mont_data(group);
+(gdb) up
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+3125        if (!EC_GROUP_set_generator(group, P, order, x)) {
+(gdb) up
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+3174                ret = ec_group_new_from_data(curve_list[i]);
+(gdb) l
+3169        if (nid <= 0)
+3170            return NULL;
+3171
+3172        for (i = 0; i < curve_list_length; i++)
+3173            if (curve_list[i].nid == nid) {
+3174                ret = ec_group_new_from_data(curve_list[i]);
+3175                break;
+3176            }
+3177
+3178        if (ret == NULL) {
+(gdb) up
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0x8076c00) at ec_ameth.c:164
+164             group = EC_GROUP_new_by_curve_name(OBJ_obj2nid(poid));
+(gdb) up
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0x8077a98, pubkey=0x80762a0) at ec_ameth.c:196
+196         eckey = eckey_type2param(ptype, pval);
+(gdb) up
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0x80762a0) at x_pubkey.c:153
+153             if (!ret->ameth->pub_decode(ret, key)) {
+(gdb) l
+148             X509err(X509_F_X509_PUBKEY_GET, X509_R_UNSUPPORTED_ALGORITHM);
+149             goto error;
+150         }
+151
+152         if (ret->ameth->pub_decode) {
+153             if (!ret->ameth->pub_decode(ret, key)) {
+154                 X509err(X509_F_X509_PUBKEY_GET, X509_R_PUBLIC_KEY_DECODE_ERROR);
+155                 goto error;
+156             }
+157         } else {
+(gdb) p key
+$69 = (X509_PUBKEY *) 0x80762a0
+(gdb) p *key
+$70 = {algor = 0x8074298, public_key = 0x8076270, pkey = 0x0}
+(gdb) p *key->public_key
+$71 = {length = 65, type = 3,
+  data = 0x8078708 "\004\326\323'\354l\367\005\200\215̀\017\227\364\237JZ\360\377w\020\327\336\323\022\214\275\374\034\022Y\222J\213\n\364{\377l5\237AM\344\vM\037\215W\234\301\300\326G\276\064\216>\356\006՟", <incomplete sequence \363>, flags = 8}
+(gdb) p key->public_key->data
+$72 = (
+    unsigned char *) 0x8078708 "\004\326\323'\354l\367\005\200\215̀\017\227\364\237JZ\360\377w\020\327\336\323\022\214\275\374\034\022Y\222J\213\n\364{\377l5\237AM\344\vM\037\215W\234\301\300\326G\276\064\216>\356\006՟", <incomplete sequence \363>
+(gdb) x/65bx key->public_key->data
+0x8078708:      0x04    0xd6    0xd3    0x27    0xec    0x6c    0xf7    0x05
+0x8078710:      0x80    0x8d    0xcd    0x80    0x0f    0x97    0xf4    0x9f
+0x8078718:      0x4a    0x5a    0xf0    0xff    0x77    0x10    0xd7    0xde
+0x8078720:      0xd3    0x12    0x8c    0xbd    0xfc    0x1c    0x12    0x59
+0x8078728:      0x92    0x4a    0x8b    0x0a    0xf4    0x7b    0xff    0x6c
+0x8078730:      0x35    0x9f    0x41    0x4d    0xe4    0x0b    0x4d    0x1f
+0x8078738:      0x8d    0x57    0x9c    0xc1    0xc0    0xd6    0x47    0xbe
+0x8078740:      0x34    0x8e    0x3e    0xee    0x06    0xd5    0x9f    0x29
+0x8078748:      0xf3
+(gdb) up
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+194         pktmp = X509_PUBKEY_get(xpk);
+(gdb) l
+189         X509_PUBKEY *xpk;
+190         EVP_PKEY *pktmp;
+191         xpk = d2i_X509_PUBKEY(NULL, pp, length);
+192         if (!xpk)
+193             return NULL;
+194         pktmp = X509_PUBKEY_get(xpk);
+195         X509_PUBKEY_free(xpk);
+196         if (!pktmp)
+197             return NULL;
+198         if (a) {
+(gdb) p xpk
+$73 = (X509_PUBKEY *) 0x80762a0
+(gdb)
+Display all 176 possibilities? (y or n)
+(gdb) p *xpk
+$74 = {algor = 0x8074298, public_key = 0x8076270, pkey = 0x0}
+(gdb) bt
+#0  ec_precompute_mont_data (group=0x8076178) at ec_lib.c:1095
+#1  0xb7ed8556 in EC_GROUP_set_generator (group=0x8076178, generator=0x8077cb8, order=0x8076500, cofactor=0x80764e8) at ec_lib.c:326
+#2  0xb7edc531 in ec_group_new_from_data (curve=...) at ec_curve.c:3125
+#3  0xb7edc6e6 in EC_GROUP_new_by_curve_name (nid=415) at ec_curve.c:3174
+#4  0xb7f0cf0e in eckey_type2param (ptype=6, pval=0x8076c00) at ec_ameth.c:164
+#5  0xb7f0d02c in eckey_pub_decode (pkey=0x8077a98, pubkey=0x80762a0) at ec_ameth.c:196
+#6  0xb7f309e0 in X509_PUBKEY_get (key=0x80762a0) at x_pubkey.c:153
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xbfffec44, length=91) at x_pubkey.c:308
+#9  0xb7d3efd1 in _ks_convertKey (keyData=0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B",
+    keyLength=91, isPrivate=false, status=0xbfffec8a) at key_storage.c:140
+#10 0xb7d3f511 in _ks_createKS_Element (key=0xbfffed49, convert=true, isPrivate=false, status=0xbfffecde) at key_storage.c:337
+#11 0xb7d401df in ks_storeKey (storage=0x8074278, key=0xbfffed49, status=0xbfffed46, convert=true) at key_storage.c:848
+#12 0xb7d3da49 in _readKeyFile (fName=0xbffff1c7 "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt", isPrivate=false,
+    status=0xbffff2c6, convert=true) at bgpsec_openssl.c:219
+#13 0xb7d3de59 in init (
+    value=0x8074cc0 "PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt", logLevel=7, status=0xbffff37e) at bgpsec_openssl.c:347
+#14 0xb7ed38ac in srxCryptoInit (api=0x8074098, status=0xbffff37e) at srxcryptoapi.c:934
+#15 0x0805141a in main (argc=1, argv=0xbffff434) at server/main.c:550
+(gdb) f
+#7  0xb7f30b73 in d2i_PUBKEY (a=0x0, pp=0xbfffec04, length=91) at x_pubkey.c:194
+194         pktmp = X509_PUBKEY_get(xpk);
+(gdb) up
+#8  0xb7f30e99 in d2i_EC_PUBKEY (a=0x0, pp=0xbfffec44, length=91) at x_pubkey.c:308
+308         pkey = d2i_PUBKEY(NULL, &q, length);
+(gdb) l
+303     {
+304         EVP_PKEY *pkey;
+305         EC_KEY *key;
+306         const unsigned char *q;
+307         q = *pp;
+308         pkey = d2i_PUBKEY(NULL, &q, length);
+309         if (!pkey)
+310             return (NULL);
+311         key = EVP_PKEY_get1_EC_KEY(pkey);
+312         EVP_PKEY_free(pkey);
+(gdb) p pp
+$75 = (const unsigned char **) 0xbfffec44
+(gdb) p *p
+No symbol "p" in current context.
+(gdb) p *pp
+$76 = (const unsigned char *) 0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B"
+(gdb) up
+#9  0xb7d3efd1 in _ks_convertKey (keyData=0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B",
+    keyLength=91, isPrivate=false, status=0xbfffec8a) at key_storage.c:140
+140         ecdsa_key_int = (size_t) d2i_EC_PUBKEY(NULL, (const unsigned char**)&p,
+(gdb) p p
+$77 = 0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B"
+(gdb) p keyData
+$78 = (u_int8_t *) 0x8078360 "0Y0\023\006\a*\206H\316=\002\001\006\b*\206H\316=\003\001\a\003B"
+(gdb)
+
+
+
+

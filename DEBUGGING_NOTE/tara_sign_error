@@ -1,0 +1,169 @@
+
+
+
+1.case
+======
+
+ every call for signing in tara bgpsec library, it has double free error happened.
+
+
+2. debugging
+============
+
+A. with watch point at signature->sigBuff
+
+  (gdb) i b
+  Num     Type           Disp Enb Address            What
+  1       breakpoint     keep y   0x00007ffff7f9fe33 in signBGPSecPathAttr at bgp_validate.c:936
+          breakpoint already hit 1 time
+  4       hw watchpoint  keep y                      *0x7ffff8397b40
+          breakpoint already hit 1 time
+
+
+
+B. debugging script
+
+  (gdb) until 3110
+  bgp_packet_attribute (bgp=0x7ffff8381960, peer=0x7ffff8397c50, s=0x7ffff8396690, attr=0x7ffff8397860,
+      p=0x7ffff83ab120, afi=1, safi=1 '\001', from=0x7ffff8381fc0, prd=0x0, tag=0x0, useASpath=0x7fffffffdef7)
+      at bgp_attr.c:3110
+  3110        if (bgp->srxCAPI->freeSignature(signature) == API_FAILURE)
+  (gdb) p signature
+  (gdb) p *signature
+  $19 = {ownedByAPI = true, algoID = 1 '\001',
+    ski = "E\312ЬD\367~\372\251F\002\351\230C\005![\364}", <incomplete sequence \315>, sigLen = 72,
+    sigBuff = 0x7ffff8397b40 "0F\002!"}
+  (gdb) n
+  Hardware watchpoint 4: *0x7ffff8397b40
+
+  Old value = 553797168
+  New value = 0
+  0x00007ffff5def3f0 in _int_free () from /lib64/libc.so.6
+  (gdb) p *signature
+  No symbol "signature" in current context.
+  (gdb) bt
+  #0  0x00007ffff5def3f0 in _int_free () from /lib64/libc.so.6
+  #1  0x00007ffff3f5e35d in taraFreeSignature () from /usr/lib/libtaraBGPsec.so
+  #2  0x00007ffff7f4052a in bgp_packet_attribute (bgp=0x7ffff8381960, peer=0x7ffff8397c50, s=0x7ffff8396690,
+      attr=0x7ffff8397860, p=0x7ffff83ab120, afi=1, safi=1 '\001', from=0x7ffff8381fc0, prd=0x0, tag=0x0,
+      useASpath=0x7fffffffdef7) at bgp_attr.c:3110
+  #3  0x00007ffff7f6c200 in bgp_update_packet (peer=0x7ffff8397c50, afi=1, safi=1 '\001') at bgp_packet.c:276
+  #4  0x00007ffff7f6d67d in bgp_write_packet (peer=0x7ffff8397c50) at bgp_packet.c:760
+  #5  0x00007ffff7f6da29 in bgp_write (thread=0x7fffffffe260) at bgp_packet.c:830
+  #6  0x00007ffff7aaad6b in thread_call (thread=0x7fffffffe260) at thread.c:1258
+  #7  0x00007ffff7f23261 in main (argc=5, argv=0x7fffffffe418) at bgp_main.c:492
+
+
+  --> the debugging script described above show that  taraFreeSignature() freed signature->sigBuff inside.
+
+
+
+BUT MORE important thing is following,
+
+  (gdb) up 1
+  #1  0x00007ffff7f4052a in bgp_packet_attribute (bgp=0x7ffff8381960, peer=0x7ffff8397c50, s=0x7ffff8396690,
+      attr=0x7ffff8397860, p=0x7ffff83ab120, afi=1, safi=1 '\001', from=0x7ffff8381fc0, prd=0x0, tag=0x0,
+      useASpath=0x7fffffffdef7) at bgp_attr.c:3110
+  3110        if (bgp->srxCAPI->freeSignature(signature) == API_FAILURE)
+  (gdb) n
+  Single stepping until exit from function taraFreeSignature,
+  which has no line number information.
+  bgp_packet_attribute (bgp=0x7ffff8381960, peer=0x7ffff8397c50, s=0x7ffff8396690, attr=0x7ffff8397860,
+      p=0x7ffff83ab120, afi=1, safi=1 '\001', from=0x7ffff8381fc0, prd=0x0, tag=0x0, useASpath=0x7fffffffdef7)
+      at bgp_attr.c:3112
+  3112          free(signature->sigBuff);
+  (gdb) p signature
+  $22 = (SCA_Signature *) 0x7ffff8397b10
+  (gdb) p *signature
+  $23 = {ownedByAPI = 96, algoID = 118 'v',
+    ski = "9\370\377\177\000\000~\372\251F\002\351\230C\005![\364}", <incomplete sequence \315>, sigLen = 72,
+    sigBuff = 0x7ffff8397b40 ""}
+    
+
+ --> Looking at $23, sigBuff still maintains its original address.
+     That means that even though taraFreeSignature() freed signature->sigBuff, 
+     but it didn't put NULL value to signature->sigBuff, 
+     so, Next statement at bgp_attr.c:3112 will try to free again.
+
+
+  
+
+C. More investigation
+
+  More investigation shows not only signature->sigBuff were freed but also signature itself was freed as well.
+  Following memory dumps shows the status before calling srxCAPI->freeSignature().
+  First signature value begins with 0x01 0x01 0x45 ...
+  But after excuting srxCAPI->freeSignature(), its values are different from the first state.
+  (beginning with 0x60 0x76 0x39 ...)
+
+
+
+  3110        if (bgp->srxCAPI->freeSignature(signature) == API_FAILURE)
+  (gdb) x/20bx signature
+  0x7ffff8397b10: 0x01    0x01    0x45    0xca    0xd0    0xac    0x44    0xf7
+  0x7ffff8397b18: 0x7e    0xfa    0xa9    0x46    0x02    0xe9    0x98    0x43
+  0x7ffff8397b20: 0x05    0x21    0x5b    0xf4
+  (gdb) x/72bx signature->sigBuff
+  0x7ffff8397b40: 0x30    0x46    0x02    0x21    0x00    0xf0    0xe4    0xc7
+  0x7ffff8397b48: 0x08    0x49    0x94    0x5e    0x0d    0x76    0xb3    0x75
+  0x7ffff8397b50: 0xe7    0x4a    0x1d    0x3a    0x49    0xcb    0xd1    0xd4
+  0x7ffff8397b58: 0x3d    0x3f    0x78    0x4a    0x1e    0x9b    0x92    0x8f
+  0x7ffff8397b60: 0x23    0xc6    0x91    0xf0    0x35    0x02    0x21    0x00
+  0x7ffff8397b68: 0x96    0x50    0x4d    0xf6    0x59    0xa2    0x3c    0xc0
+  0x7ffff8397b70: 0xc4    0x0f    0xdc    0x27    0x9a    0x60    0xc3    0xe1
+  0x7ffff8397b78: 0xcb    0xdf    0x93    0x42    0x6c    0x0a    0xa9    0x5d
+  0x7ffff8397b80: 0xb2    0x45    0xa9    0x92    0xb3    0xed    0x7a    0x16
+  (gdb) n
+  3112          if ( *signature->sigBuff != 0x00)
+  (gdb) x/20bx signature                                                                                               
+  0x7ffff8397b10: 0x60    0x76    0x39    0xf8    0xff    0x7f    0x00    0x00
+  0x7ffff8397b18: 0x7e    0xfa    0xa9    0x46    0x02    0xe9    0x98    0x43
+  0x7ffff8397b20: 0x05    0x21    0x5b    0xf4
+
+ 
+
+
+
+3. cause
+========
+
+ signature->sigBuff was already freed from tara library, but the source, bgp_attr.c:3112 tried to free again.
+ This caused double free memory error.
+
+
+
+
+4. Solution
+===========
+
+  (gdb) x/72bx 0x7ffff8397b40
+  0x7ffff8397b40: 0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+  0x7ffff8397b48: 0x21    0x8e    0x07    0x9f    0xcf    0x9d    0x41    0xb7
+  0x7ffff8397b50: 0xcd    0xff    0xb7    0x24    0x63    0x37    0x20    0x02
+  0x7ffff8397b58: 0xa5    0x5e    0xe5    0xfe    0xa5    0x7d    0x38    0xb3
+  0x7ffff8397b60: 0xc2    0x61    0xd5    0x64    0xd9    0x02    0x21    0x00
+  0x7ffff8397b68: 0xa3    0x7b    0xbe    0x95    0xbd    0x93    0x10    0xf9
+  0x7ffff8397b70: 0xfe    0x77    0xb3    0x71    0xc0    0xf3    0xb6    0xa7
+  0x7ffff8397b78: 0xb2    0xf1    0xfd    0x98    0xe4    0x75    0x3e    0x46
+  0x7ffff8397b80: 0x76    0x9b    0x9c    0xc2    0xd0    0x2d    0xb2    0x74
+  (gdb) x/72bx signature->sigBuff
+  0x7ffff8397b40: 0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+  0x7ffff8397b48: 0x21    0x8e    0x07    0x9f    0xcf    0x9d    0x41    0xb7
+  0x7ffff8397b50: 0xcd    0xff    0xb7    0x24    0x63    0x37    0x20    0x02
+  0x7ffff8397b58: 0xa5    0x5e    0xe5    0xfe    0xa5    0x7d    0x38    0xb3
+  0x7ffff8397b60: 0xc2    0x61    0xd5    0x64    0xd9    0x02    0x21    0x00
+  0x7ffff8397b68: 0xa3    0x7b    0xbe    0x95    0xbd    0x93    0x10    0xf9
+  0x7ffff8397b70: 0xfe    0x77    0xb3    0x71    0xc0    0xf3    0xb6    0xa7
+  0x7ffff8397b78: 0xb2    0xf1    0xfd    0x98    0xe4    0x75    0x3e    0x46
+  0x7ffff8397b80: 0x76    0x9b    0x9c    0xc2    0xd0    0x2d    0xb2    0x74
+
+
+  At memeory allocation, first 8bytes are nullized, but variable itself( sigBuff) is not NULL.
+  So if statement, "if ( sigBuff == NULL) " is not effective at all.
+
+  Need to use the memory value itself or check memory's availability( is it already freed or not )
+
+  Also mentioned at 2.C, signature variable also need to be handled.
+
+
+

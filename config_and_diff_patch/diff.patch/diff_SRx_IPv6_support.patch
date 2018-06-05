@@ -1,0 +1,28 @@
+diff --git a/bgpd/bgp_route.c b/bgpd/bgp_route.c
+index f96f557..a0950f7 100644
+--- a/bgpd/bgp_route.c
++++ b/bgpd/bgp_route.c
+@@ -2803,7 +2803,7 @@ static void prefix_to_IPPrefix (struct prefix* src, IPPrefix* dst)
+ {
+   dst->length = src->prefixlen;
+ 
+-#ifdef HAVE_UPV6
++#ifdef HAVE_IPV6
+   dst->ip.version = GET_VERSION_OF_AF (src->family);
+   memcpy (&dst->ip.addr, &src->u, 16);
+ #else
+diff --git a/src/server/command_handler.c b/src/server/command_handler.c
+index e46447f..c3cc33b 100644
+--- a/src/server/command_handler.c
++++ b/src/server/command_handler.c
+@@ -375,8 +375,8 @@ static bool _processUpdateValidation(CommandHandler* cmdHandler,
+                                 (SRXRPOXY_BasicHeader_VerifyRequest*)item->data;
+ 
+   // 1. get an idea what validations are requested:
+-  bool originVal = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN);
+-  bool pathVal   = _isSet(bhdr->type, SRX_PROXY_FLAGS_VERIFY_PATH);
++  bool originVal = _isSet(bhdr->flags, SRX_PROXY_FLAGS_VERIFY_PREFIX_ORIGIN);
++  bool pathVal   = _isSet(bhdr->flags, SRX_PROXY_FLAGS_VERIFY_PATH);
+   SRxUpdateID updateID = (SRxUpdateID)item->dataID;
+ 
+   if (!originVal && !pathVal)

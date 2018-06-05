@@ -1,0 +1,33 @@
+  827  rpm -q openssl
+  828  sudo yum update openssl
+  829  sudo yum install openssl
+  833  cd openssl-1.0.0j
+ 1006  ll /usr/local/ssl/include/openssl/
+
+
+# generate the EC parameters, setting the keytype up
+ 1042  /usr/local/ssl/bin/openssl ecparam -name prime256v1 -genkey -out test_pri_key
+ 1047  openssl ecparam -name prime256v1 -genkey -text -out
+
+ 1048  /usr/local/ssl/bin/openssl ecparam -name prime256v1 -genkey -text -out
+ 1049  /usr/local/ssl/bin/openssl ecparam -name prime256v1 -genkey -text
+ 1050  /usr/local/ssl/bin/openssl ecparam -name prime256v1 -genkey -text -noout
+ 1051  /usr/local/ssl/bin/openssl ecparam -name prime256v1 -genkey -text -C
+
+# generate the certificate signing request
+ 1054  /usr/local/ssl/bin/openssl req -new -batch -config router-key.cnf -key test_pri_key -out test_csr
+ 1057  /usr/local/ssl/bin/openssl req -in test_csr -text
+
+# regenerate the certificate signing request with the correct subject
+ 1059  /usr/local/ssl/bin/openssl req -new -batch -subj /CN=45CAD0AC44F77EFAA94602E9984305215BF47DCD -config router-key.cnf -key test_pri_key -out test_csr2
+ 1064  /usr/local/ssl/bin/openssl req -in test_csr2 -text
+ 1065  /usr/local/ssl/bin/openssl req -in test_csr -text
+
+# self-sign the certificate
+ 1066  /usr/local/ssl/bin/openssl x509 -sha256 -extfile router-key.cnf -extensions bgpsec_router_ext -set_serial `date +%Y%m%d0001` -in test_csr2 -outform DER -out test_pub_cert_file -req -signkey test_pri_key -days 365
+
+# extract public key from private
+ /usr/local/ssl/bin/openssl ec -in test_pri_key.private -pubout -out test_pubkey.pub
+
+# display certificate
+ /usr/local/ssl/bin/openssl x509 -inform der -in <file> -text

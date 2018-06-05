@@ -1,0 +1,809 @@
+ls1.vm05-antd [63]{~}->
+ls1.vm05-antd [63]{~}-> ping n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+PING pc52.emulab2.antd.nist.gov (10.0.31.52) 56(84) bytes of data.
+64 bytes from 10.0.31.52: icmp_seq=1 ttl=62 time=0.613 ms
+64 bytes from 10.0.31.52: icmp_seq=2 ttl=62 time=0.670 ms
+^C
+--- pc52.emulab2.antd.nist.gov ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1337ms
+rtt min/avg/max/mdev = 0.613/0.641/0.670/0.038 ms
+ls1.vm05-antd [64]{~}-> ping n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+PING pc52.emulab2.antd.nist.gov (10.0.31.52) 56(84) bytes of data.
+64 bytes from 10.0.31.52: icmp_seq=1 ttl=62 time=0.576 ms
+64 bytes from 10.0.31.52: icmp_seq=2 ttl=62 time=0.622 ms
+^C
+--- pc52.emulab2.antd.nist.gov ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1375ms
+rtt min/avg/max/mdev = 0.576/0.599/0.622/0.023 ms
+ls1.vm05-antd [64]{~}-> ssh -Y n2.ovs1.bgp-srx.emulab2.antd.nist.gov
+The authenticity of host 'n2.ovs1.bgp-srx.emulab2.antd.nist.gov (10.0.31.52)' can't be established.
+RSA key fingerprint is e5:03:07:ff:02:8c:f3:66:41:2c:0f:72:9c:c7:2b:16.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'n2.ovs1.bgp-srx.emulab2.antd.nist.gov,10.0.31.52' (RSA) to the list of known hosts.
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Mon May 23 17:24:40 2016 from 32-141.antd.nist.gov
+kyehwanl@n2:~$
+kyehwanl@n2:~$
+kyehwanl@n2:~$ ll
+total 83M
+-rw-r--r--  1 kyehwanl bgp-srx  64M Jun  6  2012 kernel-2.6.43.8-1.fc15.src.rpm
+-rw-r--r--  1 kyehwanl bgp-srx 9.1M Jul 27  2012 website_viptailor.tar.gz
+drwxr-xr-x  6 kyehwanl bgp-srx  512 Jul 27  2012 website_yi/
+-rw-r--r--  1 kyehwanl bgp-srx 1.3K Jan 31  2013 spf13-vim.sh
+-rwxr--r--  1 kyehwanl bgp-srx  835 Feb  2  2013 colortest.py*
+-rw-r--r--  1 kyehwanl bgp-srx 1.8K Feb  2  2013 colortest.pl
+-rwxr--r--  1 kyehwanl bgp-srx  119 Feb 12  2013 script_make_screen.sh*
+-rw-r--r--  1 root     bgp-srx  11M Jun 27  2013 avior-1.3_linux_x64.jar
+drwxr-xr-x  9 kyehwanl bgp-srx  512 Aug 20  2013 rpmbuild/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 Aug 22  2014 repository_bkup/
+drwxr-xr-x  8 kyehwanl bgp-srx  512 Mar 19  2015 Bird_test/
+-rwxr-xr-x  1 kyehwanl bgp-srx  219 Mar 20  2015 vf*
+-rw-r--r--  1 kyehwanl bgp-srx   97 Apr  9  2015 rootpwd_emulab
+-rwxr--r--  1 kyehwanl bgp-srx  937 Apr 29  2015 make_cscope.sh*
+drwxr-xr-x 10 kyehwanl bgp-srx  512 Nov 24 11:07 RPKI_test/
+drwxr-xr-x  5 kyehwanl bgp-srx  512 Feb 29 13:50 test_git/
+drwxr-xr-x 39 kyehwanl bgp-srx 2.0K Mar  2 16:55 old/
+drwxr-xr-x  7 kyehwanl bgp-srx  512 Mar 11 01:38 proj-bgp/
+drwxr-xr-x 12 kyehwanl bgp-srx 1.0K Mar 23 13:24 ubuntu_test/
+drwxr-x---  4 kyehwanl bgp-srx 1.5K Mar 25 12:40 Shell_Script/
+drwxr-xr-x 36 kyehwanl bgp-srx 2.0K Apr 26 18:38 srx_test1/
+drwxr-xr-x 15 kyehwanl bgp-srx 1.0K Apr 28 00:24 Programming/
+drwxr-xr-x  5 kyehwanl bgp-srx 2.0K Apr 29 17:03 config_and_diff_patch/
+-rwxr-xr-x  1 kyehwanl bgp-srx  625 May  1 03:09 run_bgpd.sh*
+drwxr-xr-x 42 kyehwanl bgp-srx 2.5K May  3 13:07 Download/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 13 02:30 VirtualBox VMs/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 May 23 19:30 SDN_test/
+kyehwanl@n2:~$ ifconfig
+br0       Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet addr:10.1.23.2  Bcast:10.1.23.255  Mask:255.255.255.0
+          inet6 addr: fe80::842a:66ff:fe79:b8ca/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:2696 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2863 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:272658 (272.6 KB)  TX bytes:276388 (276.3 KB)
+
+br1       Link encap:Ethernet  HWaddr fa:8c:d8:08:19:48
+          inet addr:10.1.24.2  Bcast:10.1.24.255  Mask:255.255.255.0
+          inet6 addr: fe80::8c4f:29ff:feee:8c45/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:50 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:50 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3716 (3.7 KB)  TX bytes:4132 (4.1 KB)
+
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9b
+          inet addr:10.0.31.52  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9b/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1230294 errors:0 dropped:177057 overruns:0 frame:0
+          TX packets:34143 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1061648995 (1.0 GB)  TX bytes:6032384 (6.0 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9d
+          inet addr:10.1.12.2  Bcast:10.1.12.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9d/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:58040 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:56048 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:6347260 (6.3 MB)  TX bytes:6120754 (6.1 MB)
+
+eth3      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:a1
+          inet6 addr: fe80::221:9bff:fe9d:bea1/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:9709 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:17861 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:806598 (806.5 KB)  TX bytes:1454198 (1.4 MB)
+
+eth4      Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet6 addr: fe80::210:18ff:fe69:a034/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1630 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9923 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:218255 (218.2 KB)  TX bytes:764207 (764.2 KB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:1798 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1798 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3320230 (3.3 MB)  TX bytes:3320230 (3.3 MB)
+
+kyehwanl@n2:~$ ping 10.1.12.1
+PING 10.1.12.1 (10.1.12.1) 56(84) bytes of data.
+64 bytes from 10.1.12.1: icmp_seq=1 ttl=64 time=0.182 ms
+64 bytes from 10.1.12.1: icmp_seq=2 ttl=64 time=0.244 ms
+^C
+--- 10.1.12.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.182/0.213/0.244/0.031 ms
+kyehwanl@n2:~$ ssh n1
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Mon May 23 17:25:12 2016 from 32-141.antd.nist.gov
+kyehwanl@n1:~$ exit
+logout
+Connection to n1 closed.
+kyehwanl@n2:~$
+kyehwanl@n2:~$ sudo -s
+root@n2:~# ovs-appctl fdb/show br0
+ port  VLAN  MAC                Age
+    1     0  00:10:18:69:a0:80   46
+LOCAL     0  00:10:18:69:a0:34   26
+    2     0  00:21:9b:9d:c9:68   26
+root@n2:~#
+root@n2:~#
+root@n2:~#
+root@n2:~# apt-get install opendaylight
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: Unable to locate package opendaylight
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+            is_connected: true
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# cd SDN_test/
+root@n2:~/SDN_test# exit                                                                                                                                     exit
+kyehwanl@n2:~$ pwd
+/users/kyehwanl
+kyehwanl@n2:~$ cd SDN_test/
+kyehwanl@n2:~/SDN_test$ wget https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.2-Beryllium.tar.gz
+--2016-05-24 13:26:16--  https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.2-Beryllium.tar.gz
+Resolving nexus.opendaylight.org (nexus.opendaylight.org)... 72.3.167.142, 2001:4800:1681:103:ff7a:1993:14ea:bc0d
+Connecting to nexus.opendaylight.org (nexus.opendaylight.org)|72.3.167.142|:443... connected.
+HTTP request sent, awaiting response... 404 Not Found
+2016-05-24 13:26:16 ERROR 404: Not Found.
+
+kyehwanl@n2:~/SDN_test$ wget https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.0-Beryllium.tar.gz
+--2016-05-24 13:26:23--  https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.0-Beryllium.tar.gz
+Resolving nexus.opendaylight.org (nexus.opendaylight.org)... 72.3.167.142, 2001:4800:1681:103:ff7a:1993:14ea:bc0d
+Connecting to nexus.opendaylight.org (nexus.opendaylight.org)|72.3.167.142|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 293750321 (280M) [application/x-gzip]
+Saving to: ‘distribution-karaf-0.4.0-Beryllium.tar.gz’
+
+100%[===================================================================================================================>] 293,750,321 1.01MB/s   in 5m 22s
+
+2016-05-24 13:31:45 (891 KB/s) - ‘distribution-karaf-0.4.0-Beryllium.tar.gz’ saved [293750321/293750321]
+
+kyehwanl@n2:~/SDN_test$ ll
+total 281M
+drwxr-xr-x 10 kyehwanl bgp-srx  512 Feb 12 16:28 Mininet/
+-rw-r--r--  1 kyehwanl bgp-srx 281M Feb 16 07:13 distribution-karaf-0.4.0-Beryllium.tar.gz
+-rw-r--r--  1 kyehwanl bgp-srx  683 Apr 25 16:42 openvswitch-files
+-rw-r--r--  1 kyehwanl bgp-srx 5.4K Apr 25 18:20 datapath_counter
+-rw-r--r--  1 kyehwanl bgp-srx 8.2K May  3 15:27 tc_queue
+-rw-r--r--  1 kyehwanl bgp-srx  303 May 23 19:17 ovs_configure_command_controller
+-rw-r--r--  1 kyehwanl bgp-srx 1.6K May 24 12:34 ovs_configure_command_switch
+kyehwanl@n2:~/SDN_test$ tar xvfz distribution-karaf-0.4.0-Beryllium.tar.gz
+distribution-karaf-0.4.0-Beryllium/configuration/
+distribution-karaf-0.4.0-Beryllium/data/
+distribution-karaf-0.4.0-Beryllium/data/tmp/
+distribution-karaf-0.4.0-Beryllium/deploy/
+distribution-karaf-0.4.0-Beryllium/etc/
+distribution-karaf-0.4.0-Beryllium/externalapps/
+distribution-karaf-0.4.0-Beryllium/lib/
+distribution-karaf-0.4.0-Beryllium/lib/bin/
+distribution-karaf-0.4.0-Beryllium/lib/endorsed/
+distribution-karaf-0.4.0-Beryllium/lib/ext/
+distribution-karaf-0.4.0-Beryllium/system/
+distribution-karaf-0.4.0-Beryllium/system/biz/
+distribution-karaf-0.4.0-Beryllium/system/biz/aQute/
+distribution-karaf-0.4.0-Beryllium/system/biz/aQute/bnd/
+distribution-karaf-0.4.0-Beryllium/system/biz/aQute/bnd/bndlib/
+distribution-karaf-0.4.0-Beryllium/system/biz/aQute/bnd/bndlib/2.2.0/
+distribution-karaf-0.4.0-Beryllium/system/colt/
+distribution-karaf-0.4.0-Beryllium/system/colt/colt/
+distribution-karaf-0.4.0-Beryllium/system/colt/colt/1.2.0/
+distribution-karaf-0.4.0-Beryllium/system/com/
+distribution-karaf-0.4.0-Beryllium/system/com/codahale/
+distribution-karaf-0.4.0-Beryllium/system/com/codahale/metrics/
+distribution-karaf-0.4.0-Beryllium/system/com/codahale/metrics/metrics-core/
+distribution-karaf-0.4.0-Beryllium/system/com/codahale/metrics/metrics-core/3.0.1/
+distribution-karaf-0.4.0-Beryllium/system/com/codahale/metrics/metrics-core/3.0.2/
+distribution-karaf-0.4.0-Beryllium/system/com/datastax/
+distribution-karaf-0.4.0-Beryllium/bin/status.bat
+...
+distribution-karaf-0.4.0-Beryllium/bin/stop.bat
+kyehwanl@n2:~/SDN_test$ ll
+total 281M
+drwxr-xr-x 10 kyehwanl bgp-srx  512 Feb 12 16:28 Mininet/
+-rw-r--r--  1 kyehwanl bgp-srx 281M Feb 16 07:13 distribution-karaf-0.4.0-Beryllium.tar.gz
+-rw-r--r--  1 kyehwanl bgp-srx  683 Apr 25 16:42 openvswitch-files
+-rw-r--r--  1 kyehwanl bgp-srx 5.4K Apr 25 18:20 datapath_counter
+-rw-r--r--  1 kyehwanl bgp-srx 8.2K May  3 15:27 tc_queue
+-rw-r--r--  1 kyehwanl bgp-srx  303 May 23 19:17 ovs_configure_command_controller
+-rw-r--r--  1 kyehwanl bgp-srx 1.6K May 24 12:34 ovs_configure_command_switch
+drwxr-xr-x 10 kyehwanl bgp-srx  512 May 24 13:38 distribution-karaf-0.4.0-Beryllium/
+kyehwanl@n2:~/SDN_test$ cd distribution-karaf-0.4.0-Beryllium/
+kyehwanl@n2:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ll
+total 30K
+-rw-r--r--  1 kyehwanl bgp-srx  12K Feb 15 19:16 LICENSE
+-rw-r--r--  1 kyehwanl bgp-srx  329 Feb 15 19:32 version.properties
+drwxr-xr-x  2 kyehwanl bgp-srx  512 Feb 15 19:32 bin/
+drwxr-xr-x  3 kyehwanl bgp-srx  512 Feb 16 04:49 data/
+drwxr-xr-x  2 kyehwanl bgp-srx  512 May 24 13:38 externalapps/
+drwxr-xr-x  2 kyehwanl bgp-srx 2.0K May 24 13:38 etc/
+drwxr-xr-x  2 kyehwanl bgp-srx  512 May 24 13:38 deploy/
+drwxr-xr-x  2 kyehwanl bgp-srx  512 May 24 13:38 configuration/
+drwxr-xr-x 27 kyehwanl bgp-srx 1.0K May 24 13:38 system/
+drwxr-xr-x  5 kyehwanl bgp-srx  512 May 24 13:38 lib/
+kyehwanl@n2:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ xterm
+^Ckyehwanl@n2:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ ./bin/karaf
+karaf: JAVA_HOME not set; results may vary
+karaf: java command not found
+kyehwanl@n2:~/SDN_test/distribution-karaf-0.4.0-Beryllium$ cd
+kyehwanl@n2:~$ sudo -s
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+            is_connected: true
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl del-controller
+ovs-vsctl: 'del-controller' command requires at least 1 arguments
+root@n2:~# ovs-vsctl del-controller br0
+root@n2:~#
+root@n2:~#
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl set-controller br0
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl del-controller br0
+root@n2:~# cat ~/SDN_test/
+datapath_counter                           distribution-karaf-0.4.0-Beryllium.tar.gz  openvswitch-files                          ovs_configure_command_switch
+distribution-karaf-0.4.0-Beryllium/        Mininet/                                   ovs_configure_command_controller           tc_queue
+root@n2:~# cat ~/SDN_test/ovs_configure_command_switch
+503  ovs-ofctl show br0
+505  ovs-ofctl dump-ports br0
+506  ovs-ofctl dump-flows br0
+509  ovs-ofctl dump-tables br0
+510  ovs-vsctl show | grep port
+512  ovs-vsctl list-ports br0
+513  ovs-vsctl list-ports
+
+518  ovs-ofctl dump-ports br1
+519  ovs-ofctl dump-ports br0
+
+522  ovs-ofctl dump-flows br0
+
+527  ovs-vsctl set-controller br0 tcp:10.1.12.1:6633
+
+
+481  ovs-vsctl add-br br0
+485  ovs-vsctl list-br
+486  ovs-vsctl add-port br0 eth4
+487  ovs-vsctl show
+488  ifconfig eth4 0
+489  ifconfig br0 10.1.23.2 netmask 255.255.255.0 up
+490  route -n
+
+491  ping 10.1.23.3
+492  ping 10.1.12.1
+
+497  ovs-vsctl add-br br1
+499  ovs-vsctl add-port br1 eth3
+500  ifconfig eth3 0
+501  ifconfig br1 10.1.24.2 netmask 255.255.255.0 up
+
+512  ip route add 10.1.23.0/24 via 10.1.23.2 dev br0
+513  ip route replace 10.1.23.0/24 via 10.1.23.2 dev br0
+514  ip route replace 10.1.24.0/24 via 10.1.23.2 dev br0
+
+518  ovs-ofctl dump-flows br0
+519  ovs-ofctl dump-ports br0
+
+530  ovs-appctl bridge/dump-flows br0
+531  ovs-appctl dpif/dump-flows br0
+532  ovs-appctl vlog/list
+
+
+< show mac table>
+root@n2:~# ovs-appctl fdb/show br0
+ port  VLAN  MAC                Age
+    1     0  00:10:18:69:a0:80   46
+LOCAL     0  00:10:18:69:a0:34   26
+    2     0  00:21:9b:9d:c9:68   26
+root@n2:~# ovs-vsctl set-controller br0 tcp:10.1.12.1:6633
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+            is_connected: true
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl del-controller br0 tcp:10.1.12.1:6633
+ovs-vsctl: 'del-controller' command takes at most 1 arguments
+root@n2:~# ovs-vsctl del-controller br0
+root@n2:~#
+root@n2:~#
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# service openvswitch-switch status
+openvswitch-switch start/running
+root@n2:~# service openvswitch-switch stop
+openvswitch-switch stop/waiting
+root@n2:~# service openvswitch-switch start
+openvswitch-switch start/running
+root@n2:~#
+root@n2:~#
+root@n2:~# ifconfig
+br0       Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet addr:10.1.23.2  Bcast:10.1.23.255  Mask:255.255.255.0
+          inet6 addr: fe80::842a:66ff:fe79:b8ca/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:27030 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:27651 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3055964 (3.0 MB)  TX bytes:2768826 (2.7 MB)
+
+br1       Link encap:Ethernet  HWaddr fa:8c:d8:08:19:48
+          inet addr:10.1.24.2  Bcast:10.1.24.255  Mask:255.255.255.0
+          inet6 addr: fe80::8c4f:29ff:feee:8c45/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:50 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:50 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3716 (3.7 KB)  TX bytes:4132 (4.1 KB)
+
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9b
+          inet addr:10.0.31.52  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9b/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1954450 errors:0 dropped:182913 overruns:0 frame:0
+          TX packets:967395 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1708110239 (1.7 GB)  TX bytes:701858219 (701.8 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9d
+          inet addr:10.1.12.2  Bcast:10.1.12.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9d/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:222557 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:144443 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:22105308 (22.1 MB)  TX bytes:31604070 (31.6 MB)
+
+eth3      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:a1
+          inet6 addr: fe80::221:9bff:fe9d:bea1/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:19808 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:29427 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:2012879 (2.0 MB)  TX bytes:2513907 (2.5 MB)
+
+eth4      Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet6 addr: fe80::210:18ff:fe69:a034/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:15876 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:25858 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1893386 (1.8 MB)  TX bytes:2496076 (2.4 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:2689 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2689 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:6572446 (6.5 MB)  TX bytes:6572446 (6.5 MB)
+
+root@n2:~# ssh n4
+The authenticity of host 'n4 (10.1.24.4)' can't be established.
+RSA key fingerprint is e5:03:07:ff:02:8c:f3:66:41:2c:0f:72:9c:c7:2b:16.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'n4,10.1.24.4' (RSA) to the list of known hosts.
+root@n4's password:
+^C
+root@n2:~# exit
+exit
+kyehwanl@n2:~$ ssh n4
+Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 24 14:25:38 2016 from n3-link23
+kyehwanl@n4:~$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:66
+          inet addr:10.0.31.80  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c966/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1385909 errors:0 dropped:182914 overruns:0 frame:0
+          TX packets:103647 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1262249553 (1.2 GB)  TX bytes:10585908 (10.5 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:68
+          inet addr:10.1.24.4  Bcast:10.1.24.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:c968/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:24762 errors:0 dropped:4685 overruns:0 frame:0
+          TX packets:19851 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:2217012 (2.2 MB)  TX bytes:2021691 (2.0 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:152 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:152 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:29606 (29.6 KB)  TX bytes:29606 (29.6 KB)
+
+kyehwanl@n4:~$
+kyehwanl@n4:~$
+kyehwanl@n4:~$ exit
+logout
+Connection to n4 closed.
+kyehwanl@n2:~$ sudo -s
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ovs-vsctl set-controller br0 tcp:10.1.12.1:6633
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~# ping 10.1.12.1
+PING 10.1.12.1 (10.1.12.1) 56(84) bytes of data.
+64 bytes from 10.1.12.1: icmp_seq=1 ttl=64 time=0.208 ms
+64 bytes from 10.1.12.1: icmp_seq=2 ttl=64 time=0.182 ms
+^C
+--- 10.1.12.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.182/0.195/0.208/0.013 ms
+root@n2:~#
+root@n2:~# ovs-vsctl show
+ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+    Bridge "br1"
+        Port "br1"
+            Interface "br1"
+                type: internal
+    Bridge "br0"
+        Controller "tcp:10.1.12.1:6633"
+            is_connected: true
+        Port "eth4"
+            Interface "eth4"
+        Port "eth3"
+            Interface "eth3"
+        Port "br0"
+            Interface "br0"
+                type: internal
+    ovs_version: "2.0.2"
+root@n2:~#
+root@n2:~#
+root@n2:~# exit
+exit
+kyehwanl@n2:~$ sudo -s
+root@n2:~# tmux
+
+root@n2:~# ifconfig
+br0       Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet addr:10.1.23.2  Bcast:10.1.23.255  Mask:255.255.255.0
+          inet6 addr: fe80::842a:66ff:fe79:b8ca/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:27159 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:27813 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3073726 (3.0 MB)  TX bytes:2788312 (2.7 MB)
+
+br1       Link encap:Ethernet  HWaddr fa:8c:d8:08:19:48
+          inet addr:10.1.24.2  Bcast:10.1.24.255  Mask:255.255.255.0
+          inet6 addr: fe80::8c4f:29ff:feee:8c45/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:50 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:50 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:3716 (3.7 KB)  TX bytes:4132 (4.1 KB)
+
+eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9b
+          inet addr:10.0.31.52  Bcast:10.0.31.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9b/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1957357 errors:0 dropped:183665 overruns:0 frame:0
+          TX packets:968623 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1708398647 (1.7 GB)  TX bytes:702070293 (702.0 MB)
+
+eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:9d
+          inet addr:10.1.12.2  Bcast:10.1.12.255  Mask:255.255.255.0
+          inet6 addr: fe80::221:9bff:fe9d:be9d/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:223637 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:146044 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:22253508 (22.2 MB)  TX bytes:32044924 (32.0 MB)
+
+eth3      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:a1
+          inet6 addr: fe80::221:9bff:fe9d:bea1/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:19943 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:29582 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:2031311 (2.0 MB)  TX bytes:2533413 (2.5 MB)
+
+eth4      Link encap:Ethernet  HWaddr 00:10:18:69:a0:34
+          inet6 addr: fe80::210:18ff:fe69:a034/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:15884 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:25893 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1894196 (1.8 MB)  TX bytes:2499332 (2.4 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:2689 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2689 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:6572446 (6.5 MB)  TX bytes:6572446 (6.5 MB)
+
+root@n2:~# exit
+logout
+
+[0] 0:bash*                                                                                                                                                   "n2.ovs1.bgp-srx.emulab" 14:59 24-May-16
+[exited]
+root@n2:~# exit
+exit
+kyehwanl@n2:~$ tmux
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+logout                                                                                             │exit
+          RX bytes:22360399 (22.3 MB)  TX bytes:34259853 (34.2 MB)                                       │kyehwanl@n2:~$ ssh n1
+                                                                                                         │Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-33-generic x86_64)
+eth3      Link encap:Ethernet  HWaddr 00:21:9b:9d:be:a1                                                  │
+          inet6 addr: fe80::221:9bff:fe9d:bea1/64 Scope:Link                                             │ * Documentation:  https://help.ubuntu.com/
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1                                             │Last login: Tue May 24 14:22:13 2016 from n3-link23
+          RX packets:20059 errors:0 dropped:0 overruns:0 frame:0                                         │kyehwanl@n1:~$ ifconfig
+          TX packets:29819 errors:0 dropped:0 overruns:0 carrier:0                                       │eth0      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:15
+          collisions:0 txqueuelen:1000                                                                   │          inet addr:10.0.31.70  Bcast:10.0.31.255  Mask:255.255.255.0
+          RX bytes:2042105 (2.0 MB)  TX bytes:2557659 (2.5 MB)                                           │          inet6 addr: fe80::221:9bff:fe9d:c915/64 Scope:Link
+                                                                                                         │          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+eth4      Link encap:Ethernet  HWaddr 00:10:18:69:a0:34                                                  │          RX packets:81127 errors:0 dropped:1373 overruns:0 frame:0
+          inet6 addr: fe80::210:18ff:fe69:a034/64 Scope:Link                                             │          TX packets:35701 errors:0 dropped:0 overruns:0 carrier:0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1                                             │          collisions:0 txqueuelen:1000
+          RX packets:16030 errors:0 dropped:0 overruns:0 frame:0                                         │          RX bytes:85919487 (85.9 MB)  TX bytes:14910026 (14.9 MB)
+          TX packets:26115 errors:0 dropped:0 overruns:0 carrier:0                                       │
+          collisions:0 txqueuelen:1000                                                                   │eth1      Link encap:Ethernet  HWaddr 00:21:9b:9d:c9:17
+          RX bytes:1908606 (1.9 MB)  TX bytes:2522146 (2.5 MB)                                           │          inet addr:10.1.12.1  Bcast:10.1.12.255  Mask:255.255.255.0
+                                                                                                         │          inet6 addr: fe80::221:9bff:fe9d:c917/64 Scope:Link
+lo        Link encap:Local Loopback                                                                      │          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          inet addr:127.0.0.1  Mask:255.0.0.0                                                            │          RX packets:4371 errors:0 dropped:0 overruns:0 frame:0
+          inet6 addr: ::1/128 Scope:Host                                                                 │          TX packets:2494 errors:0 dropped:0 overruns:0 carrier:0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1                                                       │          collisions:0 txqueuelen:1000
+          RX packets:2689 errors:0 dropped:0 overruns:0 frame:0                                          │          RX bytes:2719815 (2.7 MB)  TX bytes:332495 (332.4 KB)
+          TX packets:2689 errors:0 dropped:0 overruns:0 carrier:0                                        │
+          collisions:0 txqueuelen:0                                                                      │lo        Link encap:Local Loopback
+          RX bytes:6572446 (6.5 MB)  TX bytes:6572446 (6.5 MB)                                           │          inet addr:127.0.0.1  Mask:255.0.0.0
+                                                                                                         │          inet6 addr: ::1/128 Scope:Host
+kyehwanl@n2:~$                                                                                           │          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+kyehwanl@n2:~$ ping 10.1.12.1                                                                            │          RX packets:123 errors:0 dropped:0 overruns:0 frame:0
+PING 10.1.12.1 (10.1.12.1) 56(84) bytes of data.                                                         │          TX packets:123 errors:0 dropped:0 overruns:0 carrier:0
+64 bytes from 10.1.12.1: icmp_seq=1 ttl=64 time=0.209 ms                                                 │          collisions:0 txqueuelen:0
+64 bytes from 10.1.12.1: icmp_seq=2 ttl=64 time=0.175 ms                                                 │          RX bytes:10559 (10.5 KB)  TX bytes:10559 (10.5 KB)
+^C                                                                                                       │
+--- 10.1.12.1 ping statistics ---                                                                        │kyehwanl@n1:~$ exit
+2 packets transmitted, 2 received, 0% packet loss, time 1000ms                                           │logout
+rtt min/avg/max/mdev = 0.175/0.192/0.209/0.017 ms                                                        │Connection to n1 closed.
+kyehwanl@n2:~$ route -n                                                                                  │kyehwanl@n2:~$ sudo 0s
+Kernel IP routing table                                                                                  │sudo: 0s: command not found
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface                            │kyehwanl@n2:~$ sudo -s
+0.0.0.0         10.0.31.201     0.0.0.0         UG    0      0        0 eth0                             │root@n2:~# ovs-vsctl set-controller br0 tcp:10.0.31.70:6633
+10.0.31.0       0.0.0.0         255.255.255.0   U     0      0        0 eth0                             │root@n2:~#
+10.1.12.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1                             │root@n2:~#
+10.1.23.0       10.1.23.2       255.255.255.0   UG    0      0        0 br0                              │root@n2:~# ovs-vsctl show
+10.1.24.0       10.1.23.2       255.255.255.0   UG    0      0        0 br0                              │ce2ed124-473b-4e5e-b61f-28b9c6da38d9
+kyehwanl@n2:~$ ping 10.1.23.2                                                                            │    Bridge "br1"
+PING 10.1.23.2 (10.1.23.2) 56(84) bytes of data.                                                         │        Port "br1"
+64 bytes from 10.1.23.2: icmp_seq=1 ttl=64 time=0.039 ms                                                 │            Interface "br1"
+64 bytes from 10.1.23.2: icmp_seq=2 ttl=64 time=0.017 ms                                                 │                type: internal
+^C                                                                                                       │    Bridge "br0"
+--- 10.1.23.2 ping statistics ---                                                                        │        Controller "tcp:10.0.31.70:6633"
+2 packets transmitted, 2 received, 0% packet loss, time 999ms                                            │            is_connected: true
+rtt min/avg/max/mdev = 0.017/0.028/0.039/0.011 ms                                                        │        Port "eth4"
+kyehwanl@n2:~$ ping 10.1.23.3                                                                            │            Interface "eth4"
+PING 10.1.23.3 (10.1.23.3) 56(84) bytes of data.                                                         │        Port "eth3"
+^C                                                                                                       │            Interface "eth3"
+--- 10.1.23.3 ping statistics ---                                                                        │        Port "br0"
+5 packets transmitted, 0 received, 100% packet loss, time 4030ms                                         │            Interface "br0"
+                                                                                                         │                type: internal
+kyehwanl@n2:~$ ping 10.1.24.4                                                                            │    ovs_version: "2.0.2"
+PING 10.1.24.4 (10.1.24.4) 56(84) bytes of data.                                                         │root@n2:~# ovs-appctl fdb/show br0
+^C                                                                                                       │ port  VLAN  MAC                Age
+--- 10.1.24.4 ping statistics ---                                                                        │    1     0  00:10:18:69:a0:80  122
+77 packets transmitted, 0 received, 100% packet loss, time 76000ms                                       │    2     0  00:21:9b:9d:c9:68  122
+                                                                                                         │LOCAL     0  00:10:18:69:a0:34  122
+kyehwanl@n2:~$                                                                                           │root@n2:~#
+Broadcast message from kyehwanl@n2.ovs1.bgp-srx.emulab2.antd.nist.gov                                                                                                             "kyehwanl@n3:~" 13:08 25-May-16
+        (/dev/pts/9) at 13:08 ...
+
+The system is going down for reboot NOW!
+Connection to n2.ovs1.bgp-srx.emulab2.antd.nist.gov closed by remote host.
+Connection to n2.ovs1.bgp-srx.emulab2.antd.nist.gov closed.
+ls1.vm05-antd [65]{~}->

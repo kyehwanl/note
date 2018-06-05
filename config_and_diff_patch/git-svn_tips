@@ -1,0 +1,213 @@
+1. General Use
+==============
+
+(1) clone
+git svn clone -r713:715 https://ls2/svn/users/kyehwanl/mkbrdata/trunk/   svn.git
+git svn clone -r1188 https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/srx-server/trunk
+git svn clone -r1187 https://is1.antd.nist.gov/svn/proj-bgp/bgp-srx/quagga-srx/trunk quaggasrx
+
+
+(2) svn external repository
+git svn show-externals | perl -ne 'if (/^\/(.*) (.*)/) { print "git svn clone -r HEAD $2 $1\n";}' | bash
+
+
+
+
+
+2. Specific file Selectively Upload
+===================================
+
+When a certain file was changed and committed into git index. But there were lots of other files marked 
+as modified. For example, make command makes objects and other files except source or header files.
+In order to selectively commit source/header files, the following steps using 'git stash' are very helpful.
+
+
+(1) modify a source file  - here, bgp_router.c
+
+[kyehwanl@node1 bgpd]$ git st
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   bgp_route.c         <==== here, desired to commit only this file
+#       modified:   ../doc/quagga.info
+#       modified:   ../doc/quagga.info-1
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       ../autom4te.cache/
+#       bgpd
+#       ../pkgsrc/bgpd.sh
+....<snip>.....
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+(2) add and status
+
+[kyehwanl@node1 bgpd]$ git add bgp_route.c
+[kyehwanl@node1 bgpd]$ git st
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#       modified:   bgp_route.c         <========  source files is staged 
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   ../doc/quagga.info
+#       modified:   ../doc/quagga.info-1
+#       modified:   ../doc/quagga.info-2
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       ../autom4te.cache/
+#       bgpd
+#       ../pkgsrc/bgpd.sh
+....<snip>.....
+
+
+
+
+
+(3) commit only the source file
+
+[kyehwanl@node1 bgpd]$ git commit -m 'bgp_route.c modified'
+[master 1150519] bgp_route.c modified
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[kyehwanl@node1 bgpd]$ git st
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   ../doc/quagga.info
+#       modified:   ../doc/quagga.info-1
+#       modified:   ../doc/quagga.info-2
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       ../autom4te.cache/
+#       bgpd
+#       ../pkgsrc/bgpd.sh
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+[kyehwanl@node1 bgpd]$ git lgodb
+* 1150519 (HEAD, master) bgp_route.c modified
+* 005b017 (git-svn) make branch and test inside
+
+[kyehwanl@node1 bgpd]$ git diff --stat HEAD~
+ bgpd/bgp_route.c   |    2 +-
+ doc/quagga.info    |    2 +-
+ doc/quagga.info-1  |    2 +-
+ doc/quagga.info-2  |  Bin 72055 -> 72055 bytes
+ doc/stamp-vti      |    4 ++--
+ doc/version.texi   |    4 ++--
+ redhat/quagga.spec |    2 +-
+ 7 files changed, 8 insertions(+), 8 deletions(-)
+
+
+
+(4) In this status, there are still unstaged files in the working space.
+If you commit into svn repository with 'git svn dcommit', it will FAIL to upload with following errors.
+
+[kyehwanl@node1 bgpd]$ git svn dcommit
+doc/quagga.info: needs update
+doc/quagga.info-1: needs update
+doc/quagga.info-2: needs update
+update-index --refresh: command returned error: 1
+
+
+
+
+(5) Use 'git stash'
+
+[kyehwanl@node1 bgpd]$ git stash
+Saved working directory and index state WIP on master: 1150519 bgp_route.c modified
+HEAD is now at 1150519 bgp_route.c modified
+
+
+ ** (cf) How selectively stash 
+ stage the code you don't want to stash, and run:
+   git stash --keep-index or 
+   git stash -p 
+
+
+
+(6) Run 'git svn dcommit' again
+
+[kyehwanl@node1 bgpd]$ git svn dcommit
+Committing to svn+ssh://localhost/users/kyehwanl/srx_test1/test/svnroot/myproject/quaggasrx/branch/test1 ...
+        M       bgpd/bgp_route.c
+Committed r7
+        M       bgpd/bgp_route.c
+r7 = 265a7ce41ea11f909ada164e581a52f5eff159ab (refs/remotes/git-svn)
+No changes between current HEAD and refs/remotes/git-svn
+Resetting to the latest refs/remotes/git-svn
+
+
+
+*** Then, git status shows that only untracked files are left 
+    which has nothing to do with commit
+
+
+[kyehwanl@node1 bgpd]$ git st
+# On branch master
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       ../autom4te.cache/
+#       bgpd
+#       ../pkgsrc/bgpd.sh
+nothing added to commit but untracked files present (use "git add" to track)
+
+
+
+*** 'git stash show' shows all stashed files inside
+
+[kyehwanl@node1 bgpd]$ git stash show
+ doc/quagga.info    |    2 +-
+ doc/quagga.info-1  |    2 +-
+ doc/quagga.info-2  |  Bin 72055 -> 72055 bytes
+ doc/stamp-vti      |    4 ++--
+ doc/version.texi   |    4 ++--
+ redhat/quagga.spec |    2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
+
+
+
+(7) Later, poping up from stash and could continue to work
+
+[kyehwanl@node1 bgpd]$ git stash pop --index
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#       modified:   ../doc/quagga.info
+#       modified:   ../doc/quagga.info-1
+#       modified:   ../doc/quagga.info-2
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       ../autom4te.cache/
+#       bgpd
+#       ../pkgsrc/bgpd.sh
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (b3cfa24a4377cc37f3f8ca27d95b31ced5c94272)
+
+
+
+(optional) Later, you might use 'git rm --cached <unwanted files from workspace>'
+                And then, add these files into .gitignore to completely untrack
+
+
+

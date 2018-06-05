@@ -1,0 +1,53 @@
+
+BIRD MP NLRI test note
+======================
+
+1.Withdrawal Message Comparison 
+
+ * BIRD: Unfeasible Route Length filed + Withdrawn Route + MP_UNREACH_NLRI (Path attribute)
+ * QSRX: Unfeasible Route Length filed + Withdrawn Route
+
+
+ That means, QSRX doesn't implement MP_UNREACH_NLRI 
+
+ * Confimred that if BIRD stopped by keyboard interrupt (hitting Ctrl+C), 
+    BIRD doesn't generate a withdrawal message at all.
+
+
+
+2. TEST
+
+ * purpose: to see if the 3rd node could eliminate the stored prefix info when it receives a withdrawal message.
+    A. first, feed a prefix from the 1st node and send it to the 2nd and then to the last 3rd.
+    B. By terminating a routing process on the 1st node to generate a withdrawal message.
+    C. Observing on the 3rd node to confirm whether the previous stored prefix is removed or not.
+
+ * experiment topology
+
+    (1) BIRD -- BIRD -- BIRD
+    (2) QSRX -- BIRD -- QSRX
+
+ * Result
+    (1) 3rd node (BIRD) didn't get rid of the stored prefix
+    (2) 3rd node (QSRX) removed its stored prefix
+
+
+
+3. Final Result 
+
+ * 1st node BIRD - not generate a notification when the connection shut off
+
+ * 2nd node BIRD - 2 cases, 
+    A. connection loss detected, generate a withdrawal with MP_UNREACH_NLRI
+    B. got a notification (when using QSRx as 1st node), generate a withdrawal with MP_UNREACH_NLRI
+    C. Other problem: if 2nd node BIRD stored 10 prefixes, for example, 
+        it only sends one withdrawal(a first listed prefix) to the peer
+
+ * 3rd node BIRD - ignores a withdrawal with MP_UNREACH_NLRI in BIRD's receive update procedure.
+
+
+
+4. Additionals 
+
+ * BIRD's withdrawal in case multiple prefixes, it made one general(legacy) prefix for withdrawal
+   and multiple MP_UNREACH_NLRI messages

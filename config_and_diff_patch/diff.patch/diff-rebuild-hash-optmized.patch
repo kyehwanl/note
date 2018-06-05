@@ -1,0 +1,970 @@
+--- ./bgpd/bgp_attr.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_attr.c	2017-03-09 16:51:11.000000000 -0500
+@@ -330,6 +330,7 @@ bgp_attr_dup (struct attr *new, struct a
+ 
+   *new = *orig;
+ 
++#if 0
+ #ifdef USE_SRX
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     if(orig->bgpsecPathAttr)
+@@ -342,6 +343,7 @@ bgp_attr_dup (struct attr *new, struct a
+           new->bgpsecPathAttr?new->bgpsecPathAttr->pathSegments:0);
+     }
+ #endif
++#endif
+ 
+   /* if caller provided attr_extra space, use it in any case.
+    *
+@@ -425,6 +427,7 @@ attrhash_key_make (void *p)
+     }
+ 
+ #ifdef USE_SRX
++#if 0
+   struct BgpsecPathAttr *bpa = attr->bgpsecPathAttr;
+   /* only if bgpsec enabled case */
+   if (attr->flag & ATTR_FLAG_BIT (BGP_ATTR_BGPSEC))
+@@ -432,6 +435,8 @@ attrhash_key_make (void *p)
+     if(bpa && bpa->pathSegments && bpa->sigBlocks && bpa->sigBlocks->sigSegments)
+       MIX(bgpsec_path_attr_key_make(bpa));
+   }
++#endif
++  MIX(attr->bgpsecPathAttr);
+ #endif /* USE_SRX */
+ 
+   return key;
+@@ -450,7 +455,7 @@ attrhash_cmp (const void *p1, const void
+       && attr1->community == attr2->community
+       && attr1->med == attr2->med
+ #ifdef USE_SRX
+-      && attr1->bgpsecPathAttr == attr2->bgpsecPathAttr
++      && (bgpsec_path_attr_cmp (attr1->bgpsecPathAttr, attr2->bgpsecPathAttr))
+ #endif
+       && attr1->local_pref == attr2->local_pref)
+     {
+@@ -576,6 +581,7 @@ bgp_attr_intern (struct attr *attr)
+             attre->transit->refcnt++;
+         }
+     }
++#if 0
+ #ifdef USE_SRX
+   if (attr->bgpsecPathAttr && (attr->flag & ATTR_FLAG_BIT (BGP_ATTR_BGPSEC)) )
+   {
+@@ -584,21 +590,26 @@ bgp_attr_intern (struct attr *attr)
+     else
+       attr->bgpsecPathAttr->refcnt++;
+ 
++#if 0
+     if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+       zlog_debug("[BGPSEC] changed or dereferenced attr[%p]->bgpsecPath_Attr:%p AS:%d", \
+           attr, attr->bgpsecPathAttr, attr->bgpsecPathAttr->pathSegments->as);
++#endif
+   }
+ #endif
++#endif
+ 
+   find = (struct attr *) hash_get (attrhash, attr, bgp_attr_hash_alloc);
+   find->refcnt++;
+ 
++#if 0
+ #ifdef USE_SRX
+   if (BGP_DEBUG (bgpsec, BGPSEC))
+     if (find->bgpsecPathAttr) \
+       zlog_debug("[BGPSEC] AFTER find(attrhash...): attr[%p]->bgpsecPath_Attr:%p PathSeg:%p AS:%d",\
+           find, find->bgpsecPathAttr, find->bgpsecPathAttr->pathSegments, find->bgpsecPathAttr->pathSegments->as );
+ #endif
++#endif
+     return find;
+ }
+ 
+@@ -721,13 +732,25 @@ bgp_attr_unintern_sub (struct attr *attr
+ #ifdef USE_SRX__
+   if (attr->bgpsecPathAttr && (attr->flag & ATTR_FLAG_BIT (BGP_ATTR_BGPSEC)) )
+   {
++    UNSET_FLAG(attr->flag, BGP_ATTR_BGPSEC);
++
+     struct BgpsecPathAttr *bpa = attr->bgpsecPathAttr;
+     if(bpa)
+     {
++      /*
++      if (bpa->refcnt)
++      {
+       if(bpa->pathSegments && bpa->sigBlocks)
+         if(bpa->sigBlocks->sigSegments)
+           bgpsec_path_unintern(&bpa);
+     }
++      else
++      */
++      {
++        bgpsec_path_free (bpa);
++        attr->bgpsecPathAttr = bpa = NULL;
++      }
++    }
+   }
+ #endif
+ 
+@@ -2028,6 +2051,9 @@ static bgp_attr_parse_ret_t bgp_attr_bgp
+   /* Add the aspath attribute flag. */
+   attr->flag |= ATTR_FLAG_BIT (BGP_ATTR_AS_PATH);
+ 
++  // set bgpsec Attribute flag
++  attr->flag |= ATTR_FLAG_BIT (BGP_ATTR_BGPSEC);
++
+   return BGP_ATTR_PARSE_PROCEED;
+ }
+ 
+@@ -3065,7 +3091,11 @@ bgp_packet_attribute (struct bgp *bgp, s
+     stream_putc (s, BGP_ATTR_AS_PATH);
+     aspath_sizep = stream_get_endp (s);
+     stream_putw (s, 0);
++#ifdef USE_SRX
+     stream_putw_at (s, aspath_sizep, aspath_put (s, aspath_bgpsec, use32bit));
++#else
++    stream_putw_at (s, aspath_sizep, aspath_put (s, aspath, use32bit));
++#endif
+ 
+ #ifdef USE_SRX
+   }
+--- ./bgpd/bgp_attr.h	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_attr.h	2017-02-22 10:59:46.000000000 -0500
+@@ -171,12 +171,17 @@ extern struct attr *bgp_attr_aggregate_i
+ #ifdef USE_SRX
+ // Added the OUT parameter fSetAspath which will be returned true if the
+ // path was send as AS_PATH and false if the path was send as BGPSEC path.
+-#endif
+ extern bgp_size_t bgp_packet_attribute (struct bgp *bgp, struct peer *, 
+                                  struct stream *, struct attr *, 
+                                  struct prefix *, afi_t, safi_t, 
+                                  struct peer *, struct prefix_rd *, u_char *, 
+                                  bool* fSetAspath);
++#else
++extern bgp_size_t bgp_packet_attribute (struct bgp *bgp, struct peer *,
++                                 struct stream *, struct attr *,
++                                 struct prefix *, afi_t, safi_t,
++                                 struct peer *, struct prefix_rd *, u_char *);
++#endif
+ extern bgp_size_t bgp_packet_withdraw (struct peer *peer, struct stream *s, 
+                                 struct prefix *p, afi_t, safi_t, 
+                                 struct prefix_rd *, u_char *);
+--- ./bgpd/bgp_main.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_main.c	2017-03-09 12:19:57.000000000 -0500
+@@ -49,6 +49,9 @@ Software Foundation, Inc., 59 Temple Pla
+ #include "bgpd/bgp_debug.h"
+ #include "bgpd/bgp_filter.h"
+ #include "bgpd/bgp_zebra.h"
++#if defined (__TIME_MEASURE__)
++#include "libtm_rdtsc.h"
++#endif /* __TIME_MEASURE__ */
+ 
+ /* bgpd options, we use GNU getopt library. */
+ static const struct option longopts[] = 
+@@ -117,6 +120,10 @@ static const char *pid_file = PATH_BGPD_
+ int vty_port = BGP_VTY_PORT;
+ char *vty_addr = NULL;
+ 
++#if defined (__TIME_MEASURE__)
++unsigned int g_measureCount=0;
++#endif /* __TIME_MEASURE__ */
++
+ /* privileges */
+ static zebra_capabilities_t _caps_p [] =  
+ {
+@@ -164,6 +171,7 @@ redistribution between different routing
+ -g, --group        Group to run as\n\
+ -v, --version      Print program version\n\
+ -C, --dryrun       Check configuration for validity and exit\n\
++-c,                Time Measuring count\n\
+ -h, --help         Display this help and exit\n\
+ \n\
+ Report bugs to %s\n", progname, ZEBRA_BUG_ADDRESS);
+@@ -340,10 +348,18 @@ main (int argc, char **argv)
+   /* BGP master init. */
+   bgp_master_init ();
+ 
++#if defined (__TIME_MEASURE__)
++  tm_rdtsc_init(); // initialize time measure library
++#endif /* __TIME_MEASURE__ */
++
+   /* Command line argument treatment. */
+   while (1) 
+     {
++#if defined (__TIME_MEASURE__)
++      opt = getopt_long (argc, argv, "df:i:z:hp:l:A:P:rnu:g:vCc:", longopts, 0);
++#else
+       opt = getopt_long (argc, argv, "df:i:z:hp:l:A:P:rnu:g:vC", longopts, 0);
++#endif /* __TIME_MEASURE__ */
+     
+       if (opt == EOF)
+ 	break;
+@@ -408,6 +424,12 @@ main (int argc, char **argv)
+ 	case 'C':
+ 	  dryrun = 1;
+ 	  break;
++#if defined (__TIME_MEASURE__)
++        case 'c':
++          g_measureCount = atoi(optarg);
++          printf("[%s] Time Measuring Count: %ld\n", __FUNCTION__, g_measureCount);
++          break;
++#endif /* __TIME_MEASURE__ */
+ 	case 'h':
+ 	  usage (progname, 0);
+ 	  break;
+--- ./bgpd/bgp_network.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_network.c	2017-02-22 11:15:41.000000000 -0500
+@@ -196,6 +196,7 @@ bgp_accept (struct thread *thread)
+     peer->v_holdtime = peer1->v_holdtime;
+     peer->v_keepalive = peer1->v_keepalive;
+ 
++#ifdef USE_SRX
+     if (CHECK_FLAG (peer1->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
+     {
+       if(stream_get_size (peer1->ibuf) > BGP_MAX_PACKET_SIZE)
+@@ -209,8 +210,8 @@ bgp_accept (struct thread *thread)
+         if (CHECK_FLAG (peer1->flags, PEER_FLAG_EXTENDED_MESSAGE_LIBERAL))
+           if(stream_get_size (peer1->ibuf) > BGP_MAX_PACKET_SIZE)
+             stream_resize (peer->ibuf, BGP_MAX_PACKET_SIZE_EXTENDED);
+-
+     }
++#endif
+ 
+     /* Make peer's address string. */
+     sockunion2str (&su, buf, SU_ADDRSTRLEN);
+--- ./bgpd/bgp_open.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_open.c	2017-02-22 11:12:46.000000000 -0500
+@@ -424,7 +424,9 @@ static const struct message capcode_str[
+   { CAPABILITY_CODE_DYNAMIC,		"Dynamic"			},
+   { CAPABILITY_CODE_REFRESH_OLD,	"Route Refresh (Old)"		},
+   { CAPABILITY_CODE_ORF_OLD,		"ORF (Old)"			},
++#ifdef USE_SRX
+   { CAPABILITY_CODE_EXTENDED,		"Extended Message Support"      },
++#endif
+ };
+ static const int capcode_str_max = array_size(capcode_str);
+ 
+@@ -439,7 +441,9 @@ static const size_t cap_minsizes[] =
+   [CAPABILITY_CODE_DYNAMIC]	= CAPABILITY_CODE_DYNAMIC_LEN,
+   [CAPABILITY_CODE_REFRESH_OLD]	= CAPABILITY_CODE_REFRESH_LEN,
+   [CAPABILITY_CODE_ORF_OLD]	= sizeof (struct capability_orf_entry),
++#ifdef USE_SRX
+   [CAPABILITY_CODE_EXTENDED]    = CAPABILITY_CODE_EXTENDED_LEN,
++#endif
+ };
+ 
+ /**
+--- ./bgpd/bgp_packet.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_packet.c	2017-05-25 12:03:00.000000000 -0400
+@@ -50,6 +50,9 @@ Software Foundation, Inc., 59 Temple Pla
+ #include "bgpd/bgp_mplsvpn.h"
+ #include "bgpd/bgp_advertise.h"
+ #include "bgpd/bgp_vty.h"
++#if defined (__TIME_MEASURE__)
++#include "libtm_rdtsc.h"
++#endif /* __TIME_MEASURE__ */
+ 
+ int stream_put_prefix (struct stream *, struct prefix *);
+ 
+@@ -207,6 +210,14 @@ bgp_update_packet (struct peer *peer, af
+   unsigned long pos;
+ #ifdef USE_SRX
+   u_char bFrag =0;
++
++  // By default we assume the update will be send out using BGPSEC. the
++  // function bgp_packer_attribute will do the final decision and return
++  // the final result back. For now we assume we do BGPSEC and NOT AS_PATH
++
++  /* This value stay here, otherwise it will affect BGPv4 packing which
++   * is to put prefixes into the stream */
++  bool useASpath = false;
+ #endif
+ 
+   s = peer->work;
+@@ -238,12 +249,6 @@ bgp_update_packet (struct peer *peer, af
+     if (STREAM_REMAIN (s) <= BGP_NLRI_LENGTH + PSIZE (rn->p.prefixlen))
+ 	    break;
+ 
+-#ifdef USE_SRX
+-    // By default we assume the update will be send out using BGPSEC. the
+-    // function bgp_packer_attribute will do the final decision and return
+-    // the final result back. For now we assume we do BGPSEC and NOT AS_PATH
+-    bool useASpath = false;
+-#endif
+     /* If packet is empty, set attribute. */
+     if (stream_empty (s))
+ 	  {
+@@ -368,10 +373,12 @@ bgp_update_packet (struct peer *peer, af
+      * only if bgpsec enabled and the from-peer has joined the bgpsec
+      * or in case of sending ecommunity string to its peer
+      */
++#if defined (TEST_UNPACKING)
+     if (   (CHECK_FLAG (peer->flags, PEER_FLAG_BGPSEC_CAPABILITY_SEND)
+             && CHECK_FLAG (peer->cap, PEER_CAP_BGPSEC_ADV))
+         || ((CHECK_FLAG (peer->bgp->srx_ecommunity_flags, SRX_BGP_FLAG_ECOMMUNITY))
+             && bFrag && from))
++#endif
+     {
+ // @NOTE: This will be redone in the next run through.
+       if (bDoNotFrag)
+@@ -2692,6 +2699,7 @@ bgp_read (struct thread *thread)
+ 	}
+ 
+ 
++#ifdef USE_SRX
+       bgp_size_t size_policy;
+       if (CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
+       {
+@@ -2714,13 +2722,18 @@ bgp_read (struct thread *thread)
+       }
+       else
+         size_policy = BGP_MAX_PACKET_SIZE;
++#endif
+ 
+ 
+ 
+ 
+       /* Mimimum packet length check. */
+       if ((size < BGP_HEADER_SIZE)
++#ifdef USE_SRX
+ 	  || (size > size_policy)
++#else
++	  || (size > BGP_MAX_PACKET_SIZE)
++#endif
+ 	  || (type == BGP_MSG_OPEN && size < BGP_MSG_OPEN_MIN_SIZE)
+ 	  || (type == BGP_MSG_UPDATE && size < BGP_MSG_UPDATE_MIN_SIZE)
+ 	  || (type == BGP_MSG_NOTIFY && size < BGP_MSG_NOTIFY_MIN_SIZE)
+@@ -2759,6 +2772,11 @@ bgp_read (struct thread *thread)
+ 
+   size = (peer->packet_size - BGP_HEADER_SIZE);
+ 
++#if defined (__TIME_MEASURE__)
++  extern unsigned int g_measureCount;
++  static unsigned long tCount=0;
++#endif /* __TIME_MEASURE__ */
++
+   /* Read rest of the packet and call each sort of packet routine */
+   switch (type)
+     {
+@@ -2767,8 +2785,24 @@ bgp_read (struct thread *thread)
+       bgp_open_receive (peer, size); /* XXX return value ignored! */
+       break;
+     case BGP_MSG_UPDATE:
++#if defined (__TIME_MEASURE__)
++      if(tCount==0)
++      {
++        printf("[%s] Start Receiving Upto %ld Counts...\n", __FUNCTION__, g_measureCount);
++        start_clock = rdtsc();
++      }
++#endif /* __TIME_MEASURE__ */
+       peer->readtime = bgp_recent_clock ();
+       bgp_update_receive (peer, size);
++#if defined (__TIME_MEASURE__)
++      tCount++;
++      if(tCount >= g_measureCount && g_measureCount != 0)
++      {
++        end_clock = rdtsc();
++        print_clock_time(end_clock, start_clock, "receive test");
++        tCount=0;
++      }
++#endif /* __TIME_MEASURE__ */
+       break;
+     case BGP_MSG_NOTIFY:
+       bgp_notify_receive (peer, size);
+--- ./bgpd/bgp_route.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_route.c	2017-05-25 12:03:00.000000000 -0400
+@@ -3195,6 +3195,13 @@ bgp_update_main (struct peer *peer, stru
+ 	    }
+ 
+ 	  bgp_unlock_node (rn);
++#ifdef USE_SRX
++          if (attr_new->bgpsecPathAttr && (attr_new->flag & ATTR_FLAG_BIT (BGP_ATTR_BGPSEC)) )
++          {
++            UNSET_FLAG(attr_new->flag, BGP_ATTR_BGPSEC);
++            bgpsec_path_free (attr_new->bgpsecPathAttr);
++          }
++#endif
+ 	  bgp_attr_unintern (&attr_new);
+ 
+ 	  return 0;
+--- ./bgpd/bgp_validate.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_validate.c	2017-05-25 12:03:00.000000000 -0400
+@@ -40,12 +40,20 @@ static void * bgpsec_path_hash_alloc (vo
+ /* If two aspath have same value then return 1 else return 0 */
+ int bgpsec_path_attr_cmp (const void *arg1, const void *arg2)
+ {
++  if (arg1 == arg2)
++    return 1;
++  if (arg1 == NULL && arg2 == NULL)
++    return 1;
++
+   const struct PathSegment *seg1 = ((const struct BgpsecPathAttr *)arg1)->pathSegments;
+   const struct PathSegment *seg2 = ((const struct BgpsecPathAttr *)arg2)->pathSegments;
+ 
+   const struct SigBlock *sb1 = ((const struct BgpsecPathAttr *)arg1)->sigBlocks;
+   const struct SigBlock *sb2 = ((const struct BgpsecPathAttr *)arg2)->sigBlocks;
+ 
++  const struct SigSegment *ss1;
++  const struct SigSegment *ss2;
++
+   while (seg1 || seg2)
+     {
+       if ((!seg1 && seg2) || (seg1 && !seg2))
+@@ -68,12 +76,25 @@ int bgpsec_path_attr_cmp (const void *ar
+         return 0;
+       if (sb1->algoSuiteId != sb2->algoSuiteId)
+         return 0;
+-      /* TODO: need to have more better comparing  using SKI and signature
+-       * not only using sigSegments
+-       * Because comparing sigSegemts are just address comparing, so it need to compare more
+-       * concrete data like sigSegments->ski, ski_leng and signature */
+-      if (sb1->sigSegments != sb2->sigSegments)
++
++      ss1 = sb1->sigSegments;
++      ss2 = sb2->sigSegments;
++
++      while(ss1 || ss2)
++      {
++        if ((!ss1  && ss2) || (ss1 && !ss2))
++          return 0;
++        if (memcmp(ss1->ski, ss2->ski, BGPSEC_SKI_LENGTH) != 0)
+           return 0;
++        if (ss1->sigLen != ss2->sigLen)
++          return 0;
++        if (memcmp(ss1->signature, ss2->signature, ss1->sigLen) != 0)
++          return 0;
++
++        ss1 = ss1->next;
++        ss2 = ss2->next;
++      }
++
+       sb1 = sb1->next;
+       sb2 = sb2->next;
+     }
+@@ -90,11 +111,13 @@ unsigned int bgpsec_path_attr_key_make (
+   struct SigSegment *ss;
+   unsigned int key = 0;
+ 
++#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[BGPSEC] [%s]: bpa:%p, seg:%p, sb:%p sigSeg:%p AS:%d ", \
+         __FUNCTION__, bpa, seg, sb, sb->sigSegments, seg->as);
+   }
++#endif
+ 
+   if (sb)
+   {
+@@ -121,11 +144,13 @@ unsigned int bgpsec_path_attr_key_make (
+     key += jhash(bpa->sigBlocks, 4, 0);
+   }
+ 
++#if 0
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+   {
+     zlog_debug("[BGPSEC] [%s]:  - - key = =:%d, index:%d", \
+         __FUNCTION__, key, key % 32767);
+   }
++#endif
+   return key;
+ }
+ 
+@@ -455,11 +480,13 @@ struct BgpsecPathAttr *bgpsec_path_inter
+   /* Check bgpsec path attr hash. */
+   find = hash_get (bgpsechash, bpa, bgpsec_path_hash_alloc);
+ 
++#if 0
+ #ifdef DEBUG_TEST
+   if (BGP_DEBUG (bgpsec, BGPSEC_DETAIL))
+     zlog_debug("[BGPSEC]  [%s]: find: %p (refcnt:%ld) Vs bpa: %p",\
+         __FUNCTION__, find, find->refcnt, bpa);
+ #endif
++#endif
+ 
+   if (find != bpa)
+     bgpsec_path_free (bpa);
+--- ./bgpd/bgp_vty.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgp_vty.c	2017-02-21 14:16:18.000000000 -0500
+@@ -3033,190 +3033,128 @@ DEFUN (neighbor_bgpsec_mpnlri_ipv4,
+   return CMD_WARNING;
+ }
+ 
+-/** 
+- * Resize the buffer for this peer according to the current needs
+- * 
+- * @param peer The peer structure
+- * @param newsize The new bugffer size.
+- */
+-static void __resizeBuffer(struct peer *peer, size_t newsize)
++
++/* BGP Extended Message Support */
++DEFUN (neighbor_capability_extended_message_support,
++       neighbor_capability_extended_message_support_cmd,
++       NEIGHBOR_CMD2 "capability extended",
++       NEIGHBOR_STR
++       NEIGHBOR_ADDR_STR2
++       "Advertise capability to the peer\n"
++       "Advertise extended message support for bgp to the neighbor\n")
++{
++
++  struct peer *peer;
++  size_t oldsize, newsize = BGP_MAX_PACKET_SIZE_EXTENDED;
++
++  peer = peer_and_group_lookup_vty (vty, argv[0]);
++  if (peer)
+ {
+-  size_t oldsize;
+   if(peer->ibuf)
+   {
+     oldsize = stream_get_size (peer->ibuf);
+-    if (oldsize != newsize)
+-    {
+       newsize = stream_resize (peer->ibuf, newsize);
+     }
+-  }
+   if(peer->work)
+   {
+     oldsize = stream_get_size (peer->work);
+-    if (oldsize != newsize)
+-    {
+       newsize = stream_resize (peer->work, newsize);
+     }
+   }
++
++  return peer_flag_set_vty(vty, argv[0], PEER_FLAG_EXTENDED_MESSAGE_SUPPORT);
+ }
+ 
+-/**
+- * Set/unset the extended message support flag (Only if not connected!)
+- */
+-static int _setExtendedMessageSupport(struct vty *vty, const char* ip, bool enable)
+-{
+-  struct peer *peer = peer_and_group_lookup_vty (vty, ip);
+-  char* msg1 = NULL;
+-  int retVal = CMD_WARNING;
++DEFUN (no_neighbor_capability_extended_message_support,
++       no_neighbor_capability_extended_message_support_cmd,
++       NO_NEIGHBOR_CMD2 "capability extended",
++       NO_STR
++       NEIGHBOR_STR
++       NEIGHBOR_ADDR_STR2
++       "Advertise capability to the peer\n"
++       "Advertise extended message support for bgp to the neighbor\n")
++{
+   
++  struct peer *peer;
++  size_t oldsize, newsize = BGP_MAX_PACKET_SIZE;
++
++  peer = peer_and_group_lookup_vty (vty, argv[0]);
+   if (peer)
+   {
+-    if (!peer->established)
+-    {
+-      __resizeBuffer(peer, enable ? BGP_MAX_PACKET_SIZE_EXTENDED 
+-                                    : BGP_MAX_PACKET_SIZE);
+-      if (enable)
+-      {
+-        retVal = peer_flag_set_vty (vty, ip, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT);
+-      }
+-      else
+-      {
+-        retVal = peer_flag_unset_vty (vty, ip, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT);      
+-      }
+-      if (retVal == CMD_SUCCESS)
+-      {
+-        msg1 = enable ? "Enabled extended message capability"
+-                      : "Disabled extended message capability";
+-      }
+-      else
++    if(peer->ibuf)
+       {
+-        msg1 = "Error modifying extended message capability";
+-      }
++      oldsize = stream_get_size (peer->ibuf);
++      if( oldsize > newsize )
++        newsize = stream_resize (peer->ibuf, newsize);
+     }
+-    else
++    if(peer->work)
+     {
+-      msg1 = "Cannot modify extended message capability while session is established!\0";
+-    }
++      oldsize = stream_get_size (peer->work);
++      if( oldsize > newsize )
++        newsize = stream_resize (peer->work, newsize);
+   }
+-
+-  if (msg1 != NULL) 
+-  { 
+-    //zlog_info ("%s %s", msg1, VTY_NEWLINE);
+-    vty_out (vty, "%s %s", msg1, VTY_NEWLINE); 
+   }
+   
+-  return retVal;
++  return peer_flag_unset_vty(vty, argv[0], PEER_FLAG_EXTENDED_MESSAGE_SUPPORT);
+ }
+ 
+-/** 
+- * Enable or disable the extended message liberal behavior. This can be done
+- * in live operation.
+- */
+-static int _setExtendedMessageLiberal(struct vty *vty, const char* ip, bool enable)
+-{
+-  int retVal = CMD_WARNING;
+-  char* msg1 = NULL;
+-  char* msg2 = NULL;
+-  struct peer *peer = peer_and_group_lookup_vty (vty, ip);
+   
+-  if (peer)
++/* extended message support for bgp (optional) */
++DEFUN (neighbor_capability_extended_message_support_liberal,
++       neighbor_capability_extended_message_support_liberal_cmd,
++       NEIGHBOR_CMD2 "capability extended (liberal)",
++       NEIGHBOR_STR
++       NEIGHBOR_ADDR_STR2
++       "Advertise capability to the peer\n"
++       "Advertise extended message support for bgp to the neighbor\n"
++       "Accept extended message even if peer did not advertise capability\n")
+   {
+-    retVal = peer_flag_set_vty(vty, ip, PEER_FLAG_EXTENDED_MESSAGE_LIBERAL);
+     
+-    if (retVal == CMD_SUCCESS)
+-    {
+-      if (!enable)
+-      {
+-        // Check if the buffer can be resized back again.
+-        msg1 = "Disabled extended message liberal policy";
++  struct peer *peer;
++  peer = peer_and_group_lookup_vty (vty, argv[0]);
+ 
+-        if (!CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
++  if (peer)
+         {
+-          __resizeBuffer(peer, BGP_MAX_PACKET_SIZE);
+-        }
+-        else
++    if (CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
+         {
+-          msg2 = "Extended message capability still active";
+-        }
++      vty_out (vty, "extended liberal policy selected %s", VTY_NEWLINE);
++      return peer_flag_set_vty(vty, argv[0], PEER_FLAG_EXTENDED_MESSAGE_LIBERAL);
+       }
+       else
+-      {
+-        msg1 = "Enabled extended message liberal policy";
+-        __resizeBuffer(peer, BGP_MAX_PACKET_SIZE_EXTENDED);      
+-      }
+-    }
+-    else
+-    {
+-      msg1 = "Error modifying liberal policy flag!";
+-    }
+-            
++      return CMD_WARNING;
+   }
+   
+-  if (msg1 != NULL) 
+-  { 
+-    //zlog_info ("%s %s", msg1, VTY_NEWLINE);
+-    vty_out (vty, "%s %s", msg1, VTY_NEWLINE); 
+-  }
+-  if (msg2 != NULL) 
+-  { 
+-    //zlog_info ("%s %s", msg2, VTY_NEWLINE);
+-    vty_out (vty, "%s %s", msg2, VTY_NEWLINE); 
+   }
+   
+-  return retVal;  
+-}
+ 
+-/* BGP Extended Message Support */
+-DEFUN (neighbor_capability_extended_message_support,
+-       neighbor_capability_extended_message_support_cmd,
+-       NEIGHBOR_CMD2 "capability extended",
++DEFUN (no_neighbor_capability_extended_message_support_liberal,
++       no_neighbor_capability_extended_message_support_liberal_cmd,
++       NO_NEIGHBOR_CMD2 "capability extended (liberal)",
++       NO_STR
+        NEIGHBOR_STR
+        NEIGHBOR_ADDR_STR2
+        "Advertise capability to the peer\n"
+-       "Advertise extended message support to the neighbor\n")
++       "Advertise extended message support for bgp to the neighbor\n"
++       "Accept extended message even if peer did not advertise capability\n")
+ {
+-  return _setExtendedMessageSupport(vty, argv[0], true);
+-}
+ 
+-DEFUN (no_neighbor_capability_extended_message_support,
+-       no_neighbor_capability_extended_message_support_cmd,
+-       NO_NEIGHBOR_CMD2 "capability extended",
+-       NO_STR
+-       NEIGHBOR_STR
+-       NEIGHBOR_ADDR_STR2
+-       "Do not advertise capability to the peer\n"
+-       "Disable extended message support to the neighbor\n")
++  struct peer *peer;
++  peer = peer_and_group_lookup_vty (vty, argv[0]);
++
++  if (peer)
+ {
+-  return _setExtendedMessageSupport(vty, argv[0], false);
++    if (CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
++    {
++      vty_out (vty, "extended liberal policy de-selected %s", VTY_NEWLINE);
++      return peer_flag_unset_vty(vty, argv[0], PEER_FLAG_EXTENDED_MESSAGE_LIBERAL);
++    }
++    else
++      return CMD_WARNING;
+ }
+ 
+-
+-/* extended message support for bgp (optional) */
+-DEFUN (neighbor_capability_extended_message_support_liberal,
+-       neighbor_capability_extended_message_support_liberal_cmd,
+-       NEIGHBOR_CMD2 "capability extended liberal",
+-       NEIGHBOR_STR
+-       NEIGHBOR_ADDR_STR2
+-       "Advertise capability to the peer\n"
+-       "Advertise extended message support for bgp to the neighbor\n"
+-       "Accept extended message even if not negotiated\n")
+-{
+-  return _setExtendedMessageLiberal(vty, argv[0], true);
+ }
+ 
+ 
+-DEFUN (no_neighbor_capability_extended_message_support_liberal,
+-       no_neighbor_capability_extended_message_support_liberal_cmd,
+-       NO_NEIGHBOR_CMD2 "capability extended (liberal)",
+-       NO_STR
+-       NEIGHBOR_STR
+-       NEIGHBOR_ADDR_STR2
+-       "Configure capability to the peer\n"
+-       "Disable extended message support for bgp to the neighbor\n"
+-       "Disable libaral policy only.\n")
+-{
+-  return _setExtendedMessageLiberal(vty, argv[0], false);
+-}
+ 
+ #endif /* USE_SRX */
+ 
+--- ./bgpd/bgpd.c	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgpd.c	2017-05-25 12:03:00.000000000 -0400
+@@ -67,7 +67,7 @@ Software Foundation, Inc., 59 Temple Pla
+ #include "bgpd/bgp_validate.h"
+ 
+ #if defined(__TIME_MEASURE__)
+-#include "srx/srx_common.h"
++//#include "srx/srx_common.h"
+ #endif
+ 
+ // Forward Declaration
+@@ -5622,19 +5622,6 @@ bgp_config_write_peer (struct vty *vty, 
+         vty_out (vty, " neighbor %s bgpsec snd %s", addr, VTY_NEWLINE);
+       else if (CHECK_FLAG (peer->flags, PEER_FLAG_BGPSEC_CAPABILITY_RECV))
+ 	      vty_out (vty, " neighbor %s bgpsec rec %s", addr, VTY_NEWLINE);
+-      
+-      /* Extended message capability*/      
+-      if (CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_SUPPORT))
+-      {
+-        vty_out (vty, " neighbor %s capability extended%s", addr, 
+-                 VTY_NEWLINE);
+-      }
+-      /* Extended message capability liberal processing*/      
+-      if (CHECK_FLAG (peer->flags, PEER_FLAG_EXTENDED_MESSAGE_LIBERAL))
+-      {
+-        vty_out (vty, " neighbor %s capability extended liberal%s", addr, 
+-                 VTY_NEWLINE);
+-      }
+ #endif /* USE_SRX */
+ 
+       /* override capability negotiation. */
+@@ -6131,10 +6118,9 @@ bgp_config_write (struct vty *vty)
+         }
+         if (kIdx == 0)
+         {
+-          vty_out (vty, "! The following form is deprecated.%s", VTY_NEWLINE);
++          vty_out (vty, "! The following form is deprecated.", VTY_NEWLINE);
+           vty_out (vty, "! bgpsec ski %s%s", skiStr, VTY_NEWLINE);
+         }
+-        // BZ1055 fixed syntax of command. ...ski1 to ...ski 1
+         vty_out (vty, " srx bgpsec ski %u %s%s", kIdx, skiStr, VTY_NEWLINE);
+       }
+       vty_out (vty, " srx bgpsec active-ski %u%s", bgp->srx_bgpsec_active_key,
+--- ./bgpd/bgpd.h	2017-05-03 18:57:55.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./bgpd/bgpd.h	2017-02-22 11:17:18.000000000 -0500
+@@ -181,6 +181,8 @@ Software Foundation, Inc., 59 Temple Pla
+ 
+ // POLICY
+ #define SRX_VTY_HLP_POLICY      "Evaluation policy command\n"
++#define SRX_VTY_HLP_POLICY_ROA  "Prefix-origin validation using ROA's\n"
++#define SRX_VTY_HLP_POLICY_PATH "Path validation (NOT IMPLEMENTED YET)\n"
+ #define SRX_VTY_HLP_ORIGIN_ONLY "(" SRX_VTY_EVAL_ORIGIN_ONLY ") "
+ 
+ // POLICY IGNORE NOTFOUND / INVALID
+@@ -740,7 +742,7 @@ struct peer
+ #define PEER_CAP_AS4_ADV                    (1 << 7) /* as4 advertised */
+ #define PEER_CAP_AS4_RCV                    (1 << 8) /* as4 received */
+ #ifdef USE_SRX
+-#define PEER_CAP_EXTENDED_MSG_SUPPORT       (1 << 13)/* extended message support*/
++#define PEER_CAP_EXTENDED_MSG_SUPPORT       (1 << 13)/* bgpsec advertised send capability */
+ #define PEER_CAP_BGPSEC_ADV_SEND            (1 << 14)/* bgpsec advertised send capability */
+ #define PEER_CAP_BGPSEC_ADV                 (1 << 15)/* bgpsec advertised recv capability */
+ #endif
+@@ -996,7 +998,9 @@ struct bgp_nlri
+ #define BGP_MARKER_SIZE		                16
+ #define BGP_HEADER_SIZE		                19
+ #define BGP_MAX_PACKET_SIZE                   4096
++#ifdef USE_SRX
+ #define BGP_MAX_PACKET_SIZE_EXTENDED         65535
++#endif
+ 
+ /* BGP minimum message size.  */
+ #define BGP_MSG_OPEN_MIN_SIZE                   (BGP_HEADER_SIZE + 10)
+--- ./lib/version.h	2017-05-03 18:59:44.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./lib/version.h	2017-05-25 12:03:28.000000000 -0400
+@@ -37,7 +37,7 @@
+ 
+ #define QUAGGA_PROGNAME   "QuaggaSRx"
+ 
+-#define QUAGGA_VERSION     "0.4.2.4" GIT_SUFFIX
++#define QUAGGA_VERSION     "0.4.2.3" GIT_SUFFIX
+ 
+ #define ZEBRA_BUG_ADDRESS "http://bgpsrx.antd.nist.gov"
+ 
+--- ./config.h	2017-05-03 18:59:46.000000000 -0400
++++ /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/./config.h	2017-05-25 12:03:30.000000000 -0400
+@@ -5,10 +5,10 @@
+ /* #undef AC_APPLE_UNIVERSAL_BUILD */
+ 
+ /* babeld vty socket */
+-#define BABEL_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/babeld.vty"
++#define BABEL_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/babeld.vty"
+ 
+ /* bgpd vty socket */
+-#define BGP_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/bgpd.vty"
++#define BGP_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/bgpd.vty"
+ 
+ /* BSDI */
+ /* #undef BSDI_NRL */
+@@ -20,7 +20,7 @@
+ #define CONSUMED_TIME_CHECK 5000000
+ 
+ /* daemon vty directory */
+-#define DAEMON_VTY_DIR "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc"
++#define DAEMON_VTY_DIR "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc"
+ 
+ /* Disable BGP installation to zebra */
+ #define DISABLE_BGP_ANNOUNCE 0
+@@ -594,7 +594,7 @@
+ #define ISIS_METHOD_PFPACKET 1
+ 
+ /* isisd vty socket */
+-#define ISIS_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/isisd.vty"
++#define ISIS_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/isisd.vty"
+ 
+ /* KAME IPv6 stack */
+ /* #undef KAME */
+@@ -626,10 +626,10 @@
+ /* #undef OPEN_BSD */
+ 
+ /* ospf6d vty socket */
+-#define OSPF6_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ospf6d.vty"
++#define OSPF6_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ospf6d.vty"
+ 
+ /* ospfd vty socket */
+-#define OSPF_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ospfd.vty"
++#define OSPF_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ospfd.vty"
+ 
+ /* Name of package */
+ #define PACKAGE "quaggasrx"
+@@ -641,7 +641,7 @@
+ #define PACKAGE_NAME "QuaggaSRx"
+ 
+ /* Define to the full name and version of this package. */
+-#define PACKAGE_STRING "QuaggaSRx 0.4.2.4"
++#define PACKAGE_STRING "QuaggaSRx 0.4.2.3"
+ 
+ /* Define to the one symbol short name of this package. */
+ #define PACKAGE_TARNAME "quaggasrx"
+@@ -650,37 +650,37 @@
+ #define PACKAGE_URL ""
+ 
+ /* Define to the version of this package. */
+-#define PACKAGE_VERSION "0.4.2.4"
++#define PACKAGE_VERSION "0.4.2.3"
+ 
+ /* Have openpam_ttyconv */
+ /* #undef PAM_CONV_FUNC */
+ 
+ /* babeld PID */
+-#define PATH_BABELD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/babeld.pid"
++#define PATH_BABELD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/babeld.pid"
+ 
+ /* bgpd PID */
+-#define PATH_BGPD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/bgpd.pid"
++#define PATH_BGPD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/bgpd.pid"
+ 
+ /* isisd PID */
+-#define PATH_ISISD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/isisd.pid"
++#define PATH_ISISD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/isisd.pid"
+ 
+ /* ospf6d PID */
+-#define PATH_OSPF6D_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ospf6d.pid"
++#define PATH_OSPF6D_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ospf6d.pid"
+ 
+ /* ospfd PID */
+-#define PATH_OSPFD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ospfd.pid"
++#define PATH_OSPFD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ospfd.pid"
+ 
+ /* ripd PID */
+-#define PATH_RIPD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ripd.pid"
++#define PATH_RIPD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ripd.pid"
+ 
+ /* ripngd PID */
+-#define PATH_RIPNGD_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ripngd.pid"
++#define PATH_RIPNGD_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ripngd.pid"
+ 
+ /* watchquagga PID */
+-#define PATH_WATCHQUAGGA_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/watchquagga.pid"
++#define PATH_WATCHQUAGGA_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/watchquagga.pid"
+ 
+ /* zebra PID */
+-#define PATH_ZEBRA_PID "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/zebra.pid"
++#define PATH_ZEBRA_PID "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/zebra.pid"
+ 
+ /* Quagga Group */
+ #define QUAGGA_GROUP "root"
+@@ -695,10 +695,10 @@
+ #define RETSIGTYPE void
+ 
+ /* ripng vty socket */
+-#define RIPNG_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ripngd.vty"
++#define RIPNG_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ripngd.vty"
+ 
+ /* rip vty socket */
+-#define RIP_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/ripd.vty"
++#define RIP_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/ripd.vty"
+ 
+ /* Define to the type of arg 1 for `select'. */
+ #define SELECT_TYPE_ARG1 int
+@@ -771,7 +771,7 @@
+ 
+ 
+ /* Version number of package */
+-#define VERSION "0.4.2.4"
++#define VERSION "0.4.2.3"
+ 
+ /* VTY shell */
+ /* #undef VTYSH */
+@@ -792,10 +792,10 @@
+ #endif
+ 
+ /* zebra api socket */
+-#define ZEBRA_SERV_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/zserv.api"
++#define ZEBRA_SERV_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/zserv.api"
+ 
+ /* zebra vty socket */
+-#define ZEBRA_VTYSH_PATH "/users/kyehwanl/srx_test1/tempTest2/qsrx/../_inst/etc/zebra.vty"
++#define ZEBRA_VTYSH_PATH "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/qsrx/../_inst/etc/zebra.vty"
+ 
+ /* Number of bits in a file offset, on hosts where this is settable. */
+ #define _FILE_OFFSET_BITS 64

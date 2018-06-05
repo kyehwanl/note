@@ -1,0 +1,51 @@
+1.
+dont' need to use 'sed' to copy and modify headers in srxcryptoapi.h, 
+or it will make error to change 'config.h' to <srx/srx.h>
+
+diff --git a/Makefile.am b/Makefile.am
+index 95dbbf5..773c7f9 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -23,6 +23,9 @@ else
+   LIB_VER = 0:0:0
+ endif
+
++srxdir=$(includedir)/srx
++srx_HEADERS = srx/srxcryptoapi.h
++
+ # Used to generate the srx folder for installation - DESTDIR for RPM generation
+ INC_OUT = $(DESTDIR)$(includedir)/$(SRX_DIR)
+
+@@ -41,7 +44,7 @@ libSRxCryptoAPI_la_LDFLAGS = -version-info $(LIB_VER) $(OPENSSL_LDFLAGS)
+ # this follwing line for Ubuntu x86_64
+ libSRxCryptoAPI_la_LIBADD = $(OPENSSL_LIBS)
+
+-noinst_HEADERS  = srx/srxcryptoapi.h crypto_imple.h
++noinst_HEADERS  = crypto_imple.h
+
+ # Crypto Key generation tools
+ dist_sbin_SCRIPTS = tools/qsrx-make-cert tools/qsrx-make-key \
+@@ -69,16 +72,14 @@ distclean-local:
+        rm srxcryptoapi_lib*.conf
+
+ install-exec-local:
+-       @if [ ! -d $(INC_OUT) ]; then \
+-         mkdir -p $(INC_OUT); \
++       @if [ ! -d $(srxdir) ]; then \
++         mkdir -p $(srxdir); \
+        fi
+        @echo "Copying srxcryptoapi.h"
+-       cat srx/srxcryptoapi.h | sed -e "s/^\(#include \"[a-z]\+\)\(.*\)\".*/#include <srx\2>/g" > $(INC_OUT)/srx
+
+ uninstall-local:
+-       rm -f $(INC_OUT)/srxcryptoapi.h;
+-       @if [ -e $(INC_OUT) && "$(ls -A $(INC_OUT))" == "" ] ; then \
+-         rmdir $(INC_OUT) > /dev/null 2>&1; \
++       @if [ -e $(srxdir) && "$(ls -A $(srxdir))" == "" ] ; then \
++         rmdir $(srxdir) > /dev/null 2>&1; \
+        fi
+
+
+
+2. sed regex form error
+[a-z] --> [^c]

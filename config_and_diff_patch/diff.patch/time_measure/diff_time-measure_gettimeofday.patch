@@ -1,0 +1,240 @@
+diff --git a/quaggasrx/bgpd/bgp_attr.c b/quaggasrx/bgpd/bgp_attr.c
+index cb89b6b..aab666e 100644
+--- a/quaggasrx/bgpd/bgp_attr.c
++++ b/quaggasrx/bgpd/bgp_attr.c
+@@ -40,6 +40,12 @@ Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ #include "bgpd/bgp_ecommunity.h"
+ #ifdef USE_SRX
+ #include "bgpd/bgp_validate.h"
++#if defined(__TIME_MEASURE__)
++#include "time_measure.h"
++static int g_update;
++void time_measure_start(void);
++void time_measure_end(void);
++#endif
+ #endif
+ 
+ /* Attribute strings for logging. */
+@@ -1823,7 +1829,15 @@ static bgp_attr_parse_ret_t bgp_attr_bgpsec(struct bgp_attr_parser_args *args)
+   }
+ 
+   if (peer->sort == BGP_PEER_EBGP)
++  {
++#if defined(__TIME_MEASURE__)
++    //time_measure_end();
++#endif
+     attr->bgpsecPathAttr = bgpsec_parse(peer, peer->ibuf, length);
++#if defined(__TIME_MEASURE__)
++    //time_measure_start();
++#endif
++  }
+   else if (peer->sort == BGP_PEER_IBGP) \
+     attr->bgpsecPathAttr = bgpsec_parse_iBGP(peer, peer->ibuf, length);
+ 
+@@ -1926,6 +1940,9 @@ bgp_attr_parse (struct peer *peer, struct attr *attr, bgp_size_t size,
+   as_t as4_aggregator = 0;
+   struct in_addr as4_aggregator_addr = { 0 };
+ 
++#if defined(__TIME_MEASURE__)
++    //time_measure_end();
++#endif
+   /* Initialize bitmap. */
+   memset (seen, 0, BGP_ATTR_BITMAP_SIZE);
+ 
+@@ -2091,7 +2108,14 @@ bgp_attr_parse (struct peer *peer, struct attr *attr, bgp_size_t size,
+ 	  break;
+ #ifdef USE_SRX
+         case BGP_ATTR_BGPSEC:
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&start, NULL);
++#endif
+           ret = bgp_attr_bgpsec(&attr_args);
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&end, NULL);
++    //PRINT_TIME(start, end, "bgp_attr_parse ", 0);
++#endif
+           if (ret == BGP_ATTR_PARSE_ERROR)
+           {
+             ret = BGP_ATTR_PARSE_WITHDRAW; // Treat it as Withdraw (section 5.2)
+@@ -2211,6 +2235,9 @@ bgp_attr_parse (struct peer *peer, struct attr *attr, bgp_size_t size,
+   if (attr->extra && attr->extra->transit)
+     attr->extra->transit = transit_intern (attr->extra->transit);
+ 
++#if defined(__TIME_MEASURE__)
++    //time_measure_start();
++#endif
+   return BGP_ATTR_PARSE_PROCEED;
+ }
+ 
+@@ -3024,3 +3051,31 @@ bgp_dump_routes_attr (struct stream *s, struct attr *attr,
+   len = stream_get_endp (s) - cp - 2;
+   stream_putw_at (s, cp, len);
+ }
++
++void time_measure_start(void)
++{
++#if defined(__TIME_MEASURE__)
++  //printf("update-number:%ld\n", g_update_number);
++  if (ul_receipt_count == g_update)
++  {
++    gettimeofday(&start, NULL);
++    //gettimeofday(&start_NR, NULL);
++    ul_receipt_count++;
++  }
++#endif
++}
++
++void time_measure_end(void)
++{
++
++#if defined(__TIME_MEASURE__)
++  if (ul_receipt_count > g_update)
++  {
++    gettimeofday(&end, NULL);
++    //PRINT_TIME(start, end, "", orderReceipt++);
++    PRINT_TIME(start, end, " INTERVAL: bgp_attr_bgpsec", ul_receipt_count);
++    g_update = ul_receipt_count;
++  }
++#endif
++}
++
+diff --git a/quaggasrx/bgpd/bgp_packet.c b/quaggasrx/bgpd/bgp_packet.c
+index 68dc52c..2b2a6a5 100644
+--- a/quaggasrx/bgpd/bgp_packet.c
++++ b/quaggasrx/bgpd/bgp_packet.c
+@@ -48,6 +48,9 @@ Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ #include "bgpd/bgp_advertise.h"
+ #include "bgpd/bgp_vty.h"
+ 
++#if defined(__TIME_MEASURE__)
++#include "time_measure.h"
++#endif
+ int stream_put_prefix (struct stream *, struct prefix *);
+ 
+ /* Set up BGP packet marker and packet type. */
+@@ -2682,7 +2685,14 @@ bgp_read (struct thread *thread)
+       break;
+     case BGP_MSG_UPDATE:
+       peer->readtime = bgp_recent_clock ();
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&start, NULL);
++#endif
+       bgp_update_receive (peer, size);
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&end, NULL);
++    //PRINT_TIME(start, end, "bgp_update_receive ", 0);
++#endif
+       break;
+     case BGP_MSG_NOTIFY:
+       bgp_notify_receive (peer, size);
+diff --git a/quaggasrx/bgpd/bgp_validate.c b/quaggasrx/bgpd/bgp_validate.c
+index b8f29b8..5cedfc0 100644
+--- a/quaggasrx/bgpd/bgp_validate.c
++++ b/quaggasrx/bgpd/bgp_validate.c
+@@ -20,6 +20,9 @@
+ #include "srxcryptoapi.h"
+ SRxCryptoAPI *g_capi;
+ #endif
++#if defined(__TIME_MEASURE__)
++#include "time_measure.h"
++#endif
+ 
+ /* Hash for bgpsec path.  This is the top level structure of BGPSEC AS path. */
+ static struct hash *bgpsechash;
+@@ -570,8 +573,18 @@ struct BgpsecPathAttr * bgpsec_parse(struct peer *peer, struct stream *s,
+       .p              = &p,
+     };
+ 
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&start, NULL);
++#endif
++    int retVal;
++    retVal = g_capi->validate(bpa, 0, NULL, &trData);
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&end, NULL);
++    //PRINT_TIME(start, end, "validate from bgpd", 0);
++#endif
++
+     // call the library function --> bgpsecVerify
+-    if( g_capi->validate(bpa, 0, NULL, &trData) != BGPSEC_VERIFY_SUCCESS)
++    if( retVal != BGPSEC_VERIFY_SUCCESS)
+       goto ValidateFail;
+ 
+ #else
+@@ -1042,7 +1055,14 @@ int bgpsecPathAttribute(struct bgp *bgp, struct peer *peer,
+       .keyData          = NULL,
+     };
+ 
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&start, NULL);
++#endif
+     sig_length = g_capi->sign_with_key(&bgpsecSignData, &bgpsecKey);
++#if defined(__TIME_MEASURE__)
++    //gettimeofday(&end, NULL);
++    //PRINT_TIME(start, end, "validate from bgpd", 0);
++#endif
+ #endif /* SING_WITH_ID_ENABLED */
+ 
+ #else /* USE_SRX_CRYPTO_API */
+diff --git a/quaggasrx/bgpd/bgpd.c b/quaggasrx/bgpd/bgpd.c
+index fb151db..b1e227f 100644
+--- a/quaggasrx/bgpd/bgpd.c
++++ b/quaggasrx/bgpd/bgpd.c
+@@ -65,9 +65,6 @@ Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ #ifdef USE_SRX
+ #include "bgpd/bgp_info_hash.h"
+ 
+-#if defined(__TIME_MEASURE__)
+-#include "srx/srx_common.h"
+-#endif
+ 
+ // Forward Declaration
+ bool handleSRxValidationResult (SRxUpdateID updateID, uint32_t localID,
+diff --git a/quaggasrx/bgpd/time_measure.h b/quaggasrx/bgpd/time_measure.h
+new file mode 100644
+index 0000000..89a3449
+--- /dev/null
++++ b/quaggasrx/bgpd/time_measure.h
+@@ -0,0 +1,30 @@
++//#ifndef __TIME_MEASURE__
++//#define __TIME_MEASURE__
++
++#define UPDATE_COUNT 500000
++
++
++struct timeval start, end;
++struct timeval start_NR, end_NR;
++static orderReceipt, orderNoReceipt;
++static unsigned long ul_receipt_count;
++static unsigned long ul_noreceipt_count;
++
++#define PRINT_TIME(start, end, fmt, order)  \
++do {					    \
++    long seconds, useconds, mtime;	    \
++    seconds  = end.tv_sec  - start.tv_sec;  \
++    useconds = end.tv_usec - start.tv_usec; \
++    if(useconds < 0){			    \
++	seconds--;	  		    \
++	useconds = end.tv_usec+1000000 - start.tv_usec;		    \
++    }								    \
++    mtime = useconds / 1000.0;					    \
++    useconds %= 1000;						    \
++    printf("--- Elapsed time(%s #%d): %ld sec %ld ms %ld us\n", fmt, order, seconds, mtime, useconds); \
++    printf("  - start_sec: %ld end_sec: %ld\n",start.tv_sec,end.tv_sec);    \
++    printf("  - start_usec: %ld end_usec: %ld\n",start.tv_usec,end.tv_usec);\
++} while(0)
++
++//#endif /* __TIME_MEASURE__ */
++
+diff --git a/quaggasrx/lib/thread.c b/quaggasrx/lib/thread.c
+index 16c92c2..cc768d5 100644
+--- a/quaggasrx/lib/thread.c
++++ b/quaggasrx/lib/thread.c
+@@ -1272,6 +1272,7 @@ thread_call (struct thread *thread)
+   ++(thread->hist->total_calls);
+   thread->hist->types |= (1 << thread->add_type);
+ 
++
+ #ifdef CONSUMED_TIME_CHECK
+   if (realtime > CONSUMED_TIME_CHECK)
+     {

@@ -1,0 +1,60 @@
+" following scheme is based on 'ph.scheme'
+highlight clear
+
+highlight Win cterm=none ctermfg=248 ctermbg=234
+highlight Directory cterm=bold ctermfg=033 ctermbg=234
+"highlight Link cterm=bold ctermfg=yellow ctermbg=234
+highlight Link cterm=none ctermfg=51 ctermbg=default
+highlight BrokenLink cterm=reverse ctermfg=red ctermbg=default
+highlight Socket cterm=bold ctermfg=125 ctermbg=default
+highlight Device cterm=bold ctermfg=red ctermbg=default
+highlight Fifo cterm=bold ctermfg=cyan ctermbg=default
+"highlight Executable cterm=bold ctermfg=166 ctermbg=default
+highlight Executable cterm=bold ctermfg=34 ctermbg=default
+highlight Selected cterm=bold ctermfg=255 ctermbg=237
+"highlight CurrLine cterm=bold ctermfg=default ctermbg=237
+highlight CurrLine cterm=bold,reverse ctermfg=default ctermbg=default
+highlight TopLine cterm=bold ctermfg=black ctermbg=235
+highlight TopLineSel cterm=bold ctermfg=black ctermbg=default
+highlight StatusLine cterm=bold ctermfg=black ctermbg=235
+highlight WildMenu cterm=underline,reverse ctermfg=white ctermbg=black
+highlight CmdLine cterm=none ctermfg=white ctermbg=black
+highlight ErrorMsg cterm=none ctermfg=red ctermbg=black
+highlight Border cterm=none ctermfg=black ctermbg=234
+highlight JobLine cterm=bold,reverse ctermfg=black ctermbg=white
+highlight SuggestBox cterm=bold ctermfg=default ctermbg=default
+
+if $USER == 'root'
+    highlight Border ctermbg=red
+endif
+
+highlight {COPYRIGHT,COPYING*,BUGS,ChangeLog*,FAQ,INSTALL*,LICENSE,NEW*,README*,AUTHORS,TODO,THANKS,SERVICES,REPORTING-BUGS} cterm=none ctermfg=187 ctermbg=default
+"highlight {Makefile,Makefile.am,Makefile.in,Makefile.win,*.mak,*.mk,CMakeLists.txt} cterm=none ctermfg=121 ctermbg=default
+""highlight {*.7z,*.ace,*.arj,*.bz2,*.cpio,*.deb,*.dz,*.gz,*.jar,*.lzh,*.lzma,*.rar,*.rpm,*.rz,*.tar,*.taz,*.tb2,*.tbz,*.tbz2,*.tgz,*.tlz,*.trz,*.txz,*.tz,*.tz2,*.xz,*.z,*.zip,*.zoo}  cterm=none ctermfg=red ctermbg=default
+highlight {*.djvu,*.htm,*.html,*.shtml,*.php,*.css,*.markdown,*.md,*[^0-9].[1-9],*.mkd,*.org,*.pandoc,*.pdc,*.pdf,*.epub,*.tex,*.txt,*.xhtml,*.xml,*.pptx,*.ppt,*.doc,*.docx,*.xls,*.xls[mx]} cterm=none ctermfg=218 ctermbg=default
+""highlight {*.bmp,*.gif,*.jpeg,*.jpg,*.ico,*.png,*.ppm,*.svg,*.svgz,*.tga,*.tif,*.tiff,*.xbm,*.xcf,*.xpm,*.xspf,*.xwd} cterm=none ctermfg=117 ctermbg=default
+""highlight {*.bat,*.btm,*.cmd,*.com,*.dll,*.exe,*.run,*.msu,*.msi,*.sh,*.bash} cterm=none ctermfg=77 ctermbg=default
+""highlight {*.py,*.[ch]pp,*.mk,*.c,*.[ch]pp,*.cc,*.hs} cterm=none ctermfg=193 ctermbg=default
+highlight {*.h} cterm=bold ctermfg=244 ctermbg=default
+highlight {*.patch,*.diff} cterm=none ctermfg=166 ctermbg=default
+highlight {*.spec,*.spec.*,*.rpm} cterm=none ctermfg=1 ctermbg=default
+highlight {*.la} cterm=none ctermfg=28 ctermbg=default
+highlight {*.tar.gz} cterm=none ctermfg=9 ctermbg=default
+highlight {*.conf,*.conf.*,*.log} cterm=none ctermfg=187 ctermbg=default
+
+"highlight /^.*\.(mp3|ogg|oga|flac|m4a)$/ ctermfg=magenta
+"highlight /^.*\.(jpg|jpeg|png|gif|tiff|webp|bmp|svg|svgz)$/ ctermfg=yellow
+"highlight /^.*\.(zip|gz|bz2|xz|tar|tgz|tbz2|7z|rar|iso|rpm|deb)$/ ctermfg=red
+
+
+" file name specific highlight
+highlight /.*\.c$|.*\.c\..*/I cterm=none ctermfg=220 ctermbg=default
+highlight /.*\.am$/I cterm=bold ctermfg=177 ctermbg=default
+highlight {Makefile,Makefile.in,Makefile.win,*.mak,*.mk,CMakeLists.txt,Makefile*} cterm=none ctermfg=177 ctermbg=default
+highlight /.*\.anx$|.*\.asf$|.*\.avi$|.*\.axv$|.*\.bmp$|.*\.cgm$|.*\.dl$|.*\.emf$|.*\.flc$|.*\.fli$|.*\.flv$|.*\.gif$|.*\.gl$|.*\.jpeg$|.*\.jpg$|.*\.m2v$|.*\.m4v$|.*\.mkv$|.*\.mng$|.*\.mov$|.*\.mp4$|.*\.mp4v$|.*\.mpeg$|.*\.mpg$|.*\.nuv$|.*\.ogm$|.*\.ogv$|.*\.ogx$|.*\.pbm$|.*\.pcx$|.*\.pgm$|.*\.png$|.*\.ppm$|.*\.qt$|.*\.rm$|.*\.rmvb$|.*\.svg$|.*\.svgz$|.*\.tga$|.*\.tif$|.*\.tiff$|.*\.vob$|.*\.wmv$|.*\.xbm$|.*\.xcf$|.*\.xpm$|.*\.xwd$|.*\.yuv$/I cterm=none ctermfg=13 ctermbg=default
+highlight /.*\.aac$|.*\.au$|.*\.axa$|.*\.flac$|.*\.mid$|.*\.midi$|.*\.mka$|.*\.mp3$|.*\.mpc$|.*\.oga$|.*\.ogg$|.*\.ra$|.*\.spx$|.*\.wav$|.*\.xspf$/I cterm=none ctermfg=45 ctermbg=default
+highlight /.*\.7z$|.*\.Z$|.*\.ace$|.*\.arj$|.*\.bz$|.*\.bz2$|.*\.cpio$|.*\.deb$|.*\.dz$|.*\.ear$|.*\.gz$|.*\.jar$|.*\.lz$|.*\.lzh$|.*\.lzma$|.*\.rar$|.*\.rpm$|.*\.rz$|.*\.sar$|.*\.tar$|.*\.taz$|.*\.tbz$|.*\.tbz2$|.*\.tgz$|.*\.tlz$|.*\.txz$|.*\.tz$|.*\.war$|.*\.xz$|.*\.z$|.*\.zip$|.*\.zoo$/I cterm=none ctermfg=9 ctermbg=default
+highlight /.*\.h$|.*\.lo$|.*\.o$/I cterm=none ctermfg=default ctermbg=default
+highlight /.*Makefile$/I cterm=none ctermfg=default ctermbg=default
+highlight /.*\.ac$/I cterm=none ctermfg=204 ctermbg=default
+highlight /.*diff.*/I cterm=none ctermfg=166 ctermbg=default
