@@ -1,3 +1,0 @@
-
-1. rebuild according to the distribution
-sudo rpmbuild --rebuild --define 'dist.el5' srx-0.3.0.1-1.el6.src.rpm

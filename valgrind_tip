@@ -1,8 +1,0 @@
-
-(1) general use for memcheck
-valgrind --leak-check=full --log-file=memcheck.txt -v --error-limit=no <command> [parameters]
-
-(2) callgrind
- $ valgrind --tool=callgrind bgpd/.libs/bgpd -f ~kyehwanl/srx_test1/node2/bgpd.conf -i /tmp/bgpd2.pid
-then, use qcachegrind for displaying
- $ qcachegrind callgrind.out.10041

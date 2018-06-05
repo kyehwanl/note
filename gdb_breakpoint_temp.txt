@@ -1,8 +1,0 @@
-(gdb) i b
-Num     Type           Disp Enb Address    What
-2       hw watchpoint  keep n              ((CommandQueueItem*)0x805c640)->data > 0x10 && ((CommandQueueItem*)0x805c640)->data < 0x131000
-3       breakpoint     keep y   0x0804a1e2 in handleCommands at command_handler.c:676
-	stop only if item->data > 0x10 && item->data < 0x131000
-4       hw watchpoint  keep y              ((CommandQueueItem *)0x805c640)->data < 0x131000
-	breakpoint already hit 1 time
-(gdb) 

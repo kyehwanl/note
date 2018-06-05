@@ -1,2 +1,0 @@
- find ./ -type f \( -name '*.am' -o -name '*.ac' -o -name 'Makefile_*' -o -name 'srx*.m4' -o -name 'make*.sh' -o -name '*.spec' \) -exec diff -wibuNp ../../020-03/srx-0.2.0/{} {} \; > diff_rpm_version.patch
-

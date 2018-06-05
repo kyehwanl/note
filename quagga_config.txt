@@ -1,6 +1,0 @@
-
-automake --add-missing
-autoreconf
-----
-./configure --prefix=/usr/local/quagga/ --disable-ospfd --disable-ospf6d --enable-user=root --enable-group=root --enable-configfile-mask=0644 --enable-logfile-mask=0644
-
