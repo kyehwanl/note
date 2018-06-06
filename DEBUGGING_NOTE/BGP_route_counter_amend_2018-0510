@@ -1,0 +1,15 @@
+
+1. Quagga
+----------
+
+(1) in order to count the number of BGP routes
+
+    count = mtype_stats_alloc (MTYPE_BGP_ROUTE);
+    vty_out (vty, "%ld BGP routes, using %s of memory%s", count, ...
+
+
+
+(2) node ( = RIB)
+
+   count = mtype_stats_alloc (MTYPE_BGP_NODE);
+   vty_out (vty, "%ld RIB nodes, using %s of memory%s", count, ...

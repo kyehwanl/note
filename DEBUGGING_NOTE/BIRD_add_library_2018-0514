@@ -1,0 +1,8 @@
+
+
+in order to add an external or user-defined library,
+need to edit Obj/Rule file, and add some settings like following
+
+ CFLAGS=$(CPPFLAGS) -I/usr/local/ssl/include -pthread -I/users/kyehwanl/Programming/time-measure/tm-library/ -O0 -g     
+ LDFLAGS=-L/usr/local/ssl/lib -pthread -L/users/kyehwanl/Programming/time-measure/tm-library/.libs/                     
+ LIBS=-lcrypto -lcrypto -ldl -lrt -ltm_rdtsc -Wl,-rpath -Wl,/users/kyehwanl/Programming/time-measure/tm-library/.libs/  

@@ -1,0 +1,53 @@
+
+1. iperf measurement
+=====================
+    1.1 server side 
+
+          [root@vmware-005 kyehwanl]# docker run -it --rm --name=iperf3-server -p 5201:5201 networkstatic/iperf3 -s
+          -----------------------------------------------------------
+          Server listening on 5201
+          -----------------------------------------------------------
+          Accepted connection from 10.0.50.11, port 33848
+          [  5] local 172.17.0.3 port 5201 connected to 10.0.50.11 port 33850
+          [ ID] Interval           Transfer     Bandwidth
+          [  5]   0.00-1.00   sec  1.18 GBytes  10.2 Gbits/sec                  
+          [  5]   1.00-2.00   sec  1.20 GBytes  10.3 Gbits/sec                  
+          [  5]   2.00-3.00   sec  1.22 GBytes  10.5 Gbits/sec                  
+          [  5]   3.00-4.00   sec  1.20 GBytes  10.3 Gbits/sec                  
+          [  5]   4.00-5.00   sec  1.20 GBytes  10.3 Gbits/sec                  
+          [  5]   5.00-6.00   sec  1.25 GBytes  10.8 Gbits/sec                  
+          [  5]   6.00-7.00   sec  1.24 GBytes  10.6 Gbits/sec                  
+          [  5]   7.00-8.00   sec  1.22 GBytes  10.5 Gbits/sec                  
+          [  5]   8.00-9.00   sec  1.26 GBytes  10.8 Gbits/sec                  
+          [  5]   9.00-10.00  sec  1.24 GBytes  10.6 Gbits/sec                  
+          [  5]  10.00-10.00  sec   512 KBytes  11.2 Gbits/sec                  
+          - - - - - - - - - - - - - - - - - - - - - - - - -
+          [ ID] Interval           Transfer     Bandwidth       Retr
+          [  5]   0.00-10.00  sec  12.2 GBytes  10.5 Gbits/sec  2654             sender
+          [  5]   0.00-10.00  sec  12.2 GBytes  10.5 Gbits/sec                  receiver
+
+
+
+    1.2 Client side
+
+          [root@vmware-011 kyehwanl]# docker run -it --rm networkstatic/iperf3 -c 10.0.50.5                                                      
+          Connecting to host 10.0.50.5, port 5201
+          [  4] local 172.17.0.3 port 33850 connected to 10.0.50.5 port 5201
+          [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+          [  4]   0.00-1.00   sec  1.18 GBytes  10.2 Gbits/sec  179    561 KBytes       
+          [  4]   1.00-2.00   sec  1.20 GBytes  10.3 Gbits/sec  214    519 KBytes       
+          [  4]   2.00-3.00   sec  1.22 GBytes  10.5 Gbits/sec  338    409 KBytes       
+          [  4]   3.00-4.00   sec  1.20 GBytes  10.3 Gbits/sec  220    503 KBytes       
+          [  4]   4.00-5.00   sec  1.20 GBytes  10.3 Gbits/sec  371    448 KBytes       
+          [  4]   5.00-6.00   sec  1.25 GBytes  10.8 Gbits/sec  158    516 KBytes       
+          [  4]   6.00-7.00   sec  1.24 GBytes  10.6 Gbits/sec  260    474 KBytes       
+          [  4]   7.00-8.00   sec  1.22 GBytes  10.5 Gbits/sec  292    547 KBytes       
+          [  4]   8.00-9.00   sec  1.26 GBytes  10.8 Gbits/sec  294    602 KBytes       
+          [  4]   9.00-10.00  sec  1.24 GBytes  10.6 Gbits/sec  328    502 KBytes       
+          - - - - - - - - - - - - - - - - - - - - - - - - -
+          [ ID] Interval           Transfer     Bandwidth       Retr
+          [  4]   0.00-10.00  sec  12.2 GBytes  10.5 Gbits/sec  2654             sender
+          [  4]   0.00-10.00  sec  12.2 GBytes  10.5 Gbits/sec                  receiver
+
+          iperf Done.
+

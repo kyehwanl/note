@@ -1,0 +1,24 @@
+
+ (https://gitlab.com/gitlab-com/support-forum/issues/1892)
+  Solved with :
+
+  Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+  in my .ssh/config
+
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=747098
+
+  OR 
+
+  -- Configuration Files:
+  /etc/ssh/ssh_config changed:
+  Host *
+     Ciphers 3des-cbc,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc
+      SendEnv LANG LC_*
+      HashKnownHosts yes
+      GSSAPIAuthentication yes
+      GSSAPIDelegateCredentials no
+
+
+  OR 
+
+  ssh -c aes128-ctr 10.0.20.170

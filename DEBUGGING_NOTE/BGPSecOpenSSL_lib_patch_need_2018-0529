@@ -1,0 +1,46 @@
+
+1. Need patch for using SRxCryptoAPI's functions, which were already in BGPSecOpenSSL.c source code
+
+  (1) in Makefile
+
+    original:
+        libSRxBGPSecOpenSSL_la_LIBADD =  -lcrypto -lssl.
+        libSRxBGPSecOpenSSL_la_LDFLAGS = -version-info $(LIB_VER) -module #-avoid-version
+
+    modified:
+       libSRxBGPSecOpenSSL_la_LIBADD =  -lcrypto -lssl -lSRxCryptoAPI
+       libSRxBGPSecOpenSSL_la_LDFLAGS = -version-info $(LIB_VER) -module -L$(libdir) #-avoid-version
+
+
+    where, libdir = ${exec_prefix}/lib64/srx
+ 
+
+
+  (2) _sign function declaration needs to be without 'static'
+      in order to use from outside (in python, ctypes.cdll.LoadLibrary call)
+
+
+ 
+  (3) 'set key path' needed, because using _sign alone needs to have the location prefix, 
+      otherwise it would have only a key path
+
+      --- a/bgpsec_openssl/bgpsec_openssl.c
+      +++ b/bgpsec_openssl/bgpsec_openssl.c
+      @@ -127,6 +127,8 @@ static KeyStorage* BOSSL_pubKeys = NULL;
+       static KeyStorage* BOSSL_privKeys = NULL;
+       inline void printHex(int , unsigned char* );
+
+      +extern int sca_SetKeyPath (char* key_path);
+      +
+       /**
+        * Read the given file and pre-load all keys. The following non error status
+        * can be set:
+      @@ -153,6 +155,8 @@ static void _readKeyFile(char* fName, bool isPrivate, sca_status_t* status,
+         char line[1024];
+         int read = 0;
+
+      +  sca_SetKeyPath("/opt/project/srx_test1/keys/");
+      +
+         BGPSecKey    key;
+         sca_status_t myStatus = API_STATUS_OK;
+

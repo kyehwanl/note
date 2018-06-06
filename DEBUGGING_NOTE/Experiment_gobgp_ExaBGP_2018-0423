@@ -1,0 +1,113 @@
+
+1. Experiments between vmware-011 and vmware-005
+
+ 1.1 vmware-005 side
+
+  (1)
+     vmware.005-antd [1004]{.../project/gobgp_test}-> sudo /opt/project/gobgp_test/gowork/bin/gobgpd -f ./gobgpd.conf
+
+  (2)  gobgpd.conf
+
+    [global.config]
+      as = 65005
+      router-id = "10.0.50.5"
+
+    [[neighbors]]
+      [neighbors.config]
+        neighbor-address = "10.0.50.11"
+        peer-as = 65011
+
+    (3) monitoring and announce rib command:
+
+        vmware.005-antd [1003]{.../gowork/bin}-> ./gobgp global rib 
+            Network             Next Hop             AS_PATH              Age        Attrs
+        *>  10.10.10.2/32       192.0.2.1            65011                00:00:19   [{Origin: i} {Communities: 65001:666, 65001:400}]
+        *>  200.20.0.0/16       172.16.2.202         100 200 400          00:00:19   [{Origin: i}]
+
+        vmware.005-antd [1003]{.../gowork/bin}-> ./gobgp global rib add -a ipv4 100.3.1.0/24
+
+        vmware.005-antd [1004]{.../gowork/bin}-> ./gobgp global rib 
+            Network             Next Hop             AS_PATH              Age        Attrs
+        *>  10.10.10.2/32       192.0.2.1            65011                00:00:52   [{Origin: i} {Communities: 65001:666, 65001:400}]
+        *>  100.3.1.0/24        0.0.0.0                                   00:00:12   [{Origin: ?}]
+        *>  200.20.0.0/16       172.16.2.202         100 200 400          00:00:52   [{Origin: i}]
+
+
+
+
+ 1.2 vmware-011 side
+
+    (1) execute exabgp:
+        vmware.011-antd [1005]{.../exabgp_test/exabgp-3.4.13}-> ./sbin/exabgp ../bgpd.exa.conf
+
+    (2) bgpd.exa.conf
+
+        group Core_v4 {
+            hold-time 180;
+            router-id 10.0.50.11;
+            local-as 65011;
+            local-address 10.0.50.11;
+            peer-as 65005;
+            graceful-restart 1200;
+            group-updates true;
+
+            static {
+              route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+              route 200.20.0.0/16 next-hop 172.16.2.202 origin igp as-path [100 200 400];
+            }
+
+            neighbor 10.0.50.5 {
+              description "Exabgp";
+              add-path receive;
+
+              process parsed-route-backend {
+                  receive {
+                      parsed;
+                      neighbor-changes;
+                      update;
+                  }
+                  run etc/exabgp/processes/syslog-1.py;
+              }
+            }
+
+
+    (3) parsing result
+
+        vmware.011-antd [1005]{~}-> sudo tailf /var/log/messages
+            Apr 23 14:18:10 vmware-011 log-1.py: Mon, 23 Apr 2018 14:18:10 INFO     29046  neighbor 10.0.50.5 down - graceful restarted negotiated, closing without sending any notification
+            Apr 23 14:18:11 vmware-011 log-1.py: Mon, 23 Apr 2018 14:18:11 INFO     29046  shutdown 29036 26507
+            Apr 23 14:18:15 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:15 INFO     29075  neighbor 10.0.50.5 connected
+            Apr 23 14:18:16 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:16 INFO     29075  neighbor 10.0.50.5 down - out loop, peer reset, message [closing connection] error[the TCP connection was closed by the remote end]
+            Apr 23 14:18:19 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:19 INFO     29075  neighbor 10.0.50.5 connected
+            Apr 23 14:18:20 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:20 INFO     29075  neighbor 10.0.50.5 up
+            Apr 23 14:18:20 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:20 INFO     29075  neighbor 10.0.50.5 update start
+            Apr 23 14:18:20 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:20 INFO     29075  neighbor 10.0.50.5 announced route 100.3.1.0/24 origin incomplete as-path [ 65005 ]
+            Apr 23 14:18:20 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:20 INFO     29075  neighbor 10.0.50.5 update end
+            Apr 23 14:18:27 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:27 INFO     29075  neighbor 10.0.50.5 down - graceful restarted negotiated, closing without sending any notification
+            Apr 23 14:18:28 vmware-011 ExaBGP: Mon, 23 Apr 2018 14:18:28 INFO     29075  shutdown 29065 26507
+
+
+        vmware.011-antd [1005]{.../exabgp_test/exabgp-3.4.13}-> ./sbin/exabgp ../bgpd.exa.conf
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | reactor       | Performing reload of exabgp 3.4.13
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | configuration | loading | ####################################################
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | configuration | loading | 
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | configuration | loading | group Core_v4 {
+            -------------<snip>---------------------
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | configuration | parsing | group         | '}'
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | reactor       | New peer setup: neighbor 10.0.50.5 local-ip 10.0.50.11 local-as 65011 peer-as 65005 router-id 10.0.50.11 family-allowed in-open
+            Mon, 23 Apr 2018 14:18:13 | WARNING  | 29065  | configuration | Loaded new configuration successfully
+            Mon, 23 Apr 2018 14:18:13 | INFO     | 29065  | processes     | Forked process parsed-route-backend
+            Mon, 23 Apr 2018 14:18:16 | INFO     | 29065  | network       | Peer       10.0.50.5 ASN 65005   out loop, peer reset, message [closing connection] error[the TCP connection was closed by the remote end]
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | network       | Connected to peer neighbor 10.0.50.5 local-ip 10.0.50.11 local-as 65011 peer-as 65005 router-id 10.0.50.11 family-allowed in-open (out)
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | parsing flag 40 type 01 (origin) len 01 payload  (2) 02
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | parsing flag 40 type 02 (as-path) len 06 payload  (14) 0201 0000 FDED
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | parsing flag 40 type 03 (next-hop) len 04 payload  (9) 0A00 3205
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | no withdrawn NLRI
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | parsing 1/1 nlri payload  (9) 1864 0301
+            Mon, 23 Apr 2018 14:18:20 | INFO     | 29065  | parser        | parsed announce nlri 100.3.1.0/24 next-hop 10.0.50.5 payload  (9) 1864 0301
+            ^CMon, 23 Apr 2018 14:18:27 | INFO     | 29065  | reactor       | ^C received
+            Mon, 23 Apr 2018 14:18:27 | INFO     | 29065  | reactor       | Performing shutdown
+            Mon, 23 Apr 2018 14:18:27 | ERROR    | 29065  | network       | Closing the session without notification
+            Mon, 23 Apr 2018 14:18:27 | INFO     | 29065  | network       | Peer       10.0.50.5 ASN 65005   graceful restarted negotiated, closing without sending any notification
+            Mon, 23 Apr 2018 14:18:28 | INFO     | 29065  | processes     | Terminating process parsed-route-backend
+

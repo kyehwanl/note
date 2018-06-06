@@ -1,0 +1,12 @@
+
+1. c dynamic library importing
+  (1) issue
+    - importing libSRxCryptoAPI.so, importing libBGPSecOpenSSL.so 
+        seems to have different name space for _keyPath (as a global variable) whiich is used at sca_SetKeyPath()
+    - When importing libSRxCryptoAPI and using in_dll() for accessing the global variable, it wasn't same with the one which came from importing libBGPSecOpenSSL.so. So maybe importing two libraries are making each own name space in the virtual address area even though it is same variable in the source code
+
+
+  (2) Possible Solution
+    - how to get connected both name spaces or 
+
+    - how about importing only libSRxCryptoAPI and have it initiate the init function which in turn calls (with dlopen, libdl) to dynamically load libBGPSecOpenSSL.so ??
