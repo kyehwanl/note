@@ -334,7 +334,10 @@ git remote
     1
 
 
-8. How to remove a commit on Github
+Github
+=======
+
+1. How to remove a commit on Github
   (1) remove the commit on your local repository. using "git rebase -i" 
        git rebase -i HEAD~2 
 
@@ -347,7 +350,7 @@ git remote
 
 
 
-9. github Automation
+2. github Automation
    With the external program, expect, (can be downloaded from 'yum download expect'),
    git push & pull operation can be automated like following:
 
@@ -376,15 +379,19 @@ git remote
 
 
 
+Useful Tips
+============
 
-10. search from revisions
+1. search from revisions
   (1) Search through previous revisions whose contents contain a given regexp
    <http://travisjeffery.com/b/2012/02/search-a-git-repo-like-a-ninja/>
         git grep <regexp> $(git rev-list --all)
 
 
 
+2. Add a date & Time info into a comment
 
+        git commit --amend -m "$(date +"%D %T")"
 
 
 

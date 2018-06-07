@@ -138,7 +138,7 @@ tmux tips
 
   (2) move to 
     window - <C-B> <number>
-    pane - hit the pane number while displaying the pane number
+    pane - hit the pane number while displaying the pane number by '<preifx>+q'
 
 
     *** <change display time> ***
@@ -154,8 +154,8 @@ tmux tips
 
 4. rename session and window
 -----------------------------
-    <prefix> , : rename window
     <prefix> $ : rename session
+    <prefix> , : rename window
 
 
 

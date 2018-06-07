@@ -607,6 +607,14 @@ Then, here are the result.
 Breakpoint 2 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py:136
 
 
+Breakpoints
+/users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py:116
+/users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:153
+/users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/__init__.py:81
+/users/kyehwanl//srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/bgpsec.py:40
+
+b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/open/capability/capabilities.py:130, capability=7
+
 
 
 

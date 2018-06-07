@@ -64,12 +64,38 @@ MAILTO=""
 
 
 # current setting in ls5 or bgp2 or vmware-023
+==============================================
+
+(1) vmware-023 for sync with (Emulab --> fs6)
 MAILTO=""
 1 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/config_and_diff_patch/ ~/Emulab/config_and_diff_patch/
 2 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Documents/ ~/Emulab/Documents/
-3 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/srx_test1/DEBUGGING_NOTE/ ~/Emulab/DEBUGGING_NOTE/
+3 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/DEBUGGING_NOTE/ ~/Emulab/DEBUGGING_NOTE/
 4 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Shell_Script/ ~/Emulab/Shell_Script/
 5 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/proj-bgp/ ~/Emulab/proj-bgp/
 7 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Quagga_test/ ~/Emulab/Quagga_test/
 9 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Programming/ ~/Emulab/Programming/
+
+
+(2) vmware-005 for sync Document(config_and_diff_patch, Shell_script and Debugging_note) to Github
+
+MAILTO=""
+1 1 * * * ~/Emulab/Shell_Script/github_sync_vm005.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
