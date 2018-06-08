@@ -25,6 +25,13 @@ gobgp configuration
 
     refer to READMEfile 
 
+        ----------- below is from the website --------------
+        You need a working Go environment (1.9 or newer).
+
+        $ go get -u github.com/golang/dep/cmd/dep
+        $ go get github.com/osrg/gobgp
+        $ cd $GOPATH/src/github.com/osrg/gobgp && dep ensure
+
 (3) gobgpd config file (toml form)
 
   bgpsec1.antd [53]{.../gowork/bin}-> cat gobgpd.conf

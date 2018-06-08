@@ -21,6 +21,7 @@ git commit -m "auto-updated $(date +"%D %T")"
 cp ~/Emulab/Shell_Script/input-expect.sh /tmp/
 sudo /tmp/input-expect.sh
 
+cd /tmp
 rm -rf /tmp/note /tmp/note0
 rm -rf /tmp/input-expect.sh
 

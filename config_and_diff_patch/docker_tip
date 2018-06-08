@@ -269,6 +269,7 @@ Docker Tips
 
     $ docker inspect <container ID> 
         - there will be 'NetworkSettings' 
+        - or docker inspect <container ID| abbr. cont ID> | grep IPAddress
 
 
     ** check ip address of docker container
