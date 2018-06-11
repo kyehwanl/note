@@ -1,0 +1,79 @@
+
+calling bgp_process
+===================
+
+The reason why bgp_process has many number of calls were made during processing bgpsec updates.
+
+1. There are 3 spots to call bgp_process
+
+  A. bgp_update
+      when an update comes for the first time
+
+  B. New Result comes from SRx server
+      New ROA, BGPSec result triggers bgp_process
+
+  C. bgp_scan_timer
+      Every 60 sec (adjustable), bgp_scan will be scheduled to call bgp_process
+
+
+
+2. Simple markers at the head of bgp_process on every calling bgp_process
+
+  - This shows the number of calling bgp_process during actual running time.
+
+  - callgrind makes some sort of virtual environment to simulate, so it will take at least more than 10 times longer 
+  than actual running time as described its manual 
+
+
+
+3. with Real time test
+
+ A. in case of receiving 100,000 updates from a peer, measuring the total number of bgp_process call and others
+
+
+  < measuring counters on the receiver side>
+  [bgp_read] Start Receiving Upto 100000 Counts...
+   validate count reached 100000 and terminate 
+  cpu clock diff - Receiving time: 47278630.65 us 
+  cpu clock diff - validation time :: 129060745.20 us 
+  cpu clock diff - overall time (including validation) :: 129061643.61 us 
+
+  bgp_process count                     : 300002 
+  bgp_process_main                      : 300001
+  bgp_scan_timer                        : 4 
+  bgp_scan_timer_to_call_bgp_process    : 200000
+
+
+
+  < receiver's quagga statistics>
+  bgpsec1> sh thread cpu
+                        CPU (user+system): Real (wall-clock):
+  Runtime(ms)   Invoked Avg uSec Max uSecs Avg uSec Max uSecs  Type  Thread
+        0.000        16        0         0       22        41  W     vty_flush
+   122892.347    200001      614      6999      620      8240 R      respawnReceivePacket
+        0.000         1        0         0       80        80   T    bgp_start_timer
+        0.000         6        0         0       12        37    E   bgp_event
+     1818.698    100005       18      3999       20      4156 R      bgp_read
+        2.000         1     2000      2000     2618      2618    E   initUnSocket
+        0.000        10        0         0       10        30  W     bgp_write
+        0.000         1        0         0       17        17    E   zlookup_connect
+       72.991       938       77      9999       86     10227      B work_queue_run
+       54.991         2    27495     29995    27677     30180   T    bgp_scan_timer
+        4.000         2     2000      2000     2162      2188   T    bgp_keepalive_timer
+        0.000         1        0         0       43        43 R      vty_accept
+        0.000         5        0         0        4         7   T    bgp_routeadv_timer
+        0.000        10        0         0        3         5   T    bgp_import
+        0.000        15        0         0       32       317 R      vty_read
+        0.000         5        0         0       32        57   TE   zclient_connect
+   124845.027    301019      414     29995      419     30180 RWTEXB TOTAL
+
+
+
+ B. Conclution
+  Total bgp_process call count : (almost)300000
+
+  = <case 1.A> (bgp_update) 100,000 + <case 1.B> (triggered by SRx Result) (0)
+   + bgp_scan_timer(2 times) * 100,000  
+
+
+

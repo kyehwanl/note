@@ -1,0 +1,14 @@
+
+gobgp Feasibility
+=================
+
+
+1. expandibility
+
+1.1 compatible c library (shared and static)
+    - if bgpsec library is well origanized in forms of library
+    - it can be used in gobgp as well as exabgp
+
+
+2. Performance
+2.1 not as much fast as C based function.
