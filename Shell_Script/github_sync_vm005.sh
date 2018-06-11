@@ -15,7 +15,7 @@ rsync -avPuiz --delete note0/Shell_Script/ note/Shell_Script/
 rsync -avPuiz --delete note0/DEBUGGING_NOTE/ note/DEBUGGING_NOTE/
 
 cd note
-git add .
+git add --all ./
 git commit -m "auto-updated $(date +"%D %T")"
 
 cp ~/Emulab/Shell_Script/input-expect.sh /tmp/
