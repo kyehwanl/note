@@ -97,3 +97,4 @@ AS50/srx/extras/local/openssl
 AS50/srx/extras/local/share
 AS50/srx/extras/files/libconfig-1.4.1
 AS50/srx/extras/files/Net-Patricia-1.15
+.nfs*
