@@ -1,0 +1,48 @@
+############################################################
+# Dockerfile to build QuaggaSRx container images
+# Based on CentOS 7
+############################################################
+FROM centos:latest
+MAINTAINER "Kyehwan Lee" 
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+# Install Quagga, Telnet, and TCPDump
+RUN yum -y install wget libconfig openssl net-snmp telnet
+##################### INSTALLATION END #####################
+
+################## BEGIN CONFIGURATION ######################
+# Use the sample configurations as our production configs
+# COPY babeld.conf /etc/quagga/babeld.conf
+#VOLUME ["/etc/quagga/"]
+#ADD bgpd.conf /test
+#WORKDIR /opt/project/docker_test
+#COPY bgpd.conf /etc/quagga/bgpd.conf
+# COPY isisd.conf /etc/quagga/isisd.conf
+RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm
+RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm
+RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/srx-0.5.1.0-1.el7.centos.x86_64.rpm
+RUN wget http://129.6.140.211/temp/proj-bgp/srx-repo/quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm
+# RUN mv ospfd.conf /etc/quagga/ospfd.conf
+# RUN mv ripd.conf /etc/quagga/ripd.conf
+# RUN mv ripngd.conf /etc/quagga/ripngd.conf
+# RUN mv zebra.conf /etc/quagga/zebra.conf
+RUN rpm -ivh srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm
+RUN rpm -ivh srx-0.5.1.0-1.el7.centos.x86_64.rpm
+RUN rpm -ivh srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm
+RUN rpm -ivh quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm
+
+
+EXPOSE 2605 179
+
+#CMD ["bgpd -f /test/bgpd.conf"]
+#CMD ["srx_server &"]
+#CMD ["bgpd", "-u root"]
+CMD ["bgpd", "-u", "root"]
+#CMD bgpd -u root
+#CMD ["/bin/bash"]
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx
+##############################################################################

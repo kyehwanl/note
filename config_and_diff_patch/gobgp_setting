@@ -99,7 +99,7 @@ Modify gobgpd
 
 (5) build
  go to /users/kyehwanl/srx_test1/gowork/src/gobgp_test
- hit the command "go get ./..."  (three dots)
+ hit the command "go get ./..."  (three dots: means including subdirectories)
 
 (6) run
   sudo -E ./gobgpd -f ./gobgpd.conf [-l debug]
@@ -113,12 +113,93 @@ Check Dependencies and build
 ============================
 (1) look for any library dependencies
     cd osrg/gobgp
-    "go get ./.."
+    "go get ./..."
 
 (2) build src code using or install the binary using go install ./...
     "go build ./..."
 
 (3) compiled binaries in $GOPATH/bin/ 
+
+
+
+
+Running
+=========
+
+  (0) go run filename.go
+      go get == go build + go run
+
+  (1) log-level 
+      -l or --log-level=<info|debug>
+
+  (2) -p: plain  
+
+      vmware.005-antd [1009]{.../gowork/bin}-> sudo ./gobgpd --log-level=info -f ./gobgpd.conf -p     
+      INFO[0000] Policy config is updated                     
+      INFO[0000] gobgpd started                               
+      INFO[0000] Finished reading the config file              Topic=Config
+      INFO[0000] Peer 10.0.50.11 is added                     
+      INFO[0000] Add a peer configuration for:10.0.50.11       Topic=Peer
+      INFO[0013] Peer Up                                       Key=10.0.50.11 State="BGP_FSM_OPENCONFIRM" Topic=Peer
+      INFO[0014]  +++++++++ gobgpd update                     
+
+
+
+      vmware.005-antd [1008]{.../gowork/bin}-> sudo ./gobgpd --log-level=debug -f ./gobgpd.conf -p
+      INFO[0000] Policy config is updated                     
+      INFO[0000] gobgpd started                               
+      INFO[0000] Finished reading the config file              Topic=Config
+      INFO[0000] Peer 10.0.50.11 is added                     
+      DEBU[0000] failed to set md5 10.0.50.11 no such file or directory  Topic=Peer
+      INFO[0000] Add a peer configuration for:10.0.50.11       Topic=Peer
+      DEBU[0000] IdleHoldTimer expired                         Duration=0 Key=10.0.50.11 Topic=Peer
+      DEBU[0000] state changed                                 Key=10.0.50.11 Topic=Peer new="BGP_FSM_ACTIVE" old="BGP_FSM_IDLE" reason=idle-hold-timer-expired
+      DEBU[0017] state changed                                 Key=10.0.50.11 Topic=Peer new="BGP_FSM_OPENSENT" old="BGP_FSM_ACTIVE" reason=new-connection
+      DEBU[0017] state changed                                 Key=10.0.50.11 Topic=Peer new="BGP_FSM_OPENCONFIRM" old="BGP_FSM_OPENSENT" reason=open-msg-received
+      INFO[0017] Peer Up                                       Key=10.0.50.11 State="BGP_FSM_OPENCONFIRM" Topic=Peer
+      DEBU[0017] state changed                                 Key=10.0.50.11 Topic=Peer new="BGP_FSM_ESTABLISHED" old="BGP_FSM_OPENCONFIRM" reason=open-msg-negotiated
+      DEBU[0018] received update                               Key=10.0.50.11 Topic=Peer attributes=[{Origin: i} {Nexthop: 10.0.50.11} {Med: 0} 65011] nlri=[100.0.0.0/8 100.0.30.0/23] withdrawals=[]
+      INFO[0018]  +++++++++ gobgpd update                     
+      DEBU[0018] create Destination                            Key="100.0.0.0/8" Topic=Table
+      DEBU[0018] create Destination                            Key="100.0.30.0/23" Topic=Table
+      DEBU[0018] Processing destination                        Key="100.0.0.0/8" Topic=table
+      DEBU[0018] computeKnownBestPath known pathlist: 1        Topic=Table
+      DEBU[0018] Processing destination                        Key="100.0.30.0/23" Topic=table
+      DEBU[0018] computeKnownBestPath known pathlist: 1        Topic=Table
+      DEBU[0018] From me, ignore.                              Data={ 100.0.0.0/8 | src: { 10.0.50.11 | as: 65011, id: 10.0.50.11 }, nh: 10.0.50.11 } Key=10.0.50.11 Topic=Peer
+      DEBU[0018] From me, ignore.                              Data={ 100.0.30.0/23 | src: { 10.0.50.11 | as: 65011, id: 10.0.50.11 }, nh: 10.0.50.11 } Key=10.0.50.11 Topic=Peer
+      DEBU[0044] sent                                          Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer data=&{{[] 19 4} 0x15863f8}
+      DEBU[0074] sent                                          Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer data=&{{[] 19 4} 0x15863f8}
+
+
+
+
+Debugging
+===========
+
+  1. GDB
+    Basically, Go consist of C language, so gdb can be used for debugging
+        sudo gdb --args ./gobgpd -f ./gobgpd.conf
+
+
+
+  2. delve (a.k.a 'godebug' previously)
+
+    usage: dlv debug|attach
+    
+    2.1 installation required: go version >= 1.7 or 1.8
+    2.2 installation 
+      $ go get -u github.com/derekparker/delve/cmd/dlv
+
+    2.3 run:    sudo ./dlv attach <pid of gobgpd>
+
+    2.4 breakpoint:
+        (dlv) b /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/peer.go:465
+        Breakpoint 1 set at 0x969ce3 for github.com/osrg/gobgp/server.(*Peer).handleUpdate() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/peer.go:465
+
+
+
+
 
 
 

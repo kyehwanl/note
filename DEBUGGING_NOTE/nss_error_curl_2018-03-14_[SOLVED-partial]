@@ -1,0 +1,46 @@
+
+1. error
+    curl doesn't work
+    
+
+        [kyehwanl@node4 tmp]$ curl -v https://github.com 
+        * About to connect() to github.com port 443 (#0)
+        * Trying 192.30.253.113... connected
+        * Connected to github.com (192.30.253.113) port 443 (#0)
+        * Initializing NSS with certpath: sql:/etc/pki/nssdb
+        * CAfile: /etc/pki/tls/certs/ca-bundle.crt
+          CApath: none 
+        * NSS error -12190 
+        * Error in TLS handshake, trying SSLv3... 
+        > GET / HTTP/1.1
+        > User-Agent: curl/7.21.3 (i386-redhat-linux-gnu) libcurl/7.21.3 NSS/3.13.1.0 zlib/1.2.5 libidn/1.19 libssh2/1.2.7   
+        > Host: github.com 
+        > Accept: */* 
+        >
+        * Connection died, retrying a fresh connect
+        * Closing connection #0 
+        * Issue another request to this URL: 'https://github.com' 
+        * About to connect() to github.com port 443 (#0)
+        * Trying 192.30.253.113... connected 
+        * Connected to github.com (192.30.253.113) port 443 (#0) 
+        * TLS disabled due to previous handshake failure  
+        * CAfile: /etc/pki/tls/certs/ca-bundle.crt
+          CApath: none 
+        * NSS error -12286 
+        * Closing connection #0  
+        * SSL connect error
+                
+            curl: (35) SSL connect error 
+
+
+   
+2. NSS problem 
+ - need to find a solution
+
+ - Just rename /etc/pki/nssdb --> /etc/pki/nssdb_bkup on vmware-005
+    and then, it works as normal 
+
+ - Only changed pkcs11.txt filename into pkcs11.txt.bkup, it works
+    
+    the root cause of this issue might be the file, pkcs11.txt
+

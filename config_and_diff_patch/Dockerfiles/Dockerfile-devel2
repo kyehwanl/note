@@ -1,0 +1,23 @@
+############################################################
+# Dockerfile to build QuaggaSRx container images
+# Based on CentOS 7
+############################################################
+FROM centos:latest
+MAINTAINER "Kyehwan Lee" 
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+# Install Quagga, Telnet, and TCPDump
+RUN echo "[linuxtech]" > /etc/yum.reops.d/linuxtech.repo && echo "name=LinuxTECH" >> /etc/yum.reops.d/linuxtech.repo \
+    && echo "baseurl=http://pkgrepo.linuxtech.net/el6/release/" >> /etc/yum.reops.d/linuxtech.repo \
+    && echo "enabled=1" >> /etc/yum.reops.d/linuxtech.repo && echo "gpgcheck=1" >> /etc/yum.reops.d/linuxtech.repo \
+    && echo "pgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET" >> /etc/yum.reops.d/linuxtech.repo
+#COPY /etc/yum.reops.d/linuxtech.repo /etc/yum.repos.d/
+#CMD ["bgpd -f /test/bgpd.conf"]
+#CMD ["bgpd"]
+CMD /bin/bash
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx
+##############################################################################
