@@ -75,6 +75,7 @@ MAILTO=""
 5 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/proj-bgp/ ~/Emulab/proj-bgp/
 7 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Quagga_test/ ~/Emulab/Quagga_test/
 9 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/Programming/ ~/Emulab/Programming/
+11 0 * * * rsync -avPuiz --delete node1.bs1.bgp-srx.emulab2.antd.nist.gov:~/srx_test1/exabgp-3.4.13/ ~/Emulab/exabgp-3.4.13/
 
 
 (2) vmware-005 for sync Document(config_and_diff_patch, Shell_script and Debugging_note) to Github
