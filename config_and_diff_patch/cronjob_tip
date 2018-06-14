@@ -79,10 +79,9 @@ MAILTO=""
 
 
 (2) vmware-005 for sync Document(config_and_diff_patch, Shell_script and Debugging_note) to Github
-
 MAILTO=""
-1 1 * * * ~/Emulab/Shell_Script/github_sync_vm005.sh
-
+15 0 * * * /users/kyehwanl/Emulab/Shell_Script/github_sync_vm005.sh > /tmp/crontab.log 2>&1
+17 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.sh > /tmp/crontab-exabgp.log 2>&1
 
 
 
