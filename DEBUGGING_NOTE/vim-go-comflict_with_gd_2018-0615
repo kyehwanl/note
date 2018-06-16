@@ -1,0 +1,8 @@
+
+In case the mapping conflict with 'gd' 
+
+--> (solution)
+    :nnoremap <buffer> <silent> gd gd
+
+
+    then, it will go back to original setting
