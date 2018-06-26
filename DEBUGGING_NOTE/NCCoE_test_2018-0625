@@ -1,0 +1,36 @@
+
+NCCoE BGP RPKI TEST
+===================
+
+1. bgpsecio 
+    - verion 0.2.0.24
+    - traffic generator stops sending a bgp traffic on the number of 467,xxx packet at every time. 
+    - collector side, it finishs receiving the update messages from the Juniper router
+        -- the exact count varies
+    - But when turning on print messages on console, it goes until end of update message received
+        -- at around 120,000 packets
+        -- comparing Quagga, it received almost same amount of packets with the number bgpsecio received
+        
+
+2. traffic generator using ExaBGP 3.4.9
+    - able to parse mrt dump file, "701.updates", which bgpsecio normally uses
+
+
+
+
+
+Measurement
+============
+
+1. BGP Convergence with 700,000 updates from the peer (192.168.1.51)
+    - measure from Quagga, 
+        -- 90 seconds
+
+    - measure from bgpsecio with printout option 
+        -- 145 seconds
+
+
+
+
+2. at some point, Juniper router increases the amount of sending 8000 packet at each time, then bgpsecio seems to shutdown when dealing with these exponentially increased amount of packets
+
