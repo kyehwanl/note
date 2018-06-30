@@ -1,0 +1,7 @@
+
+examples
+--------
+
+1. in emulab node3,
+
+export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
