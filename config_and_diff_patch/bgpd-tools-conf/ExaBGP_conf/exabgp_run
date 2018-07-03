@@ -2,6 +2,14 @@
 examples
 --------
 
-1. in emulab node3,
+
+1. how to run with commands
+
+1.1  using python
 
 export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
+
+
+1.2 using executable
+
+ env exabgp.log.level=CRIT ../sbin/exabgp <conf>
