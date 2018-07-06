@@ -1,0 +1,213 @@
+diff --git a/bgpd/bgp_fsm.c b/bgpd/bgp_fsm.c
+index 4198a8e..f89b7cb 100644
+--- a/bgpd/bgp_fsm.c
++++ b/bgpd/bgp_fsm.c
+@@ -60,6 +60,7 @@ static int bgp_start_timer (struct thread *);
+ static int bgp_connect_timer (struct thread *);
+ static int bgp_holdtime_timer (struct thread *);
+ static int bgp_keepalive_timer (struct thread *);
++static int bgp_user_defined_timer (struct thread *thread);
+ 
+ /* BGP FSM functions. */
+ static int bgp_start (struct peer *);
+@@ -104,6 +105,7 @@ bgp_timer_set (struct peer *peer)
+       BGP_TIMER_OFF (peer->t_holdtime);
+       BGP_TIMER_OFF (peer->t_keepalive);
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+       break;
+ 
+     case Connect:
+@@ -115,6 +117,7 @@ bgp_timer_set (struct peer *peer)
+       BGP_TIMER_OFF (peer->t_holdtime);
+       BGP_TIMER_OFF (peer->t_keepalive);
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+       break;
+ 
+     case Active:
+@@ -134,6 +137,7 @@ bgp_timer_set (struct peer *peer)
+       BGP_TIMER_OFF (peer->t_holdtime);
+       BGP_TIMER_OFF (peer->t_keepalive);
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+       break;
+ 
+     case OpenSent:
+@@ -151,6 +155,7 @@ bgp_timer_set (struct peer *peer)
+ 	}
+       BGP_TIMER_OFF (peer->t_keepalive);
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+       break;
+ 
+     case OpenConfirm:
+@@ -173,6 +178,7 @@ bgp_timer_set (struct peer *peer)
+ 			peer->v_keepalive);
+ 	}
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+       break;
+ 
+     case Established:
+@@ -181,6 +187,8 @@ bgp_timer_set (struct peer *peer)
+       BGP_TIMER_OFF (peer->t_start);
+       BGP_TIMER_OFF (peer->t_connect);
+ 
++	  BGP_TIMER_ON (peer->t_user_defined, bgp_user_defined_timer,
++			peer->v_user_defined);
+       /* Same as OpenConfirm, if holdtime is zero then both holdtime
+          and keepalive must be turned off. */
+       if (peer->v_holdtime == 0)
+@@ -206,6 +214,7 @@ bgp_timer_set (struct peer *peer)
+       BGP_TIMER_OFF (peer->t_holdtime);
+       BGP_TIMER_OFF (peer->t_keepalive);
+       BGP_TIMER_OFF (peer->t_routeadv);
++      BGP_TIMER_OFF (peer->t_user_defined);
+     }
+ }
+ 
+@@ -289,6 +298,37 @@ bgp_keepalive_timer (struct thread *thread)
+ }
+ 
+ static int
++bgp_user_defined_timer (struct thread *thread)
++{
++
++  struct peer *peer;
++  char timebuf[BGP_UPTIME_LEN];
++
++  peer = THREAD_ARG (thread);
++  peer->t_user_defined = NULL;
++
++  if (BGP_DEBUG (fsm, FSM))
++    zlog (peer->log, LOG_DEBUG,
++	  "%s [FSM] Timer (user-defined timer expire)",
++	  peer->host);
++
++
++  //printf("test timer\n");
++  printf("+++ TIMER EVENT: [Update packet: %d, route: %d] [curent time: %d,  Last Update - First Update : %d]\n",
++      peer->update_in, mtype_stats_alloc (MTYPE_BGP_ROUTE), bgp_clock(), peer->lastupdatetime - peer->firstupdatetime);
++  //printf("+++ Last read %s\n", peer_uptime (peer->uptime, timebuf, BGP_UPTIME_LEN));
++  //printf("+++ Route count: %d\n", mtype_stats_alloc (MTYPE_BGP_ROUTE));
++  //THREAD_VAL (thread) = KeepAlive_timer_expired;
++  //bgp_event (thread); /* bgp_event unlocks peer */
++
++  //bgp_timer_set (peer);
++  BGP_TIMER_ON (peer->t_user_defined, bgp_user_defined_timer, BGP_DEFAULT_USER_DEFINED
++      /*peer->v_user_defined*/);
++}
++
++
++
++static int
+ bgp_routeadv_timer (struct thread *thread)
+ {
+   struct peer *peer;
+diff --git a/bgpd/bgp_packet.c b/bgpd/bgp_packet.c
+index b497e45..c868cc5 100644
+--- a/bgpd/bgp_packet.c
++++ b/bgpd/bgp_packet.c
+@@ -2672,6 +2672,13 @@ bgp_read (struct thread *thread)
+   
+   size = (peer->packet_size - BGP_HEADER_SIZE);
+ 
++#define __TIME_MEASURE__
++#if defined (__TIME_MEASURE__)
++  char timebuf[BGP_UPTIME_LEN];
++  static unsigned long tCount=0;
++  static unsigned int used = false;
++#endif /* __TIME_MEASURE__ */
++
+   /* Read rest of the packet and call each sort of packet routine */
+   switch (type) 
+     {
+@@ -2680,8 +2687,37 @@ bgp_read (struct thread *thread)
+       bgp_open_receive (peer, size); /* XXX return value ignored! */
+       break;
+     case BGP_MSG_UPDATE:
+-      peer->readtime = bgp_recent_clock ();
++#if defined (__TIME_MEASURE__)
++      tCount = mtype_stats_alloc (MTYPE_BGP_ROUTE);
++      if(tCount==0)
++      {
++        printf("+++ first bgp_clock time: %d\n", bgp_recent_clock() );
++        used = false;
++      }
++#endif /* __TIME_MEASURE__ */
++      peer->lastupdatetime = peer->readtime = bgp_recent_clock ();
+       bgp_update_receive (peer, size);
++
++#if defined (__TIME_MEASURE__)
++      tCount = mtype_stats_alloc (MTYPE_BGP_ROUTE);
++      if (tCount > 0 && used == false)
++      {
++        peer->firstupdatetime = bgp_recent_clock();
++        used = true;
++      }
++
++#if 0
++      printf("+++ bgp_clock time: %d\t", bgp_recent_clock() );
++      printf("+++ Last read %s\n", peer_uptime (peer->uptime, timebuf, BGP_UPTIME_LEN));
++      printf("+++ Route count: %d\n", tCount );
++#endif
++
++      //if(tCount >= g_measureCount && g_measureCount != 0 && used == false)
++      //if(used == false)
++      //{
++        //used = true;
++      //}
++#endif /* __TIME_MEASURE__ */
+       break;
+     case BGP_MSG_NOTIFY:
+       bgp_notify_receive (peer, size);
+diff --git a/bgpd/bgpd.c b/bgpd/bgpd.c
+index 6aeecb1..d9528b1 100644
+--- a/bgpd/bgpd.c
++++ b/bgpd/bgpd.c
+@@ -913,6 +913,7 @@ peer_create (union sockunion *su, struct bgp *bgp, as_t local_as,
+   peer->local_id = bgp->router_id;
+   peer->v_holdtime = bgp->default_holdtime;
+   peer->v_keepalive = bgp->default_keepalive;
++  peer->v_user_defined = BGP_DEFAULT_USER_DEFINED; // add 5 seconds user-defined timer
+   if (peer_sort (peer) == BGP_PEER_IBGP)
+     peer->v_routeadv = BGP_DEFAULT_IBGP_ROUTEADV;
+   else
+diff --git a/bgpd/bgpd.h b/bgpd/bgpd.h
+index 03df2f6..e09ca20 100644
+--- a/bgpd/bgpd.h
++++ b/bgpd/bgpd.h
+@@ -347,6 +347,8 @@ struct peer
+   time_t uptime;		/* Last Up/Down time */
+   time_t readtime;		/* Last read time */
+   time_t resettime;		/* Last reset time */
++  time_t firstupdatetime;
++  time_t lastupdatetime;
+   
+   ifindex_t ifindex;		/* ifindex of the BGP connection. */
+   char *ifname;			/* bind interface name. */
+@@ -477,6 +479,7 @@ struct peer
+   u_int32_t v_routeadv;
+   u_int32_t v_pmax_restart;
+   u_int32_t v_gr_restart;
++  u_int32_t v_user_defined;
+ 
+   /* Threads. */
+   struct thread *t_read;
+@@ -489,6 +492,7 @@ struct peer
+   struct thread *t_pmax_restart;
+   struct thread *t_gr_restart;
+   struct thread *t_gr_stale;
++  struct thread *t_user_defined;
+   
+   /* workqueues */
+   struct work_queue *clear_node_queue;
+@@ -759,6 +763,7 @@ struct bgp_nlri
+ #define BGP_DEFAULT_EBGP_ROUTEADV                3
+ #define BGP_DEFAULT_IBGP_ROUTEADV                1
+ #define BGP_DEFAULT_CONNECT_RETRY                5
++#define BGP_DEFAULT_USER_DEFINED                10
+ 
+ /* BGP default local preference.  */
+ #define BGP_DEFAULT_LOCAL_PREF                 100

@@ -1,0 +1,20 @@
+
+in compiling, 
+
+ "Clock skew detected.  Your build may be incomplete"
+
+ then, 
+
+ touch * 
+or
+ find . -exec touch {} \;
+ find . -exec touch {} +
+ 
+
+touch * will update the mtimes to the current time. Alternatively you can enable NTP on your desktop to synch your clock (assuming it's your desktop that's wrong, and not the Uni's machine... if the latter, maybe ask the sysadmins to fix it?) – caf Sep 30 '10 at 5:58
+2
+Thanks for that, touch * it is for now, and I'll see if I can find out which is wrong and maybe have a word with the admin guy next time I'm on site. – DMA57361 Sep 30 '10 at 7:30
+1
+I needed a recursive touch in my case: find . -exec touch {} \; – AaronS May 18 '17 at 14:42 
+2
+@AaronS for commands like touch that can accept multiple files to act on, you can do it (much) more efficiently with find . -exec touch {} + which will invoke touch with as many arguments as possible. – Viktor Dahl Jul 6 '17 at 23:34
