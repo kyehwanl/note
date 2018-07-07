@@ -144,8 +144,16 @@
   then, docker-repo file is saved to /etc/yum.repos.d/ 
 
 
+(14) rpm macro
+===============
+  rpmbuild --nodeps --buildroot="${PWD}/_rpm" -ba --define="_rpmdir ${PWD}" --define="_srcrpmdir ${PWD}" --define="_sourcedir ${PWD}" --define="_specdir ${PWD}" --define="_builddir ${PWD}" srxcryptoapi-0.1.1.0.spec
 
-
+  (same as above)
+  rpmbuild --nodeps --buildroot="${PWD}/_rpm" -ba --define="_rpmdir ${PWD}" \
+                                 --define="_srcrpmdir ${PWD}" \
+                                 --define="_sourcedir ${PWD}" \
+                                 --define="_specdir ${PWD}" \
+                                 --define="_builddir ${PWD}" srxcryptoapi-0.1.1.0.spec
 
 
 
