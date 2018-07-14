@@ -132,7 +132,7 @@ Running
   (1) log-level 
       -l or --log-level=<info|debug>
 
-  (2) -p: plain  
+  (2) -p: plain display  (default: JSON format)
 
       vmware.005-antd [1009]{.../gowork/bin}-> sudo ./gobgpd --log-level=info -f ./gobgpd.conf -p     
       INFO[0000] Policy config is updated                     
@@ -171,6 +171,11 @@ Running
       DEBU[0044] sent                                          Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer data=&{{[] 19 4} 0x15863f8}
       DEBU[0074] sent                                          Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer data=&{{[] 19 4} 0x15863f8}
 
+
+MISC
+=====
+  (1) tags
+    :set tags+=../gotags
 
 
 
