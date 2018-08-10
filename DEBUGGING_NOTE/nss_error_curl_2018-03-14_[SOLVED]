@@ -35,12 +35,19 @@
 
    
 2. NSS problem 
+
+ <description>
+ - this causes git clone and curl from patching jobs
  - need to find a solution
 
+
+ <Solved>
  - Just rename /etc/pki/nssdb --> /etc/pki/nssdb_bkup on vmware-005
     and then, it works as normal 
 
- - Only changed pkcs11.txt filename into pkcs11.txt.bkup, it works
+    OR more easily,
+
+ - Just ONLY change pkcs11.txt filename into pkcs11.txt.bkup, then it works
     
-    the root cause of this issue might be the file, pkcs11.txt
+    I guess the root cause of this issue might be this file, pkcs11.txt
 
