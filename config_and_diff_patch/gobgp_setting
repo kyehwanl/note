@@ -32,7 +32,7 @@ gobgp configuration
         $ go get github.com/osrg/gobgp
         $ cd $GOPATH/src/github.com/osrg/gobgp && dep ensure
 
-(3) gobgpd config file (toml form)
+(3) gobgpd config file (in toml form)
 
   bgpsec1.antd [53]{.../gowork/bin}-> cat gobgpd.conf
   [global.config]
@@ -43,6 +43,60 @@ gobgp configuration
     [neighbors.config]
       neighbor-address = "129.6.141.8"
       peer-as = 61418
+
+
+  * Additional configuration info
+
+    -----------------------------------------------------
+   [[neighbors.afi-safis]]
+    [neighbors.afi-safis.config]
+      afi-safi-name = "ipv4-unicast" 
+
+    -----------------------------------------------------
+    [zebra]
+      [zebra.config]
+        enabled = true
+        url = "unix:/var/run/quagga/zserv.api"
+        redistribute-route-type-list = ["connect"]
+
+
+    -----------------------------------------------------
+    [[defined-sets.bgp-defined-sets.community-sets]]                                        
+      community-set-name = "cs0"
+      community-list = ["200:50"]
+
+    [[policy-definitions]]
+        name = "policy1"
+    [[policy-definitions.statements]]
+        name = "Drop community 200:50"
+        [policy-definitions.statements.conditions.bgp-conditions.match-community-set]   
+            community-set = "cs0"
+            match-set-options = "any"
+        [policy-definitions.statements.actions.route-disposition]
+            accept-route = false
+
+    -----------------------------------------------------
+     [global.apply-policy.config]
+       export-policy-list = ["policy1"]
+
+
+    -----------------------------------------------------
+    [[neighbors]]
+      [neighbors.config]
+        neighbor-address = "172.40.1.3"
+        peer-as = 65001
+
+      [neighbors.route-reflector.config]
+        route-reflector-client = true
+        route-reflector-cluster-id = "172.40.1.2"
+
+      [neighbors.ebgp-multihop.config]
+        enabled = true
+
+      [neighbors.transport.config]
+           passive-mode = true
+
+
 
 
 (4) run command
@@ -74,6 +128,9 @@ gobgp configuration
         Peer           AS  Up/Down State       |#Received  Accepted
         129.6.141.8 61418 00:04:28 Establ      |        1         1
 
+
+    D. examples
+        gobgp global rib add 10.50.1.0/24 origin igp nexthop 10.1.1.1 community 100:50 -a ipv4
 
 
 
