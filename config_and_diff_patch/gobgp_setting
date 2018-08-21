@@ -235,6 +235,14 @@ MISC
     :set tags+=../gotags
 
 
+    * to generate:
+        vmware.005-antd [1004]{.../osrg/gobgp}-> find $PWD -name '*.go' | gotags -f gotags -R -L -
+
+    * to apply in vim:
+        :set tags+=../gotags
+    
+
+
 
 Debugging
 ===========
