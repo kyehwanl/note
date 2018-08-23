@@ -179,6 +179,23 @@ Check Dependencies and build
 
 
 
+ * To print local variable, (No Optimzation, same with -O0)
+
+     go build -gcflags '-N -l' ./... or
+     go get   -gcflags '-N -l' ./...
+
+    
+    (c.f) https://github.com/golang/go/issues/19340
+
+   "You are not seeing the value of some local variables because the compiler is optimizing them away.
+    You should use dlv debug or dlv test to compile your code. If you build the executable yourself 
+    you should pass the option -gcflags='-N -l' to the compiler.
+    If you used delve to compile or remembered to use -gcflags='-N -l' and the missing local variables 
+    are in a package other than main you may be victim of this go bug. 
+    If this is the case your only option is to manually purge the offending packages from $GOPATH/pkg/."
+
+
+
 
 Running
 =========
@@ -251,22 +268,53 @@ Debugging
     Basically, Go consist of C language, so gdb can be used for debugging
         sudo gdb --args ./gobgpd -f ./gobgpd.conf
 
+        # gdb ./gobgp --args global rib add  100.10.1.0/24
+
 
 
   2. delve (a.k.a 'godebug' previously)
 
-    usage: dlv debug|attach
+    usage: dlv debug|attach|exec
     
     2.1 installation required: go version >= 1.7 or 1.8
     2.2 installation 
       $ go get -u github.com/derekparker/delve/cmd/dlv
 
     2.3 run:    sudo ./dlv attach <pid of gobgpd>
+            
+                * arguments
+                [root@vmware-005 bin]# dlv exec gobgpd -- -f ./gobgpd.conf -p
 
     2.4 breakpoint:
         (dlv) b /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/peer.go:465
         Breakpoint 1 set at 0x969ce3 for github.com/osrg/gobgp/server.(*Peer).handleUpdate() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/peer.go:465
 
+
+    2.5 ETC
+        
+      A. 
+        (dlv) p e.MsgData.Body.NLRI[0]
+        (dlv) p e.MsgData.(*bgp.BGPMessage)
+
+      B. 
+        (dlv) p "some/package".A --> not works (need more search)
+
+
+      C. gobgp client example
+
+        vmware.005-antd [1017]{.../gowork/bin}-> sudo -s
+        [root@vmware-005 bin]# export GOPATH=/opt/project/gobgp_test/gowork
+        [root@vmware-005 bin]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+
+        [root@vmware-005 bin]# dlv exec gobgp -- global rib add  100.10.0.0/24     
+        Type 'help' for list of commands.
+        (dlv) c
+        Process 4926 has exited with status 0
+
+        
+      D. Not necessarily to be a sudo user, just normal user is ok to run
+
+        vmware.005-antd [1001]{.../gowork/bin}-> dlv exec gobgp -- global rib add  100.10.4.0/24
 
 
 

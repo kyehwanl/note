@@ -1,0 +1,35 @@
+
+1. Delve
+
+(1) gobgp cmd
+
+  [root@vmware-005 bin]# dlv exec gobgp -- global rib add  100.10.1.0/24
+  Type 'help' for list of commands.
+  (dlv) b /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676
+  Breakpoint 1 set at 0x91409d for github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676
+  (dlv) c
+  > github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676 (hits goroutine(1):1 total:1) (PC: 0x91409d)
+  Warning: debugging optimized function
+     671:                 extractAigp,
+     672:                 extractAggregator,
+     673:                 extractLargeCommunity,
+     674:         }
+     675:
+  => 676:         for _, fn := range fns {
+     677:                 var a bgp.PathAttributeInterface
+     678:                 args, a, err = fn(args)
+     679:                 if err != nil {
+     680:                         return nil, err
+     681:                 }
+  (dlv)
+
+
+
+
+
+
+2. GDB
+
+
+  [root@vmware-005 bin]# gdb ./gobgp --args global rib add  100.10.1.0/24
+
