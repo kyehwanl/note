@@ -302,20 +302,31 @@ Debugging
 
       C. gobgp client example
 
-        vmware.005-antd [1017]{.../gowork/bin}-> sudo -s
-        [root@vmware-005 bin]# export GOPATH=/opt/project/gobgp_test/gowork
-        [root@vmware-005 bin]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+          vmware.005-antd [1017]{.../gowork/bin}-> sudo -s
+          [root@vmware-005 bin]# export GOPATH=/opt/project/gobgp_test/gowork
+          [root@vmware-005 bin]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
 
-        [root@vmware-005 bin]# dlv exec gobgp -- global rib add  100.10.0.0/24     
-        Type 'help' for list of commands.
-        (dlv) c
-        Process 4926 has exited with status 0
+          [root@vmware-005 bin]# dlv exec gobgp -- global rib add  100.10.0.0/24     
+          Type 'help' for list of commands.
+          (dlv) c
+          Process 4926 has exited with status 0
 
         
-      D. Not necessarily to be a sudo user, just normal user is ok to run
+      D. Not necessarily to be a sudo user (in case of gobgp), just normal user is ok to run
 
-        vmware.005-antd [1001]{.../gowork/bin}-> dlv exec gobgp -- global rib add  100.10.4.0/24
+          vmware.005-antd [1001]{.../gowork/bin}-> dlv exec gobgp -- global rib add  100.10.4.0/24
 
+
+      E. in case of Server, it need to have root authority to open the port 179.
+       
+          vmware.005-antd [1007]{.../gowork/bin}-> cat ~/.go
+          #!/bin/sh
+          export GOPATH=/opt/project/gobgp_test/gowork
+          export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+          vmware.005-antd [1008]{.../gowork/bin}-> sudo -s
+          [root@vmware-005 bin]# export GOPATH=/opt/project/gobgp_test/gowork
+          [root@vmware-005 bin]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+          [root@vmware-005 bin]# /opt/project/gobgp_test/gowork/bin/dlv exec gobgpd -- -f ./gobgpd.conf -p 
 
 
 

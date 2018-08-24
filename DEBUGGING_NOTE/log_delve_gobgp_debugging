@@ -1,0 +1,3198 @@
+vmware.005-antd [1001]{.../gowork/bin}-> dlv exec gobgp -- global rib add  100.10.4.0/24
+Type 'help' for list of commands.
+(dlv)
+(dlv) b /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676
+Breakpoint 1 set at 0x986b2e for github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676
+(dlv) c
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676 (hits goroutine(1):1 total:1) (PC: 0x986b2e)
+   671:                 extractAigp,
+   672:                 extractAggregator,
+   673:                 extractLargeCommunity,
+   674:         }
+   675:
+=> 676:         for _, fn := range fns {
+   677:                 var a bgp.PathAttributeInterface
+   678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+(dlv) p fns
+[]func([]string) ([]string, github.com/osrg/gobgp/packet/bgp.PathAttributeInterface, error) len: 7, cap: 7, [github.com/osrg/gobgp/gobgp/cmd.extractOrigin,github.com/osrg/gobgp/gobgp/cmd.extractMed,github.com/osrg/gobgp/gobgp/cmd.extractLocalPref,github.com/osrg/gobgp/gobgp/cmd.extractCommunity,github.com/osrg/gobgp/gobgp/cmd.extractAigp,github.com/osrg/gobgp/gobgp/cmd.extractAggregator,github.com/osrg/gobgp/gobgp/cmd.extractLargeCommunity]
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:677 (PC: 0x986baa)
+   672:                 extractAggregator,
+   673:                 extractLargeCommunity,
+   674:         }
+   675:
+   676:         for _, fn := range fns {
+=> 677:                 var a bgp.PathAttributeInterface
+   678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+   682:                 if a != nil {
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface nil
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:678 (PC: 0x986bb5)
+   673:                 extractLargeCommunity,
+   674:         }
+   675:
+   676:         for _, fn := range fns {
+   677:                 var a bgp.PathAttributeInterface
+=> 678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+   682:                 if a != nil {
+   683:                         attrs = append(attrs, a)
+(dlv) p fn
+github.com/osrg/gobgp/gobgp/cmd.extractOrigin
+(dlv) s
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:495 (PC: 0x98225b)
+   490:                 return ParseEVPNIPPrefixArgs(args)
+   491:         }
+   492:         return nil, nil, fmt.Errorf("invalid subtype. expect [macadv|multicast|prefix] but %s", subtype)
+   493: }
+   494:
+=> 495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+   496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+   497:         for idx, arg := range args {
+   498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:496 (PC: 0x98229f)
+   491:         }
+   492:         return nil, nil, fmt.Errorf("invalid subtype. expect [macadv|multicast|prefix] but %s", subtype)
+   493: }
+   494:
+   495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+=> 496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+   497:         for idx, arg := range args {
+   498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+   501:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_IGP
+(dlv) p typ
+0
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:497 (PC: 0x9822a8)
+   492:         return nil, nil, fmt.Errorf("invalid subtype. expect [macadv|multicast|prefix] but %s", subtype)
+   493: }
+   494:
+   495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+   496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+=> 497:         for idx, arg := range args {
+   498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+   501:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_IGP
+   502:                         case "egp":
+(dlv) p typ
+2
+(dlv) p args
+[]string len: 1, cap: 1, [
+        "100.10.4.0/24",
+]
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:498 (PC: 0x98235f)
+   493: }
+   494:
+   495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+   496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+   497:         for idx, arg := range args {
+=> 498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+   501:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_IGP
+   502:                         case "egp":
+   503:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_EGP
+(dlv) p arg
+"100.10.4.0/24"
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:497 (PC: 0x982a14)
+   492:         return nil, nil, fmt.Errorf("invalid subtype. expect [macadv|multicast|prefix] but %s", subtype)
+   493: }
+   494:
+   495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+   496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+=> 497:         for idx, arg := range args {
+   498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+   501:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_IGP
+   502:                         case "egp":
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:497 (PC: 0x982a52)
+   492:         return nil, nil, fmt.Errorf("invalid subtype. expect [macadv|multicast|prefix] but %s", subtype)
+   493: }
+   494:
+   495: func extractOrigin(args []string) ([]string, bgp.PathAttributeInterface, error) {
+   496:         typ := bgp.BGP_ORIGIN_ATTR_TYPE_INCOMPLETE
+=> 497:         for idx, arg := range args {
+   498:                 if arg == "origin" && len(args) > (idx+1) {
+   499:                         switch args[idx+1] {
+   500:                         case "igp":
+   501:                                 typ = bgp.BGP_ORIGIN_ATTR_TYPE_IGP
+   502:                         case "egp":
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:512 (PC: 0x9826b2)
+   507:                         }
+   508:                         args = append(args[:idx], args[idx+2:]...)
+   509:                         break
+   510:                 }
+   511:         }
+=> 512:         return args, bgp.NewPathAttributeOrigin(uint8(typ)), nil
+   513: }
+   514: func extractNexthop(rf bgp.RouteFamily, args []string) ([]string, string, error) {
+   515:         afi, _ := bgp.RouteFamilyToAfiSafi(rf)
+   516:         nexthop := "0.0.0.0"
+   517:         if afi == bgp.AFI_IP6 {
+(dlv) p args
+[]string len: 1, cap: 1, [
+        "100.10.4.0/24",
+]
+(dlv) p bgp.NewPathAttributeOrigin(uint8(typ))
+Command failed: no type entry found, use 'types' for a list of valid types
+(dlv) s
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4362 (PC: 0x591673)
+  4357:                 Type:  p.GetType(),
+  4358:                 Value: p.Value[0],
+  4359:         })
+  4360: }
+  4361:
+=>4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+  4367:                         Flags: PathAttrFlags[t],
+(dlv) p value
+2
+(dlv) n
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4363 (PC: 0x59168a)
+  4358:                 Value: p.Value[0],
+  4359:         })
+  4360: }
+  4361:
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+=>4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+  4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+(dlv)
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4367 (PC: 0x59168f)
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+=>4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+  4369:                         Value: []byte{byte(value)},
+  4370:                 },
+  4371:         }
+  4372: }
+(dlv) p t
+BGP_ATTR_TYPE_ORIGIN
+(dlv) p &PathAttributeOrigin
+Command failed: could not find symbol value for PathAttributeOrigin
+(dlv) p PathAttributeOrigin
+Command failed: could not find symbol value for PathAttributeOrigin
+(dlv) p PathAttribute
+Command failed: could not find symbol value for PathAttribute
+(dlv) p PathAttribute.Flags
+Command failed: could not find symbol value for PathAttribute
+(dlv) p PathAttrFlags[t]
+BGP_ATTR_FLAG_TRANSITIVE
+(dlv) p PathAttrFlags
+map[github.com/osrg/gobgp/packet/bgp.BGPAttrType]github.com/osrg/gobgp/packet/bgp.BGPAttrFlag [
+        BGP_ATTR_TYPE_NEXT_HOP: BGP_ATTR_FLAG_TRANSITIVE,
+        BGP_ATTR_TYPE_AGGREGATOR: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_LARGE_COMMUNITY: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_AS_PATH: BGP_ATTR_FLAG_TRANSITIVE,
+        BGP_ATTR_TYPE_LOCAL_PREF: BGP_ATTR_FLAG_TRANSITIVE,
+        BGP_ATTR_TYPE_AS4_AGGREGATOR: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_PMSI_TUNNEL: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_TUNNEL_ENCAP: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_AIGP: BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_ATOMIC_AGGREGATE: BGP_ATTR_FLAG_TRANSITIVE,
+        BGP_ATTR_TYPE_CLUSTER_LIST: BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_MP_UNREACH_NLRI: BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_EXTENDED_COMMUNITIES: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_AS4_PATH: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_ORIGIN: BGP_ATTR_FLAG_TRANSITIVE,
+        BGP_ATTR_TYPE_MULTI_EXIT_DISC: BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_COMMUNITIES: BGP_ATTR_FLAG_TRANSITIVE|BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_ORIGINATOR_ID: BGP_ATTR_FLAG_OPTIONAL,
+        BGP_ATTR_TYPE_MP_REACH_NLRI: BGP_ATTR_FLAG_OPTIONAL,
+]
+(dlv) p PathAttrFlags[2]
+BGP_ATTR_FLAG_TRANSITIVE
+(dlv) l
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4367 (PC: 0x59168f)
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+=>4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+  4369:                         Value: []byte{byte(value)},
+  4370:                 },
+  4371:         }
+  4372: }
+(dlv) n
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4366 (PC: 0x591694)
+  4361:
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+=>4366:                 PathAttribute: PathAttribute{
+  4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+  4369:                         Value: []byte{byte(value)},
+  4370:                 },
+  4371:         }
+(dlv)
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4367 (PC: 0x5916ae)
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+=>4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+  4369:                         Value: []byte{byte(value)},
+  4370:                 },
+  4371:         }
+  4372: }
+(dlv)
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4369 (PC: 0x5916f4)
+  4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+  4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+=>4369:                         Value: []byte{byte(value)},
+  4370:                 },
+  4371:         }
+  4372: }
+  4373:
+  4374: type AsPathParamFormat struct {
+(dlv) p PathAttribute.Flags
+Command failed: could not find symbol value for PathAttribute
+(dlv) n
+> github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:4364 (PC: 0x591762)
+  4359:         })
+  4360: }
+  4361:
+  4362: func NewPathAttributeOrigin(value uint8) *PathAttributeOrigin {
+  4363:         t := BGP_ATTR_TYPE_ORIGIN
+=>4364:         return &PathAttributeOrigin{
+  4365:
+  4366:                 PathAttribute: PathAttribute{
+  4367:                         Flags: PathAttrFlags[t],
+  4368:                         Type:  t,
+  4369:                         Value: []byte{byte(value)},
+(dlv) p PathAttributeOrigin
+Command failed: could not find symbol value for PathAttributeOrigin
+(dlv) p &PathAttributeOrigin
+Command failed: could not find symbol value for PathAttributeOrigin
+(dlv) locals
+t = BGP_ATTR_TYPE_ORIGIN
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:512 (PC: 0x9826bf)
+   507:                         }
+   508:                         args = append(args[:idx], args[idx+2:]...)
+   509:                         break
+   510:                 }
+   511:         }
+=> 512:         return args, bgp.NewPathAttributeOrigin(uint8(typ)), nil
+   513: }
+   514: func extractNexthop(rf bgp.RouteFamily, args []string) ([]string, string, error) {
+   515:         afi, _ := bgp.RouteFamilyToAfiSafi(rf)
+   516:         nexthop := "0.0.0.0"
+   517:         if afi == bgp.AFI_IP6 {
+(dlv) bt
+0  0x00000000009826bf in github.com/osrg/gobgp/gobgp/cmd.extractOrigin
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:512
+1  0x0000000000986c15 in github.com/osrg/gobgp/gobgp/cmd.ParsePath
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:678
+2  0x0000000000989a3a in github.com/osrg/gobgp/gobgp/cmd.modPath
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:831
+3  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+4  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+5  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+6  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+7  0x00000000009cbe1b in main.main
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+8  0x000000000042dee2 in runtime.main
+   at /usr/local/go/src/runtime/proc.go:198
+9  0x000000000045b671 in runtime.goexit
+   at /usr/local/go/src/runtime/asm_amd64.s:2361
+(dlv) p bgp.PathAttributeOrigin
+Command failed: could not find symbol value for bgp
+(dlv) p "/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp".PathAttributeOrigin
+Command failed: type string is not a struct
+(dlv) p "/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go".PathAttributeOrigin
+Command failed: type string is not a struct
+(dlv) p /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin
+Command failed: 1:1: expected operand, found '/'
+(dlv) p "/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp"
+"/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp"
+(dlv) help
+The following commands are available:
+    args ------------------------ Print function arguments.
+    break (alias: b) ------------ Sets a breakpoint.
+    breakpoints (alias: bp) ----- Print out info for active breakpoints.
+    clear ----------------------- Deletes breakpoint.
+    clearall -------------------- Deletes multiple breakpoints.
+    condition (alias: cond) ----- Set breakpoint condition.
+    config ---------------------- Changes configuration parameters.
+    continue (alias: c) --------- Run until breakpoint or program termination.
+    disassemble (alias: disass) - Disassembler.
+    down ------------------------ Move the current frame down.
+    exit (alias: quit | q) ------ Exit the debugger.
+    frame ----------------------- Set the current frame, or execute command on a different frame.
+    funcs ----------------------- Print list of functions.
+    goroutine ------------------- Shows or changes current goroutine
+    goroutines ------------------ List program goroutines.
+    help (alias: h) ------------- Prints the help message.
+    list (alias: ls | l) -------- Show source code.
+    locals ---------------------- Print local variables.
+    next (alias: n) ------------- Step over to next source line.
+    on -------------------------- Executes a command when a breakpoint is hit.
+    print (alias: p) ------------ Evaluate an expression.
+    regs ------------------------ Print contents of CPU registers.
+    restart (alias: r) ---------- Restart process.
+    set ------------------------- Changes the value of a variable.
+    source ---------------------- Executes a file containing a list of delve commands
+    sources --------------------- Print list of source files.
+    stack (alias: bt) ----------- Print stack trace.
+    step (alias: s) ------------- Single step through program.
+    step-instruction (alias: si)  Single step a single cpu instruction.
+    stepout --------------------- Step out of the current function.
+    thread (alias: tr) ---------- Switch to the specified thread.
+    threads --------------------- Print out info for every traced thread.
+    trace (alias: t) ------------ Set tracepoint.
+    types ----------------------- Print list of types
+    up -------------------------- Move the current frame up.
+    vars ------------------------ Print package variables.
+    whatis ---------------------- Prints type of an expression.
+Type help followed by a command for full documentation.
+(dlv) vars PathAttributeOrigin
+(no vars)
+(dlv) vars PathAttribute
+(no vars)
+(dlv) funcs NewPathAttribute
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeAggregator
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeAigp
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeAsPath
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeClusterList
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeCommunities
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeExtendedCommunities
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeLargeCommunities
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeLocalPref
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeMpReachNLRI
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeMultiExitDisc
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeNextHop
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeOrigin
+github.com/osrg/gobgp/packet/bgp.NewPathAttributeOriginatorId
+(dlv) p github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin
+Command failed: could not find symbol value for github
+(dlv) p "github.com/osrg/gobgp/packet/bgp".PathAttributeOrigin
+Command failed: type string is not a struct
+(dlv) p "github.com/osrg/gobgp/packet/bgp"PathAttributeOrigin
+Command failed: 1:35: expected 'EOF', found 'IDENT' PathAttributeOrigin
+(dlv) p "github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin"
+"github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin"
+(dlv) p github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin
+Command failed: could not find symbol value for github
+(dlv) p 'github.com/osrg/gobgp/packet/bgp'.PathAttributeOrigin
+Command failed: 1:1: illegal rune literal
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.extractOrigin() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:512 (PC: 0x9826bf)
+   507:                         }
+   508:                         args = append(args[:idx], args[idx+2:]...)
+   509:                         break
+   510:                 }
+   511:         }
+=> 512:         return args, bgp.NewPathAttributeOrigin(uint8(typ)), nil
+   513: }
+   514: func extractNexthop(rf bgp.RouteFamily, args []string) ([]string, string, error) {
+   515:         afi, _ := bgp.RouteFamilyToAfiSafi(rf)
+   516:         nexthop := "0.0.0.0"
+   517:         if afi == bgp.AFI_IP6 {
+(dlv) p bgp
+Command failed: could not find symbol value for bgp
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:678 (PC: 0x986c15)
+   673:                 extractLargeCommunity,
+   674:         }
+   675:
+   676:         for _, fn := range fns {
+   677:                 var a bgp.PathAttributeInterface
+=> 678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+   682:                 if a != nil {
+   683:                         attrs = append(attrs, a)
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface nil
+(dlv) p github.com/osrg/gobgp/packet/bgp.PathAttributeInterface
+Command failed: could not find symbol value for github
+(dlv) p "github.com/osrg/gobgp/packet/bgp".PathAttributeInterface
+Command failed: type string is not a struct
+(dlv) pp a
+Command failed: command not available
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface nil
+(dlv) p attrs
+github.com/osrg/gobgp/table.PathAttrs len: 0, cap: 1, []
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:679 (PC: 0x986ce0)
+   674:         }
+   675:
+   676:         for _, fn := range fns {
+   677:                 var a bgp.PathAttributeInterface
+   678:                 args, a, err = fn(args)
+=> 679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+   682:                 if a != nil {
+   683:                         attrs = append(attrs, a)
+   684:                 }
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:682 (PC: 0x986d2b)
+   677:                 var a bgp.PathAttributeInterface
+   678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+=> 682:                 if a != nil {
+   683:                         attrs = append(attrs, a)
+   684:                 }
+   685:         }
+   686:
+   687:         args, nexthop, err := extractNexthop(rf, args)
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:683 (PC: 0x986d3d)
+   678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+   682:                 if a != nil {
+=> 683:                         attrs = append(attrs, a)
+   684:                 }
+   685:         }
+   686:
+   687:         args, nexthop, err := extractNexthop(rf, args)
+   688:         if err != nil {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:676 (PC: 0x986dae)
+   671:                 extractAigp,
+   672:                 extractAggregator,
+   673:                 extractLargeCommunity,
+   674:         }
+   675:
+=> 676:         for _, fn := range fns {
+   677:                 var a bgp.PathAttributeInterface
+   678:                 args, a, err = fn(args)
+   679:                 if err != nil {
+   680:                         return nil, err
+   681:                 }
+(dlv) b 687
+Breakpoint 2 set at 0x986e1d for github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:687
+(dlv) c
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:687 (hits goroutine(1):1 total:1) (PC: 0x986e1d)
+   682:                 if a != nil {
+   683:                         attrs = append(attrs, a)
+   684:                 }
+   685:         }
+   686:
+=> 687:         args, nexthop, err := extractNexthop(rf, args)
+   688:         if err != nil {
+   689:                 return nil, err
+   690:         }
+   691:
+   692:         switch rf {
+(dlv) p args
+[]string len: 1, cap: 1, [
+        "100.10.4.0/24",
+]
+(dlv) p rf
+RF_IPv4_UC
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:688 (PC: 0x986f4d)
+   683:                         attrs = append(attrs, a)
+   684:                 }
+   685:         }
+   686:
+   687:         args, nexthop, err := extractNexthop(rf, args)
+=> 688:         if err != nil {
+   689:                 return nil, err
+   690:         }
+   691:
+   692:         switch rf {
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+(dlv) p args
+[]string len: 1, cap: 1, [
+        "100.10.4.0/24",
+]
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:692 (PC: 0x986f98)
+   687:         args, nexthop, err := extractNexthop(rf, args)
+   688:         if err != nil {
+   689:                 return nil, err
+   690:         }
+   691:
+=> 692:         switch rf {
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+   694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:693 (PC: 0x986fc2)
+   688:         if err != nil {
+   689:                 return nil, err
+   690:         }
+   691:
+   692:         switch rf {
+=> 693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+   694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+   698:                 if err != nil {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:694 (PC: 0x986fd1)
+   689:                 return nil, err
+   690:         }
+   691:
+   692:         switch rf {
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+=> 694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+   698:                 if err != nil {
+   699:                         return nil, err
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:697 (PC: 0x98706c)
+   692:         switch rf {
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+   694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+=> 697:                 ip, net, err := net.ParseCIDR(args[0])
+   698:                 if err != nil {
+   699:                         return nil, err
+   700:                 }
+   701:                 ones, _ := net.Mask.Size()
+   702:                 if rf == bgp.RF_IPv4_UC {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:698 (PC: 0x987179)
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+   694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+=> 698:                 if err != nil {
+   699:                         return nil, err
+   700:                 }
+   701:                 ones, _ := net.Mask.Size()
+   702:                 if rf == bgp.RF_IPv4_UC {
+   703:                         if ip.To4() == nil {
+(dlv) p ip
+net.IP len: 16, cap: 16, [0,0,0,0,0,0,0,0,0,0,255,255,100,10,4,0]
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:701 (PC: 0x9871c4)
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+   698:                 if err != nil {
+   699:                         return nil, err
+   700:                 }
+=> 701:                 ones, _ := net.Mask.Size()
+   702:                 if rf == bgp.RF_IPv4_UC {
+   703:                         if ip.To4() == nil {
+   704:                                 return nil, fmt.Errorf("invalid ipv4 prefix")
+   705:                         }
+   706:                         nlri = bgp.NewIPAddrPrefix(uint8(ones), ip.String())
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:702 (PC: 0x9871ff)
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+   698:                 if err != nil {
+   699:                         return nil, err
+   700:                 }
+   701:                 ones, _ := net.Mask.Size()
+=> 702:                 if rf == bgp.RF_IPv4_UC {
+   703:                         if ip.To4() == nil {
+   704:                                 return nil, fmt.Errorf("invalid ipv4 prefix")
+   705:                         }
+   706:                         nlri = bgp.NewIPAddrPrefix(uint8(ones), ip.String())
+   707:                 } else {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:703 (PC: 0x987214)
+   698:                 if err != nil {
+   699:                         return nil, err
+   700:                 }
+   701:                 ones, _ := net.Mask.Size()
+   702:                 if rf == bgp.RF_IPv4_UC {
+=> 703:                         if ip.To4() == nil {
+   704:                                 return nil, fmt.Errorf("invalid ipv4 prefix")
+   705:                         }
+   706:                         nlri = bgp.NewIPAddrPrefix(uint8(ones), ip.String())
+   707:                 } else {
+   708:                         if ip.To16() == nil {
+(dlv) p ip.To4()
+Command failed: function calls are not supported
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:706 (PC: 0x987270)
+   701:                 ones, _ := net.Mask.Size()
+   702:                 if rf == bgp.RF_IPv4_UC {
+   703:                         if ip.To4() == nil {
+   704:                                 return nil, fmt.Errorf("invalid ipv4 prefix")
+   705:                         }
+=> 706:                         nlri = bgp.NewIPAddrPrefix(uint8(ones), ip.String())
+   707:                 } else {
+   708:                         if ip.To16() == nil {
+   709:                                 return nil, fmt.Errorf("invalid ipv6 prefix")
+   710:                         }
+   711:                         nlri = bgp.NewIPv6AddrPrefix(uint8(ones), ip.String())
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:714 (PC: 0x987304)
+   709:                                 return nil, fmt.Errorf("invalid ipv6 prefix")
+   710:                         }
+   711:                         nlri = bgp.NewIPv6AddrPrefix(uint8(ones), ip.String())
+   712:                 }
+   713:
+=> 714:                 extcomms = args[1:]
+   715:
+   716:         case bgp.RF_IPv4_VPN, bgp.RF_IPv6_VPN:
+   717:                 if len(args) < 5 || args[1] != "label" || args[3] != "rd" {
+   718:                         return nil, fmt.Errorf("invalid format")
+   719:                 }
+(dlv) p nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:714 (PC: 0x987304)
+   709:                                 return nil, fmt.Errorf("invalid ipv6 prefix")
+   710:                         }
+   711:                         nlri = bgp.NewIPv6AddrPrefix(uint8(ones), ip.String())
+   712:                 }
+   713:
+=> 714:                 extcomms = args[1:]
+   715:
+   716:         case bgp.RF_IPv4_VPN, bgp.RF_IPv6_VPN:
+   717:                 if len(args) < 5 || args[1] != "label" || args[3] != "rd" {
+   718:                         return nil, fmt.Errorf("invalid format")
+   719:                 }
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:714 (PC: 0x987304)
+   709:                                 return nil, fmt.Errorf("invalid ipv6 prefix")
+   710:                         }
+   711:                         nlri = bgp.NewIPv6AddrPrefix(uint8(ones), ip.String())
+   712:                 }
+   713:
+=> 714:                 extcomms = args[1:]
+   715:
+   716:         case bgp.RF_IPv4_VPN, bgp.RF_IPv6_VPN:
+   717:                 if len(args) < 5 || args[1] != "label" || args[3] != "rd" {
+   718:                         return nil, fmt.Errorf("invalid format")
+   719:                 }
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:714 (PC: 0x987304)
+   709:                                 return nil, fmt.Errorf("invalid ipv6 prefix")
+   710:                         }
+   711:                         nlri = bgp.NewIPv6AddrPrefix(uint8(ones), ip.String())
+   712:                 }
+   713:
+=> 714:                 extcomms = args[1:]
+   715:
+   716:         case bgp.RF_IPv4_VPN, bgp.RF_IPv6_VPN:
+   717:                 if len(args) < 5 || args[1] != "label" || args[3] != "rd" {
+   718:                         return nil, fmt.Errorf("invalid format")
+   719:                 }
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:692 (PC: 0x987359)
+   687:         args, nexthop, err := extractNexthop(rf, args)
+   688:         if err != nil {
+   689:                 return nil, err
+   690:         }
+   691:
+=> 692:         switch rf {
+   693:         case bgp.RF_IPv4_UC, bgp.RF_IPv6_UC:
+   694:                 if len(args) < 1 {
+   695:                         return nil, fmt.Errorf("invalid format")
+   696:                 }
+   697:                 ip, net, err := net.ParseCIDR(args[0])
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:796 (PC: 0x98735b)
+   791:                         nlri = bgp.NewOpaqueNLRI([]byte(m["key"][0]), nil)
+   792:                 }
+   793:         default:
+   794:                 return nil, fmt.Errorf("Unsupported route family: %s", rf)
+   795:         }
+=> 796:         if err != nil {
+   797:                 return nil, err
+   798:         }
+   799:
+   800:         if rf == bgp.RF_IPv4_UC {
+   801:                 attrs = append(attrs, bgp.NewPathAttributeNextHop(nexthop))
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:800 (PC: 0x9873a6)
+   795:         }
+   796:         if err != nil {
+   797:                 return nil, err
+   798:         }
+   799:
+=> 800:         if rf == bgp.RF_IPv4_UC {
+   801:                 attrs = append(attrs, bgp.NewPathAttributeNextHop(nexthop))
+   802:         } else {
+   803:                 mpreach := bgp.NewPathAttributeMpReachNLRI(nexthop, []bgp.AddrPrefixInterface{nlri})
+   804:                 attrs = append(attrs, mpreach)
+   805:         }
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:801 (PC: 0x9873bb)
+   796:         if err != nil {
+   797:                 return nil, err
+   798:         }
+   799:
+   800:         if rf == bgp.RF_IPv4_UC {
+=> 801:                 attrs = append(attrs, bgp.NewPathAttributeNextHop(nexthop))
+   802:         } else {
+   803:                 mpreach := bgp.NewPathAttributeMpReachNLRI(nexthop, []bgp.AddrPrefixInterface{nlri})
+   804:                 attrs = append(attrs, mpreach)
+   805:         }
+   806:
+(dlv) p attrs
+github.com/osrg/gobgp/table.PathAttrs len: 1, cap: 1, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+]
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:807 (PC: 0x987474)
+   802:         } else {
+   803:                 mpreach := bgp.NewPathAttributeMpReachNLRI(nexthop, []bgp.AddrPrefixInterface{nlri})
+   804:                 attrs = append(attrs, mpreach)
+   805:         }
+   806:
+=> 807:         if extcomms != nil && len(extcomms) > 0 {
+   808:                 extcomms, err := ParseExtendedCommunities(strings.Join(extcomms, " "))
+   809:                 if err != nil {
+   810:                         return nil, err
+   811:                 }
+   812:                 p := bgp.NewPathAttributeExtendedCommunities(extcomms)
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:807 (PC: 0x987882)
+   802:         } else {
+   803:                 mpreach := bgp.NewPathAttributeMpReachNLRI(nexthop, []bgp.AddrPrefixInterface{nlri})
+   804:                 attrs = append(attrs, mpreach)
+   805:         }
+   806:
+=> 807:         if extcomms != nil && len(extcomms) > 0 {
+   808:                 extcomms, err := ParseExtendedCommunities(strings.Join(extcomms, " "))
+   809:                 if err != nil {
+   810:                         return nil, err
+   811:                 }
+   812:                 p := bgp.NewPathAttributeExtendedCommunities(extcomms)
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:816 (PC: 0x987884)
+   811:                 }
+   812:                 p := bgp.NewPathAttributeExtendedCommunities(extcomms)
+   813:                 attrs = append(attrs, p)
+   814:         }
+   815:
+=> 816:         sort.Sort(attrs)
+   817:
+   818:         return table.NewPath(nil, nlri, false, attrs, time.Now(), false), nil
+   819: }
+   820:
+   821: func showGlobalRib(args []string) error {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:816 (PC: 0x9876e4)
+   811:                 }
+   812:                 p := bgp.NewPathAttributeExtendedCommunities(extcomms)
+   813:                 attrs = append(attrs, p)
+   814:         }
+   815:
+=> 816:         sort.Sort(attrs)
+   817:
+   818:         return table.NewPath(nil, nlri, false, attrs, time.Now(), false), nil
+   819: }
+   820:
+   821: func showGlobalRib(args []string) error {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:818 (PC: 0x987749)
+   813:                 attrs = append(attrs, p)
+   814:         }
+   815:
+   816:         sort.Sort(attrs)
+   817:
+=> 818:         return table.NewPath(nil, nlri, false, attrs, time.Now(), false), nil
+   819: }
+   820:
+   821: func showGlobalRib(args []string) error {
+   822:         return showNeighborRib(CMD_GLOBAL, "", args)
+   823: }
+(dlv) p attrs
+github.com/osrg/gobgp/table.PathAttrs len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) bt
+0  0x0000000000987749 in github.com/osrg/gobgp/gobgp/cmd.ParsePath
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:818
+1  0x0000000000989a3a in github.com/osrg/gobgp/gobgp/cmd.modPath
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:831
+2  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+3  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+4  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+5  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+6  0x00000000009cbe1b in main.main
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+7  0x000000000042dee2 in runtime.main
+   at /usr/local/go/src/runtime/proc.go:198
+8  0x000000000045b671 in runtime.goexit
+   at /usr/local/go/src/runtime/asm_amd64.s:2361
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:818 (PC: 0x987749)
+   813:                 attrs = append(attrs, p)
+   814:         }
+   815:
+   816:         sort.Sort(attrs)
+   817:
+=> 818:         return table.NewPath(nil, nlri, false, attrs, time.Now(), false), nil
+   819: }
+   820:
+   821: func showGlobalRib(args []string) error {
+   822:         return showNeighborRib(CMD_GLOBAL, "", args)
+   823: }
+(dlv) p ip
+Command failed: could not find symbol value for ip
+(dlv) p bgp
+Command failed: could not find symbol value for bgp
+(dlv) p nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) p *github.com/osrg/gobgp/packet/bgp.IPAddrPrefix
+Command failed: could not find symbol value for github
+(dlv) p bgp.RF_IPv4_UC
+65537
+(dlv) p github.com/osrg/gobgp/client.initdone
+Command failed: could not find symbol value for github
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.ParsePath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:818 (PC: 0x987749)
+   813:                 attrs = append(attrs, p)
+   814:         }
+   815:
+   816:         sort.Sort(attrs)
+   817:
+=> 818:         return table.NewPath(nil, nlri, false, attrs, time.Now(), false), nil
+   819: }
+   820:
+   821: func showGlobalRib(args []string) error {
+   822:         return showNeighborRib(CMD_GLOBAL, "", args)
+   823: }
+(dlv) p attrs
+github.com/osrg/gobgp/table.PathAttrs len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) p *0xc42008a5c0
+Command failed: expression "0xc42008a5c0" (int) can not be dereferenced
+(dlv) p mpreach
+Command failed: could not find symbol value for mpreach
+(dlv) vars mpreach
+(no vars)
+(dlv) vars attrs
+(no vars)
+(dlv) p attrs
+github.com/osrg/gobgp/table.PathAttrs len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) p table
+Command failed: could not find symbol value for table
+(dlv) p table.NewPath
+Command failed: could not find symbol value for table
+(dlv) help
+The following commands are available:
+    args ------------------------ Print function arguments.
+    break (alias: b) ------------ Sets a breakpoint.
+    breakpoints (alias: bp) ----- Print out info for active breakpoints.
+    clear ----------------------- Deletes breakpoint.
+    clearall -------------------- Deletes multiple breakpoints.
+    condition (alias: cond) ----- Set breakpoint condition.
+    config ---------------------- Changes configuration parameters.
+    continue (alias: c) --------- Run until breakpoint or program termination.
+    disassemble (alias: disass) - Disassembler.
+    down ------------------------ Move the current frame down.
+    exit (alias: quit | q) ------ Exit the debugger.
+    frame ----------------------- Set the current frame, or execute command on a different frame.
+    funcs ----------------------- Print list of functions.
+    goroutine ------------------- Shows or changes current goroutine
+    goroutines ------------------ List program goroutines.
+    help (alias: h) ------------- Prints the help message.
+    list (alias: ls | l) -------- Show source code.
+    locals ---------------------- Print local variables.
+    next (alias: n) ------------- Step over to next source line.
+    on -------------------------- Executes a command when a breakpoint is hit.
+    print (alias: p) ------------ Evaluate an expression.
+    regs ------------------------ Print contents of CPU registers.
+    restart (alias: r) ---------- Restart process.
+    set ------------------------- Changes the value of a variable.
+    source ---------------------- Executes a file containing a list of delve commands
+    sources --------------------- Print list of source files.
+    stack (alias: bt) ----------- Print stack trace.
+    step (alias: s) ------------- Single step through program.
+    step-instruction (alias: si)  Single step a single cpu instruction.
+    stepout --------------------- Step out of the current function.
+    thread (alias: tr) ---------- Switch to the specified thread.
+    threads --------------------- Print out info for every traced thread.
+    trace (alias: t) ------------ Set tracepoint.
+    types ----------------------- Print list of types
+    up -------------------------- Move the current frame up.
+    vars ------------------------ Print package variables.
+    whatis ---------------------- Prints type of an expression.
+Type help followed by a command for full documentation.
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:831 (PC: 0x989a3a)
+   826:         rf, err := checkAddressFamily(bgp.RF_IPv4_UC)
+   827:         if err != nil {
+   828:                 return err
+   829:         }
+   830:
+=> 831:         path, err := ParsePath(rf, args)
+   832:         if err != nil {
+   833:                 cmdstr := "global"
+   834:                 if resource == CMD_VRF {
+   835:                         cmdstr = fmt.Sprintf("vrf %s", name)
+   836:                 }
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: (unreadable invalid interface type),
+                source: *(*github.com/osrg/gobgp/table.PeerInfo)(0x8489480000021824),
+                timestamp: (*time.Time)(0x8cadb4),
+                noImplicitWithdraw: true,
+                validation: (unreadable invalid length: -1585345097150969719),
+                isFromExternal: true,
+                key: (unreadable invalid length: -3689348814741910324),
+                uuid: github.com/satori/go%2euuid.UUID [204,204,204,204,100,72,139,12,37,248,255,255,255,72,141,132],
+                eor: true,
+                stale: true,},
+        IsWithdraw: true,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 10, cap: 5, [
+                (unreadable invalid interface type),
+                (unreadable unknown or unsupported kind: "invalid"),
+                (unreadable unknown or unsupported kind: "invalid"),
+                nil,
+                nil,
+                nil,
+                nil,
+                nil,
+                nil,
+                nil,
+        ],
+        reason: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00...+17646816 more",
+        parent: *github.com/osrg/gobgp/table.Path {
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0x7f5990242a20),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 842350518272, cap: 1, [
+                        (unreadable invalid interface type: could not find str field),
+                        (unreadable invalid interface type),
+                        (unreadable unknown or unsupported kind: "invalid"),
+                        nil,
+                        nil,
+                        nil,
+                        (unreadable unknown or unsupported kind: "invalid"),
+                        nil,
+                        (unreadable invalid interface type: could not find str field),
+                        (unreadable invalid interface type),
+                        ...+842350518262 more
+                ],
+                reason: "",
+                parent: *(*github.com/osrg/gobgp/table.Path)(0x400),
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 140022647017712, cap: 140022647017584, [(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+140022647017708 more],
+                filtered: (unreadable input/output error),
+                VrfIds: []uint16 len: 8, cap: 0, [(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+4 more],
+                IsNexthopInvalid: false,},
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 140022647102280, cap: 140022647101216, [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,...+140022647102216 more],
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [
+                "": 842351886848,
+                "\x00�\x05 �...+-4 more": 12416480,
+                (unreadable could not read string at 0x6f due to input/output error): 842352120944,
+                (unreadable could not read string at 0x3 due to input/output error): POLICY_DIRECTION_NONE,
+                "": POLICY_DIRECTION_NONE,
+                "": POLICY_DIRECTION_NONE,
+                ...+140022647106834 more
+        ],
+        VrfIds: []uint16 len: 140022646798632, cap: 140022647101064, [12456,36900,32601,0,0,0,0,0,47760,269,0,0,24576,8195,196,0,1,0,0,0,0,0,0,0,29,0,0,0,256,0,0,0,65535,65535,7,0,53744,36898,32601,0,53712,36898,32601,0,0,0,1,65504,29,263,1,5,32,0,0,0,0,0,0,0,0,0,0,0,...+140022646798568 more],
+        IsNexthopInvalid: true,}
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:831 (PC: 0x989a3a)
+   826:         rf, err := checkAddressFamily(bgp.RF_IPv4_UC)
+   827:         if err != nil {
+   828:                 return err
+   829:         }
+   830:
+=> 831:         path, err := ParsePath(rf, args)
+   832:         if err != nil {
+   833:                 cmdstr := "global"
+   834:                 if resource == CMD_VRF {
+   835:                         cmdstr = fmt.Sprintf("vrf %s", name)
+   836:                 }
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:832 (PC: 0x989a91)
+   827:         if err != nil {
+   828:                 return err
+   829:         }
+   830:
+   831:         path, err := ParsePath(rf, args)
+=> 832:         if err != nil {
+   833:                 cmdstr := "global"
+   834:                 if resource == CMD_VRF {
+   835:                         cmdstr = fmt.Sprintf("vrf %s", name)
+   836:                 }
+   837:
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p path.nlri
+Command failed: path has no member nlri
+(dlv) p path.info
+*github.com/osrg/gobgp/table.originInfo {
+        nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+                IPAddrPrefixDefault: (*github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault)(0xc4201f0c60),
+                addrlen: 4,},
+        source: *github.com/osrg/gobgp/table.PeerInfo nil,
+        timestamp: time.Time {
+                wall: 13751688083704362704,
+                ext: 59588142958547,
+                loc: *(*time.Location)(0x10d43e0),},
+        noImplicitWithdraw: false,
+        validation: "",
+        isFromExternal: false,
+        key: "",
+        uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        eor: false,
+        stale: false,}
+(dlv) p path.info.nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) p path.info.source
+*github.com/osrg/gobgp/table.PeerInfo nil
+(dlv) p path.info.key
+""
+(dlv) p path.info.uuid
+github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+(dlv) p path.filtered
+map[string]github.com/osrg/gobgp/table.PolicyDirection []
+(dlv) p path.info.nlri.IPAddrPrefixDefault
+github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+        Length: 24,
+        Prefix: net.IP len: 4, cap: 4, [100,10,4,0],}
+(dlv) p path.info.nlri.IPAddrPrefixDefault.Prefix
+net.IP len: 4, cap: 4, [100,10,4,0]
+(dlv) whatis path.info.nlri.IPAddrPrefixDefault.Prefix
+net.IP
+(dlv) whatis path.info.nlri.IPAddrPrefixDefault.Prefix.len
+Command failed: data.IPAddrPrefixDefault.Prefix (type net.IP) is not a struct
+(dlv) help
+The following commands are available:
+    args ------------------------ Print function arguments.
+    break (alias: b) ------------ Sets a breakpoint.
+    breakpoints (alias: bp) ----- Print out info for active breakpoints.
+    clear ----------------------- Deletes breakpoint.
+    clearall -------------------- Deletes multiple breakpoints.
+    condition (alias: cond) ----- Set breakpoint condition.
+    config ---------------------- Changes configuration parameters.
+    continue (alias: c) --------- Run until breakpoint or program termination.
+    disassemble (alias: disass) - Disassembler.
+    down ------------------------ Move the current frame down.
+    exit (alias: quit | q) ------ Exit the debugger.
+    frame ----------------------- Set the current frame, or execute command on a different frame.
+    funcs ----------------------- Print list of functions.
+    goroutine ------------------- Shows or changes current goroutine
+    goroutines ------------------ List program goroutines.
+    help (alias: h) ------------- Prints the help message.
+    list (alias: ls | l) -------- Show source code.
+    locals ---------------------- Print local variables.
+    next (alias: n) ------------- Step over to next source line.
+    on -------------------------- Executes a command when a breakpoint is hit.
+    print (alias: p) ------------ Evaluate an expression.
+    regs ------------------------ Print contents of CPU registers.
+    restart (alias: r) ---------- Restart process.
+    set ------------------------- Changes the value of a variable.
+    source ---------------------- Executes a file containing a list of delve commands
+    sources --------------------- Print list of source files.
+    stack (alias: bt) ----------- Print stack trace.
+    step (alias: s) ------------- Single step through program.
+    step-instruction (alias: si)  Single step a single cpu instruction.
+    stepout --------------------- Step out of the current function.
+    thread (alias: tr) ---------- Switch to the specified thread.
+    threads --------------------- Print out info for every traced thread.
+    trace (alias: t) ------------ Set tracepoint.
+    types ----------------------- Print list of types
+    up -------------------------- Move the current frame up.
+    vars ------------------------ Print package variables.
+    whatis ---------------------- Prints type of an expression.
+Type help followed by a command for full documentation.
+(dlv) types path.info.nlri.IPAddrPrefixDefault.Prefix.len
+(dlv) types path.info.nlri.IPAddrPrefixDefault.Prefix
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:832 (PC: 0x989a91)
+   827:         if err != nil {
+   828:                 return err
+   829:         }
+   830:
+   831:         path, err := ParsePath(rf, args)
+=> 832:         if err != nil {
+   833:                 cmdstr := "global"
+   834:                 if resource == CMD_VRF {
+   835:                         cmdstr = fmt.Sprintf("vrf %s", name)
+   836:                 }
+   837:
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:920 (PC: 0x98d375)
+   915:                         return err
+   916:                 }
+   917:                 return err
+   918:         }
+   919:
+=> 920:         if modtype == CMD_ADD {
+   921:                 if resource == CMD_VRF {
+   922:                         _, err = client.AddVRFPath(name, []*table.Path{path})
+   923:                 } else {
+   924:                         _, err = client.AddPath([]*table.Path{path})
+   925:                 }
+(dlv) p err
+error nil
+(dlv) p resource
+"global"
+(dlv) help
+The following commands are available:
+    args ------------------------ Print function arguments.
+    break (alias: b) ------------ Sets a breakpoint.
+    breakpoints (alias: bp) ----- Print out info for active breakpoints.
+    clear ----------------------- Deletes breakpoint.
+    clearall -------------------- Deletes multiple breakpoints.
+    condition (alias: cond) ----- Set breakpoint condition.
+    config ---------------------- Changes configuration parameters.
+    continue (alias: c) --------- Run until breakpoint or program termination.
+    disassemble (alias: disass) - Disassembler.
+    down ------------------------ Move the current frame down.
+    exit (alias: quit | q) ------ Exit the debugger.
+    frame ----------------------- Set the current frame, or execute command on a different frame.
+    funcs ----------------------- Print list of functions.
+    goroutine ------------------- Shows or changes current goroutine
+    goroutines ------------------ List program goroutines.
+    help (alias: h) ------------- Prints the help message.
+    list (alias: ls | l) -------- Show source code.
+    locals ---------------------- Print local variables.
+    next (alias: n) ------------- Step over to next source line.
+    on -------------------------- Executes a command when a breakpoint is hit.
+    print (alias: p) ------------ Evaluate an expression.
+    regs ------------------------ Print contents of CPU registers.
+    restart (alias: r) ---------- Restart process.
+    set ------------------------- Changes the value of a variable.
+    source ---------------------- Executes a file containing a list of delve commands
+    sources --------------------- Print list of source files.
+    stack (alias: bt) ----------- Print stack trace.
+    step (alias: s) ------------- Single step through program.
+    step-instruction (alias: si)  Single step a single cpu instruction.
+    stepout --------------------- Step out of the current function.
+    thread (alias: tr) ---------- Switch to the specified thread.
+    threads --------------------- Print out info for every traced thread.
+    trace (alias: t) ------------ Set tracepoint.
+    types ----------------------- Print list of types
+    up -------------------------- Move the current frame up.
+    vars ------------------------ Print package variables.
+    whatis ---------------------- Prints type of an expression.
+Type help followed by a command for full documentation.
+(dlv) args
+args = []string len: 1, cap: 1, [...]
+modtype = "add"
+name = ""
+resource = "global"
+~r4 = error nil
+(dlv) args.args
+Command failed: command not available
+(dlv) p args
+[]string len: 1, cap: 1, [
+        "100.10.4.0/24",
+]
+(dlv) l
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:920 (PC: 0x98d375)
+   915:                         return err
+   916:                 }
+   917:                 return err
+   918:         }
+   919:
+=> 920:         if modtype == CMD_ADD {
+   921:                 if resource == CMD_VRF {
+   922:                         _, err = client.AddVRFPath(name, []*table.Path{path})
+   923:                 } else {
+   924:                         _, err = client.AddPath([]*table.Path{path})
+   925:                 }
+(dlv) n
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:921 (PC: 0x98d3fc)
+   916:                 }
+   917:                 return err
+   918:         }
+   919:
+   920:         if modtype == CMD_ADD {
+=> 921:                 if resource == CMD_VRF {
+   922:                         _, err = client.AddVRFPath(name, []*table.Path{path})
+   923:                 } else {
+   924:                         _, err = client.AddPath([]*table.Path{path})
+   925:                 }
+   926:         } else {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:924 (PC: 0x98d599)
+   919:
+   920:         if modtype == CMD_ADD {
+   921:                 if resource == CMD_VRF {
+   922:                         _, err = client.AddVRFPath(name, []*table.Path{path})
+   923:                 } else {
+=> 924:                         _, err = client.AddPath([]*table.Path{path})
+   925:                 }
+   926:         } else {
+   927:                 if resource == CMD_VRF {
+   928:                         err = client.DeleteVRFPath(name, []*table.Path{path})
+   929:                 } else {
+(dlv) s
+> github.com/osrg/gobgp/client.(*Client).AddPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:372 (PC: 0x95d8e8)
+   367:                 uuid = r.Uuid
+   368:         }
+   369:         return uuid, nil
+   370: }
+   371:
+=> 372: func (cli *Client) AddPath(pathList []*table.Path) ([]byte, error) {
+   373:         return cli.addPath("", pathList)
+   374: }
+   375:
+   376: func (cli *Client) AddVRFPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   377:         if vrfID == "" {
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).AddPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:373 (PC: 0x95d921)
+   368:         }
+   369:         return uuid, nil
+   370: }
+   371:
+   372: func (cli *Client) AddPath(pathList []*table.Path) ([]byte, error) {
+=> 373:         return cli.addPath("", pathList)
+   374: }
+   375:
+   376: func (cli *Client) AddVRFPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   377:         if vrfID == "" {
+   378:                 return nil, fmt.Errorf("VRF ID is empty")
+(dlv) s
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:352 (PC: 0x95d568)
+   347:                 return nil, err
+   348:         }
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+=> 352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+(dlv) args
+cli = (*github.com/osrg/gobgp/client.Client)(0xc42000ca20)
+pathList = []*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [...]
+vrfID = ""
+~r2 = []uint8 len: 10, cap: 65537, [...]
+~r3 = error nil
+(dlv) p pathList
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc4201f2880),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+]
+(dlv) p pathList.pathAttrs
+Command failed: pathList (type []*github.com/osrg/gobgp/table.Path) is not a struct
+(dlv) p pathList.info
+Command failed: pathList (type []*github.com/osrg/gobgp/table.Path) is not a struct
+(dlv) p &pathList
+(*[]*github.com/osrg/gobgp/table.Path)(0xc420164ab0)
+(dlv) p *pathList
+Command failed: expression "pathList" ([]*github.com/osrg/gobgp/table.Path) can not be dereferenced
+(dlv) l
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:352 (PC: 0x95d568)
+   347:                 return nil, err
+   348:         }
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+=> 352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:353 (PC: 0x95d5a1)
+   348:         }
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+   352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+=> 353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+(dlv) p pathList
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc4201f2880),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+]
+(dlv) p pathList.info
+Command failed: pathList (type []*github.com/osrg/gobgp/table.Path) is not a struct
+(dlv) p pathList[0]
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p pathList[1]
+Command failed: index out of bounds
+(dlv) p pathList[0].info
+*github.com/osrg/gobgp/table.originInfo {
+        nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+                IPAddrPrefixDefault: (*github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault)(0xc4201f0c60),
+                addrlen: 4,},
+        source: *github.com/osrg/gobgp/table.PeerInfo nil,
+        timestamp: time.Time {
+                wall: 13751688083704362704,
+                ext: 59588142958547,
+                loc: *(*time.Location)(0x10d43e0),},
+        noImplicitWithdraw: false,
+        validation: "",
+        isFromExternal: false,
+        key: "",
+        uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        eor: false,
+        stale: false,}
+(dlv) p pathList[0].info.nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) p api
+Command failed: could not find symbol value for api
+(dlv) p api.AddPathRequest
+Command failed: could not find symbol value for api
+(dlv) l
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:353 (PC: 0x95d5a1)
+   348:         }
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+   352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+=> 353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:354 (PC: 0x95d5a9)
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+   352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   353:         resource := api.Resource_GLOBAL
+=> 354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:354 (PC: 0x95d8c1)
+   349:         return &AddPathByStreamClient{stream}, nil
+   350: }
+   351:
+   352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   353:         resource := api.Resource_GLOBAL
+=> 354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:357 (PC: 0x95d5c5)
+   352: func (cli *Client) addPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+=> 357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:358 (PC: 0x95d5dc)
+   353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+=> 358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:359 (PC: 0x95d656)
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+=> 359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p api
+Command failed: could not find symbol value for api
+(dlv) p &api.AddPathRequest
+Command failed: could not find symbol value for api
+(dlv) s
+> golang.org/x/net/context.Background() /opt/project/gobgp_test/gowork/src/golang.org/x/net/context/context.go:140 (PC: 0x84e85f)
+Warning: debugging optimized function
+   135:
+   136: // Background returns a non-nil, empty Context. It is never canceled, has no
+   137: // values, and has no deadline. It is typically used by the main function,
+   138: // initialization, and tests, and as the top-level Context for incoming
+   139: // requests.
+=> 140: func Background() Context {
+   141:         return background
+   142: }
+   143:
+   144: // TODO returns a non-nil, empty Context. Code should use context.TODO when
+   145: // it's unclear which Context to use or it is not yet available (because the
+(dlv) n
+> golang.org/x/net/context.Background() /opt/project/gobgp_test/gowork/src/golang.org/x/net/context/context.go:141 (PC: 0x84e86d)
+Warning: debugging optimized function
+   136: // Background returns a non-nil, empty Context. It is never canceled, has no
+   137: // values, and has no deadline. It is typically used by the main function,
+   138: // initialization, and tests, and as the top-level Context for incoming
+   139: // requests.
+   140: func Background() Context {
+=> 141:         return background
+   142: }
+   143:
+   144: // TODO returns a non-nil, empty Context. Code should use context.TODO when
+   145: // it's unclear which Context to use or it is not yet available (because the
+   146: // surrounding function has not yet been extended to accept a Context
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:359 (PC: 0x95d65b)
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+=> 359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+(dlv) s
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362 (PC: 0x95d674)
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+=> 362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+   367:                 uuid = r.Uuid
+(dlv) s
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:237 (PC: 0x93c66b)
+   232:                 p = append(p, NewPeerFromConfigStruct(e))
+   233:         }
+   234:         return &GetNeighborResponse{Peers: p}, nil
+   235: }
+   236:
+=> 237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+(dlv) p table.Path
+Command failed: could not find symbol value for table
+(dlv) args
+path = (*github.com/osrg/gobgp/table.Path)(0xc4201f2800)
+~r1 = (*github.com/osrg/gobgp/api.Path)(0xc4200b4030)
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:238 (PC: 0x93c68e)
+   233:         }
+   234:         return &GetNeighborResponse{Peers: p}, nil
+   235: }
+   236:
+   237: func ToPathApi(path *table.Path) *Path {
+=> 238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+(dlv) p nlri
+(unreadable invalid interface type: could not find str field)
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p path.GetNlri()
+Command failed: function calls are not supported
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:239 (PC: 0x93c6b9)
+   234:         return &GetNeighborResponse{Peers: p}, nil
+   235: }
+   236:
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+=> 239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+(dlv) p nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:240 (PC: 0x93c72b)
+   235: }
+   236:
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+=> 240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+(dlv) p n
+[]uint8 len: 4, cap: 8, [24,100,10,4]
+(dlv) p nlri
+github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) *{
+        IPAddrPrefixDefault: github.com/osrg/gobgp/packet/bgp.IPAddrPrefixDefault {
+                Length: 24,
+                Prefix: net.IP len: 4, cap: 4, [100,10,4,0],},
+        addrlen: 4,}
+(dlv) p nlri.IPAddrPrefixDefault.Prefix
+net.IP len: 4, cap: 4, [100,10,4,0]
+(dlv) p nlri.Length
+24
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248 (PC: 0x93c79b)
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+=> 248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+(dlv) p family
+65537
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p pattrs
+[][]uint8 len: 4, cap: 842351922256, [
+        [0,152,5,32,196,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,...+842350827456 more],
+        [],
+        [nil,(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+842350827459 more],
+        [],
+]
+(dlv) s
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:426 (PC: 0x8d38fb)
+   421:
+   422: func (a PathAttrs) Less(i, j int) bool {
+   423:         return a[i].GetType() < a[j].GetType()
+   424: }
+   425:
+=> 426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) args
+path = (*github.com/osrg/gobgp/table.Path)(0xc4201f2800)
+~r0 = []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 4, cap: 8, [...]
+(dlv) p path.pathAttrs
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) p path.pathAttrs.PathAttribute
+Command failed: path.pathAttrs (type []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface) is not a struct
+(dlv) p path.pathAttrs[0]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 0,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) p path.pathAttrs[1]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_NEXT_HOP,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: net.IP len: 4, cap: 4, [0,0,0,0],}
+(dlv) p path.pathAttrs[0].Value
+[]uint8 len: 1, cap: 1, [2]
+(dlv) p path.pathAttrs[0].Value[0]
+2
+(dlv) p path.pathAttrs[0].Value[1]
+Command failed: index out of bounds
+(dlv) bt
+ 0  0x00000000008d38fb in github.com/osrg/gobgp/table.(*Path).GetPathAttrs
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:426
+ 1  0x000000000093c7ac in github.com/osrg/gobgp/api.ToPathApi
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248
+ 2  0x000000000095d682 in github.com/osrg/gobgp/client.(*Client).addPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362
+ 3  0x000000000095d97d in github.com/osrg/gobgp/client.(*Client).AddPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:373
+ 4  0x000000000098d635 in github.com/osrg/gobgp/gobgp/cmd.modPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:924
+ 5  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+ 6  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+ 7  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+ 8  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+ 9  0x00000000009cbe1b in main.main
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+10  0x000000000042dee2 in runtime.main
+    at /usr/local/go/src/runtime/proc.go:198
+(dlv) l
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:426 (PC: 0x8d38fb)
+   421:
+   422: func (a PathAttrs) Less(i, j int) bool {
+   423:         return a[i].GetType() < a[j].GetType()
+   424: }
+   425:
+=> 426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:427 (PC: 0x8d3929)
+   422: func (a PathAttrs) Less(i, j int) bool {
+   423:         return a[i].GetType() < a[j].GetType()
+   424: }
+   425:
+   426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+=> 427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:428 (PC: 0x8d395d)
+   423:         return a[i].GetType() < a[j].GetType()
+   424: }
+   425:
+   426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+=> 428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:429 (PC: 0x8d39ef)
+   424: }
+   425:
+   426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+=> 429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+   434:                 if p.parent == nil {
+(dlv) p p
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: (unreadable invalid interface type),
+                source: *(*github.com/osrg/gobgp/table.PeerInfo)(0x7ffc5e014d18),
+                timestamp: (*time.Time)(0x10d4898),
+                noImplicitWithdraw: true,
+                validation: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00��E\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00��E\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00�:�^�\u007f\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00...+4394200 more",
+                isFromExternal: true,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 0, cap: 0, nil,
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 6127, cap: 842350460928, [nil,(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+6122 more],
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection nil,
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:430 (PC: 0x8d39ff)
+   425:
+   426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+=> 430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+(dlv) p p
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:431 (PC: 0x8d3a01)
+   426: func (path *Path) GetPathAttrs() []bgp.PathAttributeInterface {
+   427:         deleted := NewBitmap(math.MaxUint8)
+   428:         modified := make(map[uint]bgp.PathAttributeInterface)
+   429:         p := path
+   430:         for {
+=> 431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+(dlv) p dels
+Command failed: could not find symbol value for dels
+(dlv) p p.dels
+[]github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:434 (PC: 0x8d3ace)
+   429:         p := path
+   430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+=> 434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+(dlv) p p.parent
+*github.com/osrg/gobgp/table.Path nil
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:435 (PC: 0x8d3cdc)
+   430:         for {
+   431:                 for _, t := range p.dels {
+   432:                         deleted.Flag(uint(t))
+   433:                 }
+   434:                 if p.parent == nil {
+=> 435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:439 (PC: 0x8d3d57)
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+=> 439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:440 (PC: 0x8d3df8)
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+=> 440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 0,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) p modified
+map[uint]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface []
+(dlv) p modified[0]
+Command failed: key not found
+(dlv) p typ
+0
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:441 (PC: 0x8d3e15)
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+=> 441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+   446:                                 }
+(dlv) p typ
+1
+(dlv) p modified[1]
+Command failed: key not found
+(dlv) p m
+(unreadable invalid interface type)
+(dlv) p ok
+true
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:444 (PC: 0x8d3fba)
+   439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+=> 444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+   446:                                 }
+   447:                         }
+   448:                         if len(modified) > 0 {
+   449:                                 // Huh, some attributes were newly
+(dlv) p pk
+Command failed: could not find symbol value for pk
+(dlv) p ok
+false
+(dlv) p deleted.
+Command failed: 1:9: expected selector or type assertion, found 'EOF'
+(dlv) p deleted
+github.com/osrg/gobgp/table.Bitmap len: 4, cap: 4, [0,0,0,0]
+(dlv) whatis deleted
+github.com/osrg/gobgp/table.Bitmap
+(dlv) p deleted.GetFlag(1)
+Command failed: no type entry found, use 'types' for a list of valid types
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:445 (PC: 0x8d4005)
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+=> 445:                                         list = append(list, a)
+   446:                                 }
+   447:                         }
+   448:                         if len(modified) > 0 {
+   449:                                 // Huh, some attributes were newly
+   450:                                 // added. So we need to sort...
+(dlv) p list
+github.com/osrg/gobgp/table.PathAttrs len: 0, cap: 2, []
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:439 (PC: 0x8d3f3f)
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+=> 439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+(dlv) p list
+github.com/osrg/gobgp/table.PathAttrs len: 1, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+]
+(dlv) whatis list
+github.com/osrg/gobgp/table.PathAttrs
+(dlv) p list[0]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 0,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) p list[0].PathAttribute
+github.com/osrg/gobgp/packet/bgp.PathAttribute {
+        Flags: BGP_ATTR_FLAG_TRANSITIVE,
+        Type: BGP_ATTR_TYPE_ORIGIN,
+        Length: 0,
+        Value: []uint8 len: 1, cap: 1, [2],}
+(dlv) p list[0].PathAttributeOrigin
+Command failed: data has no member PathAttributeOrigin
+(dlv) p modified
+map[uint]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface []
+(dlv) p modified[1]
+Command failed: key not found
+(dlv) p modified[0]
+Command failed: key not found
+(dlv) l
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:439 (PC: 0x8d3f3f)
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+=> 439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:440 (PC: 0x8d3df8)
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+=> 440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_NEXT_HOP,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: net.IP len: 4, cap: 4, [0,0,0,0],}
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:441 (PC: 0x8d3e15)
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+   439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+=> 441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+   446:                                 }
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:444 (PC: 0x8d3fba)
+   439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+=> 444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+   446:                                 }
+   447:                         }
+   448:                         if len(modified) > 0 {
+   449:                                 // Huh, some attributes were newly
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:445 (PC: 0x8d4005)
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+=> 445:                                         list = append(list, a)
+   446:                                 }
+   447:                         }
+   448:                         if len(modified) > 0 {
+   449:                                 // Huh, some attributes were newly
+   450:                                 // added. So we need to sort...
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:439 (PC: 0x8d3f3f)
+   434:                 if p.parent == nil {
+   435:                         list := PathAttrs(make([]bgp.PathAttributeInterface, 0, len(p.pathAttrs)))
+   436:                         // we assume that the original pathAttrs are
+   437:                         // in order, that is, other bgp speakers send
+   438:                         // attributes in order.
+=> 439:                         for _, a := range p.pathAttrs {
+   440:                                 typ := uint(a.GetType())
+   441:                                 if m, ok := modified[typ]; ok {
+   442:                                         list = append(list, m)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+(dlv) p list
+github.com/osrg/gobgp/table.PathAttrs len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) n
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:448 (PC: 0x8d40c3)
+   443:                                         delete(modified, typ)
+   444:                                 } else if !deleted.GetFlag(typ) {
+   445:                                         list = append(list, a)
+   446:                                 }
+   447:                         }
+=> 448:                         if len(modified) > 0 {
+   449:                                 // Huh, some attributes were newly
+   450:                                 // added. So we need to sort...
+   451:                                 for _, m := range modified {
+   452:                                         list = append(list, m)
+   453:                                 }
+(dlv)
+> github.com/osrg/gobgp/table.(*Path).GetPathAttrs() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/path.go:456 (PC: 0x8d42d2)
+   451:                                 for _, m := range modified {
+   452:                                         list = append(list, m)
+   453:                                 }
+   454:                                 sort.Sort(list)
+   455:                         }
+=> 456:                         return list
+   457:                 } else {
+   458:                         for _, a := range p.pathAttrs {
+   459:                                 typ := uint(a.GetType())
+   460:                                 if _, ok := modified[typ]; !deleted.GetFlag(typ) && !ok {
+   461:                                         modified[typ] = a
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248 (PC: 0x93c7ac)
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+=> 248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+(dlv) s
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:241 (PC: 0x94c098)
+   236:
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+=> 241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+(dlv) s
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:242 (PC: 0x94c0c6)
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+=> 242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+(dlv) bt
+ 0  0x000000000094c0c6 in github.com/osrg/gobgp/api.ToPathApi.func1
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:242
+ 1  0x000000000093c7e6 in github.com/osrg/gobgp/api.ToPathApi
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248
+ 2  0x000000000095d682 in github.com/osrg/gobgp/client.(*Client).addPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362
+ 3  0x000000000095d97d in github.com/osrg/gobgp/client.(*Client).AddPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:373
+ 4  0x000000000098d635 in github.com/osrg/gobgp/gobgp/cmd.modPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:924
+ 5  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+ 6  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+ 7  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+ 8  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+ 9  0x00000000009cbe1b in main.main
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+10  0x000000000042dee2 in runtime.main
+    at /usr/local/go/src/runtime/proc.go:198
+(dlv) args
+arg = []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [...]
+~r1 = [][]uint8 len: 0, cap: 0, nil
+(dlv) arg[0]
+Command failed: command not available
+(dlv) p arg[0]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 0,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) l
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:242 (PC: 0x94c0c6)
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+=> 242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+(dlv) args
+arg = []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [...]
+~r1 = [][]uint8 len: 0, cap: 0, nil
+(dlv) p arg
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000ca40),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42008a5c0),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:243 (PC: 0x94c11d)
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+=> 243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:244 (PC: 0x94c1ab)
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+=> 244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 0,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) s
+> github.com/osrg/gobgp/packet/bgp.(*PathAttributeOrigin).Serialize() <autogenerated>:1 (PC: 0x5c3440)
+(dlv) l
+> github.com/osrg/gobgp/packet/bgp.(*PathAttributeOrigin).Serialize() <autogenerated>:1 (PC: 0x5c3440)
+Command failed: open <autogenerated>: no such file or directory
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:244 (PC: 0x94c1d8)
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+=> 244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+(dlv) p aa
+[]uint8 len: 0, cap: 0, nil
+(dlv) s
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:245 (PC: 0x94c217)
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+=> 245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+(dlv) p aa
+[]uint8 len: 4, cap: 4, [64,1,1,2]
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 1,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) p a.PathAttribute
+github.com/osrg/gobgp/packet/bgp.PathAttribute {
+        Flags: BGP_ATTR_FLAG_TRANSITIVE,
+        Type: BGP_ATTR_TYPE_ORIGIN,
+        Length: 1,
+        Value: []uint8 len: 1, cap: 1, [2],}
+(dlv) p a.PathAttribute.Length
+1
+(dlv) l
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:245 (PC: 0x94c217)
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+=> 245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+(dlv) p ret
+[][]uint8 len: 0, cap: 2, []
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:243 (PC: 0x94c298)
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+=> 243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+(dlv) p ret
+[][]uint8 len: 1, cap: 2, [
+        [64,1,1,2],
+]
+(dlv) bt
+ 0  0x000000000094c298 in github.com/osrg/gobgp/api.ToPathApi.func1
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:243
+ 1  0x000000000093c7e6 in github.com/osrg/gobgp/api.ToPathApi
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248
+ 2  0x000000000095d682 in github.com/osrg/gobgp/client.(*Client).addPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362
+ 3  0x000000000095d97d in github.com/osrg/gobgp/client.(*Client).AddPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:373
+ 4  0x000000000098d635 in github.com/osrg/gobgp/gobgp/cmd.modPath
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:924
+ 5  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+ 6  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+ 7  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+ 8  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+    at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+ 9  0x00000000009cbe1b in main.main
+    at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+10  0x000000000042dee2 in runtime.main
+    at /usr/local/go/src/runtime/proc.go:198
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:244 (PC: 0x94c1ab)
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+=> 244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+(dlv) p a
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_NEXT_HOP,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: net.IP len: 4, cap: 4, [0,0,0,0],}
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:245 (PC: 0x94c217)
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+=> 245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+(dlv) p aa
+[]uint8 len: 7, cap: 7, [64,3,4,0,0,0,0]
+(dlv) p a.Value
+net.IP len: 4, cap: 4, [0,0,0,0]
+(dlv) p ret
+[][]uint8 len: 1, cap: 2, [
+        [64,1,1,2],
+]
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:243 (PC: 0x94c298)
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+   241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+=> 243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+(dlv) p ret
+[][]uint8 len: 2, cap: 2, [
+        [64,1,1,2],
+        [64,3,4,0,0,0,0],
+]
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi.func1() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:247 (PC: 0x94c30e)
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+=> 247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:248 (PC: 0x93c7e6)
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+=> 248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+(dlv) p pattrs
+[][]uint8 len: 4, cap: 842351922256, [
+        [0,152,5,32,196,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,...+842350827456 more],
+        [],
+        [nil,(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+842350827459 more],
+        [],
+]
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:241 (PC: 0x93c7f5)
+   236:
+   237: func ToPathApi(path *table.Path) *Path {
+   238:         nlri := path.GetNlri()
+   239:         n, _ := nlri.Serialize()
+   240:         family := uint32(bgp.AfiSafiToRouteFamily(nlri.AFI(), nlri.SAFI()))
+=> 241:         pattrs := func(arg []bgp.PathAttributeInterface) [][]byte {
+   242:                 ret := make([][]byte, 0, len(arg))
+   243:                 for _, a := range arg {
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+(dlv) p pattrs
+[][]uint8 len: 4, cap: 842351922256, [
+        [0,152,5,32,196,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,...+842350827456 more],
+        [],
+        [nil,(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+842350827459 more],
+        [],
+]
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:252 (PC: 0x93c80d)
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+=> 252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+(dlv) p pattrs
+[][]uint8 len: 2, cap: 2, [
+        [64,1,1,2],
+        [64,3,4,0,0,0,0],
+]
+(dlv) p pattrs[0]
+[]uint8 len: 4, cap: 4, [64,1,1,2]
+(dlv) p pattrs[1]
+[]uint8 len: 7, cap: 7, [64,3,4,0,0,0,0]
+(dlv) p n
+[]uint8 len: 4, cap: 8, [24,100,10,4]
+(dlv) args
+path = (*github.com/osrg/gobgp/table.Path)(0xc4201f2800)
+~r1 = *github.com/osrg/gobgp/api.Path nil
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p path.Nlri
+Command failed: path has no member Nlri
+(dlv) whatis Path
+Command failed: could not find symbol value for Path
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:254 (PC: 0x93c872)
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+=> 254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:255 (PC: 0x93c8b5)
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+=> 255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:257 (PC: 0x93c8d8)
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+=> 257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:258 (PC: 0x93c8f2)
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+=> 258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+   263:         if s := path.GetSource(); s != nil {
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:259 (PC: 0x93c90c)
+   254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+=> 259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+   263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:260 (PC: 0x93c926)
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+=> 260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+   263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:261 (PC: 0x93c976)
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+=> 261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+   263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:253 (PC: 0x93ca60)
+   248:         }(path.GetPathAttrs())
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+=> 253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+(dlv) p p
+*github.com/osrg/gobgp/api.Path {
+        Nlri: (unreadable input/output error),
+        Pattrs: (unreadable input/output error),
+        Age: (unreadable input/output error),
+        Best: (unreadable input/output error),
+        IsWithdraw: (unreadable input/output error),
+        Validation: (unreadable input/output error),
+        NoImplicitWithdraw: (unreadable input/output error),
+        Family: (unreadable input/output error),
+        SourceAsn: (unreadable input/output error),
+        SourceId: (unreadable could not read string len input/output error),
+        Filtered: (unreadable input/output error),
+        Stale: (unreadable input/output error),
+        IsFromExternal: (unreadable input/output error),
+        NeighborIp: (unreadable could not read string len input/output error),
+        Uuid: (unreadable input/output error),
+        IsNexthopInvalid: (unreadable input/output error),}
+(dlv) whatis p
+*github.com/osrg/gobgp/api.Path
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:254 (PC: 0x93ca7b)
+   249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+=> 254:                 Validation:         int32(path.Validation().ToInt()),
+   255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:255 (PC: 0x93ca8d)
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+=> 255:                 Filtered:           path.Filtered("") == table.POLICY_DIRECTION_IN,
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:261 (PC: 0x93cb38)
+   256:                 Family:             family,
+   257:                 Stale:              path.IsStale(),
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+=> 261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+   263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:249 (PC: 0x93cb56)
+   244:                         aa, _ := a.Serialize()
+   245:                         ret = append(ret, aa)
+   246:                 }
+   247:                 return ret
+   248:         }(path.GetPathAttrs())
+=> 249:         p := &Path{
+   250:                 Nlri:               n,
+   251:                 Pattrs:             pattrs,
+   252:                 Age:                path.GetTimestamp().Unix(),
+   253:                 IsWithdraw:         path.IsWithdraw,
+   254:                 Validation:         int32(path.Validation().ToInt()),
+(dlv) p p
+*github.com/osrg/gobgp/api.Path {
+        Nlri: (unreadable input/output error),
+        Pattrs: (unreadable input/output error),
+        Age: (unreadable input/output error),
+        Best: (unreadable input/output error),
+        IsWithdraw: (unreadable input/output error),
+        Validation: (unreadable input/output error),
+        NoImplicitWithdraw: (unreadable input/output error),
+        Family: (unreadable input/output error),
+        SourceAsn: (unreadable input/output error),
+        SourceId: (unreadable could not read string len input/output error),
+        Filtered: (unreadable input/output error),
+        Stale: (unreadable input/output error),
+        IsFromExternal: (unreadable input/output error),
+        NeighborIp: (unreadable could not read string len input/output error),
+        Uuid: (unreadable input/output error),
+        IsNexthopInvalid: (unreadable input/output error),}
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:263 (PC: 0x93cb63)
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+=> 263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+   267:         }
+   268:         return p
+(dlv) p p
+*github.com/osrg/gobgp/api.Path {
+        Nlri: []uint8 len: 4, cap: 8, [24,100,10,4],
+        Pattrs: [][]uint8 len: 2, cap: 2, [
+                [64,1,1,2],
+                [64,3,4,0,0,0,0],
+        ],
+        Age: 1535034959,
+        Best: false,
+        IsWithdraw: false,
+        Validation: -1,
+        NoImplicitWithdraw: false,
+        Family: 65537,
+        SourceAsn: 0,
+        SourceId: "",
+        Filtered: false,
+        Stale: false,
+        IsFromExternal: false,
+        NeighborIp: "",
+        Uuid: []uint8 len: 16, cap: 16, [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        IsNexthopInvalid: false,}
+(dlv) whatis p
+*github.com/osrg/gobgp/api.Path
+(dlv) l
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:263 (PC: 0x93cb63)
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+=> 263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+   267:         }
+   268:         return p
+(dlv) n
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:263 (PC: 0x93cc8c)
+   258:                 IsFromExternal:     path.IsFromExternal(),
+   259:                 NoImplicitWithdraw: path.NoImplicitWithdraw(),
+   260:                 Uuid:               path.UUID().Bytes(),
+   261:                 IsNexthopInvalid:   path.IsNexthopInvalid,
+   262:         }
+=> 263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+   267:         }
+   268:         return p
+(dlv)
+> github.com/osrg/gobgp/api.ToPathApi() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api/grpc_server.go:268 (PC: 0x93cc5e)
+   263:         if s := path.GetSource(); s != nil {
+   264:                 p.SourceAsn = s.AS
+   265:                 p.SourceId = s.ID.String()
+   266:                 p.NeighborIp = s.Address.String()
+   267:         }
+=> 268:         return p
+   269: }
+   270:
+   271: func (s *Server) GetRib(ctx context.Context, arg *GetRibRequest) (*GetRibResponse, error) {
+   272:         if arg == nil || arg.Table == nil {
+   273:                 return nil, fmt.Errorf("invalid request")
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362 (PC: 0x95d682)
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+=> 362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+   367:                 uuid = r.Uuid
+(dlv) p r
+*github.com/osrg/gobgp/api.AddPathResponse {
+        Uuid: []uint8 len: 0, cap: 11999253, [],}
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:359 (PC: 0x95d68f)
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+=> 359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+(dlv) p path
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *github.com/osrg/gobgp/table.PeerInfo nil,
+                timestamp: (*time.Time)(0xc4201f2898),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p pathList
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc4201f2880),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+]
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:362 (PC: 0x95d6a6)
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+=> 362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+   367:                 uuid = r.Uuid
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:359 (PC: 0x95d724)
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+   358:         for _, path := range pathList {
+=> 359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:364 (PC: 0x95d7cb)
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+=> 364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+   367:                 uuid = r.Uuid
+   368:         }
+   369:         return uuid, nil
+(dlv) p r
+*github.com/osrg/gobgp/api.AddPathResponse {
+        Uuid: []uint8 len: 0, cap: 0, nil,}
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:367 (PC: 0x95d821)
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+   364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+=> 367:                 uuid = r.Uuid
+   368:         }
+   369:         return uuid, nil
+   370: }
+   371:
+   372: func (cli *Client) AddPath(pathList []*table.Path) ([]byte, error) {
+(dlv) p r.Uuid
+[]uint8 len: 0, cap: 0, nil
+(dlv) n
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:358 (PC: 0x95d84d)
+   353:         resource := api.Resource_GLOBAL
+   354:         if vrfID != "" {
+   355:                 resource = api.Resource_VRF
+   356:         }
+   357:         var uuid []byte
+=> 358:         for _, path := range pathList {
+   359:                 r, err := cli.cli.AddPath(context.Background(), &api.AddPathRequest{
+   360:                         Resource: resource,
+   361:                         VrfId:    vrfID,
+   362:                         Path:     api.ToPathApi(path),
+   363:                 })
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).addPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:369 (PC: 0x95d876)
+   364:                 if err != nil {
+   365:                         return nil, err
+   366:                 }
+   367:                 uuid = r.Uuid
+   368:         }
+=> 369:         return uuid, nil
+   370: }
+   371:
+   372: func (cli *Client) AddPath(pathList []*table.Path) ([]byte, error) {
+   373:         return cli.addPath("", pathList)
+   374: }
+(dlv)
+> github.com/osrg/gobgp/client.(*Client).AddPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client/client.go:373 (PC: 0x95d97d)
+   368:         }
+   369:         return uuid, nil
+   370: }
+   371:
+   372: func (cli *Client) AddPath(pathList []*table.Path) ([]byte, error) {
+=> 373:         return cli.addPath("", pathList)
+   374: }
+   375:
+   376: func (cli *Client) AddVRFPath(vrfID string, pathList []*table.Path) ([]byte, error) {
+   377:         if vrfID == "" {
+   378:                 return nil, fmt.Errorf("VRF ID is empty")
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:924 (PC: 0x98d635)
+   919:
+   920:         if modtype == CMD_ADD {
+   921:                 if resource == CMD_VRF {
+   922:                         _, err = client.AddVRFPath(name, []*table.Path{path})
+   923:                 } else {
+=> 924:                         _, err = client.AddPath([]*table.Path{path})
+   925:                 }
+   926:         } else {
+   927:                 if resource == CMD_VRF {
+   928:                         err = client.DeleteVRFPath(name, []*table.Path{path})
+   929:                 } else {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.modPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:933 (PC: 0x98d565)
+   928:                         err = client.DeleteVRFPath(name, []*table.Path{path})
+   929:                 } else {
+   930:                         err = client.DeletePath([]*table.Path{path})
+   931:                 }
+   932:         }
+=> 933:         return err
+   934: }
+   935:
+   936: func showGlobalConfig(args []string) error {
+   937:         g, err := client.GetServer()
+   938:         if err != nil {
+(dlv)
+> github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029 (PC: 0x9c0792)
+  1024:
+  1025:         for _, v := range []string{CMD_ADD, CMD_DEL} {
+  1026:                 cmd := &cobra.Command{
+  1027:                         Use: v,
+  1028:                         Run: func(cmd *cobra.Command, args []string) {
+=>1029:                                 err := modPath(CMD_GLOBAL, "", cmd.Use, args)
+  1030:                                 if err != nil {
+  1031:                                         exitWithError(err)
+  1032:                                 }
+  1033:                         },
+  1034:                 }
+(dlv) bt
+0  0x00000000009c0792 in github.com/osrg/gobgp/gobgp/cmd.NewGlobalCmd.func3
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd/global.go:1029
+1  0x0000000000829e54 in github.com/spf13/cobra.(*Command).execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:648
+2  0x000000000082a744 in github.com/spf13/cobra.(*Command).ExecuteC
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:734
+3  0x000000000082a44b in github.com/spf13/cobra.(*Command).Execute
+   at /opt/project/gobgp_test/gowork/src/github.com/spf13/cobra/command.go:693
+4  0x00000000009cbe1b in main.main
+   at /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/main.go:25
+5  0x000000000042dee2 in runtime.main
+   at /usr/local/go/src/runtime/proc.go:198
+6  0x000000000045b671 in runtime.goexit
+   at /usr/local/go/src/runtime/asm_amd64.s:2361
+(dlv)
+
