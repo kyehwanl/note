@@ -1,0 +1,499 @@
+
+Process has exited with status 1
+(dlv) r
+Process restarted with PID 6471
+(dlv) c
+INFO[0000] Policy config is updated
+INFO[0000] gobgpd started
+INFO[0000] Finished reading the config file              Topic=Config
+INFO[0000] Peer 10.0.50.11 is added
+INFO[0000] Add a peer configuration for:10.0.50.11       Topic=Peer
+INFO[0011] Peer Up                                       Key=10.0.50.11 State="BGP_FSM_OPENCONFIRM" Topic=Peer
+INFO[0012]  +++++++++ gobgpd update
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:259 (hits goroutine(43):1 total:1) (PC: 0x93b7cb)
+   254:                 aggAttr.Value.AS = agg4Attr.Value.AS
+   255:         }
+   256:         return nil
+   257: }
+   258:
+=> 259: func createUpdateMsgFromPath(path *Path, msg *bgp.BGPMessage) *bgp.BGPMessage {
+   260:         rf := path.GetRouteFamily()
+   261:
+   262:         if rf == bgp.RF_IPv4_UC {
+   263:                 nlri := path.GetNlri().(*bgp.IPAddrPrefix)
+   264:                 if path.IsWithdraw {
+(dlv) n
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:260 (PC: 0x93b7ee)
+   255:         }
+   256:         return nil
+   257: }
+   258:
+   259: func createUpdateMsgFromPath(path *Path, msg *bgp.BGPMessage) *bgp.BGPMessage {
+=> 260:         rf := path.GetRouteFamily()
+   261:
+   262:         if rf == bgp.RF_IPv4_UC {
+   263:                 nlri := path.GetNlri().(*bgp.IPAddrPrefix)
+   264:                 if path.IsWithdraw {
+   265:                         if msg != nil {
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:262 (PC: 0x93b809)
+   257: }
+   258:
+   259: func createUpdateMsgFromPath(path *Path, msg *bgp.BGPMessage) *bgp.BGPMessage {
+   260:         rf := path.GetRouteFamily()
+   261:
+=> 262:         if rf == bgp.RF_IPv4_UC {
+   263:                 nlri := path.GetNlri().(*bgp.IPAddrPrefix)
+   264:                 if path.IsWithdraw {
+   265:                         if msg != nil {
+   266:                                 u := msg.Body.(*bgp.BGPUpdate)
+   267:                                 u.WithdrawnRoutes = append(u.WithdrawnRoutes, nlri)
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:263 (PC: 0x93b816)
+   258:
+   259: func createUpdateMsgFromPath(path *Path, msg *bgp.BGPMessage) *bgp.BGPMessage {
+   260:         rf := path.GetRouteFamily()
+   261:
+   262:         if rf == bgp.RF_IPv4_UC {
+=> 263:                 nlri := path.GetNlri().(*bgp.IPAddrPrefix)
+   264:                 if path.IsWithdraw {
+   265:                         if msg != nil {
+   266:                                 u := msg.Body.(*bgp.BGPUpdate)
+   267:                                 u.WithdrawnRoutes = append(u.WithdrawnRoutes, nlri)
+   268:                                 return nil
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:264 (PC: 0x93b85a)
+   259: func createUpdateMsgFromPath(path *Path, msg *bgp.BGPMessage) *bgp.BGPMessage {
+   260:         rf := path.GetRouteFamily()
+   261:
+   262:         if rf == bgp.RF_IPv4_UC {
+   263:                 nlri := path.GetNlri().(*bgp.IPAddrPrefix)
+=> 264:                 if path.IsWithdraw {
+   265:                         if msg != nil {
+   266:                                 u := msg.Body.(*bgp.BGPUpdate)
+   267:                                 u.WithdrawnRoutes = append(u.WithdrawnRoutes, nlri)
+   268:                                 return nil
+   269:                         } else {
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:273 (PC: 0x93ba56)
+   268:                                 return nil
+   269:                         } else {
+   270:                                 return bgp.NewBGPUpdateMessage([]*bgp.IPAddrPrefix{nlri}, nil, nil)
+   271:                         }
+   272:                 } else {
+=> 273:                         if msg != nil {
+   274:                                 u := msg.Body.(*bgp.BGPUpdate)
+   275:                                 u.NLRI = append(u.NLRI, nlri)
+   276:                         } else {
+   277:                                 pathAttrs := path.GetPathAttrs()
+   278:                                 return bgp.NewBGPUpdateMessage(nil, pathAttrs, []*bgp.IPAddrPrefix{nlri})
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:277 (PC: 0x93bb6f)
+   272:                 } else {
+   273:                         if msg != nil {
+   274:                                 u := msg.Body.(*bgp.BGPUpdate)
+   275:                                 u.NLRI = append(u.NLRI, nlri)
+   276:                         } else {
+=> 277:                                 pathAttrs := path.GetPathAttrs()
+   278:                                 return bgp.NewBGPUpdateMessage(nil, pathAttrs, []*bgp.IPAddrPrefix{nlri})
+   279:                         }
+   280:                 }
+   281:         } else {
+   282:                 if path.IsWithdraw {
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:278 (PC: 0x93bba7)
+   273:                         if msg != nil {
+   274:                                 u := msg.Body.(*bgp.BGPUpdate)
+   275:                                 u.NLRI = append(u.NLRI, nlri)
+   276:                         } else {
+   277:                                 pathAttrs := path.GetPathAttrs()
+=> 278:                                 return bgp.NewBGPUpdateMessage(nil, pathAttrs, []*bgp.IPAddrPrefix{nlri})
+   279:                         }
+   280:                 }
+   281:         } else {
+   282:                 if path.IsWithdraw {
+   283:                         if msg != nil {
+(dlv) s
+> github.com/osrg/gobgp/packet/bgp.NewBGPUpdateMessage() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:7397 (PC: 0x7fb963)
+  7392:                 }
+  7393:         }
+  7394:         return false, RouteFamily(0)
+  7395: }
+  7396:
+=>7397: func NewBGPUpdateMessage(withdrawnRoutes []*IPAddrPrefix, pathattrs []PathAttributeInterface, nlri []*IPAddrPrefix) *BGPMessage {
+  7398:         return &BGPMessage{
+  7399:                 Header: BGPHeader{Type: BGP_MSG_UPDATE},
+  7400:                 Body:   &BGPUpdate{0, withdrawnRoutes, 0, pathattrs, nlri},
+  7401:         }
+  7402: }
+(dlv) n
+> github.com/osrg/gobgp/packet/bgp.NewBGPUpdateMessage() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:7400 (PC: 0x7fb97d)
+  7395: }
+  7396:
+  7397: func NewBGPUpdateMessage(withdrawnRoutes []*IPAddrPrefix, pathattrs []PathAttributeInterface, nlri []*IPAddrPrefix) *BGPMessage {
+  7398:         return &BGPMessage{
+  7399:                 Header: BGPHeader{Type: BGP_MSG_UPDATE},
+=>7400:                 Body:   &BGPUpdate{0, withdrawnRoutes, 0, pathattrs, nlri},
+  7401:         }
+  7402: }
+  7403:
+  7404: func NewEndOfRib(family RouteFamily) *BGPMessage {
+  7405:         if family == RF_IPv4_UC {
+(dlv) p pathattrs
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000c8c0),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeAsPath {
+                DefaultAsPath: github.com/osrg/gobgp/packet/bgp.DefaultAsPath {},
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a40),
+                Value: []github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+                        ...,
+                ],},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a00),
+                Value: net.IP len: 4, cap: 4, [10,0,50,5],},
+]
+(dlv) p pathattrs[0]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 1,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) p pathattrs[1]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeAsPath) *{
+        DefaultAsPath: github.com/osrg/gobgp/packet/bgp.DefaultAsPath {},
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_AS_PATH,
+                Length: 6,
+                Value: []uint8 len: 6, cap: 8, [2,1,0,0,253,237],},
+        Value: []github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+                ...,
+        ],}
+(dlv) p pathattrs[2]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_NEXT_HOP,
+                Length: 4,
+                Value: []uint8 len: 4, cap: 4, [10,0,50,5],},
+        Value: net.IP len: 4, cap: 4, [10,0,50,5],}
+(dlv) p pathattrs[0].Value
+[]uint8 len: 1, cap: 1, [2]
+(dlv) p pathattrs[2].Value
+net.IP len: 4, cap: 4, [10,0,50,5]
+(dlv) p pathattrs[3].Value
+Command failed: index out of bounds
+(dlv) p pathattrs[1].Value
+[]github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+        *github.com/osrg/gobgp/packet/bgp.As4PathParam {
+                Type: 2,
+                Num: 1,
+                AS: []uint32 len: 1, cap: 1, [65005],},
+]
+(dlv) n
+> github.com/osrg/gobgp/packet/bgp.NewBGPUpdateMessage() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp/bgp.go:7398 (PC: 0x7fbaa2)
+  7393:         }
+  7394:         return false, RouteFamily(0)
+  7395: }
+  7396:
+  7397: func NewBGPUpdateMessage(withdrawnRoutes []*IPAddrPrefix, pathattrs []PathAttributeInterface, nlri []*IPAddrPrefix) *BGPMessage {
+=>7398:         return &BGPMessage{
+  7399:                 Header: BGPHeader{Type: BGP_MSG_UPDATE},
+  7400:                 Body:   &BGPUpdate{0, withdrawnRoutes, 0, pathattrs, nlri},
+  7401:         }
+  7402: }
+  7403:
+(dlv)
+> github.com/osrg/gobgp/table.createUpdateMsgFromPath() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:278 (PC: 0x93bc70)
+   273:                         if msg != nil {
+   274:                                 u := msg.Body.(*bgp.BGPUpdate)
+   275:                                 u.NLRI = append(u.NLRI, nlri)
+   276:                         } else {
+   277:                                 pathAttrs := path.GetPathAttrs()
+=> 278:                                 return bgp.NewBGPUpdateMessage(nil, pathAttrs, []*bgp.IPAddrPrefix{nlri})
+   279:                         }
+   280:                 }
+   281:         } else {
+   282:                 if path.IsWithdraw {
+   283:                         if msg != nil {
+(dlv)
+WARN[0103] received notification                         Code=4 Data=[] Key=10.0.50.11 Subcode=0 Topic=Peer
+INFO[0103] Peer Down                                     Key=10.0.50.11 Reason=notification-received code 4(hold timer expired) subcode 0(undefined) State="BGP_FSM_ESTABLISHED" Topic=Peer
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:405 (PC: 0x93d75c)
+   400:         for _, bList := range pathByAttrs {
+   401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+   403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+=> 405:                                         msg = createUpdateMsgFromPath(path, nil)
+   406:                                         msgs = append(msgs, msg)
+   407:                                 } else {
+   408:                                         msgLen := func(u *bgp.BGPUpdate) int {
+   409:                                                 attrsLen := 0
+   410:                                                 for _, a := range u.PathAttributes {
+(dlv) p msgs
+[]*github.com/osrg/gobgp/packet/bgp.BGPMessage len: 0, cap: 0, nil
+(dlv) p msg
+*github.com/osrg/gobgp/packet/bgp.BGPMessage nil
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:406 (PC: 0x93d769)
+   401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+   403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+   405:                                         msg = createUpdateMsgFromPath(path, nil)
+=> 406:                                         msgs = append(msgs, msg)
+   407:                                 } else {
+   408:                                         msgLen := func(u *bgp.BGPUpdate) int {
+   409:                                                 attrsLen := 0
+   410:                                                 for _, a := range u.PathAttributes {
+   411:                                                         attrsLen += a.Len()
+(dlv) p msgs
+[]*github.com/osrg/gobgp/packet/bgp.BGPMessage len: 0, cap: 0, nil
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:403 (PC: 0x93d7c8)
+   398:         }
+   399:
+   400:         for _, bList := range pathByAttrs {
+   401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+=> 403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+   405:                                         msg = createUpdateMsgFromPath(path, nil)
+   406:                                         msgs = append(msgs, msg)
+   407:                                 } else {
+   408:                                         msgLen := func(u *bgp.BGPUpdate) int {
+(dlv) p msgs
+[]*github.com/osrg/gobgp/packet/bgp.BGPMessage len: 1, cap: 1, [
+        *{
+                Header: (*github.com/osrg/gobgp/packet/bgp.BGPHeader)(0xc42027dce0),
+                Body: github.com/osrg/gobgp/packet/bgp.BGPBody(*github.com/osrg/gobgp/packet/bgp.BGPUpdate) ...,},
+]
+(dlv) p msgs[0].Body
+github.com/osrg/gobgp/packet/bgp.BGPBody(*github.com/osrg/gobgp/packet/bgp.BGPUpdate) *{
+        WithdrawnRoutesLen: 0,
+        WithdrawnRoutes: []*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix len: 0, cap: 0, nil,
+        TotalPathAttributeLen: 0,
+        PathAttributes: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+                ...,
+                ...,
+                ...,
+        ],
+        NLRI: []*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix len: 1, cap: 1, [
+                *(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix)(0xc4201e5a70),
+        ],}
+(dlv) p msgs[0].Body.PathAttributes
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42000c8c0),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeAsPath {
+                DefaultAsPath: github.com/osrg/gobgp/packet/bgp.DefaultAsPath {},
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a40),
+                Value: []github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+                        ...,
+                ],},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a00),
+                Value: net.IP len: 4, cap: 4, [10,0,50,5],},
+]
+(dlv) p msgs[0].Body.PathAttributes[0]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 1,
+                Value: []uint8 len: 1, cap: 1, [2],},}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:401 (PC: 0x93d97a)
+   396:                         msgs = append(msgs, msg)
+   397:                 }
+   398:         }
+   399:
+   400:         for _, bList := range pathByAttrs {
+=> 401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+   403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+   405:                                         msg = createUpdateMsgFromPath(path, nil)
+   406:                                         msgs = append(msgs, msg)
+(dlv) p b
+*github.com/osrg/gobgp/table.bucket {
+        attrs: []uint8 len: 20, cap: 41, [64,1,1,2,64,2,6,2,1,0,0,253,237,64,3,4,10,0,50,5],
+        paths: []*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+                *(*github.com/osrg/gobgp/table.Path)(0xc4201eea00),
+        ],}
+(dlv) p b.paths
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *github.com/osrg/gobgp/table.originInfo nil,
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *(*github.com/osrg/gobgp/table.Path)(0xc4201ee880),
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+]
+(dlv) p b.paths[0]
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo nil,
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path {
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc4201ee900),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p b.paths[0].parent
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *(*github.com/osrg/gobgp/table.PeerInfo)(0xc4201f0a00),
+                timestamp: (*time.Time)(0xc4201ee918),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [132,195,113,163,193,154,64,174,153,26,33,27,220,227,227,85],
+                eor: false,
+                stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p b.paths[0]
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo nil,
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                ...,
+                ...,
+        ],
+        reason: "",
+        parent: *github.com/osrg/gobgp/table.Path {
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc4201ee900),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,
+                IsNexthopInvalid: false,},
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p b.paths[0].pathAttrs
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 2, cap: 2, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a00),
+                Value: net.IP len: 4, cap: 4, [10,0,50,5],},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeAsPath {
+                DefaultAsPath: github.com/osrg/gobgp/packet/bgp.DefaultAsPath {},
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc420030a40),
+                Value: []github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+                        ...,
+                ],},
+]
+(dlv) l
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:401 (PC: 0x93d97a)
+   396:                         msgs = append(msgs, msg)
+   397:                 }
+   398:         }
+   399:
+   400:         for _, bList := range pathByAttrs {
+=> 401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+   403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+   405:                                         msg = createUpdateMsgFromPath(path, nil)
+   406:                                         msgs = append(msgs, msg)
+(dlv) p bList
+[]*github.com/osrg/gobgp/table.bucket len: 1, cap: 1, [
+        *{
+                attrs: []uint8 len: 20, cap: 41, [64,1,1,2,64,2,6,2,1,0,0,253,237,64,3,4,10,0,50,5],
+                paths: []*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+                        *(*github.com/osrg/gobgp/table.Path)(0xc4201eea00),
+                ],},
+]
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:400 (PC: 0x93d994)
+   395:                         msg := createUpdateMsgFromPath(path, nil)
+   396:                         msgs = append(msgs, msg)
+   397:                 }
+   398:         }
+   399:
+=> 400:         for _, bList := range pathByAttrs {
+   401:                 for _, b := range bList {
+   402:                         var msg *bgp.BGPMessage
+   403:                         for i, path := range b.paths {
+   404:                                 if i == 0 {
+   405:                                         msg = createUpdateMsgFromPath(path, nil)
+(dlv)
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:431 (PC: 0x93d9ac)
+   426:                                 }
+   427:                         }
+   428:                 }
+   429:         }
+   430:
+=> 431:         return msgs
+   432: }
+(dlv) n
+> github.com/osrg/gobgp/server.(*FSMHandler).sendMessageloop() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/fsm.go:1175 (PC: 0x9cc5a3)
+  1170:                 select {
+  1171:                 case <-h.t.Dying():
+  1172:                         return nil
+  1173:                 case o := <-h.outgoing.Out():
+  1174:                         m := o.(*FsmOutgoingMsg)
+=>1175:                         for _, msg := range table.CreateUpdateMsgFromPaths(m.Paths) {
+  1176:                                 if err := send(msg); err != nil {
+  1177:                                         return nil
+  1178:                                 }
+  1179:                         }
+  1180:                         if m.Notification != nil {
+(dlv) p msg
+*github.com/osrg/gobgp/packet/bgp.BGPMessage {
+        Header: github.com/osrg/gobgp/packet/bgp.BGPHeader {
+                Marker: []uint8 len: 842352452232, cap: 842350820896, [nil,(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),(unreadable input/output error),...+842352452227 more],
+                Len: 46992,
+                Type: 119,},
+        Body: (unreadable invalid interface type: key not found),}
+(dlv) n
+FATA[0226] failed to free the fsm.h.t for 10.0.50.11 BGP_FSM_ESTABLISHED BGP_FSM_IDLE  Topic=Peer
+Process has exited with status 1
+(dlv) p msg
+Process 6471 has exited with status 0
+(dlv)
