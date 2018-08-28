@@ -9,10 +9,9 @@ gobgp configuration
 (1) prepare .go config file
 
   (A) filename: .go                         
-
-  #!/bin/sh                                              
-  export GOPATH=$HOME/srx_test1/gowork       
-  export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin 
+      #!/bin/sh                                              
+      export GOPATH=$HOME/srx_test1/gowork       
+      export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin 
 
 
   (B) put .go file into account root directory 
@@ -31,6 +30,11 @@ gobgp configuration
         $ go get -u github.com/golang/dep/cmd/dep
         $ go get github.com/osrg/gobgp
         $ cd $GOPATH/src/github.com/osrg/gobgp && dep ensure
+        -----------------------------------------------------
+
+    'go get' should be run in GOPATH (same with go build or go install)
+
+
 
 (3) gobgpd config file (in toml form)
 
