@@ -137,6 +137,22 @@ gobgp configuration
         gobgp global rib add 10.50.1.0/24 origin igp nexthop 10.1.1.1 community 100:50 -a ipv4
 
 
+(6) go test
+
+    vmware.005-antd [1006]{.../gobgp/cmd}-> go test -v -run="Parse" 
+    RUN   Test_ParsePath
+    { 10.0.0.0/24 | src: <nil>, nh: 10.0.0.1 }
+    --- PASS: Test_ParsePath (0.00s)
+    PASS
+    ok      github.com/osrg/gobgp/gobgp/cmd 0.005s
+
+
+    -v: verbose output
+    -run: regular expression if there are multiple Tests
+
+
+
+
 
 Modify gobgpd
 =============
@@ -250,6 +266,9 @@ Running
       DEBU[0074] sent                                          Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer data=&{{[] 19 4} 0x15863f8}
 
 
+
+
+
 MISC
 =====
   (1) tags
@@ -262,6 +281,11 @@ MISC
     * to apply in vim:
         :set tags+=../gotags
     
+
+
+    (2) C shared library
+    vmware.005-antd [999]{.../gobgp/lib}-> go build --buildmode=c-shared -o libgobgp.so *.go
+
 
 
 
