@@ -360,6 +360,10 @@ Debugging
     3. gRPC install
         go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 
+        gRPC compile:
+            vmware.005-antd [1001]{.../gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto 
+            ==> Then, gobgp.pb.go will be generated
+
 
 
 
