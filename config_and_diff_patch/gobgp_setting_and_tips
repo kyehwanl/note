@@ -151,6 +151,7 @@ gobgp configuration
     -run: regular expression if there are multiple Tests
 
 
+    (Requirements) go get github.com/stretchr/testify/assert
 
 
 
@@ -271,7 +272,11 @@ Running
 
 MISC
 =====
-  (1) tags
+  (1) gotags
+    * install
+    go get -u github.com/jstemmer/gotags
+
+    * configure in vim
     :set tags+=../gotags
 
 
@@ -293,6 +298,7 @@ Debugging
 ===========
 
   1. GDB
+  ------
     Basically, Go consist of C language, so gdb can be used for debugging
         sudo gdb --args ./gobgpd -f ./gobgpd.conf
 
@@ -301,6 +307,7 @@ Debugging
 
 
   2. delve (a.k.a 'godebug' previously)
+  -------------------------------------
 
     usage: dlv debug|attach|exec
     
@@ -358,12 +365,26 @@ Debugging
 
 
     3. gRPC install
-        go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+    ---------------
 
-        gRPC compile:
+        3.1 install protocol buffer compiler, "protoc" 
+            Here: https://github.com/protocolbuffers/protobuf/releases/tag/v3.6.1
+            https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+            https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_32.zip
+
+        3.2 install Go protocol buffer plugin
+            go get -u github.com/golang/protobuf/protoc-gen-go
+
+        3.3 protocol buffer with gRPC compile:
+            protoc -I=$SRC_DIR --go_out=$DST_DIR $SRC_DIR/filename.proto                (without gRPC)
+            protoc -I=$SRC_DIR --go_out=plugins=gprc:$DST_DIR $SRC_DIR/filename.proto   (with gRPC)
+
+            (example)
             vmware.005-antd [1001]{.../gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto 
             ==> Then, gobgp.pb.go will be generated
 
+            vmware.005-antd [1003]{.../gobgp/api}-> protoc --version
+            libprotoc 3.6.1 
 
 
 

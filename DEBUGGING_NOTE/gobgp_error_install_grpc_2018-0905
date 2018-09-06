@@ -1,0 +1,47 @@
+
+gobgp installation
+==================
+
+
+1. go installation
+
+    - download golang from https://golang.org/doc/install
+    - untar into /usr/local/
+
+
+2. gobgp installation
+
+    2.1 $ go get -u github.com/golang/dep/cmd/dep
+    2.2 $ go get github.com/osrg/gobgp
+        
+        --> but, if there is error: "can't load package package github.com/osrg/gobgp no Go files in"
+        Copy from another directory, vmware005 or bgpsec1's $GOPATH/src/github.com/ and $GOPATH/src/google.golang.org
+
+
+3. build and run
+
+    go to gobgp and go build ./... or go get ./...
+        
+
+
+
+gRPC error
+===========
+
+- when using protoc for gRPC 
+
+  vmware.005-antd [1003]{.../osrg/gobgp}-> protoc -I=api --go_out=plugins=grpc:api api/gobgp.proto 
+  vmware.005-antd [1004]{.../osrg/gobgp}-> go get ./...
+  # github.com/osrg/gobgp/api
+  api/grpc_server.go:1937:75: too few values in struct initializer 
+
+
+- then go to grpc_server.go:1937 and modify that line like following line,
+
+    (previous)
+    return &GetPolicyAssignmentResponse{NewAPIPolicyAssignmentFromTableStruct(t)}, err
+
+    (after)
+    return &GetPolicyAssignmentResponse{Assignment: NewAPIPolicyAssignmentFromTableStruct(t)}, err
+
+- then, go get ./... to build 

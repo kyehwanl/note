@@ -191,6 +191,7 @@ press '-' on gdb running (tui enable|disable)
 4. using ssh-tunnel ( using -u, --update :  skip files that are newer on the receiver)
   $ rsync -avPuni -e 'ssh -p 12345' kyehwanl@localhost:/users/kyehwanl/config_and_diff_patch/ ./config_and_diff_patch/
 
+
 (15) grep | egrep
 ====================
 1. recursive grep for a particular file type: 
@@ -203,6 +204,9 @@ press '-' on gdb running (tui enable|disable)
 ====================
 1. ssh -f -N -L12345:node5.ex1-test.bgp-srx.emulab.antd.nist.gov:22 bgp2.antd.nist.gov
 2. ssh -p 12345 -o StrictHostKeyChecking=no kyehwanl@localhost
+3. [kyehwanl@localhost ~]$ ssh -fNL12345:vmware-005.antd.nist.gov:22 bgpsec1.antd.nist.gov
+    then,
+   [kyehwanl@localhost ~]$ rsync -avPuiz -e "ssh -p 12345" localhost:/tmp/crontab-gobgp.log ./
 
 
 (17) compare two files or dirs

@@ -25,3 +25,27 @@ rsync -avPuniz --delete $SOURCE $DEST  --exclude=".git*" --include='*.[ch]' --ex
 rsync -avz --exclude='.git' --include='*/' --include='*.[ch]' --exclude '*'  $source $destination
 
 
+
+# 4. Tips and using ssh-tunnel
+#
+  1. backup:  rsync -avPz --delete <src> <dest>    (-z: zipped communication)
+    (example) rsync -avP config_and_diff_patch/tip_command bgp2.antd.nist.gov:~/config_and_diff_patch/
+
+  2. view and diff: rsync -avni <src> <dest>
+     <cf> -i(--itemize-changes): YXcstpoguax -- Y(<):sent(to remote), X(f):file, c:checksum, s:size, t:time, p:p  ermission, o:owner...) 
+
+  3. to transfer the specified files
+      $  find ./ -name '*.[ch]' -print0 | rsync -avPni --files-from=- --from0 <source> <target>
+      $  rsync -avPni  <source> <target>  --exclude='.git*' --exclude='test_install' --exclude="quaggasrx/[^b]*" --  include="*/" --include="*.[ch]"  --exclude="*" --prune-empty-dirs
+
+  4. using ssh-tunnel ( using -u, --update :  skip files that are newer on the receiver)
+      $ rsync -avPuni -e 'ssh -p 12345' kyehwanl@localhost:/users/kyehwanl/config_and_diff_patch/ ./config_and_diff  _patch/
+
+
+  (example)
+  [kyehwanl@localhost ~]$ ssh -fNL12345:vmware-005.antd.nist.gov:22 bgpsec1.antd.nist.gov
+        then,
+  [kyehwanl@localhost ~]$ rsync -avPuiz -e "ssh -p 12345" localhost:/tmp/crontab-gobgp.log ./
+
+  
+
