@@ -32,7 +32,26 @@ gobgp configuration
         $ cd $GOPATH/src/github.com/osrg/gobgp && dep ensure
         -----------------------------------------------------
 
-    'go get' should be run in GOPATH (same with go build or go install)
+    * 'go get' should be run in GOPATH (same with go build or go install)
+        
+        --> 'go build' should be accomplished based on $GOPATH, so if $GOPATH is modified to 
+            other directory and if there are customized sources (for example, github.com/gobgpd),
+            then, it can be done to build another version as well as 'src','bin'
+
+            (Example)
+            A. new version of goBGP already exists in ~/go/
+            B. modify env variable GOPATH, export GOPATH=~/project/gowork
+            C. copy a prepared old version sources (github.com/osrg/gobgp and etc) into $GOPATH/src
+            D. go to gobgp ($GOPATH/src/github.com/osrg/gobgp) and "go build ./..." or go get ./...
+
+
+    * if "go get <snip>/gobgp" has an error, 
+        "can't load package: package github.com/osrg/gobgp: no Go files in...""
+
+      --> then use this command :  go get github.com/osrg/gobgp/...
+          OR
+          hit the command "dep ensure"
+
 
 
 
@@ -200,7 +219,7 @@ Check Dependencies and build
 
 
 
- * To print local variable, (No Optimzation, same with -O0)
+ * To print local variable, (No optimization, same with -O0)
 
      go build -gcflags '-N -l' ./... or
      go get   -gcflags '-N -l' ./...
@@ -317,8 +336,13 @@ Debugging
 
     2.3 run:    sudo ./dlv attach <pid of gobgpd>
             
-                * arguments
-                [root@vmware-005 bin]# dlv exec gobgpd -- -f ./gobgpd.conf -p
+      * arguments
+      [root@vmware-005 bin]# dlv exec gobgpd -- -f ./gobgpd.conf -p
+
+      * source optimization build
+         go build -gcflags '-N -l' ./... or
+         go get   -gcflags '-N -l' ./...
+
 
     2.4 breakpoint:
         (dlv) b /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server/peer.go:465
@@ -362,6 +386,11 @@ Debugging
           [root@vmware-005 bin]# export GOPATH=/opt/project/gobgp_test/gowork
           [root@vmware-005 bin]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
           [root@vmware-005 bin]# /opt/project/gobgp_test/gowork/bin/dlv exec gobgpd -- -f ./gobgpd.conf -p 
+
+
+      F. show parameter arguments
+          (dlv) args
+
 
 
     3. gRPC install
