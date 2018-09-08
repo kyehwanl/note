@@ -111,3 +111,70 @@
             Mon, 23 Apr 2018 14:18:27 | INFO     | 29065  | network       | Peer       10.0.50.5 ASN 65005   graceful restarted negotiated, closing without sending any notification
             Mon, 23 Apr 2018 14:18:28 | INFO     | 29065  | processes     | Terminating process parsed-route-backend
 
+
+
+
+
+2. struct analysis of pathList, pathAttrs and sub-structures
+    -- from *BgpServer.propagateUpdate()
+
+(dlv) p pathList
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc420166700),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+                        ...,
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,                                                                                                IsNexthopInvalid: false,},
+]
+(dlv) p pathList[0]
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *(*github.com/osrg/gobgp/table.PeerInfo)(0xc4202b6140),                                                                      timestamp: (*time.Time)(0xc420166718),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [177,8,169,27,72,160,70,92,145,75,65,51,208,125,37,112],
+                eor: false,                                                                                                                          stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+                ...,
+                ...,
+                ...,
+        ],                                                                                                                                   reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p pathList[0].pathAttrs
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42014cc80),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc4200b2b40),
+                Value: []uint8 len: 0, cap: 0, nil,},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc4200b2b80),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) p pathList[0].pathAttrs[1]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_OPTIONAL,
+                Type: BGP_ATTR_TYPE_BGPSEC,
+                Length: 4,
+                Value: []uint8 len: 4, cap: 5, [30,31,33,125],},
+        Value: []uint8 len: 0, cap: 0, nil,}
+
+
+

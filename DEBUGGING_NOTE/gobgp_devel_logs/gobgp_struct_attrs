@@ -1,0 +1,218 @@
+
+1. struct analysis of pathList, pathAttrs and sub-structures
+-------------------------------------------------------------
+    -- from *BgpServer.propagateUpdate()
+
+(dlv) p pathList
+[]*github.com/osrg/gobgp/table.Path len: 1, cap: 1, [
+        *{
+                info: *(*github.com/osrg/gobgp/table.originInfo)(0xc420166700),
+                IsWithdraw: false,
+                pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+                        ...,
+                        ...,
+                        ...,
+                ],
+                reason: "",
+                parent: *github.com/osrg/gobgp/table.Path nil,
+                dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+                filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+                VrfIds: []uint16 len: 0, cap: 0, nil,                                                                                                IsNexthopInvalid: false,},
+]
+(dlv) p pathList[0]
+*github.com/osrg/gobgp/table.Path {
+        info: *github.com/osrg/gobgp/table.originInfo {
+                nlri: github.com/osrg/gobgp/packet/bgp.AddrPrefixInterface(*github.com/osrg/gobgp/packet/bgp.IPAddrPrefix) ...,
+                source: *(*github.com/osrg/gobgp/table.PeerInfo)(0xc4202b6140),                                                                      timestamp: (*time.Time)(0xc420166718),
+                noImplicitWithdraw: false,
+                validation: "",
+                isFromExternal: false,
+                key: "",
+                uuid: github.com/satori/go%2euuid.UUID [177,8,169,27,72,160,70,92,145,75,65,51,208,125,37,112],
+                eor: false,                                                                                                                          stale: false,},
+        IsWithdraw: false,
+        pathAttrs: []github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+                ...,
+                ...,
+                ...,
+        ],                                                                                                                                   reason: "",
+        parent: *github.com/osrg/gobgp/table.Path nil,
+        dels: []github.com/osrg/gobgp/packet/bgp.BGPAttrType len: 0, cap: 0, nil,
+        filtered: map[string]github.com/osrg/gobgp/table.PolicyDirection [],
+        VrfIds: []uint16 len: 0, cap: 0, nil,
+        IsNexthopInvalid: false,}
+(dlv) p pathList[0].pathAttrs
+[]github.com/osrg/gobgp/packet/bgp.PathAttributeInterface len: 3, cap: 4, [
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc42014cc80),},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc4200b2b40),
+                Value: []uint8 len: 0, cap: 0, nil,},
+        *github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop {
+                PathAttribute: (*github.com/osrg/gobgp/packet/bgp.PathAttribute)(0xc4200b2b80),
+                Value: net.IP len: 4, cap: 4, [0,0,0,0],},
+]
+(dlv) p pathList[0].pathAttrs[1]
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_OPTIONAL,
+                Type: BGP_ATTR_TYPE_BGPSEC,
+                Length: 4,
+                Value: []uint8 len: 4, cap: 5, [30,31,33,125],},
+        Value: []uint8 len: 0, cap: 0, nil,}
+
+
+
+
+
+
+2. config values
+-----------------
+
+(dlv) p peer.fsm.gConf
+*github.com/osrg/gobgp/config.Global {
+        Config: github.com/osrg/gobgp/config.GlobalConfig {
+                As: 65005,
+                RouterId: "10.0.50.5",
+                Port: 179,
+                LocalAddressList: []string len: 2, cap: 2, ["0.0.0.0","::"],},
+        State: github.com/osrg/gobgp/config.GlobalState {
+                As: 0,
+                RouterId: "",
+                TotalPaths: 0,
+                TotalPrefixes: 0,
+                Port: 0,
+                LocalAddressList: []string len: 0, cap: 0, nil,},
+        RouteSelectionOptions: github.com/osrg/gobgp/config.RouteSelectionOptions {
+                Config: (*github.com/osrg/gobgp/config.RouteSelectionOptionsConfig)(0xc420094878),
+                State: (*github.com/osrg/gobgp/config.RouteSelectionOptionsState)(0xc42009487e),},
+        DefaultRouteDistance: github.com/osrg/gobgp/config.DefaultRouteDistance {
+                Config: (*github.com/osrg/gobgp/config.DefaultRouteDistanceConfig)(0xc420094884),
+                State: (*github.com/osrg/gobgp/config.DefaultRouteDistanceState)(0xc420094886),},
+        Confederation: github.com/osrg/gobgp/config.Confederation {
+                Config: (*github.com/osrg/gobgp/config.ConfederationConfig)(0xc420094888),
+                State: (*github.com/osrg/gobgp/config.ConfederationState)(0xc4200948a8),},
+        UseMultiplePaths: github.com/osrg/gobgp/config.UseMultiplePaths {
+                Config: (*github.com/osrg/gobgp/config.UseMultiplePathsConfig)(0xc4200948c8),
+                State: (*github.com/osrg/gobgp/config.UseMultiplePathsState)(0xc4200948c9),
+                Ebgp: (*github.com/osrg/gobgp/config.Ebgp)(0xc4200948cc),
+                Ibgp: (*github.com/osrg/gobgp/config.Ibgp)(0xc4200948dc),},
+        GracefulRestart: github.com/osrg/gobgp/config.GracefulRestart {
+                Config: (*github.com/osrg/gobgp/config.GracefulRestartConfig)(0xc4200948e8),
+                State: (*github.com/osrg/gobgp/config.GracefulRestartState)(0xc420094900),},
+        AfiSafis: []github.com/osrg/gobgp/config.AfiSafi len: 21, cap: 33, [
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024e000),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024e2e0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024e5c0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024e8a0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024eb80),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024ee60),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024f140),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024f420),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024f700),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024f9e0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024fcc0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc42024ffa0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420250280),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420250560),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420250840),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420250b20),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420250e00),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc4202510e0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc4202513c0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc4202516a0),
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420251980),
+        ],
+        ApplyPolicy: github.com/osrg/gobgp/config.ApplyPolicy {
+                Config: (*github.com/osrg/gobgp/config.ApplyPolicyConfig)(0xc420094948),
+                State: (*github.com/osrg/gobgp/config.ApplyPolicyState)(0xc4200949c0),},}
+
+
+
+(dlv) p peer.fsm.pConf                                                                                                      [5/18537]
+*github.com/osrg/gobgp/config.Neighbor {
+        Config: github.com/osrg/gobgp/config.NeighborConfig {
+                PeerAs: 65011,
+                LocalAs: 65005,
+                PeerType: "external",
+                AuthPassword: "",
+                RemovePrivateAs: "",
+                RouteFlapDamping: false,
+                SendCommunity: "",
+                Description: "",
+                PeerGroup: "",
+                NeighborAddress: "10.0.50.11",
+                AdminDown: false,
+                NeighborInterface: "",
+                Vrf: "",},
+        State: github.com/osrg/gobgp/config.NeighborState {
+                PeerAs: 0,
+                LocalAs: 0,
+                PeerType: "",
+                AuthPassword: "",
+                RemovePrivateAs: "",
+                RouteFlapDamping: false,
+                SendCommunity: "",
+                Description: "",
+                PeerGroup: "",
+                NeighborAddress: "",
+                SessionState: "established",
+                SupportedCapabilitiesList: []github.com/osrg/gobgp/config.BgpCapability len: 0, cap: 0, nil,
+                Messages: (*github.com/osrg/gobgp/config.Messages)(0xc420236150),
+                Queues: (*github.com/osrg/gobgp/config.Queues)(0xc4202361d0),
+                AdjTable: (*github.com/osrg/gobgp/config.AdjTable)(0xc4202361d8),
+                RemoteCapabilityList: []github.com/osrg/gobgp/packet/bgp.ParameterCapabilityInterface len: 0, cap: 0, nil,
+                LocalCapabilityList: []github.com/osrg/gobgp/packet/bgp.ParameterCapabilityInterface len: 0, cap: 0, nil,
+                ReceivedOpenMessage: *github.com/osrg/gobgp/packet/bgp.BGPMessage nil,
+                AdminDown: false,
+                AdminState: "",
+                EstablishedCount: 1,
+                Flops: 0,
+                NeighborInterface: "",
+                Vrf: "",
+                RemoteRouterId: "",},
+        Timers: github.com/osrg/gobgp/config.Timers {
+                Config: (*github.com/osrg/gobgp/config.TimersConfig)(0xc420236270),
+                State: (*github.com/osrg/gobgp/config.TimersState)(0xc420236298),},
+        Transport: github.com/osrg/gobgp/config.Transport {
+                Config: (*github.com/osrg/gobgp/config.TransportConfig)(0xc4202362e0),
+                State: (*github.com/osrg/gobgp/config.TransportState)(0xc420236300),},
+        ErrorHandling: github.com/osrg/gobgp/config.ErrorHandling {
+                Config: (*github.com/osrg/gobgp/config.ErrorHandlingConfig)(0xc420236338),
+                State: (*github.com/osrg/gobgp/config.ErrorHandlingState)(0xc42023633c),},
+        LoggingOptions: github.com/osrg/gobgp/config.LoggingOptions {
+                Config: (*github.com/osrg/gobgp/config.LoggingOptionsConfig)(0xc420236344),
+                State: (*github.com/osrg/gobgp/config.LoggingOptionsState)(0xc420236345),},
+        EbgpMultihop: github.com/osrg/gobgp/config.EbgpMultihop {
+                Config: (*github.com/osrg/gobgp/config.EbgpMultihopConfig)(0xc420236346),
+                State: (*github.com/osrg/gobgp/config.EbgpMultihopState)(0xc420236348),},
+        RouteReflector: github.com/osrg/gobgp/config.RouteReflector {
+                Config: (*github.com/osrg/gobgp/config.RouteReflectorConfig)(0xc420236350),
+                State: (*github.com/osrg/gobgp/config.RouteReflectorState)(0xc420236368),},
+        AsPathOptions: github.com/osrg/gobgp/config.AsPathOptions {
+                Config: (*github.com/osrg/gobgp/config.AsPathOptionsConfig)(0xc420236380),
+                State: (*github.com/osrg/gobgp/config.AsPathOptionsState)(0xc420236382),},
+        AddPaths: github.com/osrg/gobgp/config.AddPaths {
+                Config: (*github.com/osrg/gobgp/config.AddPathsConfig)(0xc420236384),
+                State: (*github.com/osrg/gobgp/config.AddPathsState)(0xc420236386),},
+        AfiSafis: []github.com/osrg/gobgp/config.AfiSafi len: 1, cap: 1, [
+                (*github.com/osrg/gobgp/config.AfiSafi)(0xc420238300),
+        ],
+        GracefulRestart: github.com/osrg/gobgp/config.GracefulRestart {
+                Config: (*github.com/osrg/gobgp/config.GracefulRestartConfig)(0xc4202363a0),
+                State: (*github.com/osrg/gobgp/config.GracefulRestartState)(0xc4202363b8),},
+        ApplyPolicy: github.com/osrg/gobgp/config.ApplyPolicy {
+                Config: (*github.com/osrg/gobgp/config.ApplyPolicyConfig)(0xc4202363e8),
+                State: (*github.com/osrg/gobgp/config.ApplyPolicyState)(0xc420236460),},
+        UseMultiplePaths: github.com/osrg/gobgp/config.UseMultiplePaths {
+                Config: (*github.com/osrg/gobgp/config.UseMultiplePathsConfig)(0xc4202364d8),
+                State: (*github.com/osrg/gobgp/config.UseMultiplePathsState)(0xc4202364d9),
+                Ebgp: (*github.com/osrg/gobgp/config.Ebgp)(0xc4202364dc),
+                Ibgp: (*github.com/osrg/gobgp/config.Ibgp)(0xc4202364ec),},
+        RouteServer: github.com/osrg/gobgp/config.RouteServer {
+                Config: (*github.com/osrg/gobgp/config.RouteServerConfig)(0xc4202364f4),
+                State: (*github.com/osrg/gobgp/config.RouteServerState)(0xc4202364f5),},}
+
+
+
+
