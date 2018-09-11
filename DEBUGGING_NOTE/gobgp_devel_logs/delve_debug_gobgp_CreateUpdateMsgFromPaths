@@ -1,0 +1,341 @@
+(dlv) r
+Process restarted with PID 24529
+(dlv) c
+INFO[0000] Policy config is updated
+INFO[0000] gobgpd started
+INFO[0000] Finished reading the config file              Topic=Config
+INFO[0000] Peer 10.0.50.11 is added
+INFO[0000] Add a peer configuration for:10.0.50.11       Topic=Peer
+INFO[0014] Peer Up                                       Key=10.0.50.11 State="BGP_FSM_OPENCONFIRM" Topic=Peer
+INFO[0015]  +++++++++ gobgpd update
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:360 (hits goroutine(49):1 total:1) (PC: 0x979ac5)
+   355:                         }
+   356:                         return true
+   357:                 }(path)
+   358:
+   359:                 if y {
+=> 360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:369 (PC: 0x979adc)
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+=> 369:                         }(path)
+   370:
+   371:                         if bl, y := pathByAttrs[key]; y {
+   372:                                 found := false
+   373:                                 for _, b := range bl {
+   374:                                         if bytes.Compare(b.attrs, attrs) == 0 {
+(dlv) s
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:360 (PC: 0x9be36b)
+   355:                         }
+   356:                         return true
+   357:                 }(path)
+   358:
+   359:                 if y {
+=> 360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:361 (PC: 0x9be3a4)
+   356:                         return true
+   357:                 }(path)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+=> 361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+(dlv)
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:362 (PC: 0x9be3bc)
+   357:                 }(path)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+=> 362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+(dlv)
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:363 (PC: 0x9be418)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+=> 363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+(dlv)
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:364 (PC: 0x9be4c9)
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+=> 364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeOrigin) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_ORIGIN,
+                Length: 1,
+                Value: []uint8 len: 1, cap: 5, [2],},}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:365 (PC: 0x9be535)
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+=> 365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+   370:
+(dlv) p b
+[]uint8 len: 4, cap: 4, [64,1,1,2]
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:363 (PC: 0x9be56c)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+=> 363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+(dlv) p total
+*bytes.Buffer {
+        buf: []uint8 len: 4, cap: 4, [64,1,1,2],
+        off: 0,
+        bootstrap: [64]uint8 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        lastRead: opInvalid,}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:364 (PC: 0x9be4c9)
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+=> 364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeAsPath) *{
+        DefaultAsPath: github.com/osrg/gobgp/packet/bgp.DefaultAsPath {},
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_AS_PATH,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: []github.com/osrg/gobgp/packet/bgp.AsPathParamInterface len: 1, cap: 1, [
+                ...,
+        ],}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:365 (PC: 0x9be535)
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+=> 365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+   370:
+(dlv) p b
+[]uint8 len: 9, cap: 9, [64,2,6,2,1,0,0,253,237]
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:363 (PC: 0x9be56c)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+=> 363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+(dlv) p total
+*bytes.Buffer {
+        buf: []uint8 len: 13, cap: 17, [64,1,1,2,64,2,6,2,1,0,0,253,237],
+        off: 0,
+        bootstrap: [64]uint8 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        lastRead: opInvalid,}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:364 (PC: 0x9be4c9)
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+=> 364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeNextHop) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_TRANSITIVE,
+                Type: BGP_ATTR_TYPE_NEXT_HOP,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: net.IP len: 4, cap: 4, [10,0,50,5],}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:365 (PC: 0x9be535)
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+=> 365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+   370:
+(dlv) p b
+[]uint8 len: 7, cap: 7, [64,3,4,10,0,50,5]
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:363 (PC: 0x9be56c)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+=> 363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+(dlv) p total
+*bytes.Buffer {
+        buf: []uint8 len: 20, cap: 41, [64,1,1,2,64,2,6,2,1,0,0,253,237,64,3,4,10,0,50,5],
+        off: 0,
+        bootstrap: [64]uint8 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        lastRead: opInvalid,}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:364 (PC: 0x9be4c9)
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+=> 364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_OPTIONAL,
+                Type: BGP_ATTR_TYPE_BGPSEC,
+                Length: 4,
+                Value: []uint8 len: 4, cap: 5, [30,31,33,125],},
+        Value: []uint8 len: 0, cap: 0, nil,}
+(dlv) n
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:365 (PC: 0x9be535)
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+   363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+=> 365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+   369:                         }(path)
+   370:
+(dlv) p b
+[]uint8 len: 3, cap: 3, [128,33,0]
+(dlv) p v.PathAttribute.Value
+[]uint8 len: 0, cap: 0, nil
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_OPTIONAL,
+                Type: BGP_ATTR_TYPE_BGPSEC,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: []uint8 len: 0, cap: 0, nil,}
+(dlv) p v.PathAttribute
+github.com/osrg/gobgp/packet/bgp.PathAttribute {
+        Flags: BGP_ATTR_FLAG_OPTIONAL,
+        Type: BGP_ATTR_TYPE_BGPSEC,
+        Length: 0,
+        Value: []uint8 len: 0, cap: 0, nil,}
+(dlv) p v.Value
+[]uint8 len: 0, cap: 0, nil
+(dlv) p v
+github.com/osrg/gobgp/packet/bgp.PathAttributeInterface(*github.com/osrg/gobgp/packet/bgp.PathAttributeBgpsec) *{
+        PathAttribute: github.com/osrg/gobgp/packet/bgp.PathAttribute {
+                Flags: BGP_ATTR_FLAG_OPTIONAL,
+                Type: BGP_ATTR_TYPE_BGPSEC,
+                Length: 0,
+                Value: []uint8 len: 0, cap: 0, nil,},
+        Value: []uint8 len: 0, cap: 0, nil,}
+(dlv) n
+WARN[0245] received notification                         Code=4 Data=[] Key=10.0.50.11 Subcode=0 Topic=Peer
+WARN[0245] hold timer expired                            Key=10.0.50.11 State="BGP_FSM_ESTABLISHED" Topic=Peer
+INFO[0245] Peer Down                                     Key=10.0.50.11 Reason=hold-timer-expired State="BGP_FSM_ESTABLISHED" Topic=Peer
+> github.com/osrg/gobgp/table.CreateUpdateMsgFromPaths.func2() /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table/message.go:363 (PC: 0x9be56c)
+   358:
+   359:                 if y {
+   360:                         key, attrs := func(p *Path) (uint32, []byte) {
+   361:                                 h := fnv.New32()
+   362:                                 total := bytes.NewBuffer(make([]byte, 0))
+=> 363:                                 for _, v := range p.GetPathAttrs() {
+   364:                                         b, _ := v.Serialize()
+   365:                                         total.Write(b)
+   366:                                 }
+   367:                                 h.Write(total.Bytes())
+   368:                                 return h.Sum32(), total.Bytes()
+(dlv) p b
+Command failed: could not find symbol value for b
+(dlv) p total
+*bytes.Buffer {
+        buf: []uint8 len: 23, cap: 41, [64,1,1,2,64,2,6,2,1,0,0,253,237,64,3,4,10,0,50,5,128,33,0],
+        off: 0,
+        bootstrap: [64]uint8 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        lastRead: opInvalid,}
+(dlv) q
