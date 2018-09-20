@@ -1,0 +1,11 @@
+
+** ssh tunnel & sync gowork from vmwware-005 to a virtualbox image **
+
+
+1. make ssh tunnel
+    [kyehwanl@localhost ~]$ ssh -fNL12345:vmware-005.antd.nist.gov:22 bgpsec1.antd.nist.gov
+
+
+2. sync with rsync
+    [kyehwanl@localhost ~]$ rsync -avPuiz -e "ssh -p 12345" localhost:/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp ~/project/gowork/src/github.com/osrg/
+
