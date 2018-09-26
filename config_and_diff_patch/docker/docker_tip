@@ -273,9 +273,15 @@ Docker Tips
 
 
     ** check ip address of docker container
-    $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' <CONTAINER_ID>
+      $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' <CONTAINER_ID>
 
-    $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+      $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+
+      or add the followings in bashrc,
+
+        docker-ip() {
+          sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$@"
+        }
 
 
 
@@ -385,6 +391,11 @@ Docker Tips
     <missing>           2 months ago        /bin/sh -c #(nop)  CMD ["/bin/bash"]                                                                       0B
     <missing>           2 months ago        /bin/sh -c #(nop)  LABEL name=CentOS Base Image vendor=CentOS license=GPLv2 build-date=20180302            0B
     <missing>           2 months ago        /bin/sh -c #(nop) ADD file:8d83f3e2c14f39e7f7b281117a45e245c1941668f2d560e9f7ac23da89d667a9 in /           195MB
+
+
+
+22. Unique command extraction from  history command 
+    history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++'  > /tmp/history_cmd_docker
 
 
 

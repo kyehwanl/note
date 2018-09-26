@@ -1,0 +1,239 @@
+docker ps -a
+docker rm $(docker ps -a)
+service docker restart
+service docker status
+docker images
+docker rmi localhost:5000/centos
+docker rmi vmware-011:5000/centos
+docker tag docker.io/centos 10.0.50.11:5000/centos
+docker push 10.0.50.11:5000/centos
+cd /etc/docker/certs.d/10.0.50.11\:5000/
+sercie docker reload
+service docker reload
+docker ps
+docker tag docker.io/registry 10.0.50.11:5000/registry-kyehwanl
+docker push 10.0.50.11:5000/registry-kyehwanl
+docker rmi 10.0.50.11:5000/centos
+docker rmi 10.0.50.11:5000/registry-kyehwanl
+docker rmi docker.io/centos
+docker rmi docker.io/kyehwanl/quagga-centos
+docker pull 10.0.50.11:5000/centos-quagga
+docker logout
+docker pull 10.0.50.11:5000/quagga-test
+docker pull 10.0.50.11/quagga-test
+docker pull 10.0.50.11:5000/quagga-test*
+docker pull 10.0.50.11:5000/quagga
+docker pull
+man docker pull
+docker pull 0fbd2a6d1dcd
+docker pull 10.0.50.11:5000/0fbd2a6d1dcd
+docker pull 10.0.50.11:5000/0fbd2a6d1dcdbee2cbd30ffa4f228664c2c61ca7f04421ba398869aef78ffd67
+docker pull pierky/bird
+docker tag docker.io/pierky/bird 10.0.50.11:5000/bird
+docker push 10.0.50.11:5000/bird
+docker search bird
+docker rmi docker.io/pierky/bird
+docker rmi 10.0.50.11:5000/bird
+docker images 
+docker pull 10.0.50.11:5000/bird
+docker pull bird
+docker pull openbsd
+docker pull openbsd/wso2dss
+docker image ls
+docker image 
+docker inspect iperf3-server
+docker ps 
+docker-compose version
+which docker-compose 
+docker-compose
+docker run -it --rm openbsd/wso2dss
+docker run --rm -it docker.io/centos /bin/bash
+docker run -it --rm --name=iperf3-server -p 5201:5201 networkstatic/iperf3 -s
+docker run -it --rm --name=iperf3-server -p 5201:5201 networkstatic/iperf3
+docker build vim-go
+docker build 
+docker build kyehwanl/vim-go
+docker build .
+docker build kyehwanl/vim-go .
+docker build vim-go .
+docker build vimgo .
+docker rmi
+docker rmi 42192a8155da
+docker image 42192a8155da
+docker image history 42192a8155da
+docker image history 95e0c56eea09
+docker rmi 95e0c56eea09
+docker image history 6a17d1cc4b8e
+docker rm 
+docker rm 6a17d1cc4b8e
+docker rm ed75a6c4b714
+docker rm a3ff26bc4aba
+docker rm ef05b617d346
+docker image history 075e82bf94f3
+docker image history ba7868513063
+docker rm 075e82bf94f3
+docker rm a510533a4a31
+docker rmi ba7868513063
+docker rm a929b730f538
+docker rm ebf2a5072c9f
+docker rm 4152c8f85712
+docker rmi cb1e74d00fd0
+docker rmi a929b730f538
+docker ps -l -q
+docker commit 9e9d6d3600e3 docker.io/centos-srx
+docker run -it --rm docker.io/entos-srx /bin/bash
+docker run -it --rm centos-srx /bin/bash
+docker tag docker.io/centos-srx 10.0.50.11:5000/centos-srx
+docker push 10.0.50.11:5000/centos-srx
+docker image history 6ea158fee1a7
+docker image inspect 6ea158fee1a7
+docker system prune
+docker swarm join --token SWMTKN-1-1hlueu8djibvd35uixyi459i2e9xogtv7fibnw82ptci1m5n4y-372kvg7s1y31fupmq2dhdr564 172.17.0.10:2377
+docker swarm join --token SWMTKN-1-38ru7o4k28n1c3pes1qxtvpvttc78dl06s2fjxbp9dv9ltmfxz-5f0tbvvz4drp6w5rbm478daca 10.0.50.11:2377
+docker service ls
+docker network ls
+docker log
+docker log --help
+docker logs --help
+docker build
+docker build --help
+docker inspect bd7c
+docker network rm nginx-net
+docker stop bd7c
+docker stop 370b
+docker pull 10.0.50.11:5000/srx
+docker run --rm -ti srx
+docker run --rm -ti 10.0.50.11:5000/srx
+docker run --rm -ti 10.0.50.11:5000/srx srx_server
+docker inspect d670 | grep "IPAdress"
+docker inspect d670 | head
+docker inspect d670 | grep IPAddress
+docker exec --rm -it d670 /bin/bash
+docker exec  -it d670 /bin/bash
+docker inspect 09c9 | grep IPAddress
+docker inspect 2eb | grep IPAddress
+docker stop d6 09 2e
+cd /opt/project/docker_test/
+docker pull 10.0.50.11:5000/srx-swarm
+docker stop 68 02
+docker rm 68 02
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+docker exec -it d4 /bin/bash
+docker exec -it a8 /bin/bash
+docker stop a8 9f
+docker stop 8b 28
+docker rm 8b 28
+docker stop 8d c6
+docker rm 8d c6
+docker exec -it c6 /bin/bash
+docker stop c6
+docker rm c6
+docker run --rm -it 10.0.50.11:5000/srx-swarm
+docker image inspect 10.0.50.11:5000/srx-swarm 
+docker stop f1 24
+docker exec -it 32 /bin/bash
+docker exec -it 62 /bin/bash
+docker exec -it 46 /bin/bash
+docker exec -it 34 /bin/bash
+docker exec -it 1c
+docker exec -it 1c /bin/bash
+docker run -d swarm join --addr=172.17.42.10:2375 token://d35d0cd4f5a8d339e30a2a2220da37d9
+docker run -d -p 9999:2375 swarm manage token://d35d0cd4f5a8d339e30a2a2220da37d9
+docker run --rm swarm list token://d35d0cd4f5a8d339e30a2a2220da37d9
+docker info
+export DOCKER_HOST="tcp://172.17.42.10:9999"((("docker", "info")))
+export DOCKER_HOST="tcp://172.17.42.10:9999"(("docker", "info"))
+export DOCKER_HOST="tcp://172.17.42.10:9999"("docker", "info")
+docker exec -ti 65f0b257777e /bin/bash
+docker exec -ti 65f0b257777e /bin/ipaddr
+docker exec -ti 65f0b257777e 
+docker exec -ti 65f0b257777e sh
+docker inspect 65f0b257777e
+docker inspect 
+docker 
+docker stop 
+docker stop 65f0b257777e
+export DOCKER_HOST="tcp://172.17.0.1:9999"((("docker", "info")))
+docker run -d swarm join --addr=172.17.0.1:2375 token://d35d0cd4f5a8d339e30a2a2220da37d9
+docker run --rm -ti centos
+docker run  centos /bin/bash
+docker pull 10.0.50.11:5000/centos-srx
+docker pull 10.0.50.11:5000/centos-srx:latest
+docker stop 338a607d0b5f
+docker stop 37d2db0e28a8
+docker rm 338a607d0b5f
+docker rm 65f0b257777e
+docker rm 37d2db0e28a8
+docker run swarm list
+docker run --rm swarm 
+docker run --rm swarm list
+docker run swarm create
+docker run swarm list token://$CLUSTER_ID
+curl https://discovery-stage.hub.docker.com/v1/clusters/$CLUSTER_ID
+curl https://discovery-stage.hub.docker.com/
+curl https://discovery-stage.hub.docker.com/v1
+curl https://discovery-stage.hub.docker.com/v1/clusters
+curl https://discovery-stage.hub.docker.com/v1/clusters/2d8f49d3b61968d072f74592a9e2458b
+docker run -d swarm join --addr=10.0.50.5:2375 token://$CLUSTER_ID
+docker run -d -p 4000:2375 swarm manage token://$CLUSTER_ID
+docker -H tcp://localhost:4000 info
+docker stop 012ddae66a6d
+docker stop d904658cd350
+docker run -d swarm join --addr=172.17.0.1:2375 token://$CLUSTER_ID
+docker run --help | grep addr
+docker run -d -p 9999:2375 swarm manage token://$CLUSTER_ID
+docker run --rm swarm list token://$CLUSTER_ID
+docker stop ecfba75fff62 1b1e3efa9256
+docker rm ecfba75fff62 1b1e3efa9256
+docker run -d swarm join --addr=172.17.0.10:2375 token://$CLUSTER_ID
+docker run -d -p 9999:2375 swarm manage token://$CLUSTER_ID`
+docker stop ef04b481f29e 35413006c934
+docker rm ef04b481f29e 35413006c934
+docker version
+rpm -qa | grep docker*
+docker pull swarm
+docker run --rm swarm create
+docker run --rm docker.io/swarm create
+yum install docker-machine
+docker stop 32 62 46
+docker exec -it 76 /bin/bash
+docker run --rm -it srx-swarm /bin/bash
+docker run --rm -it 10.0.50.11:5000/srx-swarm /bin/bash
+docker stop 76 85
+docker exec -it 7a /bin/bash
+docker stop 7a 9c 02
+docker rm 7a 9c 02
+docker exec -it 23 /bin/bash
+docker stop 23 72
+docker exec -it e6 /bin/bash
+docker stop e6 83
+docker exec -it b2
+docker exec -it b2 /bin/bash
+docker stop b2 344
+docker stop 1f a4
+docker swarm leave
+docker network ls 
+docker network inspect srx-net 
+docker network inspect srx-net  --pretty
+docker exec -it 79 /bin/bash
+docker stop 1c 79
+docker image inspect srx
+docker run --rm -it 10.0.50.11:5000/srx srx_server
+docker run --rm -it 10.0.50.11:5000/srx /bin/rpkirtr_svr
+docker run --rm -it 10.0.50.11:5000/srx 
+docker run --rm -it 10.0.50.11:5000/srx bgpd -u root -f /etc/quagga/bgpd.conf
+docker run --rm -it 10.0.50.11:5000/centos /bin/bash
+docker node ls
+docker swarm join --token SWMTKN-1-4vc5xvh5ow6st9jyol0i2bxjznbtv25vaweon64inna7vyl02n-6g3mxixvfny0rbj9ncb7w8w48 10.0.20.170:2377
+docker swarm join --token SWMTKN-1-47v7ass5ft6y6figywr2eckr87pi4pg2y8tagw6jdrvhj9tcrz-0eptc1ucxh4ot5x7n9ro4hz67 10.0.20.171:2377
+docker swarm join --token SWMTKN-1-53h0m0xsgu60q9w1h8a84xy0gn4h99pnwk7yqsflopqxzchq26-epjo5g3gor8zq102z079yoszm 10.0.50.11:2377
+docker swarm init
+docker node rm re
+docker swarm 
+docker swarm leave --force
+docker swarm join --token SWMTKN-1-0zkeyb2rhl3ey1t2l0y048jjdv7i1mmw8tr2mb9owtov3qplnn-867snmi9u1ab379pxjql995rv 10.0.20.170:2377
+docker run --rm -it centos /bash/bin
+docker run --rm -it docker.io/centos-srx /bin/bash
+docker run -rm -it docker.io/openbsd/wso2dss /bin/sh
+docker run --rm -it docker.io/openbsd/wso2dss /bin/sh
+history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++' > history_cmd_docker_vm005

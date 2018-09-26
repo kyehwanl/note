@@ -1,0 +1,137 @@
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce docker-compose
+systemctl start docker; docker run hello world; systemctl enable docker
+docker version
+docker images
+docker pull 10.0.50.11:5000/centos
+ll /etc/docker/
+mkdir -p /etc/docker/certs.d/10.0.50.11\:5000
+cp /tmp/domain.cert /etc/docker/certs.d/10.0.50.11\:5000/
+cd /etc/docker/certs.d/10.0.50.11\:5000/
+ docker run --rm -it 10.0.50.11:5000/centos /bin/bash
+docker ps
+cd /opt/project/docker_test/
+docker swarm init Swarm
+docker swarm init 
+docker swarm init --advertise-addr 10.0.20.170
+docker node ls
+docker node rm nt
+docker logs
+docker info
+docker node rm 0x
+docker node rm hs
+docker pull 10.0.50.11:5000/srx 
+docker pull 10.0.50.11:5000/srx-swarm
+mkdir docker_test
+docker service ls
+docker network sl
+docker network ls
+docker serivce create --name srx_test1 --replicas=10 10.0.50.11:5000/srx-swarm
+docker service create --name srx_test1 --replicas=10 10.0.50.11:5000/srx-swarm
+docker service rm srx_test1
+docker node
+docker node rm ihz
+docker node update 
+docker node update ih
+docker system prune
+docker node rm fd
+docker node rm ih
+docker swarm join --token SWMTKN-1-47v7ass5ft6y6figywr2eckr87pi4pg2y8tagw6jdrvhj9tcrz-0eptc1ucxh4ot5x7n9ro4hz67 10.0.20.171:2377
+docker swarm leave
+docker service 
+docker node ps
+docker node rm ju
+docker swarm 
+docker swarm ca
+docker swarm join-token
+docker swarm join-token manager
+docker swarm join-token worker
+docker swarm unlock
+docker node demote
+docker node demote y3
+docker swarm leave --force
+docker swarm join --token SWMTKN-1-47v7ass5ft6y6figywr2eckr87pi4pg2y8tagw6jdrvhj9tcrz-0eptc1ucxh4ot5x7n9ro4hz67 10.0.20.171:2377 --help
+docker swarm join --token SWMTKN-1-47v7ass5ft6y6figywr2eckr87pi4pg2y8tagw6jdrvhj9tcrz-0eptc1ucxh4ot5x7n9ro4hz67 10.0.20.171:2377 -v
+docker swarm join 10.0.20.171:2377 
+docker swarm ls
+docker swarm ps
+docker swarm join --token SWMTKN-1-47v7ass5ft6y6figywr2eckr87pi4pg2y8tagw6jdrvhj9tcrz-0eptc1ucxh4ot5x7n9ro4hz67 fe80::569f:35ff:fec8:8730:2377
+docker swarm join     --token SWMTKN-1-32cxkgqasyxh79p9ahw5i8gjz8pyztkvmddldb6y3o4r3vv6r5-09hflydip6m7shrqjvj7r7u03     10.0.50.5:2377
+systemctl status docker
+systemctl enable docker
+docker swarm join-token  worker
+docker swarm join-token  
+service docker stop
+service docker start
+docker swarm init --advertise-addr 10.0.20.170 --force-new-cluster
+netstat -tanp | grep docker
+docker node rm yf
+docker node rm n1
+docker pull centos
+docker imag
+docker pull quagga
+docker pull ubuntu
+docker swarm init --advertise-addr 10.0.20.170 --listen-addr 10.0.20.170:2377
+docker node 
+docker node rm de
+service docker satus
+service docker status
+service docker restart
+docker swarm init --advertise-addr 10.0.20.170 
+docker node ps 
+docker node rm r3
+yum list installed docker
+yum list installed | grep docker
+yum erase docker-ce
+yum install docker-ce
+systemctl start docker
+docker swarm init
+docker swarm init --advertise-addr 10.0.20.170 on em1
+docker exec -it 26 /bin/bash
+docker exec -it 09
+docker exec -it 09 /bin/bash
+docker run -v /opt/project/docker_test/test4/bgpd.conf.base:/etc/quagga/bgpd.conf -it --rm --net srx-net2 --ip 10.1.1.1  10.0.50.11:5000/srx /bin/bash
+docker run --net=host -v /opt/project/docker_test/test4/bgpd.conf.base:/etc/quagga/bgpd.conf -it --rm --net srx-net2  10.0.50.11:5000/srx /bin/bash
+docker run --net=host -v /opt/project/docker_test/test4/bgpd.conf.base:/etc/quagga/bgpd.conf -it --rm --net srx-net2 --ip=10.1.1.1 10.0.50.11:5000/srx /bin/bash
+docker run -v /opt/project/docker_test/test4/bgpd.conf.base:/etc/quagga/bgpd.conf -it --rm --net srx-net2 --ip=10.1.1.100 10.0.50.11:5000/srx /bin/bash
+docker run -v /opt/project/docker_test/test4/bgpd.conf.base:/etc/quagga/bgpd.conf -itd --net srx-net2 --ip=10.1.1.100 10.0.50.11:5000/srx 
+docker stop e8
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12:/etc/quagga/bgpd.conf -it --net docker_gwbridge --ip 172.18.0.12 10.0.50.11:5000/srx /bin/bash
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12:/etc/quagga/bgpd.conf -it --net docker_gwbridge --ip 172.18.0.12 -p 179:179 10.0.50.11:5000/srx 
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12:/etc/quagga/bgpd.conf -it --net docker_gwbridge --ip 172.18.0.12  10.0.50.11:5000/srx 
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12:/etc/quagga/bgpd.conf -it 10.0.50.11:5000/srx /bin/bash
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12:/etc/quagga/bgpd.conf -it --net srx-net --ip 172.19.0.12  10.0.50.11:5000/srx /bin/bash
+docker run --rm -v /opt/project/docker_test/bgpd.conf.idac12.v2:/etc/quagga/bgpd.conf -it --net srx-net --ip 172.19.0.12  10.0.50.11:5000/srx /bin/bash
+docker run -v /opt/project/docker_test/bgpd.conf.idac12.v2:/etc/quagga/bgpd.conf -dit --net srx-net --ip 172.19.0.12  10.0.50.11:5000/srx 
+docker logs 9a
+docker logs 9a --details
+docker logs 9a -f
+docker logs 9a -t
+docker logs 99 -tf
+docker logs  -tf 6c
+docker run  -v /opt/project/docker_test/test4/bgpd.conf.n3:/etc/quagga/bgpd.conf -it --rm --net srx-net2 --ip 10.1.1.3  10.0.50.11:5000/srx /bin/bash
+docker run  -v /opt/project/docker_test/test4/bgpd.conf.n3:/etc/quagga/bgpd.conf -it --rm --net srx-net2 --ip 10.1.1.3  10.0.50.11:5000/srx 
+docker network 
+docker network inspect 
+docker network inspect bridge
+docker network inspect docker_gwbridge
+docker network create --subnet=172.19.0.0/16 srx-net
+docker logs 
+docker logs  --help
+docker network inspect srx-net
+docker network create --subnet=10.1.1.0/24 srx-net2
+docker network inspect srx-net2 
+docker exec -it e1 /bin/bash
+docker logs --help
+docker logs e1
+docker logs e8 -f
+cd docker_test/
+docker stop $(docker ps -q)
+docker rm $(docker ps -q)
+docker rm $(docker ps -aq)
+docker network
+cat sh_docker_run.sh 
+docker ps -a
+docker image inspect 7d03
+docker ls -a
+history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++' > history_cmd_docker_idac11

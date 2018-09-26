@@ -94,7 +94,8 @@ find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
 
 (7) vertical select
 =====================
-1. cut -c '9[-][number]' origianl.txt > new.txt: (ex. cut -c '9-' temp>new)
+1. cut -c '9[-][number]' origianl.txt > new.txt: (ex. cut -c '9-' temp>new: from 9'th byte or character, to end of line)
+    (example) history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++'
 2. in Vim, ctrl+v, then select
 
 
@@ -264,7 +265,7 @@ press '-' on gdb running (tui enable|disable)
 (22) perform consecutive history commands
 =========================================
 1. traditional way : $!-3; !-2; !-1  (using negative number)
-2. using fc :  fc -ln <no1> <no2>   --> display all commands between no1 and no2
+2. using fc,(fix command) :  fc -ln <no1> <no2>   --> display all commands between no1 and no2
    (example) A. $(fc -ln 1 3) : perform all commands between 1 and 3  
              B. $(fc -ln 3 3) : perform only line 3
 
@@ -272,7 +273,7 @@ press '-' on gdb running (tui enable|disable)
 (23) execute consecutive commands from history
 ==============================================
 1. To view a range of commands in the history use the built-in fc(Fix Command) command:
-        fc -ln 432 435      (-l: listed on std, -n: suppress the number)
+        fc -ln 432 435      (-l: listed on stdout, -n: suppress the number)
 2. To execute them again:
         eval "$(fc -ln 432 435)"
 3. search the history using CTRL+r and type keyword, and using arrow keys to edit
@@ -282,6 +283,11 @@ press '-' on gdb running (tui enable|disable)
    whereas, 'export HISTCONTROL=erasedups' to eliminate across the whole history
 6. 'export HISTCONTROL=ignorespace' can hide any command typed a space in front of a command
 7. 'export HISTIGNORE="pwd:ls:ls -ltr:"' to ignore specific commands
+
+    (current configure)
+      HISTSIZE=1000
+      HISTIGNORE=pwd:ls:ls -htrl:ll
+      HISTCONTROL=ignoredups
 
 
 (24) write a file in bash script

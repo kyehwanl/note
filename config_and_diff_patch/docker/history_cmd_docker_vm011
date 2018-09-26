@@ -1,0 +1,294 @@
+docker ps
+docker stop `dl`
+alias dl="docker ps -ql"
+docker rm `dl`
+docker images
+docker rmi localhost:5000/quagga
+docker tag quagga 10.0.50.11:5000/quagga
+docker push 10.0.50.11:5000/quagga
+docker run -d -p 5000:5000  -v $(pwd):/certs  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.cert  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key --restart=always --name registry registry:2
+ll /etc/docker/
+mkdir -p /etc/docker/certs.d/10.0.50.11:5000
+cp domain.cert /etc/docker/certs.d/10.0.50.11\:5000/ca.crt
+service docker reload
+docker rmi 10.0.50.11:5000/quagga
+docker image inspect quagga-test
+docker search 
+ll /var/lib/docker/
+ll /var/lib/docker/containers/
+ll /var/lib/docker/containers/989a2dfaa42c80e3b2a413f83d8ad6f160e0e43d06e906933fee589ffb89b8f9/
+ll /var/lib/docker/containers/989a2dfaa42c80e3b2a413f83d8ad6f160e0e43d06e906933fee589ffb89b8f9/checkpoints/
+docker logs `dl`
+docker tag quagga-test localhost:5000/quagga-test
+docker tag quagga-test 10.0.50.11:5000/quagga-test
+docker push localhost:5000/quagga-test
+docker push 10.0.50.11:5000/quagga-test
+cd /var/lib/docker/
+alias dl=`docker ps -l -q`
+alias dl='docker ps -l -q'
+docker exec -it `dl` /bin/bash
+./sh_docker_run.sh  test 10
+./sh_docker_run.sh run 10
+docker run --name node1 --rm --privileged -ti --ip=172.17.0.1 -v $PWD/bgpd.conf.base:/test/bgpd.conf -v $PWD/run.sh:/test/run.sh quagga-test /bin/bash
+docker run --name node1 --rm --privileged -ti --cap-add=NET_ADMIN -v $PWD/bgpd.conf.base:/test/bgpd.conf -v $PWD/run.sh:/test/run.sh quagga-test /bin/sh -c "/sbin/ip addr add 172.17.0.1 dev eth0;/bin/bash"
+docker run --name node12 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /test/run.sh
+./sh_docker_run.sh test 100
+./sh_docker_run.sh run 100
+docker run --name node102 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /test/run.sh
+./sh_docker_run.sh run 2
+docker run --name node4 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /test/run.sh
+docker run --name node4 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /bin/bash
+docker pull pierky/exabgp
+docker image 
+docker image history pierky/exabgp
+docker run -d -v `pwd`/exabgp:/etc/exabgp:rw pierky/exabgp
+docker run -ti -v `pwd`/exabgp:/etc/exabgp:rw pierky/exabgp
+docker image
+docker rmi ruby
+docker run --rm --privileged -ti -v $PWD:/test centos /bin/bash
+./sh_docker_run.sh run 300
+docker stop $(docker ps -q)
+./sh_docker_run.sh run 500
+docker ps -a | less
+docker rm $(docker ps -aq)
+docker run --name node502 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /bin/bash
+docker run --name node502 --rm --privileged -ti -v /opt/project/docker_test/perf-test/:/test/  quagga-test /bin/bash
+docker run --name node502 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /test/run.sh
+docker ps | nl 
+docker ps | nl -l
+docker ps | nl -n
+docker ps | nl -a
+docker ps | nl a
+docker ps | nl
+docker exec -ti node300 /bin/bash
+docker exec -ti node255 /bin/bash
+docker exec -ti db7572c92cfc6c6f8c1d09b3f9a957277a64acf5d59a9b60b2c73151e671158e /bin/bash
+docker rm $(docker ps -q)
+docker kill $(docker ps -q)
+docker run --name node2 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /test/run.sh
+docker run --name node2 --rm --privileged -ti -v /opt/project/docker_test/perf-test/bgpd.conf.base:/test/bgpd.conf -v /opt/project/docker_test/perf-test/run.sh:/test/run.sh quagga-test /bin/bash
+docker run --name node2 --rm --privileged -ti -v $PWD/:/test quagga-test /bin/bash
+docker run --name node2 --rm --privileged -ti -v $PWD/run.sh:/test/run.sh quagga-test /bin/bash
+docker run --name node2 --rm --privileged -ti -v $PWD/bgpd.conf.base:/test/bgpd.conf quagga-test /bin/bash
+docker run --name node2 --rm --privileged -ti -v $PWD/bgpd.conf.base:/test/bgpd.conf -v $PWD/run.sh:/test/run.sh quagga-test /bin/bash
+docker run --name node2 --rm --privileged -ti -v $PWD/bgpd.conf.n2:/test/bgpd.conf -v $PWD/run.sh:/test/run.sh quagga-test /bin/bash
+cat sh_docker_run.sh 
+cat docker_run.py 
+docker ps -l
+docker ps -a
+docker build --help
+docker pull osrg/gobgp
+rpm -q docker
+rpm -qa | grep docker
+docker pull jamesandariese/go-openbsd-amd64
+docker pull debian:8
+docker pull 
+docker pull anak10thn/openbsd
+docker search openbgpd
+docker search openbsd
+docker search quagga
+docker pull centos
+docker pull appropriate/nc:latest
+docker image inspect quagga-test2
+docker image history quagga-test2
+docker rmi appropriate/nc:latest
+docker run  --rm  -ti osrg/gobgp /bin/bash
+docker run --rm -ti osrg/gobgp 
+docker run --name node1 --rm --privileged  -ti osrg/gobgp 
+docker search osrg/quagga
+docker --help
+docker search --help
+docker image --help
+docker image history osrg/gobgp
+docker image inspect osrg/gobgp
+docker run --name=node1 --rm  -ti osrg/gobgp
+docker run --help
+docker ps --help
+docker ps -l -q
+docker run --name=node1 --rm --privileged -ti osrg/gobgp
+docker pull iperf3
+docker pull networkstatic/iperf3
+docker run  -it --rm --name=iperf3-server -p 5201:5201 networkstatic/iperf3 -s
+docker search iperf3
+docker run -it --rm networkstatic/iperf3 -c 10.0.50.5 
+docker-compose 
+docker-compose  version
+docker-compose  --help
+docker-compose  /?
+docker-compose  Version
+docker-compose  
+which docker-c
+docker-compose version
+yum install docker-compose
+whereis docker-compose
+which docker-compose
+rpm -ql docker-compose
+pip install docker-compose
+pip install --upgrade docker-compose
+docker-compose
+docker run -it --rm -c 10.0.50.5
+docker run -it --rm -c 10.0.50.5 iperf3
+docker run -it --rm iperf3 -c 10.0.50.5 
+docker build .
+docker build -t srx .
+docker rm 33bcfbecd9a1
+docker rmi b17716a792bc
+docker rmi 307ff9bf5d71
+docker exec -it 69bc7b59c12f /bin/bash
+alias dl="docker ps -l -q"
+docker exec -it `dl`/bin/bash
+docker run --rm -ti centos /bin/bash
+docker run --rm -ti -p 179:179 -v $PWD:/etc/quagga/ srx 
+docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf:/etc/quagga/bgpd.conf srx 
+docker run --rm -ti -p 179:179 -v $PWD/:/etc/quagga srx 
+docker run --rm -ti -p 179:179 -v $PWD:/etc/quagga srx 
+docker run  -ti -p 179:179 -v $PWD:/etc/quagga srx 
+docker run --rm  -ti -p 179:179 -v $PWD:/etc/quagga srx 
+docker run --rm  -ti -p 179:179  srx 
+docker run --rm  -ti -p 179:179 -v $PWD/bgpd.conf:/etc/quagga/bgpd.conf srx 
+docker run --rm  -ti -p 179:179 -v $PWD/bgpd.conf:/etc/quagga/bgpd.conf -v /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm --privileged -ti -p 179:179 -v $PWD/bgpd.conf:/etc/quagga/bgpd.conf -v /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm --privileged -ti -p 179:179 -v $PWD/bgpd.conf:/etc/quagga/bgpd.conf  srx 
+docker run --rm --privileged -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf  srx 
+docker run --rm --privileged -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm --privileged -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm  -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx 
+docker run --rm -ti -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx-devel
+docker ps -ql
+alias dl='docker ps -ql'
+ps aux | grep docker
+docker build -f Dockerfile-devel -t srx-devel 
+docker build -f ./Dockerfile-devel -t srx-devel 
+docker build -f ./Dockerfile-devel -t srx-devel .
+docker rm d63330dca9a4
+docker rm f25cc841771e
+docker rm 
+docker rm eca880386169
+docker rm --help
+docker rm b87a586bb695
+docker rmi a6eeaa231918
+docker rmi 8fff136889d5
+docker rmi e97f3369555e
+docker rmi 4de5c875faa4
+docker rmi 41ed1b466c05 98b8e45b011b f25cc841771e
+docker version
+docker node ls
+docker swarm init --advertise-addr="172.17.0.10"
+docker swarm join --token SWMTKN-1-1hlueu8djibvd35uixyi459i2e9xogtv7fibnw82ptci1m5n4y-372kvg7s1y31fupmq2dhdr564 172.17.0.10:2377
+docker swarm leave
+docker network ls
+docker swarm
+docker swarm --help | grep erase
+docker swarm --help 
+docker swarm leave --force
+docker swarm init 
+docker node ls --filter role=manager
+docker service ls
+docker service create --name my-nginx --publish target=80,published=80 --replicas=5 --network nginx-net nginx
+docker pull nginx
+docker pull nginx:latest
+docker network create -d overlay nginx-net
+docker service inspect my-nginx
+docker service monitor
+docker inspect d1a2
+docker service rm my-nginx
+docker netowrk ls
+docker network rm nginx
+docker network rm nginx-net
+docker network create -d overlay srx-net
+docker service create --name my-srx --publish target=179, published=179 --replicas=5 --network srx-net srx
+docker tag srx 10.0.50.11:5000/srx
+docker push 10.0.50.11:5000/srx
+docker service create --name my-srx --publish target=179,published=179 --replicas=5 --network srx-net srx
+docker service rm my-srx
+docker service create --name my-srx --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx
+docker service ps 09rbwxlfi95jsvkok3nyw90ag
+docker service create --name my-srx --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx srx_server
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx 
+docker inspect 8e | grep IPAddress
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 8e
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' 8e
+docker inspect -f '{{.Name}} - {{.NetworkSettings.IPAddress }}' $(docker ps -aq)
+docker ps 
+docker inspect -f '{{.Name}} - {{.NetworkSettings.IPAddress }}' $(docker ps -q)
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+docker inspect -f '{{ .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+docker inspect -f '{{ .NetworkSettings.Networks}}{{.IPAddress}}' $(docker ps -q)
+docker inspect -f '{{ .NetworkSettings.Networks}}{{.IPAddress}}' 8e
+docker inspect -f '{{.NetworkSettings.Networks}}{{.IPAddress}}' 8e
+docker inspect -f '{{NetworkSettings.Networks}}{{.IPAddress}}' 8e
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+docker network inspect bridge
+docker network inspect srx-net
+cd /opt/project/docker_test/
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=5 --network srx-net -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ 
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/
+docker service ps voqtxv7x26prf3i1vl8zkcrrh
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ srx_server
+docker service rm srx_test1
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server -p 179:179 -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ 
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server  -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf -v $PWD/keys/:/var/lib/bgpsec-keys/ 
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server  -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf 
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker exec -it ee /bin/bash
+docker service ls -a
+docker service 
+docker network 
+docker network prune
+docker network rm 74b
+lsof -c dockerd
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx-swarm
+docker run --rm -ti 10.0.50.11:5000/srx-swarm
+docker service ps rxiz049gvb7exvzfqra8fbwem
+docker service inspect 
+docker service inspect srx_test1
+docker service create --name srx_test2 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx-swarm
+docker service ps cfy6xe7zmtgvdnz1ke5fse84w
+docker service rm srx_test2
+docker system prune
+docker service ps iqyx03waxztb6ytr7irvl7tcx
+docker service create --name srx_test1 --publish target=179,published=179 --replicas=3 --network srx-net centos
+docker service ps xyj0n89kvsx0d4tmheae8jqaf
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=$PWD,type=volume,writable=true --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=$PWD,type=volume,writable --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=$PWD,type=volume --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=/opt/project/docker_test/srx/,type=volume --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=./srx/,type=volume --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount target=/etc/quagga/,source=/srx/,type=volume --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker service ps ggg2egds6v24g7gsm1vvkgo5g
+docker service ps
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx srx_server 
+docker servie ls
+docker service ps srx_test1
+docker service create --name srx_test1  --replicas=3 --network srx-net 10.0.50.11:5000/srx-swarm
+docker service create --name srx_test1  --replicas=3  10.0.50.11:5000/srx-swarm
+docker service create --name srx_test1  --replicas=3 --network srx-net 10.0.50.11:5000/srx-swarm /bin/bash
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx /bin/bash
+docker service ps 
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx-swarm
+docker exec -it 10.0.50.11:5000/srx-swarm /bin/bash
+docker exec -it d0 /bin/bash
+docker exec -it fd /bin/bash
+docker exec -it 14 /bin/bash
+docker service inspect srx_test1 
+docker service ps srx_test1 
+docker service rm srx_test1 
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx-swarm
+docker service create --name srx_test1 --mount dst=/etc/quagga/,src=$PWD,type=bind --publish target=179,published=179 --replicas=5 --network srx-net 10.0.50.11:5000/srx-swarm 
+docker exec -it 7f telnet localhost 2605
+docker inspect 1685
+docker inspect 1685 | grep IPAddress
+docker commit -m 'gobgp testing' 16856b449f5c kyehwanl/centos-gobgp
+docker run --rm -it centos /bin/bash
+docker run -it -v /opt/project/gobgp_test/:/opt/test kyehwanl/centos-gobgp /bash/bin
+docker run -it kyehwanl/centos-gobgp /bash/bin
+docker run -it -v /opt/project/gobgp_test/:/opt/test kyehwanl/centos-gobgp /bin/bash
+docker rm aa
+docker rm aa44
+docker rm 44
+docker rm df
+export HISTIGNORE=$HISTIGNORE"docker ps"
+docker image ls
+history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++' > /tmp/history_cmd_docker_vm011

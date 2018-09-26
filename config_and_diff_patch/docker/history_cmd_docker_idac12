@@ -1,0 +1,218 @@
+docker pull pierky/bird
+docker pull pierky/quagga
+docker images
+docker run --rm -it -v /opt/project/exabgp_test/net_emulator/exabgp-conf2/bgpd.conf.base:/opt/project/srx_test1/qsrx/../_inst/etc/bgpd.conf --net srx-net --ip 172.19.0.2^C srx-inst-devel /bin/bash
+docker run --rm -it -v /opt/project/exabgp_test/net_emulator/exabgp-conf2/bgpd.conf.base:/opt/project/srx_test1/qsrx/../_inst/etc/bgpd.conf --net srx-net --ip 172.19.0.200 srx-inst-devel /bin/bash
+docker run --rm -it -v `pwd`/gobgp-conf/gobgpd.conf:/etc/gobgp/gobgp.conf pierky/gobgp
+docker run -d -v `pwd`/gobgp-conf/gobgpd.conf:/etc/gobgp/gobgp.conf pierky/gobgp
+docker exec -it 9f bash
+docker run -d --net srx-net --ip 172.19.0.200 -v `pwd`/gobgp-conf/gobgpd.conf:/etc/gobgp/gobgp.conf pierky/gobgp
+docker exec -it 22 gobgp neighbor
+docker ps
+docker stop 22 9f
+docker ps -a
+docker rm 22 9f
+docker stop 26
+docker logs ee
+docker logs ee -f
+docker logs ee 
+docker logs 07
+docker pull centos
+docker pull centos7
+docker pull
+docker pull --help
+docker pull centos@e934aafc2206
+docker pull centos@sha256:989b936d56b1ace20ddf855a301741e52abca38286382cba7f44443210e96d16
+docker run --rm -it centos /bin/bash
+docker run --rm -it srx-inst-devel /bin/bash
+cat sh_docker_run_normalns.sh 
+docker stop $(docker ps -q) && docker rm $(docker ps -aq)
+../sh_docker_run_normalns.sh 
+docker run --name node2 -d -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker stop 78
+docker rm 78
+docker run --name node2 --rm -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run  -d -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run --name node3 -d -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n3:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run --name node2 --rm -it -v $PWD/bgpd.conf.n2:/etc/exabgp/exabgp.conf 10.0.50.11:5000/srx /bin/bash
+docker run --name node2 -d -v $PWD/bgpd.conf.n2:/etc/exabgp/exabgp.conf 10.0.50.11:5000/srx 
+docker stop a2
+docker rm a2
+docker run --name node2 -d -v $PWD/bgpd.conf.n2:/etc/quagga/bgpd.conf 10.0.50.11:5000/srx
+docker run --name node3 -d -v $PWD/bgpd.conf.n3:/etc/quagga/bgpd.conf 10.0.50.11:5000/srx
+docker run --name node2 --rm -it -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run --name node3 -d -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n3:/etc/exabgp/exabgp.conf pierky/exabgp && docker run --name node2 -d -v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run --name node2 -d -v $PWD/bgpd.conf.n2:/etc/quagga/bgpd.conf 10.0.50.11:5000/srx && docker run --name node3 -d -v $PWD/bgpd.conf.n3:/etc/quagga/bgpd.conf 10.0.50.11:5000/srx
+docker exec -it eb /bin/bash
+docker run --name node2 --rd v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+docker run --name node2 -d v /opt/project/exabgp_test/net_emulator/exabgp-conf/bgpd.conf.n2:/etc/exabgp/exabgp.conf pierky/exabgp
+../sh_docker_run_normalns.sh test 2
+../sh_docker_run_normalns.sh run 2
+cp sh_docker_run.sh stop_docker.sh
+vim stop_docker.sh 
+../stop_docker.sh 
+vim ../stop_docker.sh 
+vim ../sh_docker_run.sh 
+vim ../sh_docker_run_normalns.sh 
+../sh_docker_run_normalns.sh test 
+bash -x ../sh_docker_run_normalns.sh test 
+bash -x ../sh_docker_run_normalns.sh test 2 
+bash -x ../sh_docker_run_normalns.sh test 2 quagga
+ ../sh_docker_run_normalns.sh test 2 quagga
+ ../sh_docker_run_normalns.sh test 2 
+ ../sh_docker_run_normalns.sh test 
+ ../sh_docker_run_normalns.sh 
+ ../sh_docker_run_normalns.sh test 2 exabgp
+ ../sh_docker_run_normalns.sh stop
+ ../sh_docker_run_normalns.sh run 2 
+vim ../sh_docker_run_normalns.sh s
+ ../sh_docker_run_normalns.sh test 3 
+ ../sh_docker_run_normalns.sh test 3 exabgp
+ ../sh_docker_run_normalns.sh run 3 exabgp
+ ../sh_docker_run_normalns.sh run 3 
+docker run --name node2 --rm -it -v /opt/project/exabgp_test/net_emulator/quagga-conf/bgpd.conf.n2:/etc/quagga/bgpd.conf 10.0.50.11:5000/srx /bin/bash
+docker network ls
+docker network 
+docker network inspect srx-net
+cat ../sh_docker_run
+cat ../sh_docker_run.sh 
+cat ../sh_docker_run_normalns.sh 
+chmod 744 sh_docker_run_normalns.sh 
+chmod 744 sh_docker_run.sh 
+chown kyehwanl.admin sh_docker_run.sh 
+chown kyehwanl.admin sh_docker_run_normalns.sh 
+mv sh_docker_run.sh sh_docker_run----.sh
+mv sh_docker_run_normalns.sh sh_docker_run.sh
+mv sh_docker_run----.sh tmp_docker_run.sh
+rm -rf sh_docker_run_normalns.sh~ 
+./sh_docker_run.sh 
+./sh_docker_run.sh test 2 
+./sh_docker_run.sh test 2 --net 111
+./sh_docker_run.sh test 2 --net 
+./sh_docker_run.sh test 
+cat sh_docker_run_normalns.sh
+chmod o+w ./sh_docker_run.sh 
+diff -wibuNp sh_docker_run.sh sh_docker_run2.sh 
+rm -rf sh_docker_run2.sh 
+./sh_docker_run.sh test
+./sh_docker_run.sh test 2
+./sh_docker_run.sh test 2 quagga
+./sh_docker_run.sh test 2 --net 211.11.11.11
+./sh_docker_run.sh test 2 exabgp
+./sh_docker_run.sh -o test
+./sh_docker_run.sh -o run
+./sh_docker_run.sh -o test -m 10
+./sh_docker_run.sh -o test -m 10 -t quagga
+./sh_docker_run.sh -o test -m 10 -t quagga -n 172.19.0.1
+./sh_docker_run.sh -o test -m 10 -t quagga -n 172.19.0.
+cat tmp_docker_run.sh 
+./sh_docker_run.sh -o test -m 10 -n 172.19.0.
+./sh_docker_run.sh  -m 10 -n 172.19.0.
+./sh_docker_run.sh -o run -m 10 -n 172.19.0.
+./sh_docker_run.sh  -m 10 -n 172.19.0. -p $PWD
+./sh_docker_run.sh  -m 10 -n 172.19.0. -p \$PWD/quagga-conf
+./sh_docker_run.sh  -m 10 -n 172.19.0. -p ../quagga-conf
+./sh_docker_run.sh  -m 10 -n 172.19.0. -p `pwd`/../quagga-conf
+../sh_docker_run.sh  -m 10 -n 172.19.0. -p 
+../sh_docker_run.sh  -m 10 -n 172.19.0. -p $PWD/../quagga-conf
+../sh_docker_run.sh  -m 10 -n 172.19.0. -p $PWD/quagga-conf
+./sh_docker_run.sh  -m 10 -n 172.19.0. -p $PWD/quagga-conf
+../sh_docker_run.sh  -m 10 -n 172.19.0.
+../sh_docker_run.sh  -m 10 -n 172.19.0. -o exabgp
+../sh_docker_run.sh  -m 10 -n 172.19.0. -t exabgp
+../sh_docker_run.sh  -m 10 -n 172.19.0. 
+../sh_docker_run.sh  -m 2 -n 172.19.0. 
+../sh_docker_run.sh -m 2 -n 172.19.0. -o run
+../sh_docker_run.sh -m 2 -n 172.19.0. 
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. 
+../sh_docker_run.sh -m 10 -n srx-net -i 172.19.0. 
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -o test
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -o run
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -o stop
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -o tset
+docker run --name node2 --rm -it -v /opt/project/exabgp_test/net_emulator/quagga-conf2/bgpd.conf.n2:/etc/quagga/bgpd.conf --net srx-net --ip 172.19.0.2 10.0.50.11:5000/srx /bin/bash
+docker stop node2
+docker stop node3
+docker rm node2
+docker rm node3
+../sh_docker_run.sh
+../sh_docker_run.sh 
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -t exabgp
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -t exabgp -o run
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -t exabgp -o stop
+../sh_docker_run.sh -m 2 -t exabgp -o test
+../sh_docker_run.sh -m 2 -t exabgp -o run
+../sh_docker_run.sh -m 2 -n srx-net -i 172.19.0. -t exabgp -o test
+../sh_docker_run.sh -m 2 -t exabgp -o stop
+../sh_docker_run.sh -m 100 -t exabgp -o run
+../sh_docker_run.sh -m 100 -t exabgp -o stop
+../sh_docker_run.sh -m 10 -t exabgp -o test
+../sh_docker_run.sh -m 10 -t exabgp -n srx-net -i 172.19.0. -o test
+../sh_docker_run.sh -m 10 -t exabgp -n srx-net -i 172.19.0. -o run
+../sh_docker_run.sh -m 10 -t exabgp -n srx-net -i 172.19.0. -o stop
+../sh_docker_run.sh -m 100 -t exabgp -n srx-net -i 172.19.0. -o run
+../sh_docker_run.sh -m 100 -t exabgp -n srx-net -i 172.19.0. -o stop
+../sh_docker_run.sh -m 100 -t exabgp -n srx-net -i 172.19.0. -h
+../sh_docker_run.sh -m 100 -t exabgp  -t test
+../sh_docker_run.sh -m 3 -t exabgp  -t test
+../sh_docker_run.sh -m 2 -t exabgp -n srx-net -i 172.19.0. -o test
+../sh_docker_run.sh -m 2 -t exabgp -n srx-net -i 172.19.0. -o test -h
+../sh_docker_run.sh -m 2 -t exabgp  -o test 
+../sh_docker_run.sh -m 2 -t exabgp  -o run
+docker network inspect srx-net 
+docker node
+docker node ls
+docker node ps
+docker netowrk
+docker network
+docker image 
+docker image ls
+docker image inspect 
+../sh_docker_run.sh -m 2 -t exabgp  -o stop
+../sh_docker_run.sh -m 2 -t exabgp -n srx-net -i 172.19.0. -o run
+../sh_docker_run.sh -m 2 -t exabgp -n srx-net -i 172.19.0. -o stop
+../sh_docker_run.sh -m 2 -t exabgp  -o test
+../sh_docker_run.sh -m 2 -t exabgp  -o test -h
+../sh_docker_run.sh -m 2 -t exabgp  -o test -s 2
+../sh_docker_run.sh -m 2 -t exabgp  -o test -s 3
+../sh_docker_run.sh -m 4 -t exabgp  -o test -s 3
+../sh_docker_run.sh -m 100 -t exabgp  -o test -s 98
+../sh_docker_run.sh -m 3 -s 2 -t exabgp  -o test
+../sh_docker_run.sh -m 3 -s 3 -t exabgp  -o test
+../sh_docker_run.sh -m 3 -s 3 -t exabgp  -o run
+../sh_docker_run.sh -m 5 -s 4 -t exabgp  -o test
+../sh_docker_run.sh -m 5 -s 4 -t exabgp  -o run
+../sh_docker_run.sh -m 5  -t exabgp  -o stop
+../sh_docker_run.sh -m 10 -s 5 -t exabgp  -o test
+../sh_docker_run.sh -m 10 -s 7 -t exabgp  -o test
+../sh_docker_run.sh -m 10 -s 7 -t exabgp  -o run
+docker exec -it 30 bash
+docker exec -it 79 bash
+../sh_docker_run.sh -m 10  -t exabgp  -o stop
+../sh_docker_run.sh -m 10  -t exabgp  -o test
+../sh_docker_run.sh -m 10  -t exabgp  -o run
+../sh_docker_run.sh -m 20 -s 10 -t exabgp  -o test
+../sh_docker_run.sh -m 20 -s 11 -t exabgp  -o test
+../sh_docker_run.sh -m 21 -s 11 -t exabgp  -o test
+../sh_docker_run.sh -m 20 -s 11 -t exabgp  -o run
+../sh_docker_run.sh -m 20 -t exabgp  -o test
+../sh_docker_run.sh -m 20 -t exabgp  -o stop
+../sh_docker_run.sh -m 20 -t exabgp  -o run
+../sh_docker_run.sh -m 30 -s 21 -t exabgp  -o test
+../sh_docker_run.sh -m 30 -s 21 -t exabgp  -o run
+../sh_docker_run.sh -m 40 -s 31 -t exabgp  -o test
+../sh_docker_run.sh -m 40 -s 31 -t exabgp  -o run
+../sh_docker_run.sh -m 60 -s 41 -t exabgp  -o test
+../sh_docker_run.sh -m 60 -s 41 -t exabgp  -o run
+../sh_docker_run.sh -m 80 -s 61 -t exabgp  -o test
+../sh_docker_run.sh -m 80 -s 61 -t exabgp  -o run
+../sh_docker_run.sh -m 100 -s 81 -t exabgp  -o test
+docker ps | less
+../sh_docker_run.sh -m 100 -s 81 -t exabgp  -o run
+../sh_docker_run.sh -m 100  -t exabgp  -o stop
+../sh_docker_run.sh -m 40  -t exabgp  -o test
+../sh_docker_run.sh -m 40  -t exabgp  -o run
+docker ps | nl
+docker ps | nl | less
+history | grep docker | perl -ne 'print unless $a{$_}++'
+history | grep docker | cut -c 8- | perl -ne 'print unless $a{$_}++'  > /tmp/history_cmd_docker
