@@ -235,6 +235,25 @@ Check Dependencies and build
     If this is the case your only option is to manually purge the offending packages from $GOPATH/pkg/."
 
 
+(4) external C library to include the path to the C library in the code
+    - LD_LIBRARY_PATH=/path/to/lib go build [source] 
+    - go build -ldflags="-r /path/to/lib" [source]   
+
+
+(5) Avoiding the LD_LIBRARY_PATH for Shared Libs in Go (cgo) Applications 
+      export CGO_LDFLAGS="-L/path/to/the/lib -Wl,-rpath -Wl,\$ORIGIN/../lib"
+      export CGO_CFLAGS="-I/path/to/include/file/of/the/lib/include"
+      go build
+
+    or 
+      put "-Wl,-rpath -Wl, /path/lib" into #cgo LD_FLAGS line at source code 
+      in source code, #cgo LDFLAGS: -L. -lSRxBGPSecOpenSSL -Wl,-rpath -Wl,/path/lib/
+
+(6) -v and -x switch for more information
+    -x: show command like gcc compilation
+    -v: verbose including fils generated
+    
+
 
 
 Running
