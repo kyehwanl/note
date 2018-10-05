@@ -236,8 +236,9 @@ Check Dependencies and build
 
 
 (4) external C library to include the path to the C library in the code
-    - LD_LIBRARY_PATH=/path/to/lib go build [source] 
-    - go build -ldflags="-r /path/to/lib" [source]   
+    - LD_LIBRARY_PATH=/path/to/lib go build [source|./...] 
+    - go build -ldflags="-r /path/to/lib" [source|./...]   
+    - go install -ldflags="-r /path/to/lib/go_srx_test" -gcflags='-N -l' ./...
 
 
 (5) Avoiding the LD_LIBRARY_PATH for Shared Libs in Go (cgo) Applications 
@@ -260,7 +261,10 @@ Running
 =========
 
   (0) go run filename.go
-      go get == go build + go run
+
+      go run == go build + go install
+      go get == go build + go install + go run [+ download external dependencies in import statement]
+
 
   (1) log-level 
       -l or --log-level=<info|debug>
