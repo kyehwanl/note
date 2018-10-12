@@ -1,0 +1,35 @@
+
+ *** openDaylight (ODL) & Open Network Operating System (ONOS) ***
+
+1. how to run
+==============
+
+  (1) download from official site:
+    https://hub.docker.com/r/opendaylight/odl/
+
+  (2) running with docker (with various version of docker images)
+
+    docker run -ti opendaylight/odl:latest /opt/opendaylight/bin/karaf
+    docker run -d -p 6633:6633 -p 8181:8181 -p 8101:8101 --name=opendaylight glefevre/opendaylight
+    docker run -itd -p 8181:8181 -p 8101:8101 --name odl networkoverlay/opendaylight  (version: Oxygen)
+
+
+  (3) openDaylight Running BGP
+   
+        Install BGP feature - odl-bgpcep-bgp. Also, for sake of this sample, it is required to install RESTCONF. 
+        In the Karaf console, type command:
+
+            feature:install odl-restconf odl-bgpcep-bgp 
+
+
+  (4) Source Code link
+        https://git.opendaylight.org/gerrit/gitweb?p=bgpcep.git;a=tree;f=bgp;h=25bc6d6b0de60dc9992a755220354939ca840906;hb=HEAD
+
+
+
+2. Install
+==========
+
+
+    (1) features required to install for http access
+        feature:install odl-restconf odl-l2switch-switch odl-mdsal-apidocs odl-dlux-core

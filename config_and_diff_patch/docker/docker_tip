@@ -67,7 +67,8 @@ Docker Tips
     - Pull a base image
         docker pull ubuntu
 
-    - To create a image from a Container. For tag name, <username>/<imagename> is recommended
+    - To create an image from a running container, save into a new image 
+            (for tag name, <username>/<imagename> is recommended)
         docker run -d ubuntu /bin/sh -c "apt-get install -y hello"
         docker commit -m "My first container" `dl` tcnksm/hello
 
@@ -399,6 +400,9 @@ Docker Tips
 
 
 
+23. Search : search the Docker Hub for images
+    docker search <TERM>
+    
 
 
 
