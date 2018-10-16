@@ -26,6 +26,17 @@
         https://git.opendaylight.org/gerrit/gitweb?p=bgpcep.git;a=tree;f=bgp;h=25bc6d6b0de60dc9992a755220354939ca840906;hb=HEAD
 
 
+  (5) curl GET / POST
+    OpenDaylight: Programming Flows with the REST Interface and cURL (link: http://www.voidcn.com/article/p-sypqiapd-bdr.html)
+    [ OpenDaylight ODL ]: Using ODL BGP and advertising routes ODL REST API and XML files (https://www.serro.com/opendaylight-using-odl-bgp-advertising-routes-odl-rest-api-xml-files/)
+  
+    -- GET
+    curl -u admin:admin -H 'Accept: application/xml' 'http://172.17.0.1:8181/restconf/config/network-topology:network-topology/topology/topology-netconf/node/controller-config/yang-ext:mount/conf/module/odl-bgp-rib-impl-cfg:rib-impl/example-bgp-rib'
+
+    -- PUT
+    curl -u admin:admin -H 'Content-type: application/json' -X PUT -d '....'
+
+
 
 2. Install
 ==========
@@ -33,3 +44,7 @@
 
     (1) features required to install for http access
         feature:install odl-restconf odl-l2switch-switch odl-mdsal-apidocs odl-dlux-core
+
+
+
+
