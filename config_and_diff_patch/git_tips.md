@@ -178,7 +178,9 @@ git remote
   $ git fetch jessica
   $ git checkout -b rubyclient jessica/ruby-client
 
-  -->fetch한후에는  git push, pull 도 쓸수 있음
+  --> (1) fetch한후에는  git push, pull 도 쓸수 있음
+      (2) rebase/merge 사용  (pull = fetch + rebase/merge)
+                git rebase jessica/ruby-client
 
 
   (my project case)

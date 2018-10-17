@@ -335,6 +335,14 @@ MISC
 
 
 
+    (3) vim-go
+    * install
+        following Pathogen way: git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
+        and 
+        in .vimrc.bundles or .vimrc.local, put "Bundle 'fatih/vim-go'"
+    * set filetype=go
+
+
 
 Debugging
 ===========
