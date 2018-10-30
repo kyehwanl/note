@@ -342,6 +342,10 @@ MISC
         in .vimrc.bundles or .vimrc.local, put "Bundle 'fatih/vim-go'"
     * set filetype=go
 
+    * Trouble-Shoot:
+        - when conflict with 'gd'
+        <solution> :nnoremap <buffer> <silent> gd gd
+
 
 
 Debugging
