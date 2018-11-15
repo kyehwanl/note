@@ -410,7 +410,9 @@ Debugging
         
       D. Not necessarily to be a sudo user (in case of gobgp), just normal user is ok to run
 
+          vmware.005-antd [1000]{.../gowork/bin}-> dlv exec gobgp -- global rib 
           vmware.005-antd [1001]{.../gowork/bin}-> dlv exec gobgp -- global rib add  100.10.4.0/24
+          vmware.005-antd [1005]{.../gowork/bin}-> dlv exec gobgp -- global rib add bgpsec -a ipv4 15.18.20.0/24 nexthop 10.0.50.5
 
 
       E. in case of Server, it need to have root authority to open the port 179.
