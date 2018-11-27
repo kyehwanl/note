@@ -41,13 +41,26 @@
  - need to find a solution
 
 
- <Solved>
+ <Cause>
+ - Stale NSS version and some sites donot support redhat's old version of NSS
+
+
+ <Solved partially>
  - Just rename /etc/pki/nssdb --> /etc/pki/nssdb_bkup on vmware-005
     and then, it works as normal 
 
     OR more easily,
 
- - Just ONLY change pkcs11.txt filename into pkcs11.txt.bkup, then it works
+ - Just ONLY change pkcs11.txt's filename in nssdb into pkcs11.txt.bkup, then it works
     
     I guess the root cause of this issue might be this file, pkcs11.txt
 
+
+ - Important Fact
+    (source: https://unix.stackexchange.com/questions/280548/curl-doesnt-connect-to-https-while-wget-does-nss-error-12286)
+
+    * Need to update NSS
+    * Relevant: www-archive.mozilla.org/projects/security/pki/nss/ref/ssl/… where it says that NSS error -12286 means 
+      SSL_ERROR_NO_CYPHER_OVERLAP "Cannot communicate securely with peer: no common encryption algorithm(s)." 
+      The local and remote systems share no cipher suites in common. This can be due to a misconfiguration at either end. 
+      It can be due to a server being misconfigured to use a non-RSA certificate with the RSA key exchange algorithm
