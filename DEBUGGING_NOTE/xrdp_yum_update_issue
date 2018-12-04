@@ -1,0 +1,63 @@
+
+- source : https://bugzilla.redhat.com/show_bug.cgi?id=1565957
+
+1. issue
+========
+Description of problem:
+With RHEL7.5 released, there's a broken dependency in xorgxrdp.
+
+Version-Release number of selected component (if applicable):
+xorgxrdp-0.2.6-1.el7.x86_64
+
+How reproducible:
+Always
+
+Steps to Reproduce:
+1. yum update xorg-x11-server-Xorg
+
+Actual results:
+[...]
+Error: Package: xorgxrdp-0.2.6-1.el7.x86_64 (@epel)
+           Requires: xorg-x11-server-Xorg(x86-64) = 1.19.3
+           Removing: xorg-x11-server-Xorg-1.19.3-11.el7_4.2.x86_64 (@rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.19.3-11.el7_4.2
+           Updated By: xorg-x11-server-Xorg-1.19.5-5.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.19.5-5.el7
+           Available: xorg-x11-server-Xorg-1.15.0-7.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.15.0-7.el7
+           Available: xorg-x11-server-Xorg-1.15.0-7.el7_0.3.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.15.0-7.el7_0.3
+           Available: xorg-x11-server-Xorg-1.15.0-32.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.15.0-32.el7
+           Available: xorg-x11-server-Xorg-1.15.0-33.el7_1.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.15.0-33.el7_1
+           Available: xorg-x11-server-Xorg-1.17.2-10.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.17.2-10.el7
+           Available: xorg-x11-server-Xorg-1.17.2-22.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.17.2-22.el7
+           Available: xorg-x11-server-Xorg-1.19.3-11.el7.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.19.3-11.el7
+           Available: xorg-x11-server-Xorg-1.19.3-11.el7_4.1.x86_64 (rhel7-server-rpms)
+               xorg-x11-server-Xorg(x86-64) = 1.19.3-11.el7_4.1
+ You could try using --skip-broken to work around the problem
+ You could try running: rpm -Va --nofiles --nodigest
+
+Expected results:
+Successful dependency resolution and update.
+
+
+
+2. solution
+============
+
+yum clean all
+rm -rf /var/cache/yum
+yum-config-manager --enable cr (you might need to install yum-utils)
+yum update xorgxrdp-0.2.8-3.el7.x86_64 (answer yes)
+yum update xrdp
+yum-config-manager --disable cr (put it back the way it was)
+yum clean all
+
+...and after that, just do a 'regular' yum update
+
+yum update
