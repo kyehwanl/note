@@ -167,8 +167,43 @@ tmux tips
 
 
 
+6. status bar
+--------------
+    # on Command line, <prefix> + ':'
+    # enable / disable
+    set -g status on | off
 
-6. Other Useful config tips
+
+    # Status bar color 
+    # Set status line message background colour, where colour is one of:
+    # black, red, green, yellow, blue, magenta, cyan, white, colour0 to colour255
+    # from the 256-colour palette, or default.
+    #
+    set -g status-bg colour240
+    set -g status-fg white
+
+
+
+7. Rotate and Swap the panes
+----------------------------
+    # Rotate
+    <prefix> + Ctrl-o  : clock-wise rotating
+    <prefix> + Alt or Esc -o : couter-clock wise rotating
+
+
+    # Swap
+    # rotate doesn't change the panes' order itself, it is just to rotate panes
+    # if panes are needed to be inserted at some position, use swap 
+    # 
+    <prefix> + {    :  1 step up the current pane, in other words, swap the current with the previous pane
+    <prefix> + }    :  1 step down the current pane 
+    
+    (where, 'previous' means, the pane numbers shown in the command '<prefix>+q' is previous number of the current)
+    
+
+
+
+7. Other Useful config tips
 ----------------------------
     # Switching tmux zoom between panes without zooming out
         bind -r a select-pane -t .+2 \;  resize-pane -Z
@@ -180,6 +215,8 @@ tmux tips
     # prefix + Ctrl-s - save
     # prefix + Ctrl-r - restore
     set -g @plugin 'tmux-plugins/tmux-resurrect'
+
+
 
 
 
