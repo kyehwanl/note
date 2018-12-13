@@ -447,6 +447,10 @@ Debugging
             protoc -I=$SRC_DIR --go_out=$DST_DIR $SRC_DIR/filename.proto                (without gRPC)
             protoc -I=$SRC_DIR --go_out=plugins=gprc:$DST_DIR $SRC_DIR/filename.proto   (with gRPC)
 
+            (where SRC_DIR means the place where .proto file located)
+            (where DST_DIR means the place where the output file will be generated)
+
+
             (example)
             vmware.005-antd [1001]{.../gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto 
             ==> Then, gobgp.pb.go will be generated
