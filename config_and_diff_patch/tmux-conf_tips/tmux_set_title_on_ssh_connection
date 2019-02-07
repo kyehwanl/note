@@ -1,0 +1,29 @@
+
+* to change the window title in accordance to ssh connections
+--------------------------------------------------------------
+
+
+(1) source:
+    https://blog.no-panic.at/2015/04/21/set-tmux-pane-title-on-ssh-connections/
+
+(2) 
+
+    I am frequently connecting to several servers over SSH at once and like to use tmux to organize those 
+    different sessions. To be able to keep track which pane is which server I am using the following function 
+    in my .bashrc file to display the machine name in tmux’s pane title.
+
+
+    * use this code into .bashrc
+
+    ssh() {
+        if [ "$(ps -p $(ps -p $$ -o ppid=) -o comm=)" = "tmux" ]; then
+            tmux rename-window "$(echo $* | cut -d . -f 1)"
+            command ssh "$@"
+            tmux set-window-option automatic-rename "on" 1>/dev/null
+        else
+            command ssh "$@"
+        fi
+    }
+
+(3) test result
+    - it was successful to change a window-status title, but if you apply this, you re not going to customize the title any more

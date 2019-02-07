@@ -25,3 +25,15 @@ VIM Regular Expression tips
 3. s/\(.*\/\)\([0-9]\{1,2}\)\ \([0-9]\+$\)/add \1\2 \2 \3/
 
     in case of missing from #2, 
+
+
+
+
+General Tips
+============
+
+(1) Compare files over ssh with vimdiff
+     vimdiff config_and_diff_patch/tip_command scp://bgp2.antd.nist.gov//users/kyehwanl/config_and_diff_patch/tip_command
+      or scp://bgp2.antd.nist.gov/~/config_and_diff_patch/tip_command
+     AND (in vim command mode) :vsp scp://ts1/~/Projects/proj-bgp/quaggasrx/test_install/etc/bgpd.conf
+
