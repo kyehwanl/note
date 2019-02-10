@@ -1,0 +1,15 @@
+docker swarm init --advertise-addr 10.1.1.2
+docker network create -d overlay srx-net
+docker service create --name srx_service1 --publish target=179,published=179 --replicas=3 --network srx-net 10.0.50.11:5000/srx 
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
+
+
+
+docker service ps uh7mialkrd3j1rh2vjg2i82xo
+
+docker pull 10.0.50.11:5000/srx
+docker pull 10.0.50.11:5000/srx-swarm
+
+docker service ls
+docker service ps srx_service1
+docker service rm srx_service1
