@@ -931,6 +931,9 @@
 
 (2) create service
 
+	BEFORE creating service, need to be done with 
+	'docker swarm init' from manger and 'docker swarm join' from worker 
+
     docker service create   --name srx_test1 \
                             --mount dst=/etc/quagga/,src=$PWD,type=bind \
                             --mount src=$PWD/keys/,dst=/var/lib/bgpsec-keys/,type=bind \
