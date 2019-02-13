@@ -1,0 +1,23 @@
+
+go errors and solutions
+=======================
+
+1. duplicate of definition when using cgo
+
+$ go build test3.go
+# command-line-arguments
+/tmp/go-build747730768/b001/_x002.o: In function `PrintInternalCall':
+./test3.go:10: multiple definition of `PrintInternalCall'
+/tmp/go-build747730768/b001/_x001.o:/opt/project/gobgp_test/gowork/src/srxapi/test/test3.go:10: first defined here
+collect2: error: ld returned 1 exit status
+
+
+ * (Reason) 
+ 52 // export Serve 
+ 53 func Serve() { 
+    ...
+    }
+
+ * (solution)
+    in line52, commented out with '//' is generally good, but under to use of cgo, it's duplicated with 'func Server()'
+    so need to change '//' with /* */
