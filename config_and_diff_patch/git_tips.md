@@ -396,10 +396,22 @@ Useful Tips
         git commit --amend -m "$(date +"%D %T")"
 
 
+3. gitignore tip : 
+
+  (1) remove binary files, not source file from the index
+
+        bin_filename
+        !bin_filename.[a-z]  --> this might be a source file which has extension of c or go or etc
 
 
+  (2) negation examples
+   A. 
+     **/dir/
+     !**/dir/filename.ext or "filename.[a-z]"
 
+   B. 
+     *.conf
+     !**/srx/**/*.conf
 
-
-
+    (explanation) "Prepending an exclamation mark to a pattern negates it.  If a file matches a pattern, but also matches a negating pattern defined later in the file, it will not be ignored."
 
