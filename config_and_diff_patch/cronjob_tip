@@ -82,7 +82,8 @@ MAILTO=""
 MAILTO=""
 15 0 * * * /users/kyehwanl/Emulab/Shell_Script/github_sync_vm005.sh > /tmp/crontab.log 2>&1
 17 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.sh > /tmp/crontab-exabgp.log 2>&1
-
+19 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.sh  > /tmp/crontab-gobgp.log 2>&1       
+21 20 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_sync_vm005.sh > /tmp/crontab-srx_grpc.log 2>&1 
 
 
 

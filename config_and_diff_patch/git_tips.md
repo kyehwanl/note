@@ -413,5 +413,26 @@ Useful Tips
      *.conf
      !**/srx/**/*.conf
 
-    (explanation) "Prepending an exclamation mark to a pattern negates it.  If a file matches a pattern, but also matches a negating pattern defined later in the file, it will not be ignored."
+    (explanation) "Prepending an exclamation mark to a pattern negates it.  If a file matches a pattern, but 
+    also matches a negating pattern defined later in the file, it will not be ignored."
+
+
+  (3) Debugging .gitignore pattern
+   - If you have complicated .gitignore patterns, or patterns spread over multiple .gitignore files, 
+     it can be difficult to track down why a particular file is being ignored. You can use the git check-ignore command 
+     with the -v (or --verbose) option to determine which pattern is causing a particular file to be ignored:
+
+    $ git check-ignore -v debug.log
+    .gitignore:3:*.log debug.log
+
+
+
+
+
+
+
+
+
+
+
 
