@@ -37,3 +37,6 @@ General Tips
       or scp://bgp2.antd.nist.gov/~/config_and_diff_patch/tip_command
      AND (in vim command mode) :vsp scp://ts1/~/Projects/proj-bgp/quaggasrx/test_install/etc/bgpd.conf
 
+
+(2) split and show list
+    :20vs ./ --> same as Ctrl+e (pluggin function)
