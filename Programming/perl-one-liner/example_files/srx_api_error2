@@ -1,0 +1,211 @@
+NO RECEIPT! 0x54F2CCDF
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x54F2CCDF], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x54F2CCDF]!
+NO RECEIPT! 0x3093A116
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x3093A116], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x3093A116]!
+NO RECEIPT! 0x27E8B555
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x27E8B555], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x27E8B555]!
+NO RECEIPT! 0x54E0929A
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x54E0929A], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x54E0929A]!
+NO RECEIPT! 0xD683EE88
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0xD683EE88], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0xD683EE88]!
+NO RECEIPT! 0xC1F8FACB
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0xC1F8FACB], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0xC1F8FACB]!
+NO RECEIPT! 0x10C620A2
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x10C620A2], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x10C620A2]!
+NO RECEIPT! 0x9B2AEE3D
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0x9B2AEE3D], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0x9B2AEE3D]!
+NO RECEIPT! 0xA2A7D2F8
+2011/09/21 17:19:58 BGP: [bt 0] /srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(zlog_backtrace+0x2b) [0x7f3012f05618]
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0xA2A7D2F8], 1
+2011/09/21 17:19:58 BGP: [bt 1] /srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(_zlog_assert_failed+0xa7) [0x7f3012f05df1]
+2011/09/21 17:19:58 BGP: [bt 2] /srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x4ae03) [0x7f301339de03]
+2011/09/21 17:19:58 BGP: [bt 3] /srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x2ae66) [0x7f301337de66]
+2011/09/21 17:19:58 BGP: [bt 4] /srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(+0x33ea9) [0x7f3012f0dea9]
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0xA2A7D2F8]!
+2011/09/21 17:19:58 BGP: [bt 5] /srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(work_queue_run+0x17e) [0x7f3012f0e090]
+2011/09/21 17:19:58 BGP: [bt 6] /srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0(thread_call+0x67) [0x7f3012efae83]
+NO RECEIPT! 0xB5DCC6BB
+2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0xB5DCC6BB], 1
+2011/09/21 17:19:58 BGP: [bt 7] /srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(main+0x3ce) [0x7f301336dd19]
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0xB5DCC6BB]!
+2011/09/21 17:19:58 BGP: [bt 8] /lib64/libc.so.6(__libc_start_main+0xfd) [0x7f3012078e5d]
+NO RECEIPT! 0xD1BDAB72
+2011/09/21 17:19:58 BGP: [bt 9] /srx/AS50/quagga-0.99.16/bgpd/.libs/lt-bgpd(+0x1a5a9) [0x7f301336d5a9]
+2011/09/21 17:19:58 2011/09/21 17:19:58 BGP: SRx Validation result (Origin): Update [0xD1BDAB72], 1
+2011/09/21 17:19:58 BGP: Remove 'Ignore' flag for update [0xD1BDAB72]!
+ls10.antd [123]{.../quagga-0.99.16/bgpd}->
+ls10.antd [123]{.../quagga-0.99.16/bgpd}->
+l
+
+
+
+-------------------------------------------------------------------------------------------------
+
+
+
+000000000004ae03 <bgp_unlock_node+0x66>:
+bgp_node_delete():
+/srx/AS50/quagga-0.99.16/bgpd/bgp_table.c:373
+{
+  struct bgp_node *child;
+  struct bgp_node *parent;
+
+  assert (node->lock == 0);
+  assert (node->info == NULL);
+   4ae03:       48 83 7e 38 00          cmpq   $0x0,0x38(%rsi)
+   4ae08:       74 1c                   je     4ae26 <bgp_unlock_node+0x89>
+   4ae0a:       48 8d 0d 3f 67 03 00    lea    0x3673f(%rip),%rcx        # 81550 <__func__.9357>
+   4ae11:       ba 75 01 00 00          mov    $0x175,%edx
+   4ae16:       48 8d 35 a3 66 03 00    lea    0x366a3(%rip),%rsi        # 814c0 <__func__.11072+0x60>
+   4ae1d:       48 8d 3d e3 66 03 00    lea    0x366e3(%rip),%rdi        # 81507 <__func__.11072+0xa7>
+   4ae24:       eb d8                   jmp    4adfe <bgp_unlock_node+0x61>
+/srx/AS50/quagga-0.99.16/bgpd/bgp_table.c:375
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+
+Disassembly of section .text:
+
+000000000002ae66 <bgp_processq_del+0x23>:
+bgp_processq_del():
+/srx/AS50/quagga-0.99.16/bgpd/bgp_route.c:1992
+  struct bgp_process_queue *pq = data;
+  struct bgp_table *table = pq->rn->table;
+  
+  bgp_unlock (pq->bgp);
+  bgp_unlock_node (pq->rn);
+  bgp_table_unlock (table);
+   2ae66:       4c 89 e7                mov    %r12,%rdi
+   2ae69:       e8 ff fd 01 00          callq  4ac6d <bgp_table_unlock>
+/srx/AS50/quagga-0.99.16/bgpd/bgp_route.c:1993
+  XFREE (MTYPE_BGP_PROCESS_QUEUE, pq);
+   2ae6e:       48 89 de                mov    %rbx,%rsi
+   2ae71:       bf 6a 00 00 00          mov    $0x6a,%edi
+/srx/AS50/quagga-0.99.16/bgpd/bgp_route.c:1994
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+
+
+/srx/AS50/quagga-0.99.16/lib/.libs/libzebra.so.0:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000033ea9 <work_queue_item_remove+0x6a>:
+work_queue_item_remove():
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:154
+
+  /* call private data deletion callback if needed */  
+  if (wq->spec.del_item_data)
+    wq->spec.del_item_data (wq, item->data);
+
+  list_delete_node (wq->items, ln);
+   33ea9:       49 8b 7c 24 48          mov    0x48(%r12),%rdi
+   33eae:       4c 89 ee                mov    %r13,%rsi
+   33eb1:       e8 da 0e fe ff          callq  14d90 <list_delete_node@plt>
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:158
+  work_queue_item_free (item);
+  
+  return;
+}
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+
+
+
+static void
+work_queue_item_requeue (struct work_queue *wq, struct listnode *ln)
+{
+  LISTNODE_DETACH (wq->items, ln);
+   3404b:       8d 71 ff                lea    -0x1(%rcx),%esi
+   3404e:       89 70 10                mov    %esi,0x10(%rax)
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:164
+  LISTNODE_ATTACH (wq->items, ln); /* attach to end of list */
+   34051:       48 8b 70 08             mov    0x8(%rax),%rsi
+   34055:       48 89 72 08             mov    %rsi,0x8(%rdx)
+   34059:       75 05                   jne    34060 <work_queue_run+0x14e>
+   3405b:       48 89 10                mov    %rdx,(%rax)
+   3405e:       eb 03                   jmp    34063 <work_queue_run+0x151>
+   34060:       48 89 16                mov    %rdx,(%rsi)
+   34063:       48 89 50 08             mov    %rdx,0x8(%rax)
+   34067:       89 48 10                mov    %ecx,0x10(%rax)
+work_queue_run():
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:312
+        }
+      case WQ_REQUEUE:
+        {
+          item->ran--;
+          work_queue_item_requeue (wq, node);
+          break;
+   3406a:       eb 24                   jmp    34090 <work_queue_run+0x17e>
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:318
+        }
+      case WQ_RETRY_NOW:
+        /* a RETRY_NOW that gets here has exceeded max_tries, same as ERROR */
+      case WQ_ERROR:
+        {
+          if (wq->spec.errorfunc)
+   3406c:       48 8b 43 28             mov    0x28(%rbx),%rax
+   34070:       48 85 c0                test   %rax,%rax
+   34073:       74 10                   je     34085 <work_queue_run+0x173>
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:319
+            wq->spec.errorfunc (wq, item);
+   34075:       48 89 55 c8             mov    %rdx,-0x38(%rbp)
+   34079:       48 89 ce                mov    %rcx,%rsi
+   3407c:       48 89 df                mov    %rbx,%rdi
+   3407f:       ff d0                   callq  *%rax
+   34081:       48 8b 55 c8             mov    -0x38(%rbp),%rdx
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:325
+        }
+        /* fall through here is deliberate */
+      case WQ_SUCCESS:
+      default:
+        {
+          work_queue_item_remove (wq, node);
+   34085:       48 89 d6                mov    %rdx,%rsi
+   34088:       48 89 df                mov    %rbx,%rdi
+   3408b:       e8 af fd ff ff          callq  33e3f <work_queue_item_remove>
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:331
+          break;
+        }
+      }
+
+    /* completed cycle */
+    cycles++;
+   34090:       41 ff c4                inc    %r12d
+/srx/AS50/quagga-0.99.16/lib/workqueue.c:334
+
+    /* test if we should yield */
+    if ( !(cycles % wq->cycles.granularity) 
+   34093:       31 d2                   xor    %edx,%edx
+   34095:       44 89 e0                mov    %r12d,%eax
+   34098:       f7 73 5c                divl   0x5c(%rbx)
+   3409b:       85 d2                   test   %edx,%edx
+   3409d:       75 10                   jne    340af <work_queue_r
+-------------------------------------------------------------------------------------------------

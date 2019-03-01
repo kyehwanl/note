@@ -1,0 +1,5 @@
+print('name test2')
+MyName=input()
+print('name tested is ' + MyName)
+print("name's length is")
+print(len(MyName))

@@ -1,0 +1,34 @@
+--- Makefile	2016-01-21 15:53:08.000000000 -0500
++++ Makefile	2016-01-21 15:52:39.000000000 -0500
+@@ -205,10 +205,10 @@ INSTALL_PROGRAM = ${INSTALL}
+ INSTALL_SCRIPT = ${INSTALL}
+ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
+ LD = /usr/bin/ld
+-LDFLAGS = 
++LDFLAGS = -L/bktrace/library/location/directory/
+ LD_ARCH_LOC = 
+ LIBOBJS = 
+-LIBS = -lpthread -lreadline -lrt -ldl -lconfig 
++LIBS = -lpthread -lreadline -lrt -ldl -lconfig -lbktrace
+ LIBTOOL = $(SHELL) $(top_builddir)/libtool
+ LIB_PATRICIA = /tmp/srx-gitsvn/src/../extras/local/lib/libpatricia.a
+ LIB_SCA = 
+
+--- src/server/main.c
++++ src/server/main.c
+@@ -507,6 +507,7 @@ void shutDown()
+  *
+  * @return the exit code.
+  */
++void bt_sighandler(int , struct sigcontext );
+ int main(int argc, const char* argv[])
+ {
+   //bool cleanupRequired = false;
+@@ -515,6 +516,7 @@ int main(int argc, const char* argv[])
+   bool printGoodbye = true;
+   FILE* fp=NULL;
+ 
++  signal(SIGSEGV, bt_sighandler);
+   // By default all messages go to standard error
+   setLogMethodToFile(stderr);
+   setLogLevel(LEVEL_ERROR);

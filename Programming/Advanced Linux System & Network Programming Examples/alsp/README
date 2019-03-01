@@ -1,0 +1,22 @@
+Advanced Linux System & Network Programming 예제 모음
+
+<디렉토리 구조>
+
+alsp
+  |
+  |-- include : 헤더 디렉토리
+  |-- lib     : 사용자 라이브러리 디렉토리
+  +-- src
+       |
+	   |-- 0.preface         : Chapter  0. Preface 예제
+	   |-- 1.process         : Chapter  1. Process 예제
+	   |-- 2.file            : Chapter  2. File 예제
+       |-- 3.text            : Chapter  3. Text 예제
+	   |-- 4.memory          : Chapter  4. Memory 예제
+	   |-- 5.ipc             : Chapter  5. IPC(Inter Process Communication) 예졔
+	   |-- 6.io_interface    : Chapter  6. I/O Interface 예제
+       |-- 7.io_multiplexing : Chapter  7. I/O Multiplexing 예제
+	   |-- 8.pthread         : Chapter  8. POSIX Thread 예제
+	   |-- 9.signal          : Chapter  9. Signal 예제
+	   |-- 10.realtime       : Chapter 10. Realtime extentions 예제
+       +-- appendix          : 부록의 epoll & pthread 예제

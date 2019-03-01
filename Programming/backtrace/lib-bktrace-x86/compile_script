@@ -1,0 +1,3 @@
+libtool --mode=compile gcc -g -c backtrace-callgdb.c 
+libtool --mode=link gcc -o libbktrace.la backtrace-callgdb.lo
+libtool --mode=link gcc -o libbktrace.la backtrace-callgdb.lo -rpath /users/kyehwanl/Programming/backtrace/combined/lib

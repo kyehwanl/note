@@ -1,0 +1,7 @@
+all: 
+	/usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o libtm_rdtsc.lo libtm_rdtsc.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_rdtsc.la libtm_rdtsc.lo -lrt -rpath `pwd`
+
+	@# main program compile
+	@# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
+	@# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/users/kyehwanl/Programming/time-measure/tm-library/.libs/

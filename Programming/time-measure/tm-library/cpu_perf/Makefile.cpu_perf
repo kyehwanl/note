@@ -1,0 +1,3 @@
+all:
+	#gcc -Os -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,${PWD}/.libs
+	gcc -Os -DTARA_DO_PERF -I. -o util_main util_main.c -L./.libs/ -ltm_util -lrt -lcpu_perf_measurement -Wl,-rpath -Wl,${PWD}/.libs

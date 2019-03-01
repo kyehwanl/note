@@ -1,0 +1,151 @@
+==28333== Memcheck, a memory error detector
+==28333== Copyright (C) 2002-2010, and GNU GPL'd, by Julian Seward et al.
+==28333== Using Valgrind-3.6.1 and LibVEX; rerun with -h for copyright info
+==28333== Command: .libs/test_loadKey
+==28333== Parent PID: 12679
+==28333== 
+--28333-- 
+--28333-- Valgrind options:
+--28333--    --leak-check=full
+--28333--    --log-file=memcheck.txt
+--28333--    -v
+--28333-- Contents of /proc/version:
+--28333--   Linux version 2.6.42.9-2.fc15.i686.PAE (mockbuild@x86-18.phx2.fedoraproject.org) (gcc version 4.6.1 20110908 (Red Hat 4.6.1-9) (GCC) ) #1 SMP Mon Mar 5 21:03:10 UTC 2012
+--28333-- Arch and hwcaps: X86, x86-sse1-sse2
+--28333-- Page sizes: currently 4096, max supported 4096
+--28333-- Valgrind library directory: /usr/lib/valgrind
+--28333-- Reading syms from /users/kyehwanl/proj-bgp/extras/srxcryptoapi/.libs/test_loadKey (0x8048000)
+--28333-- Reading syms from /usr/lib/valgrind/memcheck-x86-linux (0x38000000)
+--28333--    object doesn't have a dynamic symbol table
+--28333-- Reading syms from /lib/ld-2.14.1.so (0x4d1e3000)
+--28333-- Reading suppressions file: /usr/lib/valgrind/default.supp
+--28333-- REDIR: 0x4d1fa440 (strlen) redirected to 0x38052c98 (vgPlain_x86_linux_REDIR_FOR_strlen)
+--28333-- REDIR: 0x4d1fa280 (index) redirected to 0x38052c73 (vgPlain_x86_linux_REDIR_FOR_index)
+--28333-- Reading syms from /usr/lib/valgrind/vgpreload_core-x86-linux.so (0x4001000)
+--28333-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-x86-linux.so (0x4003000)
+==28333== WARNING: new redirection conflicts with existing -- ignoring it
+--28333--     new: 0x4d1fa280 (index               ) R-> 0x04007250 index
+==28333== WARNING: new redirection conflicts with existing -- ignoring it
+--28333--     new: 0x4d1fa440 (strlen              ) R-> 0x040076a0 strlen
+--28333-- Reading syms from /lib/libdl-2.14.1.so (0x4d393000)
+--28333-- Reading syms from /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2 (0x401c000)
+--28333-- Reading syms from /usr/local/lib/libconfig.so.9.0.1 (0x415b000)
+--28333--    object doesn't have a symbol table
+--28333-- Reading syms from /lib/libc-2.14.1.so (0x4d205000)
+--28333-- REDIR: 0x4d27ffe0 (memcpy) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27e7f0 (strlen) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27f9f0 (memset) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27e140 (strcmp) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27f600 (bcmp) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27ea60 (strncmp) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27f930 (memmove) redirected to 0x40014a0 (_vgnU_ifunc_wrapper)
+--28333-- REDIR: 0x4d27ebd0 (rindex) redirected to 0x4007080 (rindex)
+--28333-- REDIR: 0x4d27e840 (__GI_strlen) redirected to 0x4007680 (__GI_strlen)
+--28333-- REDIR: 0x4d27a3f0 (malloc) redirected to 0x4006d00 (malloc)
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x406AF62: srxCryptoInit (srxcryptoapi.c:692)
+==28333==    by 0x8049CC1: main (test_loadKey.c:698)
+==28333== 
+--28333-- REDIR: 0x4d2811d0 (strchrnul) redirected to 0x4009570 (strchrnul)
+--28333-- REDIR: 0x4d27a960 (free) redirected to 0x4005e60 (free)
+--28333-- REDIR: 0x4d27b480 (calloc) redirected to 0x40053a0 (calloc)
+--28333-- REDIR: 0x4d27aa80 (realloc) redirected to 0x4006dd0 (realloc)
+--28333-- REDIR: 0x4d27dfd0 (index) redirected to 0x4007160 (index)
+--28333-- REDIR: 0x4d2854f0 (__strlen_sse2_bsf) redirected to 0x4007660 (strlen)
+--28333-- REDIR: 0x4d27e200 (strcpy) redirected to 0x40076e0 (strcpy)
+--28333-- Reading syms from /users/kyehwanl/proj-bgp/extras/srxcryptoapi/bgpsec_openssl/.libs/libSRxBGPSecOpenSSL.so.1.0.2 (0x4567000)
+--28333-- REDIR: 0x4d1fab00 (stpcpy) redirected to 0x4009220 (stpcpy)
+--28333-- REDIR: 0x4d2850f0 (__GI_strncmp) redirected to 0x4007bb0 (__GI_strncmp)
+--28333-- REDIR: 0x4d27fce0 (stpcpy) redirected to 0x4009080 (stpcpy)
+--28333-- REDIR: 0x4d32d640 (__memcpy_ssse3) redirected to 0x40083f0 (memcpy)
+--28333-- REDIR: 0x4d27e900 (strnlen) redirected to 0x4007600 (strnlen)
+--28333-- REDIR: 0x4d32c530 (__memset_sse2) redirected to 0x40093c0 (memset)
+--28333-- REDIR: 0x4d3386e0 (__memcmp_ssse3) redirected to 0x4008fa0 (bcmp)
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x4089769: ASN1_STRING_set (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x40FA7DB: ASN1_mbstring_copy (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x40BA89B: ASN1_STRING_to_UTF8 (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x2: ???
+==28333== 
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x406C0D2: impl_loadKey (crypto_imple.c:410)
+==28333==    by 0x406B730: sca_loadKey (srxcryptoapi.c:1002)
+==28333==    by 0x8049238: testVerify_withPublicKeyInfo (test_loadKey.c:356)
+==28333==    by 0x8049C7B: testOpenssl (test_loadKey.c:661)
+==28333==    by 0x8049DA3: main (test_loadKey.c:717)
+==28333== 
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x4D2467F3: _itoa_word (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D24A129: vfprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D26EC6A: vsnprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0xBEE4A0BC: ???
+==28333== 
+==28333== Use of uninitialised value of size 4
+==28333==    at 0x4D2467E8: _itoa_word (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D24A129: vfprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D26EC6A: vsnprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0xBEE4A0BC: ???
+==28333== 
+--28333-- Discarding syms at 0x45b5e40-0x4661bb8 in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/bgpsec_openssl/.libs/libSRxBGPSecOpenSSL.so.1.0.2 due to munmap()
+==28333== 
+==28333== HEAP SUMMARY:
+==28333==     in use at exit: 572 bytes in 4 blocks
+==28333==   total heap usage: 280 allocs, 276 frees, 28,844 bytes allocated
+==28333== 
+==28333== Searching for pointers to 4 not-freed blocks
+==28333== Checked 85,432 bytes
+==28333== 
+==28333== LEAK SUMMARY:
+==28333==    definitely lost: 0 bytes in 0 blocks
+==28333==    indirectly lost: 0 bytes in 0 blocks
+==28333==      possibly lost: 0 bytes in 0 blocks
+==28333==    still reachable: 572 bytes in 4 blocks
+==28333==         suppressed: 0 bytes in 0 blocks
+==28333== Reachable blocks (those to which a pointer was found) are not shown.
+==28333== To see them, rerun with: --leak-check=full --show-reachable=yes
+==28333== 
+==28333== Use --track-origins=yes to see where uninitialised values come from
+==28333== ERROR SUMMARY: 17 errors from 5 contexts (suppressed: 19 from 10)
+==28333== 
+==28333== 1 errors in context 1 of 5:
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x406C0D2: impl_loadKey (crypto_imple.c:410)
+==28333==    by 0x406B730: sca_loadKey (srxcryptoapi.c:1002)
+==28333==    by 0x8049238: testVerify_withPublicKeyInfo (test_loadKey.c:356)
+==28333==    by 0x8049C7B: testOpenssl (test_loadKey.c:661)
+==28333==    by 0x8049DA3: main (test_loadKey.c:717)
+==28333== 
+==28333== 
+==28333== 1 errors in context 2 of 5:
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x406AF62: srxCryptoInit (srxcryptoapi.c:692)
+==28333==    by 0x8049CC1: main (test_loadKey.c:698)
+==28333== 
+==28333== 
+==28333== 2 errors in context 3 of 5:
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x4089769: ASN1_STRING_set (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x40FA7DB: ASN1_mbstring_copy (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x40BA89B: ASN1_STRING_to_UTF8 (in /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxCryptoAPI.so.1.0.2)
+==28333==    by 0x2: ???
+==28333== 
+==28333== 
+==28333== 6 errors in context 4 of 5:
+==28333== Use of uninitialised value of size 4
+==28333==    at 0x4D2467E8: _itoa_word (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D24A129: vfprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D26EC6A: vsnprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0xBEE4A0BC: ???
+==28333== 
+==28333== 
+==28333== 7 errors in context 5 of 5:
+==28333== Conditional jump or move depends on uninitialised value(s)
+==28333==    at 0x4D2467F3: _itoa_word (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D24A129: vfprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0x4D26EC6A: vsnprintf (in /lib/libc-2.14.1.so)
+==28333==    by 0xBEE4A0BC: ???
+==28333== 
+--28333-- 
+--28333-- used_suppression:     19 U1004-ARM-_dl_relocate_object
+==28333== 
+==28333== ERROR SUMMARY: 17 errors from 5 contexts (suppressed: 19 from 10)

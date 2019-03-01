@@ -1,0 +1,62 @@
+AC_PREREQ([2.63])
+AC_INIT([SRx], [0.3.0.1], [bgpsrx-dev@nist.gov])
+AC_PROG_MAKE_SET
+AC_CONFIG_MACRO_DIR([m4])
+
+have_ltdl=no
+AC_SEARCH_LIBS([lt_dlopen], [ltdl], [have_ltdl=yes])
+
+AC_MSG_CHECKING([ srx cryptoapi testing])
+CFLAGS="$CFLAGS -I/tmp/nist-srx-bundle-22-0.4.1.3/srxcryptoapi-0.1.1.1/test_install/include"
+LDFLAGS="$LDFLAGS -L/tmp/nist-srx-bundle-22-0.4.1.3/srxcryptoapi-0.1.1.1/test_install/lib/"
+save_libs="$LIBS"
+
+if test "x${have_ltdl}" = xyes; then
+  LIBS="$LIBS -lssl -lcrypto -lconfig -lltdl -lSRxCryptoAPI"
+else
+  LIBS="$LIBS -lssl -lcrypto -lconfig -ldl -lSRxCryptoAPI"
+fi
+#AC_RUN_IFELSE( [AC_LANG_PROGRAM([[
+AC_LINK_IFELSE( [AC_LANG_PROGRAM([[
+                #include <srxcryptoapi.h>
+                ]],
+                [[
+                 BGPSecKey *outKeyInfo=0;
+                 sca_loadKey(outKeyInfo, 0 );
+                 ]])],
+                 [AC_MSG_RESULT(srxcprytoapi found and link success -- yes)],
+                 [AC_MSG_RESULT(srxcryptoapi found and link success -- no)]
+                 )
+
+AC_MSG_CHECKING([for SRxCryptoAPI in -lSRxCryptoAPI (alternate version)])
+
+header_ltdl=no
+AC_COMPILE_IFELSE(
+                  [AC_LANG_PROGRAM( [[
+                   #include<ltdl.h>
+                   ]],
+                   [[ ]])],
+                  [header_ltdl=yes],[]
+                  )
+AC_MSG_RESULT()
+AC_MSG_RESULT(checking for header ltdl ... $header_ltdl )
+if test "x$header_ltdl" = xyes; then
+  AC_LINK_IFELSE(
+                 [AC_LANG_PROGRAM( [[ 
+                  #include<srxcryptoapi.h>
+                  #include<ltdl.h>
+                  ]],
+                  [[
+                   #ifndef lt__PROGRAM__LTX_preloaded_symbols
+                   #define lt_preloaded_symbols    lt_libltdl_LTX_preloaded_symbols
+                   extern LT_DLSYM_CONST lt_dlsymlist lt_libltdl_LTX_preloaded_symbols[];
+                   #endif
+                   SRxCryptoAPI *g_capi;
+                   srxCryptoInit(g_capi);
+                   ]])],
+                   [AC_MSG_RESULT(found)],
+                   [LIBS="$save_libs"
+                    AC_MSG_ERROR([ error occurred -- need to compile with the patch file  ])]
+                   )
+fi
+AC_OUTPUT

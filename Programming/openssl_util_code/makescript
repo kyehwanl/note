@@ -1,0 +1,2 @@
+gcc -O0 -g -Wall  -I/usr/local/ssl/include/ -c ecdsatest.c
+gcc -O0 -g -Wall -I/usr/local/ssl/include/ -o ecdsatest ecdsatest.o  -ldl -L/usr/local/ssl/lib  -lssl -lcrypto

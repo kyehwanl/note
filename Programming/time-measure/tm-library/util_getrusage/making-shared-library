@@ -1,0 +1,61 @@
+
+
+# making script - srxcryptoapi
+
+:!make all install
+/bin/sh ../libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..     -g -O0 -Wall  -I.  -I/usr/local/ssl/include -MT bgpsec_openssl.lo -MD -MP -MF .deps/bgpsec_openssl.Tpo -c -o bgpsec_openssl.lo bgpsec_openssl.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -g -O0 -Wall -I. -I/usr/local/ssl/include -MT bgpsec_openssl.lo -MD -MP -MF .deps/bgpsec_openssl.Tpo -c bgpsec_openssl.c  -fPIC -DPIC -o .libs/bgpsec_openssl.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -g -O0 -Wall -I. -I/usr/local/ssl/include -MT bgpsec_openssl.lo -MD -MP -MF .deps/bgpsec_openssl.Tpo -c bgpsec_openssl.c -o bgpsec_openssl.o >/dev/null 2>&1
+mv -f .deps/bgpsec_openssl.Tpo .deps/bgpsec_openssl.Plo
+/bin/sh ../libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -I/usr/local/ssl/include  -version-info 1:2:0 -module   -o libSRxBGPSecOpenSSL.la -rpath /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib bgpsec_openssl.lo -lssl -lcrypto -lconfig -ldl
+libtool: link: rm -fr  .libs/libSRxBGPSecOpenSSL.a .libs/libSRxBGPSecOpenSSL.la .libs/libSRxBGPSecOpenSSL.lai .libs/libSRxBGPSecOpenSSL.so .libs/libSRxBGPSecOpenSSL.so.1 .libs/libSRxBGPSecOpenSSL.so.1.0.2
+libtool: link: gcc -shared  -fPIC -DPIC  .libs/bgpsec_openssl.o   -lssl -lcrypto -lconfig -ldl  -O0   -Wl,-soname -Wl,libSRxBGPSecOpenSSL.so.1 -o .libs/libSRxBGPSecOpenSSL.so.1.0.2
+libtool: link: (cd ".libs" && rm -f "libSRxBGPSecOpenSSL.so.1" && ln -s "libSRxBGPSecOpenSSL.so.1.0.2" "libSRxBGPSecOpenSSL.so.1")
+libtool: link: (cd ".libs" && rm -f "libSRxBGPSecOpenSSL.so" && ln -s "libSRxBGPSecOpenSSL.so.1.0.2" "libSRxBGPSecOpenSSL.so")
+libtool: link: ar cru .libs/libSRxBGPSecOpenSSL.a  bgpsec_openssl.o
+libtool: link: ranlib .libs/libSRxBGPSecOpenSSL.a
+libtool: link: ( cd ".libs" && rm -f "libSRxBGPSecOpenSSL.la" && ln -s "../libSRxBGPSecOpenSSL.la" "libSRxBGPSecOpenSSL.la" )
+make[1]: Entering directory `/users/kyehwanl/proj-bgp/extras/srxcryptoapi/bgpsec_openssl'
+test -z "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib" || /bin/mkdir -p "/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib"
+ /bin/sh ../libtool   --mode=install /usr/bin/install -c   libSRxBGPSecOpenSSL.la '/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib'
+libtool: install: /usr/bin/install -c .libs/libSRxBGPSecOpenSSL.so.1.0.2 /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxBGPSecOpenSSL.so.1.0.2
+libtool: install: (cd /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib && { ln -s -f libSRxBGPSecOpenSSL.so.1.0.2 libSRxBGPSecOpenSSL.so.1 || { rm -f libSRxBGPSecOpenSSL.so.1 && ln -s libSRxBGPSecOpenSSL.so.1.0.2 libSRxBGPSecOpenSSL.so.1; }; })
+libtool: install: (cd /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib && { ln -s -f libSRxBGPSecOpenSSL.so.1.0.2 libSRxBGPSecOpenSSL.so || { rm -f libSRxBGPSecOpenSSL.so && ln -s libSRxBGPSecOpenSSL.so.1.0.2 libSRxBGPSecOpenSSL.so; }; })
+libtool: install: /usr/bin/install -c .libs/libSRxBGPSecOpenSSL.lai /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxBGPSecOpenSSL.la
+libtool: install: /usr/bin/install -c .libs/libSRxBGPSecOpenSSL.a /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxBGPSecOpenSSL.a
+libtool: install: chmod 644 /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxBGPSecOpenSSL.a
+libtool: install: ranlib /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/libSRxBGPSecOpenSSL.a
+libtool: finish: PATH="/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/sbin" ldconfig -n /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib
+----------------------------------------------------------------------
+Libraries have been installed in:
+   /users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+----------------------------------------------------------------------
+make[1]: Nothing to be done for `install-data-am'.
+make[1]: Leaving directory `/users/kyehwanl/proj-bgp/extras/srxcryptoapi/bgpsec_openssl'
+
+
+
+
+
+
+# making driver(main)
+
+
+gcc -DHAVE_CONFIG_H -DSYSCONFDIR=\"/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/etc/\"  -I. -I/users/kyehwanl/proj-bgp/quaggasrx -I/users/kyehwanl/proj-bgp/quaggasrx/lib   -g -O0 -Wall -g -O0 -Wall  -MT perf_test.o -MD -MP -MF .deps/perf_test.Tpo -c -o perf_test.o `test -f 'perf_test.c' || echo './'`perf_test.c
+mv -f .deps/perf_test.Tpo .deps/perf_test.Po
+/bin/sh ./libtool --tag=CC   --mode=link gcc -g -O0 -Wall -g -O0 -Wall  -L. -L/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -L/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/  -o perf_test perf_test.o -lzebra -lSRxCryptoAPI -lconfig -ldl  -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/
+libtool: link: gcc -g -O0 -Wall -g -O0 -Wall -o .libs/perf_test perf_test.o -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/  -L. -L/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -L/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib/ /users/kyehwanl/proj-bgp/quaggasrx/test_install/lib/libzebra.so -L/usr/local/ssl/lib -lcrypt -lpthread -lrt /users/kyehwanl/proj-bgp/extras/srxcryptoapi/.libs/libSRxCryptoAPI.so -lssl -lcrypto -lconfig -ldl -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/quaggasrx/test_install/lib -Wl,-rpath -Wl,/users/kyehwanl/proj-bgp/extras/srxcryptoapi/test_install/lib
