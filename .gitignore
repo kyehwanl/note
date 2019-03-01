@@ -98,3 +98,14 @@ AS50/srx/extras/local/share
 AS50/srx/extras/files/libconfig-1.4.1
 AS50/srx/extras/files/Net-Patricia-1.15
 .nfs*
+**/grpc/
+**/callgrind.*
+**/*100k
+**/*10k
+*.zip
+*.jpg
+XML_visual_quick_examples
+**/openssl_util_code/*test
+**/openssl_util_code/*test1
+**/openssl_util_code/util_openssl 
+XML_visual_quick_examples
