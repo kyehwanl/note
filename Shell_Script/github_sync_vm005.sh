@@ -15,7 +15,7 @@ rsync -avPuiz --delete note0/config_and_diff_patch/ note/config_and_diff_patch/
 rsync -avPuiz --delete note0/Shell_Script/ note/Shell_Script/
 rsync -avPuiz --delete note0/DEBUGGING_NOTE/ note/DEBUGGING_NOTE/
 rsync -avPuiz --delete note0/Documents/ note/Documents/
-rsync -avPuiz --delete note0/Programming/ note/Programming/ --exclude='.git*'
+rsync -avPuiz --delete note0/Programming/ note/Programming/ --exclude='.git'
 
 cd note
 git add --all ./
