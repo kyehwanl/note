@@ -251,6 +251,7 @@ press '-' on gdb running (tui enable|disable)
 2. lsof -p <PID>    lsof  -u (uid)
 3. lsof -i[tcp|udp][@address or ip][:port]
   (example) lsof -i:6633    lsof -iTCP(|UDP)@security.kaist.ac.kr:smtp
+4. lsof | grep "file.name" (plus, ps aux | grep PID): to look into where and who already opens the file
 
 
 (21) dynamic-loader(ld.so) search path
