@@ -428,7 +428,16 @@ Useful Tips
 
 
 
+4. git clone  
+    (1) cloning to a specific folder
+    git clone <repo> <directory> 
 
+    (2) cloning a specific tag
+    git clone --branch <tag> <repo>
+
+    (3) shallow clone (the history of commits specified by the option ,depth)
+    git clone -depth=1 <repo>    ( depth=1, most recent commit)
+    
 
 
 
