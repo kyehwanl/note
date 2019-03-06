@@ -50,3 +50,16 @@ B. make install DESTDIR=/usr/local/stow/foo, install binaries in
         /usr/local/stow/foo/usr/local/bin
         [ DESTDIR + configure_prefix + /bin ]
 
+
+
+
+4. archive
+===========
+  A. creation
+        ar crus <archive-file> <object-files> [object-files...]
+
+  B. view
+        ar t <archive-file>
+
+  C. extract 
+        ar x <archive-file> [object-files]
