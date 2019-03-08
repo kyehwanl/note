@@ -40,3 +40,12 @@ General Tips
 
 (2) split and show list
     :20vs ./ --> same as Ctrl+e (pluggin function)
+
+
+(3) capitalize first letter of each word
+    :s/\<./\u&/g
+    
+      \<   : beginning of a word
+      .    : matches the first character of a word
+      \u   : make next character uppercase
+      &    : matched pattern on left side
