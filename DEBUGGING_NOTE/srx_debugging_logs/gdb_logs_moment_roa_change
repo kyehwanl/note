@@ -1,0 +1,68 @@
+
+
+
+1. Here are the moment and places where the ROA value changed in UpdateCache Entry (cEntry)
+===========================================================================================
+
+A.  How To Use Hardware Watch In GDB
+    (gdb) p cEntry ->srxResult.roaResult                             
+    $19 = 3 '\003'                                                   
+    (gdb) p &cEntry ->srxResult.roaResult                            
+    $20 = (uint8_t *) 0x7fffd0000994 "\003\003"                      
+    (gdb) watch *((uint8_t *) 0x7fffd0000994) != 3                   
+    Hardware watchpoint 3: *((uint8_t *) 0x7fffd0000994) != 3 
+
+
+
+B. After Hitting The Watch
+
+    modifyUpdateResult (self=self@entry=0x631240 <updCache>, updateID=updateID@entry=0x7fffd40009b0,            
+        result=result@entry=0x7fffeaffcd10, suppressNotification=suppressNotification@entry=false)              
+        at server/update_cache.c:730                                                                            
+    730             valRes.valResult.roaResult = result->roaResult;                                             
+    (gdb) bt                                                                                                    
+    #0  modifyUpdateResult (self=self@entry=0x631240 <updCache>, updateID=updateID@entry=0x7fffd40009b0,        
+        result=result@entry=0x7fffeaffcd10, suppressNotification=suppressNotification@entry=false)              
+        at server/update_cache.c:730                                                                            
+    #1  0x000000000040b57c in notifyUpdateCacheForROAChange (updCache=0x631240 <updCache>,                      
+        updateID=updateID@entry=0x7fffd40009b0, newROAResult=newROAResult@entry=SRx_RESULT_VALID,               
+        suppressNotification=suppressNotification@entry=false) at server/prefix_cache.c:2010                    
+    #2  0x000000000040b99b in _performUpdateValidation_PrefixNotCovered (self=0x631100 <prefixCache>,           
+        pcUpdate=0x7fffd40009b0, pcPrefix=0x7fffe40009b0) at server/prefix_cache.c:732                          
+    #3  _performUpdateValidationKnownPrefix (self=0x631100 <prefixCache>, self@entry=0x7fffd0000db4,            
+        pcUpdate=0x7fffd40009b0, as=65011, isNew=false) at server/prefix_cache.c:841                            
+    #4  0x000000000040c4fe in requestUpdateValidation (self=0x7fffd0000db4,                                     
+        updateID=updateID@entry=0x7fffeaffcdcc, prefix=prefix@entry=0x7fffd40008c0, as=<optimized out>)         
+        at server/prefix_cache.c:605                                                                            
+    #5  0x0000000000404e3d in _processUpdateValidation (item=0x7fffd0000db0, cmdHandler=0x630ea0 <cmdHandler>)  
+        at server/command_handler.c:413                                                                         
+    #6  handleCommands (arg=0x630ea0 <cmdHandler>) at server/command_handler.c:567                              
+    #7  0x00007ffff72e9dd5 in start_thread () from /lib64/libpthread.so.0                                       
+    #8  0x00007ffff5ecbead in clone () from /lib64/libc.so.6                                                    
+
+    (gdb) p cEntry ->srxResult                                                                                  
+    $21 = {roaResult = 0 '\000', bgpsecResult = 3 '\003'}                                                       
+    (gdb) p result->roaResult                                                                                   
+    $22 = 0 '\000'                                                                                              
+    (gdb) p valRes .valResult .roaResult                                                                        
+    $23 = 3 '\003'                                                                                              
+    (gdb) p *((uint8_t *) 0x7fffd0000994)                                                                       
+    $25 = 0 '\000' 
+
+
+
+C. Conclusion
+    
+    (1) when received first update request:  _handlePacket -> processValidationRequest 
+
+    (2) when CommandHandler thread processed the queued item, verifyRequest, which was stored processValidationRequest
+        And then, calls requestUpdateValidation for RPKI handler thread to take care of the request
+        At this time, if the RPKI client has the connection with RPKI rtr server and received the ROA result, UpdateCache was already reflected 
+        with the validation result of the obtained ROA result.
+
+    (3) from the second, requestUpdateValidation calls modifiUpdateResutl through serveral calls ()described in gdb above) 
+        And then changed ROA result. 
+
+    (4) later, modifyUpdateChange calls resChangedCallback function, which was declared as handleUpdateResultChange, which calls in turn 
+        broadcastResult to send the modified values to the clients
+        
