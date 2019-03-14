@@ -49,3 +49,7 @@ General Tips
       .    : matches the first character of a word
       \u   : make next character uppercase
       &    : matched pattern on left side
+
+
+(4) Environment variable TERM change at starting 
+    $ TERM=screen-256color vim <file>
