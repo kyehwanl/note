@@ -41,6 +41,8 @@ highlight {*.spec,*.spec.*,*.rpm} cterm=none ctermfg=1 ctermbg=default
 highlight {*.la} cterm=none ctermfg=28 ctermbg=default
 highlight {*.tar.gz} cterm=none ctermfg=9 ctermbg=default
 highlight {*.conf,*.conf.*,*.log} cterm=none ctermfg=187 ctermbg=default
+highlight {*.go} cterm=none ctermfg=116 ctermbg=default
+highlight {*.so} cterm=none ctermfg=243 ctermbg=default
 
 "highlight /^.*\.(mp3|ogg|oga|flac|m4a)$/ ctermfg=magenta
 "highlight /^.*\.(jpg|jpeg|png|gif|tiff|webp|bmp|svg|svgz)$/ ctermfg=yellow

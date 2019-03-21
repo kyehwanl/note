@@ -150,6 +150,8 @@ command gl !!git lgodb
 command gb !!git branch
 command gc !!git checkout %a
 command git !!git %a
+command hex !!hexdump -C %f
+command gdb gdb --args %f %a
 
 filter '(\.([sl])?o|\.a|.*~)$'
 " in cpoptions(cpo), 't' enables 'tab' to switch between panes like space, otherwise forward in history. so 't' is opted out
@@ -381,7 +383,7 @@ set vifminfo=dhistory,savedirs,chistory,state,tui,shistory,
 "
 " windo filter! /^.*\.(lo|o|d|class|py[co])$|.*~$/
 " filter '(o|.*~)$' 
-filter '(\.([Pl])?o|\.a|out|.*~)$'
+filter '(\.([Pl])?o|\.a|out|.*~|.pyc)$'
 
 " ------------------------------------------------------------------------------
 
