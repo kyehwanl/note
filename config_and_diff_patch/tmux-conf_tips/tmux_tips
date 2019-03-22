@@ -89,10 +89,10 @@ tmux tips
  
 
 
-2. split panes into windows or move a pane 
--------------------------------------------
+2. split panes into windows or move a pane to another window
+------------------------------------------------------------
 
-  (1) break the pane out via break-pane. This is bound to <prefix> ! by default 
+  (1) break the pane out via break-pane. This is bound to "<prefix> + !" by default 
         if "Can't break with only one pane", then make another pane and then break
     
     
@@ -128,15 +128,15 @@ tmux tips
 
 
 
-3. get and move to a number of windows and panes
--------------------------------------------------
+3. get and change focus to a certain window or panae 
+----------------------------------------------------
 
   (1) get a number 
     <prefix> q : show pane numbers
     <prefix> w : get current windows list
 
 
-  (2) move to 
+  (2) change focus to 
     window - <C-B> <number>
     pane - hit the pane number while displaying the pane number by '<preifx>+q'
 
