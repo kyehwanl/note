@@ -3,7 +3,7 @@ echo "srx gprc sync with github..."
 cd /tmp
 git clone https://github.com/kyehwanl/srx_grpc.git srx_grpc
 
-cp -rf /opt/project/gobgp_test/gowork/src/srx_grpc /tmp/srx_grpc0
+git clone /opt/project/gobgp_test/gowork/src/srx_grpc /tmp/srx_grpc0
 rsync -avPuiz --delete srx_grpc0/ srx_grpc/ --exclude='.git'
 
 cd srx_grpc

@@ -57,12 +57,12 @@ C. Conclusion
 
     (2) when CommandHandler thread processed the queued item, verifyRequest, which was stored processValidationRequest
         And then, calls requestUpdateValidation for RPKI handler thread to take care of the request
-        At this time, if the RPKI client has the connection with RPKI rtr server and received the ROA result, UpdateCache was already reflected 
-        with the validation result of the obtained ROA result.
+        At this time, if the RPKI client has the connection with RPKI rtr server and received the ROA result, 
+        UpdateCache was already reflected with the validation result of the obtained ROA result.
 
-    (3) from the second, requestUpdateValidation calls modifiUpdateResutl through serveral calls ()described in gdb above) 
+    (3) from the second, requestUpdateValidation calls modifiUpdateResult through serveral calls (described in gdb above) 
         And then changed ROA result. 
 
-    (4) later, modifyUpdateChange calls resChangedCallback function, which was declared as handleUpdateResultChange, which calls in turn 
-        broadcastResult to send the modified values to the clients
+    (4) later, modifiUpdateResult calls resChangedCallback function, which was declared as handleUpdateResultChange, 
+        which calls in turn broadcastResult to send the modified values to the clients
         
