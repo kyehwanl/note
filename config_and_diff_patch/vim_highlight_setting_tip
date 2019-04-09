@@ -6,3 +6,17 @@
         :hi CursorLine ctermbg=235 guibg=Grey40
         :hi SpecialKey term=bold cterm=bold ctermfg=240 ctermbg=235 guifg=Blue
 
+
+
+2. syntax-loading : highlight for comments
+    (https://en.wikipedia.org/wiki/Comment_%28computer_programming%29#Tags)
+
+  Types:
+        TODO
+        FIXME
+        XXX : warn other programmers of problematic or misguiding code
+        BUG
+        NOTE
+        
+        HACK    --> unavailable
+        UNDONE  --> unavailable
