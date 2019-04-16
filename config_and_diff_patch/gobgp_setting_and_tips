@@ -434,14 +434,26 @@ Debugging
 
     3. gRPC install
     ---------------
+        3.0. Need to set GOPATH into environment variable
+             (GOPATH has normally /bin /src /pkg directories)
+
 
         3.1 install protocol buffer compiler, "protoc" 
+            (1) download from https://github.com/protocolbuffers/protobuf/releases
+            (2) simply place this binary(protoc) somewhere in your PATH
+            (3) And place 'include' folder to somewhere CFLAGS is able to find (ex. /usr/include or /usr/local/include)
+            ** current version used
+                protoc-3.6.1-linux-x86_64.zip
+
             Here: https://github.com/protocolbuffers/protobuf/releases/tag/v3.6.1
             https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
             https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_32.zip
 
-        3.2 install Go protocol buffer plugin
+
+        3.2 install Go protocol buffer plugin and grpc-go
             go get -u github.com/golang/protobuf/protoc-gen-go
+            go get -u google.golang.org/grpc
+
 
         3.3 protocol buffer with gRPC compile:
             protoc -I=$SRC_DIR --go_out=$DST_DIR $SRC_DIR/filename.proto                (without gRPC)
@@ -457,6 +469,7 @@ Debugging
 
             vmware.005-antd [1003]{.../gobgp/api}-> protoc --version
             libprotoc 3.6.1 
+
 
 
 

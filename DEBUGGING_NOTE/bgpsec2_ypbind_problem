@@ -1,0 +1,10 @@
+
+1. Issues
+    unable to access Bgpsec2 server 
+
+
+2. Solution
+    login with 'maintenance' password: 'QuaggaSRx01!'
+
+    command : sudo service ypbind restart
+
