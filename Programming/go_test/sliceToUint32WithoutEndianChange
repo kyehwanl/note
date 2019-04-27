@@ -1,0 +1,13 @@
+
+1. using unsafe.Pointer, convert []byte slice to uint32 integer value
+---------------------------------------------------------------------
+
+resp := pb.ProxyVerifyNotify{                           
+    Type:         uint32(b[0]),                         
+    ResultType:   uint32(b[1]),                         
+    RoaResult:    uint32(b[2]),                         
+    BgpsecResult: uint32(b[3]),                         
+    Length:       *((*uint32)(unsafe.Pointer(&b[4]))),  
+    RequestToken: *((*uint32)(unsafe.Pointer(&b[8]))),  
+    UpdateID:     *((*uint32)(unsafe.Pointer(&b[12]))), 
+}                                                       
