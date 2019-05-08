@@ -1,0 +1,21 @@
+
+
+error: Class not found: org.eclipse.jdt.core.JDTCompilerAdapter
+
+<Solution>
+ source: https://jazz.net/forum/questions/18959/class-not-found-orgeclipsejdtcorejdtcompileradapter
+
+    You can download it from Eclipse site: 
+    http://download.eclipse.org/eclipse/downloads/drops/R-3.4.2-200902111700/index.php
+    Look for &quot;JDT Core Batch Compiler&quot;.
+
+    Then, add it under Ant tab of your Build Defintion as an Ant argument. 
+    Something like this: -lib %path%\ecj-3.4.2.jar
+
+
+<What I did>
+
+1. Download jar
+  curl -k -O http://archive.eclipse.org/eclipse/downloads/drops/R-3.4.2-200902111700/ecj-3.4.2.ja
+2. ant command
+ ant -lib $PWD/ecj-3.4.2.jar
