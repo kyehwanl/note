@@ -1,0 +1,38 @@
+https://buckbuild.com/setup/getting_started.html
+
+
+Prerequisites
+To manually build Buck, download and install the following prerequisites:
+
+  Oracle Java Development Kit version 8 (support for future versions is in the works)
+  Apache Ant 1.9 (or newer)
+  Python 2.7
+  Git
+  Watchman
+      With watchman, Buck will use a daemon which will prevent Buck from parsing all of your build 
+      files every time and cache some other things as well. It is strongly recommended that you install Watchman.
+
+
+
+   You can use your distro's package manager (e.g., apt) to install many of the prerequisites on Linux. For example on Ubuntu 16.04, you can run the following:
+
+
+  sudo apt-get update
+  sudo apt-get install default-jdk ant python2 git
+  # install watchman as stated in the watchman prerequisite link above
+
+
+
+Build
+Once you have the above tools installed, you can build Buck as follows:
+
+  git clone https://github.com/facebook/buck.git
+  cd buck
+  ant
+  ./bin/buck build --show-output buck
+  buck-out/gen/programs/buck.pex --help
+
+
+
+
+

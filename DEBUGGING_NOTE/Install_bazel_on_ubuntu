@@ -1,0 +1,51 @@
+https://docs.bazel.build/versions/master/install-ubuntu.html#install-with-installer-ubuntu
+
+
+
+Using Bazel custom APT repository
+  Step 1: Install the JDK
+  Install JDK 8:
+
+  sudo apt-get install openjdk-8-jdk
+  On Ubuntu 14.04 LTS you must use a PPA:
+
+  sudo add-apt-repository ppa:webupd8team/java
+  sudo apt-get update && sudo apt-get install oracle-java8-installer
+  Step 2: Add Bazel distribution URI as a package source
+  Note: This is a one-time setup step.
+
+  echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+  curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+  If you want to install the testing version of Bazel, replace stable with testing.
+
+  Step 3: Install and update Bazel
+  sudo apt-get update && sudo apt-get install bazel
+  Once installed, you can upgrade to a newer version of Bazel with the following command:
+
+  sudo apt-get install --only-upgrade bazel
+
+
+Installing using binary installer
+The binary installers are on Bazel’s GitHub releases page.
+
+The installer contains the Bazel binary. Some additional libraries must also be installed for Bazel to work.
+
+  Step 1: Install required packages
+  First, install the prerequisites: pkg-config, zip, g++, zlib1g-dev, unzip, and python.
+
+  sudo apt-get install pkg-config zip g++ zlib1g-dev unzip python
+  Step 2: Download Bazel
+  Next, download the Bazel binary installer named bazel-<version>-installer-linux-x86_64.sh from the Bazel releases page on GitHub.
+
+  Step 3: Run the installer
+  Run the Bazel installer as follows:
+
+  chmod +x bazel-<version>-installer-linux-x86_64.sh
+  ./bazel-<version>-installer-linux-x86_64.sh --user
+  The --user flag installs Bazel to the $HOME/bin directory on your system and sets the .bazelrc path to $HOME/.bazelrc. Use the --help command to see additional installation options.
+
+  Step 4: Set up your environment
+  If you ran the Bazel installer with the --user flag as above, the Bazel executable is installed in your $HOME/bin directory. It’s a good idea to add this directory to your default paths, as follows:
+
+  export PATH="$PATH:$HOME/bin"
+  You can also add this command to your ~/.bashrc file.
