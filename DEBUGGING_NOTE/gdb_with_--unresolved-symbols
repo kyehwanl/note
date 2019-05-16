@@ -1,0 +1,4 @@
+
+if a binary was compiled with "--unresolved-symbols" options, then gdb has some problem when running.
+
+Then What about using "LD_PRELOAD=<path>/library gdb <target>" ??

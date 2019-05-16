@@ -1,0 +1,16 @@
+
+Download ONOS:
+    $ git clone https://github.com/opennetworkinglab/onos.git
+
+Setup ONOS Environment Variables:
+    $ echo '. ~/onos/tools/dev/bash_profile' >> ~/.bashrc
+    $ source ~/.bashrc
+
+
+Running ONOS single instance using buck or bazel:
+    $ cd onos
+    ~/onos$ buck run onos-local -- clean debug
+    OR
+    ~/onos$ bazel run onos-local -- clean debug
+
+Wait until the running log stops
