@@ -1,8 +1,10 @@
-https://docs.bazel.build/versions/master/install-ubuntu.html#install-with-installer-ubuntu
 
+https://docs.bazel.build/versions/master/install-ubuntu.html
 
 
 Using Bazel custom APT repository
+----------------------------------
+
   Step 1: Install the JDK
     Install JDK 8:
 
@@ -27,26 +29,76 @@ Using Bazel custom APT repository
 
 
 Installing using binary installer
+---------------------------------
 The binary installers are on Bazel’s GitHub releases page.
-
 The installer contains the Bazel binary. Some additional libraries must also be installed for Bazel to work.
 
   Step 1: Install required packages
-  First, install the prerequisites: pkg-config, zip, g++, zlib1g-dev, unzip, and python.
+    First, install the prerequisites: pkg-config, zip, g++, zlib1g-dev, unzip, and python.
 
-  sudo apt-get install pkg-config zip g++ zlib1g-dev unzip python
+        sudo apt-get install pkg-config zip g++ zlib1g-dev unzip python
+
   Step 2: Download Bazel
-  Next, download the Bazel binary installer named bazel-<version>-installer-linux-x86_64.sh from the Bazel releases page on GitHub.
+    Next, download the Bazel binary installer named bazel-<version>-installer-linux-x86_64.sh from the Bazel releases page on GitHub.
+
+    -->  I downloaded "bazel-0.25.1-installer-linux-x86_64.sh"
+
 
   Step 3: Run the installer
-  Run the Bazel installer as follows:
+    Run the Bazel installer as follows:
 
-  chmod +x bazel-<version>-installer-linux-x86_64.sh
-  ./bazel-<version>-installer-linux-x86_64.sh --user
-  The --user flag installs Bazel to the $HOME/bin directory on your system and sets the .bazelrc path to $HOME/.bazelrc. Use the --help command to see additional installation options.
+        chmod +x bazel-<version>-installer-linux-x86_64.sh
+        ./bazel-<version>-installer-linux-x86_64.sh --user
+
+    The --user flag installs Bazel to the $HOME/bin directory on your system and sets the .bazelrc path to $HOME/.bazelrc. 
+    Use the --help command to see additional installation options.
 
   Step 4: Set up your environment
-  If you ran the Bazel installer with the --user flag as above, the Bazel executable is installed in your $HOME/bin directory. It’s a good idea to add this directory to your default paths, as follows:
+    If you ran the Bazel installer with the --user flag as above, the Bazel executable is installed in your $HOME/bin directory. 
+    It’s a good idea to add this directory to your default paths, as follows:
 
-  export PATH="$PATH:$HOME/bin"
-  You can also add this command to your ~/.bashrc file.
+    export PATH="$PATH:$HOME/bin"
+    You can also add this command to your ~/.bashrc file.
+
+
+
+To Avoid installation on NFS
+----------------------------
+
+    Users can also use Bazel’s --output_user_root startup option to override the default install base and output base directories. 
+    For example: bazel --output_user_root=/tmp/bazel build x/y:z.
+
+
+
+    bazel --output_user_root=/path/to/directory build //foo:bar
+
+    OR 
+
+    From the bazel docs:
+    The outputRoot directory is ~/.cache/bazel. 
+    (Unless $TEST_TMPDIR is set, as in a test of bazel itself, in which case this directory is used instead.)
+
+    You can change the outputRoot directory by changing the $TEST_TMPDIR variable
+
+    export TEST_TMPDIR=/path/to/directory
+
+
+Uninstall 
+---------
+
+rm $HOME/.cache/bazel -fr
+sudo rm /usr/local/bin/bazel /etc/bazelrc /usr/local/lib/bazel -fr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
