@@ -1,0 +1,16 @@
+
+
+
+ Error: Firefox is already running but is not responding To open a new window ...
+
+ Start:
+    1. with X11 server, running firefox from the command line
+
+
+ (Solution)
+    $ firefox -p    :  profile windows pop-up
+
+    Then, create a new profile, because the default one 
+
+
+

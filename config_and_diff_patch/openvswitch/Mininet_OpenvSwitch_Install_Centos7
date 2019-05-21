@@ -1,0 +1,166 @@
+
+
+Mininet and Open vSwitch on CentOS 7
+====================================
+(source: https://techandtrains.com/2014/09/13/mininet-and-open-vswitch-on-centos-7/)
+(source 2nd: http://lukehinds.com/2016/04/21/building-openvswitch-2-50-on-centos7.html)
+
+
+The following are the steps I took to get Mininet running in CentOS 7.  I ran into many issues trying to get OVS installed and running.  There was a conflict between the OVS script tools starting OVSDB and SELinux.  I had to set SELinux to Passive to work around it.  So depending on what system you are running this on,  be advised of the following steps and what system level settings I changed for security.  I assume most of these will be corrected once OVS officially supports CentOS/RHEL 7.
+
+
+Installing Mininet on CentOS7
+-----------------------------
+– - needed VM with 2GB memory to get OS installed.
+– - used CentOS-7.0-1406-x86_64-livecd.iso to install the VM. I’m not going to outline steps for installing CentOS.
+– - created a local user called mininet and gave it sudo access and ran the remainder as that user.
+– - Install SSHD
+
+    sudo yum -y install openssh-server
+    sudo chkconfig sshd on
+    sudo service sshd start
+
+  -–Disable SELinux to get OVSDB to stasrt
+    sudo setenforce Permissive
+
+– - Modify sudoers secure_path to add /usr/local/bin so the ‘controller’ which be found.
+    Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+– - Install GIT
+    sudo yum -y install git
+
+– - Get Mininet.
+    git clone git://github.com/mininet/mininet.git
+
+– - Update installer mininet/util/install.sh.
+    ***ADD the following before the line ‘test -e /etc/fedora-release && DIST=”Fedora”‘. Somewhere around line 47.  May differ.
+      test -e /etc/centos-release && DIST="CentOS"
+      if [ "$DIST" = "CentOS" ]; then
+          install='sudo yum -y install'
+          remove='sudo yum -y erase'
+          pkginst='sudo rpm -ivh'
+          # Prereqs for this script
+          if ! which lsb_release &> /dev/null; then
+              $install redhat-lsb-core
+          fi
+      fi
+   ***EDIT
+      if ! echo $DIST | egrep 'Ubuntu|Debian|Fedora|CentOS'; then
+          echo "Install.sh currently only supports Ubuntu, Debian and Fedora."
+          exit 1
+      fi
+
+– - Install Mininet and OpenFlow reference.  Not OVS.
+    mininet/util/install.sh -nf
+
+
+Build and Install OVS
+----------------------
+    sudo yum -y install gcc make python-devel openssl-devel kernel-devel graphviz \
+    kernel-debug-devel autoconf automake rpm-build redhat-rpm-config \
+    libtool wget
+
+    mkdir -p /home/mininet/rpmbuild/SOURCES/
+    cd /home/mininet/rpmbuild/SOURCES/
+    wget https://www.openvswitch.org/releases/openvswitch-2.3.0.tar.gz
+    tar zxvf openvswitch-2.3.0.tar.gz
+    cd openvswitch-2.3.0
+    rpmbuild -bb --without check rhel/openvswitch.spec
+    
+    (*) if rpmbuild not working due to not using /home/mininet/rpmbuild/<DIRS>
+        $ RPMDIR=/opt/project/docker_test/mininet/rpmbuild
+        $ rpmbuild --nodeps --buildroot="${RPMDIR}/_rpm" -bb --define="_rpmdir ${RPMDIR}" --define="_srcrpmdir ${RPMDIR}" \
+            --define="_sourcedir ${RPMDIR}/SOURCES" --define="_specdir ${RPMDIR}" --define="_builddir ${RPMDIR}" --without \
+            check SOURCES/openvswitch-2.3.0/rhel/openvswitch.spec
+
+    sudo rpm -ivh --nodeps /home/mininet/rpmbuild/RPMS/x86_64/openvswitch*.rpm
+
+– - Start OVS
+    sudo /etc/init.d/openvswitch start
+
+– - Check working
+    [mininet@localhost ~]$ sudo ovs-vsctl show
+    76ed3664-6b6b-4325-85c1-c9a2bf735e30
+        ovs_version: "2.3.0"
+
+
+
+Test out Mininet
+-----------------
+    [mininet@localhost ~]$ sudo mn --test pingall
+    OR
+    [mininet@localhost ~]$ sudo mn --test pingall --controller remote,ip=172.17.0.2 (in case of using a controller in docker)
+
+    *** Creating network
+    *** Adding controller
+    *** Adding hosts:
+    h1 h2
+    *** Adding switches:
+    s1
+    *** Adding links:
+    (h1, s1) (h2, s1)
+    *** Configuring hosts
+    h1 h2
+    *** Starting controller
+    *** Starting 1 switches
+    s1
+    *** Waiting for switches to connect
+    s1
+    *** Ping: testing ping reachability
+    h1 -> h2
+    h2 -> h1
+    *** Results: 0% dropped (2/2 received)
+    *** Stopping 1 controllers
+    c0
+    *** Stopping 1 switches
+    s1 ..
+    *** Stopping 2 hosts
+    h1 h2
+    *** Done
+    completed in 5.397 seconds
+
+
+So it seems to work.  But there are a few things to note.
+
+1. The kernel datapath is not installed.  This is totally userspace.  I could not get the kernel module to compile.  Wait until official support of RHEL7.
+2. The above is the extent of the testing I did.  There may be other issues that crop up.
+
+Hope this helps anyone that uses CentOS or RHEL 7 with Mininet.
+
+
+
+
+  - if Mininet example above doesn't work, Try to use the followings -- ONOS Docker
+    (source: https://wiki.onosproject.org/display/ONOS/Running+the+published+Docker+ONOS+images)
+
+        idac.server11-antd [1585]{.../docker_test/mininet}-> sudo mn --topo tree,2 --controller remote,ip=172.17.0.2
+        *** Creating network
+        *** Adding controller
+        Connecting to remote controller at 172.17.0.2:6653
+        *** Adding hosts:
+        h1 h2 h3 h4 
+        *** Adding switches:
+        s1 s2 s3 
+        *** Adding links:
+        (s1, s2) (s1, s3) (s2, h1) (s2, h2) (s3, h3) (s3, h4) 
+        *** Configuring hosts
+        h1 h2 h3 h4 
+        *** Starting controller
+        c0 
+        *** Starting 3 switches
+        s1 s2 s3 ...
+        *** Starting CLI:
+        mininet> pingall
+        *** Ping: testing ping reachability
+        h1 -> h2 h3 h4 
+        h2 -> h1 h3 h4 
+        h3 -> h1 h2 h4 
+        h4 -> h1 h2 h3 
+        *** Results: 0% dropped (12/12 received)
+        mininet> 
+
+
+  - GUI
+    in firefox, put 172.17.0.2:8181/onos/ui in url
+    id: onos, pw: rocks
+

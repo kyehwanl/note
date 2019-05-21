@@ -13,4 +13,19 @@ Running ONOS single instance using buck or bazel:
     OR
     ~/onos$ bazel run onos-local -- clean debug
 
+
+    **) To avoid writing bazel's files into $HOME/.cache/bazel in case of using NFS, 
+        use the followings,
+
+        To Avoid installation on NFS
+        ----------------------------
+
+        bazel --output_user_root=/path/to/directory build //foo:bar
+
+        OR
+        
+        export TEST_TMPDIR=/path/to/directory
+        bazel build //foo:bar
+
+
 Wait until the running log stops

@@ -65,7 +65,7 @@ The installer contains the Bazel binary. Some additional libraries must also be 
 To Avoid installation on NFS
 ----------------------------
 
-    Users can also use Bazel’s --output_user_root startup option to override the default install base and output base directories. 
+    Users can also use Bazel's --output_user_root startup option to override the default install base and output base directories. 
     For example: bazel --output_user_root=/tmp/bazel build x/y:z.
 
 
