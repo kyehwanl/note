@@ -1,0 +1,42 @@
+  813  docker pull onosproject/onos
+  814  docker images
+  815  docker run  -t -d --name onos1 onosproject/onos
+  816  docker run  -t -d --name onos2 onosproject/onos
+  817  docker run  -t -d --name onos3 onosproject/onos
+  818  docker image ls
+  819  docker image
+  820  docker images
+  821  docker ps
+  822  exit
+  823  docker ps
+  824  docker inspect --help
+  825  docker inspect onos1
+  826  cat ~kyehwanl/.bashrc | tail
+  827  docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos1
+  828  mn
+  829  yum install mininet
+  830  exit
+  831  docker ps -a
+  832  docker exec -it 4bd
+  833  docker exec -it 4bdd bash
+  834  docker ps
+  835  docker ps -a
+  836  docker network
+  837  docker network ls
+  838  ssh -p 8801 karaf@
+  839  docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos1
+  840  docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos2
+  841  docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos3
+  842  ssh -p 8801 karaf@`docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos2`
+  843  ssh -p 8101 karaf@`docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos2`
+  844  ssh -p 8101 karaf@172.17.0.4
+  845  ssh -p 8101 karaf@172.17.0.2
+  846  ll
+  847  cat onos-form-cluster
+  848  exit
+  849  docker ps -a
+  850  docker ps
+  851  pst
+  852  ll -htrl /opt/project/docker_test/
+  853  cat /opt/project/docker_test/sh_docker_run.sh
+

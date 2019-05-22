@@ -1,31 +1,65 @@
 
-Download ONOS:
-    $ git clone https://github.com/opennetworkinglab/onos.git
+ONOS Installation and Running
+=============================
 
-Setup ONOS Environment Variables:
-    $ echo '. ~/onos/tools/dev/bash_profile' >> ~/.bashrc
-    $ source ~/.bashrc
+    Download ONOS:
+        $ git clone https://github.com/opennetworkinglab/onos.git
 
-
-Running ONOS single instance using buck or bazel:
-    $ cd onos
-    ~/onos$ buck run onos-local -- clean debug
-    OR
-    ~/onos$ bazel run onos-local -- clean debug
+    Setup ONOS Environment Variables:
+        $ echo '. ~/onos/tools/dev/bash_profile' >> ~/.bashrc
+        $ source ~/.bashrc
 
 
-    **) To avoid writing bazel's files into $HOME/.cache/bazel in case of using NFS, 
-        use the followings,
-
-        To Avoid installation on NFS
-        ----------------------------
-
-        bazel --output_user_root=/path/to/directory build //foo:bar
-
+    Running ONOS single instance using buck or bazel:
+        $ cd onos
+        ~/onos$ buck run onos-local -- clean debug
         OR
-        
-        export TEST_TMPDIR=/path/to/directory
-        bazel build //foo:bar
+        ~/onos$ bazel run onos-local -- clean debug
 
 
-Wait until the running log stops
+        **) To avoid writing bazel's files into $HOME/.cache/bazel in case of using NFS, 
+            use the followings,
+
+            To Avoid installation on NFS
+            ----------------------------
+
+            bazel --output_user_root=/path/to/directory build //foo:bar
+
+            OR
+            
+            export TEST_TMPDIR=/path/to/directory
+            bazel build //foo:bar
+
+
+    Wait until the running log stops
+
+
+
+ONOS cluster
+============
+
+    [root@idac-server11 docker_test]# ./onos-form-cluster -u karaf -p karaf 172.17.0.2 172.17.0.3 172.17.0.4
+      Forming cluster on 172.17.0.2...
+      Forming cluster on 172.17.0.3...
+      Forming cluster on 172.17.0.4...
+
+
+    To confirm, use the following commands
+        onos> nodes
+        onos> masters
+        onos> summary
+
+
+ONOS BGP feature
+================
+
+    Install following features in onos prompt
+
+    onos> feature:install onos-app-iptopology-api
+    onos> feature:install onos-app-iptopology-ip
+    onos> feature:install onos-app-bgp
+
+
+    then, after several seconds later, check the status with the following command
+    onos> ip-links
+    onos> ip-devices
