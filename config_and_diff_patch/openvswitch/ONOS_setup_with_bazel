@@ -1,6 +1,6 @@
 
-ONOS Installation and Running
-=============================
+ONOS Installation and Running (Latest version)
+==============================================
 
     Download ONOS:
         $ git clone https://github.com/opennetworkinglab/onos.git
@@ -35,6 +35,71 @@ ONOS Installation and Running
 
 
 
+ONOS Installation (version 1.14)
+================================
+ (source) https://blog.zufardhiyaulhaq.com/installing-onos-the-right-way/
+
+ - create group sdn
+    sudo adduser sdn --system --group
+
+ - Install java 8
+
+    sudo apt-get update
+    sudo apt-get install software-properties-common -y
+    sudo add-apt-repository ppa:webupd8team/java -y
+    sudo apt-get update
+    sudo apt-get install oracle-java8-installer oracle-java8-set-default curl -y
+
+ - changed into /opt
+    sudo mkdir -p /opt && cd /opt
+
+ - ONOS 1.14.0
+
+    sudo wget http://repo1.maven.org/maven2/org/onosproject/onos-releases/1.14.0/onos-1.14.0.tar.gz
+    sudo tar xzf onos-1.14.0.tar.gz
+    sudo mv onos-1.14.0 onos
+    sudo chown -R sdn:sdn onos
+
+ - setting startup options
+
+    sudo -u sdn nano /opt/onos/options
+
+    # running onos with user sdn
+    export ONOS_USER=sdn
+
+    # default active drivers and openflow
+    export ONOS_APPS=drivers,openflow
+
+ - install service file
+
+    sudo cp /opt/onos/init/onos.initd /etc/init.d/onos
+    sudo cp /opt/onos/init/onos.service /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable onos
+
+
+ - start onos
+    sudo systemctl start onos
+ 
+
+ - delete default user 
+    /opt/onos/bin/onos-user-password onos --remove
+
+
+ - username, password 
+    /opt/onos/bin/onos-user-password zufar zufar
+
+
+ - CLI, generate ssh-keygen,  public key
+    ssh-keygen -t rsa
+    /opt/onos/bin/onos-user-key $USER ~/.ssh/id_rsa.pub
+
+
+ - login CLI
+    /opt/onos/bin/onos
+
+
+
 ONOS cluster
 ============
 
@@ -44,10 +109,30 @@ ONOS cluster
       Forming cluster on 172.17.0.4...
 
 
+    BUT,  version > 1.14 Owl (ONOS), onos-form-cluster script was obsolete
+        2019-05-22 06:04:30,283 | WARN  | qtp2022858232-49 | ClusterManager        
+            | 161 - org.onosproject.onos-core-net - 1.15.0.SNAPSHOT | formCluster is deprecated
+        
+
+    So, after version 1.14, ONOS cluster uses Atomix
+    ------------------------------------------------
+
+    (official)
+    https://wiki.onosproject.org/pages/viewpage.action?pageId=28836788
+
+    (good example blog)
+    https://blog.zufardhiyaulhaq.com/category/sdn/
+
+
+
     To confirm, use the following commands
+    --------------------------------------
         onos> nodes
         onos> masters
         onos> summary
+
+
+    
 
 
 ONOS BGP feature

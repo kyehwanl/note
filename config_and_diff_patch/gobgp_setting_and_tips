@@ -432,8 +432,8 @@ Debugging
 
 
 
-    3. gRPC install
-    ---------------
+    3. gRPC  install (including Protocol Buffer)
+    --------------------------------------------
         3.0. Need to set GOPATH into environment variable
              (GOPATH has normally /bin /src /pkg directories)
 

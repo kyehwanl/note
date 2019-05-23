@@ -1,0 +1,51 @@
+
+
+
+1. List
+-------
+
+	onos> feature:list | grep bgp
+	onos-providers-bgpcep                   | 1.7.0            |           | onos-providers-bgpcep-1.7.0                   | BGPCEP Provider
+	onos-apps-bgprouter                     | 1.7.0            |           | onos-apps-bgprouter-1.7.0                     | BGP Router App
+	onos-providers-bgp                      | 1.7.0            |           | onos-providers-bgp-1.7.0                      | BGP Provider
+
+	onos> feature:list | grep sdnip
+	onos-apps-sdnip                         | 1.7.0            |           | onos-apps-sdnip-1.7.0                         | SDN-IP App
+
+
+2. Install
+----------
+	onos> feature:install onos-apps-bgprouter
+	onos> feature:install onos-providers-bgp
+	onos> bgp-neighbors
+
+
+	onos> feature:install onos-apps-sdnip
+	onos> feature:list | grep sdnip
+	onos-apps-sdnip                         | 1.7.0            | x         | onos-apps-sdnip-1.7.0                         | SDN-IP App
+
+
+	onos> apps -a -s
+	*  10 org.onosproject.drivers              1.7.0    Default device drivers
+
+
+3. Activate
+-----------
+	onos> app activate org.onosproject.sdnip
+	onos> apps -a -s
+	*  10 org.onosproject.drivers              1.7.0    Default device drivers
+	*  34 org.onosproject.sdnip                1.7.0    SDN-IP App
+
+
+	onos> apps --help
+	DESCRIPTION
+			onos:apps		 Lists application information
+	SYNTAX
+			onos:apps [options]
+	OPTIONS
+			-a, --active	 Show active only
+			-j, --json		 Output JSON
+			--help			 Display this help message
+			-s, --short		 Show short output only
+
+
