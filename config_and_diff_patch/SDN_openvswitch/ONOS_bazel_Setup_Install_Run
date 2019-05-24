@@ -103,7 +103,7 @@ ONOS Installation (version 1.14)
 ONOS cluster
 ============
 
-    [root@idac-server11 docker_test]# ./onos-form-cluster -u karaf -p karaf 172.17.0.2 172.17.0.3 172.17.0.4
+    [root@idac-server11 test]# ./onos-form-cluster -u karaf -p karaf 172.17.0.2 172.17.0.3 172.17.0.4
       Forming cluster on 172.17.0.2...
       Forming cluster on 172.17.0.3...
       Forming cluster on 172.17.0.4...
@@ -131,14 +131,26 @@ ONOS cluster
         onos> masters
         onos> summary
 
+              onos> nodes
+              id=172.17.0.4, address=172.17.0.4:9876, state=READY, version=1.12.1, updated=1m33s ago *
+              id=172.17.0.5, address=172.17.0.5:9876, state=READY, version=1.12.1, updated=1m33s ago 
+              id=172.17.0.6, address=172.17.0.6:9876, state=READY, version=1.12.1, updated=1m33s ago 
 
+              onos> summary
+              node=172.17.0.4, version=1.12.1 clusterId=default
+              nodes=3, devices=0, links=0, hosts=0, SCC(s)=0, flows=0, intents=0
+
+              onos> masters
+              172.17.0.4: 0 devices
+              172.17.0.5: 0 devices
+              172.17.0.6: 0 devices
     
 
 
 ONOS BGP feature
 ================
 
-    Install following features in onos prompt
+    1. Install following features in onos prompt
 
     onos> feature:install onos-app-iptopology-api
     onos> feature:install onos-app-iptopology-ip
@@ -148,3 +160,48 @@ ONOS BGP feature
     then, after several seconds later, check the status with the following command
     onos> ip-links
     onos> ip-devices
+
+
+
+    2. BGP command
+
+    onos> bgp-routes
+    onos> bgp-neighbors
+    onos> bgp-speaker-add sp1 0000000000000001/1
+    onos> interface-add --ip 172.17.0.3/24 of:0000000000000002/1 s1
+    onos> bgp-peer-add sp1 172.17.0.3
+    onos> netcfg
+
+
+
+
+
+ONOS Running With Docker
+========================
+
+   docker pull onosproject/onos
+
+   docker run  -t -d --name onos1 onosproject/onos
+   docker run  -t -d --name onos2 onosproject/onos
+   docker run  -t -d --name onos3 onosproject/onos
+
+   docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos1
+   docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos2
+   docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos3
+
+   ssh -p 8801 karaf@`docker inspect --format '{{ .NetworkSettings.IPAddress }}' onos2`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

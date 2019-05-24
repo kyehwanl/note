@@ -5,12 +5,12 @@
 -------
 
 	onos> feature:list | grep bgp
-	onos-providers-bgpcep                   | 1.7.0            |           | onos-providers-bgpcep-1.7.0                   | BGPCEP Provider
-	onos-apps-bgprouter                     | 1.7.0            |           | onos-apps-bgprouter-1.7.0                     | BGP Router App
-	onos-providers-bgp                      | 1.7.0            |           | onos-providers-bgp-1.7.0                      | BGP Provider
+	onos-providers-bgpcep             | 1.7.0      |      | onos-providers-bgpcep-1.7.0        | BGPCEP Provider
+	onos-apps-bgprouter               | 1.7.0      |      | onos-apps-bgprouter-1.7.0          | BGP Router App
+	onos-providers-bgp                | 1.7.0      |      | onos-providers-bgp-1.7.0           | BGP Provider
 
 	onos> feature:list | grep sdnip
-	onos-apps-sdnip                         | 1.7.0            |           | onos-apps-sdnip-1.7.0                         | SDN-IP App
+	onos-apps-sdnip                   | 1.7.0      |      | onos-apps-sdnip-1.7.0              | SDN-IP App
 
 
 2. Install
@@ -22,7 +22,7 @@
 
 	onos> feature:install onos-apps-sdnip
 	onos> feature:list | grep sdnip
-	onos-apps-sdnip                         | 1.7.0            | x         | onos-apps-sdnip-1.7.0                         | SDN-IP App
+	onos-apps-sdnip                  | 1.7.0       | x    | onos-apps-sdnip-1.7.0              | SDN-IP App
 
 
 	onos> apps -a -s

@@ -50,7 +50,7 @@ Installing Mininet on CentOS7
           exit 1
       fi
 
-– - Install Mininet and OpenFlow reference.  Not OVS.
+– - Install Mininet(-n) and OpenFlow(-f) reference.  Not OVS (-v)
     mininet/util/install.sh -nf
 
 
