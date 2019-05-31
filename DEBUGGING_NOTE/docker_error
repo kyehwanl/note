@@ -1,0 +1,8 @@
+
+1. issue
+    Error response from daemon: Get https://registry-1.docker.io/v2/library/ubuntu/manifests/latest: EOF
+
+
+2. solution
+    restart docker service
+    (https://forums.docker.com/t/error-response-from-daemon-get-https-registry-1-docker-io-v2/23741)

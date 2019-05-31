@@ -210,7 +210,7 @@ Docker Tips
             ENTRYPOINT ["/bin/ping","-c","3"]
             CMD ["localhost"] 
     
-        $ docker build -t ping
+        $ docker build -t ping .
         $ docker ps -l 
             CONTAINER ID IMAGE COMMAND CREATED 
             82df66a2a9f1 ping:latest "/bin/ping -c 3 localhost" 6 seconds ago

@@ -16,7 +16,7 @@
 
  (1) Create a Self Signed Certificate 
 
-   @vmware-011:# mkdir registry_certs
+   @vmware-011:# mkdir registry_certs  <-- (located in vmware-011:/opt/project/docker_test)
    @vmware-011:$ openssl req -newkey rsa:4096 -nodes -sha256 \
                 -keyout registry_certs/domain.key -x509 -days 356 \
                 -out registry_certs/domain.cert
@@ -57,6 +57,17 @@
 
       [root@vmware-011 registry_certs]# docker run -d -p 5000:5000  -v $(pwd):/certs  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.cert  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key --restart=always --name registry registry:2
       989a2dfaa42c80e3b2a413f83d8ad6f160e0e43d06e906933fee589ffb89b8f9
+
+    (c.f) here $(pwd) == /opt/project/docker_test/registry_certs
+
+
+
+  (*) To Read certs and key
+    $ openssl x509 -in domain.cert -text
+    $ openssl ras -in domain.key -text
+
+
+
 
  (3) Try to upload to the local repository
 
