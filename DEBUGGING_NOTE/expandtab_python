@@ -4,11 +4,13 @@
 *문제점:  
 
 1. Python으로 작성된 소스파일을 Vim으로 편집할때, tab과 space세팅때문에 compile error가 날때
-        코드에 이미 존재 하는 tab 문자들은 ‘:set expancetab’으로 변경이 불가능 → 이는 set expandtab 이후 새로 작성되는 코드에만 적용
+        코드에 이미 존재 하는 tab 문자들은 ‘:set expandtab’으로 변경이 불가능 → 이는 set expandtab 이후 새로 작성되는 코드에만 적용
+    ('expandtab' option: To insert space characters whenever the tab key is pressed)
 
 2. 따라서 기존 코드의 tab은 “ :retab” 커맨드로 강제 변환시켜줄수 있다
 
 
 <참고>
 http://vim.wikia.com/wiki/Converting_tabs_to_spaces
+https://vim.fandom.com/wiki/Converting_tabs_to_spaces
 
