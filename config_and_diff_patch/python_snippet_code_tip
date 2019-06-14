@@ -45,7 +45,18 @@ python import sys; print(sys.version)
     pass
 
 
+	--> 'validator' is now function fo lambda which will have 'length' that will be 
+		substituted with '_' in lambda function.
 
+		For example, if msg == CODE.UPDATE, validator would have "lambda _: _ >=23"
+					 then validtor(length=25) will be true
+
+
+	(c.f.) dict.get(key[, value]) 
+			Return value:
+			  - the value for the specified key if key is in dictionary.
+			  - None if the key is not found and value is not specified.
+			  - value if the key is not found and value is specified.
 
 
 3. pdb
@@ -159,6 +170,64 @@ addr.ipV4 = struct.unpack("!L", socket.inet_aton("10.1.1.2"))[0]
   SimpleTest_initialize()
   SimpleTest_Y = Out.in_dll(myLib, 'SimpleTest_Y')
   print SimpleTest_Y.Out1
+
+
+
+
+
+
+7. defaultdict() & setdefault()
+================================
+
+ You could say defaultdict is useful for settings defaults before filling the dict and 
+	setdefault is useful for setting defaults while or after filling the dict.
+
+  # really verbose
+  new = {}
+  for (key, value) in data:
+	  if key in new:
+		  new[key].append( value )
+	  else:
+		  new[key] = [value]
+
+
+  # easy with setdefault
+  new = {}
+  for (key, value) in data:
+	  group = new.setdefault(key, []) # key might exist already
+	  group.append( value )
+
+	  # OR new.setdefault(key, []).append(value)
+
+
+  # even simpler with defaultdict 
+  new = defaultdict(list)
+  for (key, value) in data:
+	  new[key].append( value ) # all keys have a default already
+
+
+
+  Sometimes you want to make sure that specific keys exist after creating a dict. 
+	defaultdict doesn't work in this case, because it only creates keys on explicit access. 
+	Think you use something HTTP-ish with many headers -- some are optional, but you want defaults for them:
+
+  headers = parse_headers( msg ) # parse the message, get a dict
+  # now add all the optional headers
+  for headername, defaultvalue in optional_headers:
+	  headers.setdefault( headername, defaultvalue )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

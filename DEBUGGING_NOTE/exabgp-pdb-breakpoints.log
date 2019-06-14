@@ -651,3 +651,67 @@ True
 >
 
 
+
+
+------------------
+ Attirbutes
+------------------
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(128)messages()
+-> attr = self.attributes.pack(negotiated,True, add_mp)
+(Pdb) p self.attributes
+{3: 10.1.1.2}
+(Pdb) whatis self.attributes
+<class 'exabgp.bgp.message.update.attribute.attributes.Attributes'>
+
+
+ --> self.attribute.pack --> following routine
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(128)messages()
+-> attr = self.attributes.pack(negotiated,True, add_mp)
+(Pdb) l
+123
+124                     if not add_nlri and not del_nlri and not add_mp and not del_mp:
+125                             return
+126
+127                     if add_nlri or add_mp:
+128 B->                         attr = self.attributes.pack(negotiated,True, add_mp)
+129                     else:
+130                             attr = ''
+131
+132                     # withdrawn IPv4
+133
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(167)pack()
+-> def pack (self, negotiated, with_default=True, add_mp={}):
+(Pdb) l
+162             return self.pop(Attribute.CODE.INTERNAL_WATCHDOG,None)
+163
+164         def withdraw (self):
+165             return self.pop(Attribute.CODE.INTERNAL_WITHDRAW,None) is not None
+166
+167  ->     def pack (self, negotiated, with_default=True, add_mp={}):
+168             local_asn = negotiated.local_as
+169             peer_asn = negotiated.peer_as
+170
+171             message = ''
+172
+(Pdb) p self
+{3: 10.1.1.2}
+(Pdb) p add_mp
+{(ipv4, unicast): [<exabgp.bgp.message.update.nlri.mpls.MPLS object at 0x8cbff7c>, <exabgp.bgp.message.update.nlri.mpls.MPLS object at 0x8ccbcdc>]}
+(Pdb) l
+173             default = {
+174                 Attribute.CODE.ORIGIN: lambda l,r: Origin(Origin.IGP),
+175                 #Attribute.CODE.AS_PATH: lambda l,r: ASPath([],[]) if l == r else ASPath([local_asn,],[]),
+176                 Attribute.CODE.LOCAL_PREF: lambda l,r: LocalPreference(100) if l == r else NOTHING,
+177             }
+178
+179             if hasattr(negotiated.neighbor,'bgpsec'):
+180                 if negotiated.neighbor.bgpsec:
+181                     default[Attribute.CODE.BGPSEC] = lambda l,r: BGPSEC(negotiated, add_mp)
+182                 else:
+183                     default[Attribute.CODE.AS_PATH] = lambda l,r: ASPath([],[]) if l == r else ASPath([local_asn,],[])
+(Pdb)
