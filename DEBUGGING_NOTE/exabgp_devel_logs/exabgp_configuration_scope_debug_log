@@ -1,0 +1,754 @@
+
+
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(866)_single_line()
+-> return self._single_static_route(scope,tokens[1:])
+(Pdb) pp scope
+[{'graceful-restart': 1200,
+  'group-updates': True,
+  'hold-time': 180,
+  'local-as': 60004L,
+  'peer-as': 60005L,
+  'router-id': 10.1.1.4}]
+(Pdb) pp tokens
+['route', '30.20.0.0/24', 'next-hop', '10.1.1.4']
+(Pdb) l
+861                 if command == 'operational':
+862                     return self._set_process_command(scope,'receive-operational',tokens[1:])
+863
+864             elif name == 'static':
+865                 if command == 'route':
+866 B->                 return self._single_static_route(scope,tokens[1:])
+867
+868             elif name == 'l2vpn':
+869                 if command == 'vpls':
+870                     return self._single_l2vpn_vpls(scope,tokens[1:])
+871
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1821)_single_static_route()
+-> def _single_static_route (self, scope, tokens):
+(Pdb) l
+1816                if r is False:
+1817                    return False
+1818                if r is None:
+1819                    return self._split_last_route(scope)
+1820
+1821 ->     def _single_static_route (self, scope, tokens):
+1822            if len(tokens) < 3:
+1823                return False
+1824
+1825            if not self._insert_static_route(scope,tokens):
+1826                return False
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1822)_single_static_route()
+-> if len(tokens) < 3:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1825)_single_static_route()
+-> if not self._insert_static_route(scope,tokens):
+(Pdb) pp tokens
+['30.20.0.0/24', 'next-hop', '10.1.1.4']
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1828)_single_static_route()
+-> while len(tokens):
+(Pdb) p ip
+*** NameError: NameError("name 'ip' is not defined",)
+(Pdb) pp socpe
+*** NameError: NameError("name 'socpe' is not defined",)
+(Pdb) pp scope
+[{'announce': [<exabgp.rib.change.Change object at 0x8f23e2c>],
+  'graceful-restart': 1200,
+  'group-updates': True,
+  'hold-time': 180,
+  'local-as': 60004L,
+  'peer-as': 60005L,
+  'router-id': 10.1.1.4}]
+(Pdb) pp tokens
+['next-hop', '10.1.1.4']
+(Pdb) pp scope[0]['announce']
+[<exabgp.rib.change.Change object at 0x8f23e2c>]
+(Pdb) whatis scope[0]['announce']                                                                                                    
+<type 'list'>
+(Pdb) pp dir(scope[0]['announce'])                                                                                                   
+['__add__',
+ '__class__',
+ '__contains__',
+ '__delattr__',
+ '__delitem__',
+ '__delslice__',
+ '__doc__',
+ '__eq__',
+ '__format__',
+ '__ge__',
+ '__getattribute__',
+ '__getitem__',
+ '__getslice__',
+ '__gt__',
+ '__hash__',
+ '__iadd__',
+ '__imul__',
+ '__init__',
+ '__iter__',
+ '__le__',
+ '__len__',
+ '__lt__',
+ '__mul__',
+ '__ne__',
+ '__new__',
+ '__reduce__',
+ '__reduce_ex__',
+ '__repr__',
+ '__reversed__',
+ '__rmul__',
+ '__setattr__',
+ '__setitem__',
+ '__setslice__',
+ '__sizeof__',
+ '__str__',
+ '__subclasshook__',
+ 'append',
+ 'count',
+ 'extend',
+ 'index',
+ 'insert',
+ 'pop',
+ 'remove',
+ 'reverse',
+ 'sort']
+(Pdb) pp len(tokens)
+2
+(Pdb) l
+1823                return False
+1824
+1825            if not self._insert_static_route(scope,tokens):
+1826                return False
+1827
+1828 ->         while len(tokens):
+1829                command = tokens.pop(0)
+1830
+1831                if command in ('withdraw','withdrawn'):
+1832                    if self._route_withdraw(scope,tokens):
+1833                        continue
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1829)_single_static_route()
+-> command = tokens.pop(0)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1831)_single_static_route()
+-> if command in ('withdraw','withdrawn'):
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1836)_single_static_route()
+-> if len(tokens) < 1:
+(Pdb) pp len(tokens)
+1
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1839)_single_static_route()
+-> if command in self._dispatch_route_cfg:
+(Pdb) pp self._dispatch_route_cfg
+{'aggregator': <bound method Configuration._route_aggregator of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'aigp': <bound method Configuration._route_aigp of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'as-path': <bound method Configuration._route_aspath of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'as-sequence': <bound method Configuration._route_aspath of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'atomic-aggregate': <bound method Configuration._route_atomic_aggregate of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'attribute': <bound method Configuration._route_generic_attribute of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'cluster-list': <bound method Configuration._route_cluster_list of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'community': <bound method Configuration._route_community of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'extended-community': <bound method Configuration._route_extended_community of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'label': <bound method Configuration._route_label of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'local-preference': <bound method Configuration._route_local_preference of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'med': <bound method Configuration._route_med of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'name': <bound method Configuration._route_name of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'next-hop': <bound method Configuration._route_next_hop of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'origin': <bound method Configuration._route_origin of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'originator-id': <bound method Configuration._route_originator_id of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'path-information': <bound method Configuration._route_path_information of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'rd': <bound method Configuration._route_rd of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'route-distinguisher': <bound method Configuration._route_rd of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'split': <bound method Configuration._route_split of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'watchdog': <bound method Configuration._route_watchdog of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'withdraw': <bound method Configuration._route_withdraw of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>,
+ 'withdrawn': <bound method Configuration._route_withdraw of <exabgp.configuration.ancient.Configuration object at 0x8f0f8cc>>}
+(Pdb) pp tokens
+['10.1.1.4']
+(Pdb) pp command
+'next-hop'
+(Pdb) l
+1834                    return False
+1835
+1836                if len(tokens) < 1:
+1837                    return False
+1838
+1839 ->             if command in self._dispatch_route_cfg:
+1840                    if command in ('rd','route-distinguisher'):
+1841                        if self._dispatch_route_cfg[command](scope,tokens,SAFI.mpls_vpn):
+1842                            continue
+1843                    else:
+1844                        if self._dispatch_route_cfg[command](scope,tokens):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1840)_single_static_route()
+-> if command in ('rd','route-distinguisher'):
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1844)_single_static_route()
+-> if self._dispatch_route_cfg[command](scope,tokens):
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1932)_route_next_hop()
+-> def _route_next_hop (self, scope, tokens):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1933)_route_next_hop()
+-> if scope[-1]['announce'][-1].attributes.has(Attribute.CODE.NEXT_HOP):
+(Pdb) pp scope[-1]['announce'][-1]
+<exabgp.rib.change.Change object at 0x8f23e2c>
+(Pdb) pp scope[-1]['announce'][-1].attributes
+{}
+(Pdb) scope[-1]['announce'][-1].attributes.has(Attribute.CODE.NEXT_HOP)
+False
+(Pdb) pp scope[-1]['announce']
+[<exabgp.rib.change.Change object at 0x8f23e2c>]
+(Pdb) l
+1928                self._error = self._str_route_error
+1929                if self.debug: raise Exception()  # noqa
+1930                return False
+1931
+1932        def _route_next_hop (self, scope, tokens):
+1933 ->         if scope[-1]['announce'][-1].attributes.has(Attribute.CODE.NEXT_HOP):
+1934                self._error = self._str_route_error
+1935                if self.debug: raise Exception()  # noqa
+1936                return False
+1937
+1938            try:
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1938)_route_next_hop()
+-> try:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1940)_route_next_hop()
+-> ip = tokens.pop(0)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1941)_route_next_hop()
+-> if ip.lower() == 'self':
+(Pdb) p ip
+'10.1.1.4'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1952)_route_next_hop()
+-> nh = IP.create(ip)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1954)_route_next_hop()
+-> change = scope[-1]['announce'][-1]
+(Pdb) p nh
+10.1.1.4
+(Pdb) p change
+*** NameError: NameError("name 'change' is not defined",)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1955)_route_next_hop()
+-> nlri = change.nlri
+(Pdb) p change
+<exabgp.rib.change.Change object at 0x8f23e2c>
+(Pdb) pp change.attributes
+{}
+(Pdb) p change.nlri
+<exabgp.bgp.message.update.nlri.mpls.MPLS object at 0x8f06f0c>
+(Pdb) l
+1950                    nh = IP.unpack(la.pack())
+1951                else:
+1952                    nh = IP.create(ip)
+1953
+1954                change = scope[-1]['announce'][-1]
+1955 ->             nlri = change.nlri
+1956                afi = nlri.afi
+1957                safi = nlri.safi
+1958
+1959                nlri.nexthop = nh
+1960
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1956)_route_next_hop()
+-> afi = nlri.afi
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1957)_route_next_hop()
+-> safi = nlri.safi
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1959)_route_next_hop()
+-> nlri.nexthop = nh
+(Pdb) pp change.attributes
+{}
+(Pdb) pp change.nlri
+<exabgp.bgp.message.update.nlri.mpls.MPLS object at 0x8f06f0c>
+(Pdb) pp change.nlri.nexthop
+<exabgp.protocol.ip._NoIP object at 0x8cbb32c>
+(Pdb) l
+1954                change = scope[-1]['announce'][-1]
+1955                nlri = change.nlri
+1956                afi = nlri.afi
+1957                safi = nlri.safi
+1958
+1959 ->             nlri.nexthop = nh
+1960
+1961                if afi == AFI.ipv4 and safi in (SAFI.unicast,SAFI.multicast):
+1962                    change.attributes.add(Attribute.unpack(NextHop.ID,NextHop.FLAG,nh.packed,None))
+1963                    # NextHop(nh.ip,nh.packed) does not cache the result, using unpack does
+1964                    # change.attributes.add(NextHop(nh.ip,nh.packed))
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1961)_route_next_hop()
+-> if afi == AFI.ipv4 and safi in (SAFI.unicast,SAFI.multicast):
+(Pdb) pp change.nlri.nexthop
+10.1.1.4
+(Pdb) pp change.attributes
+{}
+(Pdb) pp change.attributes.nlri
+*** AttributeError: AttributeError("'Attributes' object has no attribute 'nlri'",)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1962)_route_next_hop()
+-> change.attributes.add(Attribute.unpack(NextHop.ID,NextHop.FLAG,nh.packed,None))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1966)_route_next_hop()
+-> return True
+(Pdb) pp change.attributes
+{3: 10.1.1.4}
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(127)run()
+-> if not self.load():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(322)load()
+-> reloaded = self.configuration.reload()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(381)reload()
+-> return self._reload()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(427)_reload()
+-> []
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(564)_dispatch()
+-> return self._multi_line(scope,name,tokens[:-1],multi)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(594)_multi_line()
+-> return self._multi_group(scope,tokens[1])
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1287)_multi_group()
+-> 'route-refresh','asn4','aigp','auto-flush','adj-rib-out'
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(564)_dispatch()
+-> return self._multi_line(scope,name,tokens[:-1],multi)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(602)_multi_line()
+-> return self._multi_static(scope,tokens[1:])
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1688)_multi_static()
+-> ['route',]
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(566)_dispatch()
+-> return self._single_line(scope,name,tokens[:-1],single)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(866)_single_line()
+-> return self._single_static_route(scope,tokens[1:])
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1844)_single_static_route()
+-> if self._dispatch_route_cfg[command](scope,tokens):
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/configuration/ancient.py(1966)_route_next_hop()
+-> return True
+(Pdb) clear
+Clear all breaks? y
+(Pdb) b
+(Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:52
+Breakpoint 4 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:52
+(Pdb) restart
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | Problem with the configuration file, no change done
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | syntax error in section static
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | line 10: route 30.20.0.0/24 next-hop 10.1.1.4 ;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | community, extended-communities and as-path can take a single community as parameter.
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | only next-hop is mandatory
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | syntax:
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | route 10.0.0.1/22 {
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    path-information 0.0.0.1;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    route-distinguisher|rd 255.255.255.255:65535|65535:65536|65536:65535   next-hop 192.0.1.254;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    origin IGP|EGP|INCOMPLETE;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    as-path [ AS-SEQUENCE-ASN1 AS-SEQUENCE-ASN2 ( AS-SET-ASN3 )] ;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    med 100;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    local-preference 100;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    atomic-aggregate;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    community [ 65000 65001 65002 ];
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    extended-community [ target:1234:5.6.7.8 target:1.2.3.4:5678 origin:1234:5.6.7.8 origin:1.2.3.4:5678 0x0002FDE800000001 ]
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    originator-id 10.0.0.10;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    cluster-list [ 10.10.0.1 10.10.0.2 ];
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    label [ 100 200 ];
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    aggregator ( 65000:10.0.0.10 )
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    aigp 100;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    split /24
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    watchdog watchdog-name
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |    withdraw
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | }
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | syntax:
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration | route 10.0.0.1/22 path-information 0.0.0.1 route-distinguisher|rd 255.255.255.255:65535|65535:65536|65536:65535 next-hop 192.0.2.1 origin IGP|EGP|INCOMPLETE as-path AS-SEQUENCE-ASN med 100 local-preference 100 atomic-aggregate community 65000 extended-community target:1234:5.6.7.8 originator-id 10.0.0.10 cluster-list 10.10.0.1 label 150 aggregator ( 65000:10.0.0.10 ) aigp 100 split /24 watchdog watchdog-name withdraw name what-you-want-to-remember-about-the-route;
+Tue, 18 Jun 2019 12:38:19 | ERROR    | 19683  | configuration |
+The program exited via sys.exit(). Exit status:  1
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(7)<module>()
+-> """
+(Pdb) c
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | environment file missing
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | generate it using "exabgp --fi > /etc/exabgp/exabgp/exabgp.env"
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | reactor       | Performing reload of exabgp 3.4.13
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading | ####################################################
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading | group Core_v4 {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     hold-time 180;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     local-as 60004;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     peer-as 60005;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     router-id 10.1.1.4;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     graceful-restart 1200;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     group-updates true;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     # Route can be defined in either here, 'static' or using 'process-run' or both
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     static {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       # Example - Announcing a /32 with one community
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #route 30.10.10.1/32 next-hop 10.1.1.4 community 65001:666;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #Example - Two communities
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       route 30.20.0.0/24 next-hop 10.1.1.4;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     neighbor 10.1.1.5 {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       local-address 10.1.1.4;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       description "Quagga";
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       bgpsec;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |         #ski C30433FA1975FF193181458FB902B501EA9789DC;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       ski 492AAE72485D926CACDA2D259BE19DAE82DFBDE3;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       bgpsec_libloc "/opt/project/srx_test1/api/.libs/libSRxCryptoAPI.so";
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       add-path send/receive;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       process parsed-route-backend {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |             receive {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |               parsed;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |               update;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |             }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |             run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |             #run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/log-1.py;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |           }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     process add-routes {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #encoder text;    # how the data to be serialized before sent to exaBGP
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |                         # provides the program with neighbor events
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       neighbor-changes;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |                         # (TCP connection established/closed, successful OPEN negotiation, OPENCONFIRM)
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       run /usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #'announce route 100.10.0.0/24 next-hop self'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |       #'announce route 200.20.0.0/24 next-hop self'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     #process loving-flaps {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     #  run /users/kyehwanl/Download/exabgp-3.4.13/flap.sh;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |     #}
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading | }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |    #neighbor 192.168.1.253 {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |    #     local-address 192.168.1.2;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |    #     description "IOS_XR";
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |    #     md5 S00pers3kretz;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | loading |    #}
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | configuration | 'group' 'core_v4' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'hold-time' '180' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'local-as' '60004' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'peer-as' '60005' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'router-id' '10.1.1.4' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'graceful-restart' '1200' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'group-updates' 'true' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'static' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | static        | 'route' '30.20.0.0/24' 'next-hop' '10.1.1.4' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | static        | '}'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'neighbor' '10.1.1.5' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'local-address' '10.1.1.4' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'description' '"quagga"' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'bgpsec' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | +++ bgpsec ENABLED
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'ski' '492aae72485d926cacda2d259be19dae82dfbde3' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | +++ ski: 492aae72485d926cacda2d259be19dae82dfbde3
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'bgpsec_libloc' '"/opt/project/srx_test1/api/.libs/libsrxcryptoapi.so"' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | +++ crypto library at: "/opt/project/srx_test1/api/.libs/libsrxcryptoapi.so"
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'add-path' 'send/receive' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | 'process' 'parsed-route-backend' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | 'receive' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | receive       | 'parsed' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | receive       | 'update' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | receive       | '}'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | 'run' '/users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | '}'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | neighbor      | '}'
+bgpsec here 2222
+ski ['492aae72485d926cacda2d259be19dae82dfbde3']
+bgpsec library location: ['"/opt/project/srx_test1/api/.libs/libsrxcryptoapi.so"']
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | neighbor 10.1.1.5 {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   description "quagga";
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   router-id 10.1.1.4;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   local-address 10.1.1.4;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   local-as 60004;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   peer-as 60005;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   hold-time 180;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   manual-eor false;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   group-updates: True;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   auto-flush: true;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   adj-rib-out: true;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   ttl-security: ;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   capability {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     asn4 enable;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     route-refresh disable;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     graceful-restart 1200;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     add-path send/receive;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     multi-session disable;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     operational disable;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     aigp disable;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   family {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 unicast;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 multicast;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 nlri-mpls;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 mpls-vpn;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 flow;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet4 flow-vpn;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet6 unicast;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet6 mpls-vpn;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet6 flow;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     inet6 flow-vpn;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     l2vpn vpls;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   process {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     receive {
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |       update;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |       parsed;
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |     }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |   }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | }
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration |
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | 'process' 'add-routes' '{'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | 'neighbor-changes' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | 'run' '/usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py' ';'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | process       | '}'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | configuration | parsing | group         | '}'
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | reactor       | New peer setup: neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open
+Tue, 18 Jun 2019 12:38:20 | WARNING  | 19683  | configuration | Loaded new configuration successfully
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | processes     | Forked process parsed-route-backend
+Tue, 18 Jun 2019 12:38:20 | INFO     | 19683  | processes     | Forked process add-routes
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(52)__init__()
+-> self.negotiated = Negotiated(self.neighbor)
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(584)_run()
+-> for action in self._[direction]['code']():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(337)_connect()
+-> proto = Protocol(self)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(52)__init__()
+-> self.negotiated = Negotiated(self.neighbor)
+(Pdb) pp self.neighbor
+<exabgp.bgp.neighbor.Neighbor object at 0x8f269cc>
+(Pdb) pp dir(self.neighbor)
+['__class__',
+ '__delattr__',
+ '__dict__',
+ '__doc__',
+ '__eq__',
+ '__format__',
+ '__getattribute__',
+ '__hash__',
+ '__init__',
+ '__module__',
+ '__ne__',
+ '__new__',
+ '__reduce__',
+ '__reduce_ex__',
+ '__repr__',
+ '__setattr__',
+ '__sizeof__',
+ '__str__',
+ '__subclasshook__',
+ '__weakref__',
+ '_families',
+ 'add_family',
+ 'add_path',
+ 'adjribout',
+ 'aigp',
+ 'api',
+ 'asm',
+ 'asn4',
+ 'backup_changes',
+ 'bgpsec',
+ 'bgpsec_libloc',
+ 'changes',
+ 'clear_rib',
+ 'counter',
+ 'description',
+ 'eor',
+ 'families',
+ 'flush',
+ 'graceful_restart',
+ 'group_updates',
+ 'hold_time',
+ 'identificator',
+ 'listen',
+ 'local_address',
+ 'local_as',
+ 'make_rib',
+ 'manual_eor',
+ 'md5',
+ 'messages',
+ 'missing',
+ 'multisession',
+ 'name',
+ 'operational',
+ 'passive',
+ 'peer_address',
+ 'peer_as',
+ 'pprint',
+ 'refresh',
+ 'remove_family',
+ 'reset_rib',
+ 'rib',
+ 'route_refresh',
+ 'router_id',
+ 'ski',
+ 'ttl']
+(Pdb) pp self.neighbor.ski                                                                                                           
+['492aae72485d926cacda2d259be19dae82dfbde3']
+(Pdb) up
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(337)_connect()
+-> proto = Protocol(self)
+(Pdb) w
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(584)_run()
+-> for action in self._[direction]['code']():
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(337)_connect()
+-> proto = Protocol(self)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(52)__init__()
+-> self.negotiated = Negotiated(self.neighbor)
+(Pdb) up 3
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(584)_run()
+-> for action in self._[direction]['code']():
+(Pdb) up 2
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+(Pdb) l
+667
+668                             generator = self._[direction]['generator']
+669                             if generator:
+670                                     try:
+671                                             # This generator only stops when it raises
+672  ->                                         r = generator.next()
+673
+674                                             # if r is ACTION.NOW: status = 'immediately'
+675                                             # elif r is ACTION.LATER:   status = 'next second'
+676                                             # elif r is ACTION.CLOSE:   status = 'stop'
+677                                             # else: status = 'buggy'
+(Pdb) up
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+(Pdb) l
+197                                             keys = set(self.peers.keys())
+198
+199                                             while start < time.time() < end:
+200                                                     for key in list(keys):
+201                                                             peer = self.peers[key]
+202  ->                                                         action = peer.run()
+203
+204                                                             # .run() returns an ACTION enum:
+205                                                             # * immediate if it wants to be called again
+206                                                             # * later if it should be called again but has no work atm
+207                                                             # * close if it is finished and is closing down, or restarting
+(Pdb) p key
+'neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open'
+(Pdb) p peers
+*** NameError: NameError("name 'peers' is not defined",)
+(Pdb) p peer
+<exabgp.reactor.peer.Peer object at 0xb73e98ec>
+(Pdb) pp self.peers
+{'neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open': <exabgp.reactor.peer.Peer object at 0xb73e98ec>}
+(Pdb) l
+208                                                             if action == ACTION.CLOSE:
+209                                                                     self.unschedule(peer)
+210                                                                     keys.discard(key)
+211                                                             # we are loosing this peer, not point to schedule more process work
+212                                                             elif action == ACTION.LATER:
+213                                                                     for io in peer.sockets():
+214                                                                             ios[io] = key
+215                                                                     # no need to come back to it before a a full cycle
+216                                                                     keys.discard(key)
+217
+218                                                     if not self.schedule() and not keys:
+(Pdb) pp environment.settings()
+{'api': {'encoder': 'text', 'highres': False, 'respawn': False, 'socket': ''},
+ 'bgp': {'openwait': 60},
+ 'cache': {'attributes': True, 'nexthops': True},
+ 'daemon': {'daemonize': False, 'pid': '', 'user': 'nobody'},
+ 'debug': {'configuration': False,
+           'defensive': False,
+           'memory': False,
+           'pdb': False,
+           'rotate': False,
+           'route': '',
+           'selfcheck': False},
+ 'log': {'all': False,
+         'configuration': True,
+         'daemon': True,
+         'destination': 'stdout',
+         'enable': True,
+         'level': 6,
+         'message': False,
+         'network': True,
+         'packets': False,
+         'parser': False,
+         'processes': True,
+         'reactor': True,
+         'rib': False,
+         'routes': False,
+         'short': False,
+         'timers': False},
+ 'pdb': {'enable': False},
+ 'profile': {'enable': False, 'file': ''},
+ 'reactor': {'speed': 1.0},
+ 'tcp': {'acl': False, 'bind': '', 'delay': 0, 'once': False, 'port': 179}}
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(584)_run()
+-> for action in self._[direction]['code']():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(337)_connect()
+-> proto = Protocol(self)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(52)__init__()
+-> self.negotiated = Negotiated(self.neighbor)
+(Pdb) up
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+
