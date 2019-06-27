@@ -218,8 +218,12 @@ addr.ipV4 = struct.unpack("!L", socket.inet_aton("10.1.1.2"))[0]
 
 
 
+8. Address of a variable
+========================
 
+	hex(id(variable))
 
+	: id() is the actual memory address of the variable
 
 
 
