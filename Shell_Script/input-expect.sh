@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 set timeout -1
-spawn git push --all origin 
+spawn git push --force --all origin 
 
 expect "Username*"
 send -- "kyehwanl\r"
