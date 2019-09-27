@@ -55,6 +55,16 @@ installation
   bootstrap/internal/bio
 
 
+4. install go1.10.2
+    - Download go1.10.2.linux-amd64.tar.gz and untar
+    - copy go/ into /usr/local/
+
+    - environment variable setting for GOPATH and executable go/bin dir
+        export GOPATH=/opt/project/gobgp_test/gowork
+        export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+    - confirm with 'go verion'
+
+
 Error 
 ======
 If the following error occurs, 

@@ -53,6 +53,20 @@ gobgp configuration
           hit the command "dep ensure"
 
 
+(2-2) gobgp Compilation ( in case copied from another place)
+    (A) Check go version first ( need to be > go1.10)
+    (B) if lower than go version 1.10, there will be cgo error
+    (C) then version up with > go1.10.2
+    (D) recommend to install protoc and grpc again ( high chance of some errors with protocol buffer issues)
+        go get -u github.com/golang/protobuf/protoc-gen-go
+        go get -u google.golang.org/grpc
+
+    (E) protocol buffer compile with grpc plugins in api directory
+        gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto
+
+    (F) build 
+        osrg/gobgp}-> go build -ldflags="-r /opt/project/srx_test1/srxcryptoapi-0.3.0.0/_inst/lib64/srx" -gcflags='-N -l' ./...
+
 
 
 (3) gobgpd config file (in toml form)
