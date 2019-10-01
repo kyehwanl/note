@@ -570,3 +570,46 @@ bgpsec1.antd [86]{.../gowork/bin}-> sudo -E ./gobgpd -f ./gobgpd.conf
 
 count:2  time took : 11263 us
 11.263042ms
+
+
+
+
+
+
+
+GoBGPd BGPSec Configuration
+===========================
+
+gobgpd utilize SRxCryptoAPI and BGPSecOpenSSL library only, not using Dynamic Library Loading (dlopen(), dlsym()).
+So it only needs to configure a key location and flags (cflag, ldflag)
+
+
+(1) for key and SKI setting
+
+   in gobgpd.conf
+
+     [global.config]
+      key-path = "/opt/project/srx_test1/keys/"                                                                                              
+     [neighbors.config] 
+       bgpsec-enable = true
+       SKI = "45CAD0AC44F77EFAA94602E9984305215BF47DCD"  <-- SKI for signing with private key 
+
+(2) srxcryptoapi's library 
+
+    in bgpsec.go
+        #cgo CFLAGS: -I/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/include/srx
+        #cgo LDFLAGS: -L/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI
+    Or 
+      export CGO_LDFLAGS="-L/path/to/the/lib -Wl,-rpath -Wl,\$ORIGIN/../lib"
+      export CGO_CFLAGS="-I/path/to/include/file/of/the/lib/include"
+      Run gobgpd
+
+
+
+
+
+
+
+
+
+

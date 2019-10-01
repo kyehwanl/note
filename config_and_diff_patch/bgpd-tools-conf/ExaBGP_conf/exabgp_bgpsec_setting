@@ -1,0 +1,37 @@
+
+ExaBGP Bgpsec setting
+=====================
+Exabgp uses and utilizes the configuration structure of SRxCryptoAPI.
+So it needs to know SRxCryptoAPI.so file itself in the exabgp's configuration file.
+Then, when openning the file, libSRxCryptoAPI.so, it includes srxcryptoapi.conf inside, 
+so it knows where to find the key and SKI etc.
+
+(1) in exabgp.conf
+
+  neighbor 10.0.50.5 {
+    local-address 10.0.50.11;
+    description "Quagga";
+
+    #============================ <BGPSec Options> ===========================================
+    # enable bgpsec
+    bgpsec;
+
+    # set SKI and libraries' location
+    ski 492AAE72485D926CACDA2D259BE19DAE82DFBDE3;   <-- signing for a private key
+    bgpsec_libloc /opt/project/srx_test1/_inst/lib64/srx/libSRxCryptoAPI.so;
+
+    # to indicate direction in bgpsec capability : 0- receive, 1: send/receive both
+    bgpsec_send_receive 1;
+
+    # --------------------------------------------------------------------------------
+    # Multiple BGPSec Stacking
+    #     bgpsec_pre_asns: previous ASNs in order of ASN-1 ASN-2 ... ASN-n(origin)
+    #     bgpsec_pre_skis: previous SKIs in accordance with pre_asns variable above
+    # --------------------------------------------------------------------------------
+    bgpsec_pre_asns 60003 60002;
+    bgpsec_pre_skis 45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC;
+
+    #==========================================================================================================
+    ...
+    }
+ 
