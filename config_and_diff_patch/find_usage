@@ -2,8 +2,20 @@
 =================================================
 -mmin  n : File's data was last modified n minutes ago.
 -mtime n : File's data was last modified n*24 hours ago
+
+    (1) Numeric arguments can be specified as
+       +n      for greater than n,
+       -n      for less than n,
+        n      for exactly n.
+
+    (2) type
+      -cmin -60 # creation time
+      -mmin -60 # modification time
+      -amin -60 # access time
+
 # find . -mmin -60  --> whose content got updated within last 1 hour (60 minutes)
 # find . -mtime -1  --> that got updated within the last 24 hours (1 day).
+  (example) find . -mmin -60 -type f -exec ls -l {} \;
 
 
 
