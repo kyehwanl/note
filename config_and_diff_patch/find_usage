@@ -18,6 +18,20 @@
   (example) find . -mmin -60 -type f -exec ls -l {} \;
 
 
+     (3) Differences
+        find . -exec grep chrome {} \;
+        find . -exec grep chrome {} +
+
+        find will execute grep and will substitute {} with the filename(s) found.
+        The difference between ; and + is that with ; a single grep command for each file is executed
+        whereas with + as many files as possible are given as parameters to grep at once.
+
+
+        In short,
+        find . -exec grep foo {} + will show you output like this,   ./dir/file.py:from foo import bar
+        find . -exec grep foo {} \; will show you output like this,  from foo import bar
+
+
 
 1. Restricting the search only to unhidden files. (Do not display hidden files in find output)
 =================================================
