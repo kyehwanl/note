@@ -1,0 +1,13 @@
+
+gRPC stream Issue
+=================
+
+1. How to solve ? 
+
+(1) what about using "stream.SendAndClose()" instead of send()
+(2) Cancel context ??
+
+
+2. test plan
+    (1) first of all, make 1k 10k 100k validation examples from the srxsvr_client
+    (2) if (1) is not ok, then find the solution described #1

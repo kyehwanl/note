@@ -36,7 +36,7 @@ tmux tips
     [kyehwanl@node4 ~]$ ps aux | grep tmux
     kyehwanl  2491  0.0  0.2  35464 31424 ?        Ss   Jan23   8:40 tmux
 
-    [kyehwanl@node4 ~]$ killall -s SIGUSR1 tmux
+    [kyehwanl@node4 ~]$ killall -s SIGUSR1 tmux  (Or kill -s SIGUSR1 <PID> )
 
     [kyehwanl@node4 ~]$ ps aux | grep tmux
     kyehwanl  2491  0.0  0.2  35464 31432 ?        Ss   Jan23   8:40 tmux
