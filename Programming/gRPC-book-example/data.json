@@ -1,0 +1,5452 @@
+{
+  "films": [
+    {
+      "title": "A New Hope",
+      "episode_id": 4,
+      "opening_crawl": "It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base, have won\r\ntheir first victory against\r\nthe evil Galactic Empire.\r\n\r\nDuring the battle, Rebel\r\nspies managed to steal secret\r\nplans to the Empire's\r\nultimate weapon, the DEATH\r\nSTAR, an armored space\r\nstation with enough power\r\nto destroy an entire planet.\r\n\r\nPursued by the Empire's\r\nsinister agents, Princess\r\nLeia races home aboard her\r\nstarship, custodian of the\r\nstolen plans that can save her\r\npeople and restore\r\nfreedom to the galaxy....",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "character_ids": [
+        "SyAbJp35ViM",
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "S1WGJ62cEjf",
+        "r1fMkp25Njz",
+        "HJ7Myp39Njf",
+        "Bk4fJp3cNjf",
+        "S1BGJThqEoG",
+        "r1Lz1T2q4iM",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM2",
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4",
+        "SyAbJp35ViM5",
+        "SyAbJp35ViM6",
+        "SyAbJp35ViM8",
+        "SyAbJp35ViM9",
+        "S1BGJThqEoG1"
+      ],
+      "planet_ids": [
+        "B17gkTncNoz",
+        "SkElJp3q4sM",
+        "SkNak6hcEjf"
+      ],
+      "starship_ids": [
+        "H1sq16h5Vif",
+        "B1KwypncEif",
+        "BkAgyTh94jM",
+        "S1JZJphcEoM",
+        "rJe-kah5NsM",
+        "SkZ-1p39ViM",
+        "HJMWJT254oG",
+        "BJXbJT2qNiM"
+      ],
+      "vehicle_ids": [
+        "Skka2cNjf",
+        "H1x1T2cEiM",
+        "S1bJTnqEiz",
+        "SJMkT35Nof"
+      ],
+      "species_ids": [
+        "HJFy629NoG",
+        "rJdFya25VjM",
+        "S1YtJ63qVoG",
+        "BJcKJT2qViz",
+        "SksY1ah9NoG"
+      ],
+      "id": "S1vZy63c4oz"
+    },
+    {
+      "title": "Attack of the Clones",
+      "episode_id": 2,
+      "opening_crawl": "There is unrest in the Galactic\r\nSenate. Several thousand solar\r\nsystems have declared their\r\nintentions to leave the Republic.\r\n\r\nThis separatist movement,\r\nunder the leadership of the\r\nmysterious Count Dooku, has\r\nmade it difficult for the limited\r\nnumber of Jedi Knights to maintain \r\npeace and order in the galaxy.\r\n\r\nSenator Amidala, the former\r\nQueen of Naboo, is returning\r\nto the Galactic Senate to vote\r\non the critical issue of creating\r\nan ARMY OF THE REPUBLIC\r\nto assist the overwhelmed\r\nJedi....",
+      "director": "George Lucas",
+      "producer": "Rick McCallum",
+      "release_date": "2002-05-16",
+      "character_ids": [
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "HJ7Myp39Njf",
+        "Bk4fJp3cNjf",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1",
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG1",
+        "Hyyzkp2qEoG2",
+        "rJlMJT25Njz3",
+        "rJlMJT25Njz6",
+        "S1WGJ62cEjf0",
+        "S1WGJ62cEjf3",
+        "S1WGJ62cEjf6",
+        "r1fMkp25Njz1",
+        "r1fMkp25Njz2",
+        "r1fMkp25Njz3",
+        "r1fMkp25Njz8",
+        "r1fMkp25Njz9",
+        "HJ7Myp39Njf0",
+        "HJ7Myp39Njf1",
+        "HJ7Myp39Njf2",
+        "HJ7Myp39Njf3",
+        "HJ7Myp39Njf4",
+        "HJ7Myp39Njf5",
+        "HJ7Myp39Njf6",
+        "HJ7Myp39Njf7",
+        "HJ7Myp39Njf8",
+        "HJ7Myp39Njf9",
+        "Bk4fJp3cNjf0",
+        "Bk4fJp3cNjf1",
+        "Bk4fJp3cNjf2",
+        "Bk4fJp3cNjf3",
+        "Bk4fJp3cNjf4",
+        "Bk4fJp3cNjf5",
+        "Bk4fJp3cNjf6",
+        "Bk4fJp3cNjf7",
+        "Bk4fJp3cNjf8",
+        "S1BGJThqEoG2",
+        "rJlMJT25Njz5"
+      ],
+      "planet_ids": [
+        "ByYe1T2c4sG",
+        "HJ5e1639Vsf",
+        "S1oxJanqVsG",
+        "By3lk6294sG",
+        "SkNak6hcEjf"
+      ],
+      "starship_ids": [
+        "HkEWkTncEsf",
+        "HJ9E1ThcVif",
+        "Bkp41p3qVoG",
+        "SJA4JTh9Esz",
+        "BJJByp354jG",
+        "Hyuv1Tn9Viz",
+        "B1KwypncEif2",
+        "BkAgyTh94jM2",
+        "BkAgyTh94jM8"
+      ],
+      "vehicle_ids": [
+        "Skka2cNjf",
+        "Skka2cNjf4",
+        "Skka2cNjf5",
+        "Skka2cNjf6",
+        "B1TSka254if",
+        "ryRHyp2cVsG",
+        "BJeFk6254of",
+        "r1-tJTn94sf",
+        "HJzKyahq4if",
+        "BJ7YJpn5EoG",
+        "Sy4tkphqVjz"
+      ],
+      "species_ids": [
+        "Hyj8yphc4jf",
+        "BynIJ62q4jf",
+        "S1YtJ63qVoG",
+        "BkStyThc4jz",
+        "HyckT29VjG",
+        "BJcKJT2qViz",
+        "S1egy63qNsG",
+        "r1aUJ62cVjG",
+        "ByWl162qVoM",
+        "SkzQkph9NsG",
+        "HyDLJ63q4of",
+        "HyOLyah5NjM",
+        "S1t8yT25Njf",
+        "Skq8yT294sG"
+      ],
+      "id": "SJ_-J62qViM"
+    },
+    {
+      "title": "The Phantom Menace",
+      "episode_id": 1,
+      "opening_crawl": "Turmoil has engulfed the\r\nGalactic Republic. The taxation\r\nof trade routes to outlying star\r\nsystems is in dispute.\r\n\r\nHoping to resolve the matter\r\nwith a blockade of deadly\r\nbattleships, the greedy Trade\r\nFederation has stopped all\r\nshipping to the small planet\r\nof Naboo.\r\n\r\nWhile the Congress of the\r\nRepublic endlessly debates\r\nthis alarming chain of events,\r\nthe Supreme Chancellor has\r\nsecretly dispatched two Jedi\r\nKnights, the guardians of\r\npeace and justice in the\r\ngalaxy, to settle the conflict....",
+      "director": "George Lucas",
+      "producer": "Rick McCallum",
+      "release_date": "1999-05-19",
+      "character_ids": [
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1",
+        "SyAbJp35ViM6",
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG1",
+        "rJlMJT25Njz2",
+        "rJlMJT25Njz3",
+        "rJlMJT25Njz4",
+        "rJlMJT25Njz6",
+        "rJlMJT25Njz7",
+        "rJlMJT25Njz8",
+        "rJlMJT25Njz9",
+        "S1WGJ62cEjf0",
+        "S1WGJ62cEjf1",
+        "S1WGJ62cEjf2",
+        "S1WGJ62cEjf3",
+        "S1WGJ62cEjf4",
+        "S1WGJ62cEjf6",
+        "S1WGJ62cEjf8",
+        "S1WGJ62cEjf9",
+        "r1fMkp25Njz0",
+        "r1fMkp25Njz1",
+        "r1fMkp25Njz2",
+        "r1fMkp25Njz3",
+        "r1fMkp25Njz4",
+        "r1fMkp25Njz5",
+        "r1fMkp25Njz6",
+        "r1fMkp25Njz7",
+        "r1fMkp25Njz8",
+        "r1fMkp25Njz9",
+        "S1WGJ62cEjf7",
+        "rJlMJT25Njz5"
+      ],
+      "planet_ids": [
+        "ByYe1T2c4sG",
+        "HJ5e1639Vsf",
+        "SkNak6hcEjf"
+      ],
+      "starship_ids": [
+        "B1iEJpn5Niz",
+        "By3VkT2cNsf",
+        "SyKEJT2q4jz",
+        "B1KwypncEif2",
+        "HJ9E1ThcVif"
+      ],
+      "vehicle_ids": [
+        "rJifyan5Esf",
+        "By3GkpncEjf",
+        "H1pfyp3qVoG",
+        "By0fy62qNiG",
+        "rk1Qyah9NsG",
+        "BkeXkp2c4sG",
+        "Skka2cNjf2"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz",
+        "S1YtJ63qVoG",
+        "HyckT29VjG",
+        "S1yxy63q4if",
+        "S1egy63qNsG",
+        "ByWl162qVoM",
+        "S1fxyTn5EjG",
+        "SkzQkph9NsG",
+        "BJXXJa3cVoz",
+        "B14X1TncVof",
+        "rJrXyThqVsz",
+        "ryLXyp25Noz",
+        "HyPXkp39Niz",
+        "H1dQk6394iM",
+        "B1YQJp2qViG",
+        "HJcQkpnqEiG",
+        "HyoXJa3c4oG",
+        "rk4IJphqEsG",
+        "BkrL1phqEiz",
+        "BJ8I1Tnc4jG"
+      ],
+      "id": "H1YZyp3cVjf"
+    },
+    {
+      "title": "Revenge of the Sith",
+      "episode_id": 3,
+      "opening_crawl": "War! The Republic is crumbling\r\nunder attacks by the ruthless\r\nSith Lord, Count Dooku.\r\nThere are heroes on both sides.\r\nEvil is everywhere.\r\n\r\nIn a stunning move, the\r\nfiendish droid leader, General\r\nGrievous, has swept into the\r\nRepublic capital and kidnapped\r\nChancellor Palpatine, leader of\r\nthe Galactic Senate.\r\n\r\nAs the Separatist Droid Army\r\nattempts to flee the besieged\r\ncapital with their valuable\r\nhostage, two Jedi Knights lead a\r\ndesperate mission to rescue the\r\ncaptive Chancellor....",
+      "director": "George Lucas",
+      "producer": "Rick McCallum",
+      "release_date": "2005-05-19",
+      "character_ids": [
+        "SyAbJp35ViM",
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "S1WGJ62cEjf",
+        "r1fMkp25Njz",
+        "HJ7Myp39Njf",
+        "Bk4fJp3cNjf",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1",
+        "SyAbJp35ViM2",
+        "SyAbJp35ViM3",
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG1",
+        "rJlMJT25Njz3",
+        "S1WGJ62cEjf6",
+        "r1fMkp25Njz1",
+        "r1fMkp25Njz2",
+        "r1fMkp25Njz3",
+        "r1fMkp25Njz4",
+        "r1fMkp25Njz5",
+        "r1fMkp25Njz6",
+        "r1fMkp25Njz8",
+        "HJ7Myp39Njf3",
+        "HJ7Myp39Njf4",
+        "HJ7Myp39Njf7",
+        "HJ7Myp39Njf8",
+        "Bk4fJp3cNjf5",
+        "Bk4fJp3cNjf8",
+        "Bk4fJp3cNjf9",
+        "S1BGJThqEoG0",
+        "S1BGJThqEoG1",
+        "S1BGJThqEoG2",
+        "S1BGJThqEoG3",
+        "rJlMJT25Njz5"
+      ],
+      "planet_ids": [
+        "B17gkTncNoz",
+        "HkIlkTnqEjG",
+        "ByYe1T2c4sG",
+        "HJ5e1639Vsf",
+        "SJhXJp294oz",
+        "HkTX1Th5Esf",
+        "SyAmJ639Viz",
+        "Bky4k63c4oG",
+        "B1xEk629EjG",
+        "Hy-4yphqEif",
+        "S1G4J639EoM",
+        "SkQEkT2cEsG",
+        "SkNak6hcEjf"
+      ],
+      "starship_ids": [
+        "BJJByp354jG",
+        "BkAgyTh94jM9",
+        "H1oDJ6hqEsG",
+        "B1KwypncEif2",
+        "HJWdy63cVof",
+        "HJL5kp25VjG",
+        "SyvqyThqNoz",
+        "ryd5k6n9Nif",
+        "rkKqJ6ncEjz",
+        "H159Jph9Vjz",
+        "H1sq16h5Vif",
+        "Bkhq16h54iz"
+      ],
+      "vehicle_ids": [
+        "rJifyan5Esf",
+        "B1TSka254if",
+        "BJeFk6254of",
+        "BJ7YJpn5EoG",
+        "H1x1T2cEiM0",
+        "H1x1T2cEiM2",
+        "H1x1T2cEiM7",
+        "H1x1T2cEiM9",
+        "S1bJTnqEiz0",
+        "S1bJTnqEiz1",
+        "S1bJTnqEiz2",
+        "S1bJTnqEiz3",
+        "S1bJTnqEiz6"
+      ],
+      "species_ids": [
+        "ryLXyp25Noz",
+        "BynIJ62q4jf",
+        "S1YtJ63qVoG",
+        "rJdFya25VjM",
+        "SJ8Ky6h9Nsf",
+        "S1PFyah5Vjz",
+        "HyckT29VjG",
+        "BJcKJT2qViz",
+        "r1aUJ62cVjG",
+        "SkzQkph9NsG",
+        "BkStyThc4jz",
+        "HyPXkp39Niz",
+        "HJcQkpnqEiG",
+        "HyoXJa3c4oG",
+        "rk4IJphqEsG",
+        "BkrL1phqEiz",
+        "BJ8I1Tnc4jG",
+        "HyDLJ63q4of",
+        "HyOLyah5NjM",
+        "S1t8yT25Njf"
+      ],
+      "id": "HycWyp39Nsf"
+    },
+    {
+      "title": "Return of the Jedi",
+      "episode_id": 6,
+      "opening_crawl": "Luke Skywalker has returned to\r\nhis home planet of Tatooine in\r\nan attempt to rescue his\r\nfriend Han Solo from the\r\nclutches of the vile gangster\r\nJabba the Hutt.\r\n\r\nLittle does Luke know that the\r\nGALACTIC EMPIRE has secretly\r\nbegun construction on a new\r\narmored space station even\r\nmore powerful than the first\r\ndreaded Death Star.\r\n\r\nWhen completed, this ultimate\r\nweapon will spell certain doom\r\nfor the small band of rebels\r\nstruggling to restore freedom\r\nto the galaxy...",
+      "director": "Richard Marquand",
+      "producer": "Howard G. Kazanjian, George Lucas, Rick McCallum",
+      "release_date": "1983-05-25",
+      "character_ids": [
+        "SyAbJp35ViM",
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "S1WGJ62cEjf",
+        "r1fMkp25Njz",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4",
+        "SyAbJp35ViM6",
+        "SyAbJp35ViM8",
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG1",
+        "Hyyzkp2qEoG2",
+        "Hyyzkp2qEoG5",
+        "Hyyzkp2qEoG7",
+        "Hyyzkp2qEoG8",
+        "Hyyzkp2qEoG9",
+        "rJlMJT25Njz0",
+        "rJlMJT25Njz1",
+        "S1WGJ62cEjf5"
+      ],
+      "planet_ids": [
+        "HkIlkTnqEjG",
+        "ry_xJph5EoG",
+        "ByYe1T2c4sG",
+        "HJ5e1639Vsf",
+        "SkNak6hcEjf"
+      ],
+      "starship_ids": [
+        "BkpeJa25Voz",
+        "rJe-kah5NsM",
+        "SkZ-1p39ViM",
+        "HJMWJT254oG",
+        "S1HZya254iM",
+        "Hk8WyT39Eof",
+        "rk8N1ah94jG",
+        "BJPVyT3cEsM",
+        "BkdVJan5ViG",
+        "B1KwypncEif",
+        "B1pw1Tn94jf",
+        "H1sq16h5Vif"
+      ],
+      "vehicle_ids": [
+        "SJMkT35Nof",
+        "HJV1p3qEiG",
+        "HJrJa3qEjz",
+        "S1Ika2cVoG",
+        "H1dyT35Noz",
+        "SJdzya294iM",
+        "rJFzyThcNjf",
+        "Byqf1ahcVsz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz",
+        "S1YtJ63qVoG",
+        "rJdFya25VjM",
+        "HJFy629NoG",
+        "HyckT29VjG",
+        "rynJTn94of",
+        "rJT1T3cEif",
+        "Sy0yp3cEif",
+        "SkzQkph9NsG"
+      ],
+      "id": "B1ibyphc4iG"
+    },
+    {
+      "title": "The Empire Strikes Back",
+      "episode_id": 5,
+      "opening_crawl": "It is a dark time for the\r\nRebellion. Although the Death\r\nStar has been destroyed,\r\nImperial troops have driven the\r\nRebel forces from their hidden\r\nbase and pursued them across\r\nthe galaxy.\r\n\r\nEvading the dreaded Imperial\r\nStarfleet, a group of freedom\r\nfighters led by Luke Skywalker\r\nhas established a new secret\r\nbase on the remote ice world\r\nof Hoth.\r\n\r\nThe evil lord Darth Vader,\r\nobsessed with finding young\r\nSkywalker, has dispatched\r\nthousands of remote probes into\r\nthe far reaches of space....",
+      "director": "Irvin Kershner",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1980-05-17",
+      "character_ids": [
+        "SyAbJp35ViM",
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "S1WGJ62cEjf",
+        "r1fMkp25Njz",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4",
+        "SyAbJp35ViM8",
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG1",
+        "Hyyzkp2qEoG2",
+        "Hyyzkp2qEoG3",
+        "Hyyzkp2qEoG4",
+        "Hyyzkp2qEoG5",
+        "Hyyzkp2qEoG6"
+      ],
+      "planet_ids": [
+        "SkSl1a2qViM",
+        "HkIlkTnqEjG",
+        "SyvxkThq4oG",
+        "B17gkTncNoz7"
+      ],
+      "starship_ids": [
+        "BkpeJa25Voz",
+        "rJe-kah5NsM",
+        "SkZ-1p39ViM",
+        "HJMWJT254oG",
+        "HkEWkTncEsf",
+        "S1HZya254iM",
+        "Hk8WyT39Eof",
+        "B1KwypncEif",
+        "B1pw1Tn94jf"
+      ],
+      "vehicle_ids": [
+        "SJMkT35Nof",
+        "B1mJah9Eiz",
+        "HJV1p3qEiG",
+        "HJrJa3qEjz",
+        "S1Ika2cVoG",
+        "BkwJpncEoM"
+      ],
+      "species_ids": [
+        "HyckT29VjG",
+        "Hkj1Th9Voz",
+        "rJdFya25VjM",
+        "S1YtJ63qVoG",
+        "BJcKJT2qViz"
+      ],
+      "id": "Sy3WJT2qVsG"
+    },
+    {
+      "title": "The Force Awakens",
+      "episode_id": 7,
+      "opening_crawl": "Luke Skywalker has vanished.\r\nIn his absence, the sinister\r\nFIRST ORDER has risen from\r\nthe ashes of the Empire\r\nand will not rest until\r\nSkywalker, the last Jedi,\r\nhas been destroyed.\r\n \r\nWith the support of the\r\nREPUBLIC, General Leia Organa\r\nleads a brave RESISTANCE.\r\nShe is desperate to find her\r\nbrother Luke and gain his\r\nhelp in restoring peace and\r\njustice to the galaxy.\r\n \r\nLeia has sent her most daring\r\npilot on a secret mission\r\nto Jakku, where an old ally\r\nhas discovered a clue to\r\nLuke's whereabouts....",
+      "director": "J. J. Abrams",
+      "producer": "Kathleen Kennedy, J. J. Abrams, Bryan Burk",
+      "release_date": "2015-12-11",
+      "character_ids": [
+        "SyAbJp35ViM",
+        "rJlMJT25Njz",
+        "r1fMkp25Njz",
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4",
+        "Hyyzkp2qEoG7",
+        "S1BGJThqEoG4",
+        "S1BGJThqEoG5",
+        "S1BGJThqEoG6",
+        "S1BGJThqEoG7",
+        "S1BGJThqEoG8"
+      ],
+      "planet_ids": [
+        "SyvxkThq4oG1"
+      ],
+      "starship_ids": [
+        "Hy2vkp29Esf",
+        "rJe-kah5NsM"
+      ],
+      "vehicle_ids": [],
+      "species_ids": [
+        "rJdFya25VjM",
+        "S1YtJ63qVoG",
+        "BJcKJT2qViz"
+      ],
+      "id": "Sk6Zyp2c4oz"
+    }
+  ],
+  "vehicles": [
+    {
+      "name": "Sand Crawler",
+      "model": "Digger Crawler",
+      "manufacturer": "Corellia Mining Corporation",
+      "cost_in_credits": 150000,
+      "length": 36.8,
+      "max_atmosphering_speed": 30,
+      "crew": 46,
+      "passengers": 30,
+      "cargo_capacity": 50000,
+      "consumables": "60 days",
+      "vehicle_class": "wheeled",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "S1vZy63c4oz"
+      ],
+      "id": "Skka2cNjf"
+    },
+    {
+      "name": "T-16 skyhopper",
+      "model": "T-16 skyhopper",
+      "manufacturer": "Incom Corporation",
+      "cost_in_credits": 14500,
+      "length": 10.4,
+      "max_atmosphering_speed": 1200,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 50,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "H1x1T2cEiM"
+    },
+    {
+      "name": "X-34 landspeeder",
+      "model": "X-34 landspeeder",
+      "manufacturer": "SoroSuub Corporation",
+      "cost_in_credits": 10550,
+      "length": 3.4,
+      "max_atmosphering_speed": 250,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 5,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "S1bJTnqEiz"
+    },
+    {
+      "name": "TIE/LN starfighter",
+      "model": "Twin Ion Engine/Ln Starfighter",
+      "manufacturer": "Sienar Fleet Systems",
+      "length": 6.4,
+      "max_atmosphering_speed": 1200,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 65,
+      "consumables": "2 days",
+      "vehicle_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "SJMkT35Nof"
+    },
+    {
+      "name": "Snowspeeder",
+      "model": "t-47 airspeeder",
+      "manufacturer": "Incom corporation",
+      "length": 4.5,
+      "max_atmosphering_speed": 650,
+      "crew": 2,
+      "passengers": 0,
+      "cargo_capacity": 10,
+      "vehicle_class": "airspeeder",
+      "pilot_ids": [
+        "SyAbJp35ViM",
+        "SyAbJp35ViM8"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "B1mJah9Eiz"
+    },
+    {
+      "name": "TIE bomber",
+      "model": "TIE/sa bomber",
+      "manufacturer": "Sienar Fleet Systems",
+      "length": 7.8,
+      "max_atmosphering_speed": 850,
+      "crew": 1,
+      "passengers": 0,
+      "consumables": "2 days",
+      "vehicle_class": "space/planetary bomber",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "HJV1p3qEiG"
+    },
+    {
+      "name": "AT-AT",
+      "model": "All Terrain Armored Transport",
+      "manufacturer": "Kuat Drive Yards, Imperial Department of Military Research",
+      "length": 20,
+      "max_atmosphering_speed": 60,
+      "crew": 5,
+      "passengers": 40,
+      "cargo_capacity": 1000,
+      "vehicle_class": "assault walker",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "HJrJa3qEjz"
+    },
+    {
+      "name": "AT-ST",
+      "model": "All Terrain Scout Transport",
+      "manufacturer": "Kuat Drive Yards, Imperial Department of Military Research",
+      "length": 2,
+      "max_atmosphering_speed": 90,
+      "crew": 2,
+      "passengers": 0,
+      "cargo_capacity": 200,
+      "vehicle_class": "walker",
+      "pilot_ids": [
+        "SyAbJp35ViM3"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "S1Ika2cVoG"
+    },
+    {
+      "name": "Storm IV Twin-Pod cloud car",
+      "model": "Storm IV Twin-Pod",
+      "manufacturer": "Bespin Motors",
+      "cost_in_credits": 75000,
+      "length": 7,
+      "max_atmosphering_speed": 1500,
+      "crew": 2,
+      "passengers": 0,
+      "cargo_capacity": 10,
+      "consumables": "1 day",
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "BkwJpncEoM"
+    },
+    {
+      "name": "Sail barge",
+      "model": "Modified Luxury Sail Barge",
+      "manufacturer": "Ubrikkian Industries Custom Vehicle Division",
+      "cost_in_credits": 285000,
+      "length": 30,
+      "max_atmosphering_speed": 100,
+      "crew": 26,
+      "passengers": 500,
+      "cargo_capacity": 2000000,
+      "vehicle_class": "sail barge",
+      "pilot_ids": [],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "H1dyT35Noz"
+    },
+    {
+      "name": "Bantha-II cargo skiff",
+      "model": "Bantha-II",
+      "manufacturer": "Ubrikkian Industries",
+      "cost_in_credits": 8000,
+      "length": 9.5,
+      "max_atmosphering_speed": 250,
+      "crew": 5,
+      "passengers": 16,
+      "cargo_capacity": 135000,
+      "consumables": "1 day",
+      "vehicle_class": "repulsorcraft cargo skiff",
+      "pilot_ids": [],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "SJdzya294iM"
+    },
+    {
+      "name": "TIE/IN interceptor",
+      "model": "Twin Ion Engine Interceptor",
+      "manufacturer": "Sienar Fleet Systems",
+      "length": 9.6,
+      "max_atmosphering_speed": 1250,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 75,
+      "consumables": "2 days",
+      "vehicle_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "rJFzyThcNjf"
+    },
+    {
+      "name": "Imperial Speeder Bike",
+      "model": "74-Z speeder bike",
+      "manufacturer": "Aratech Repulsor Company",
+      "cost_in_credits": 8000,
+      "length": 3,
+      "max_atmosphering_speed": 360,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 4,
+      "consumables": "1 day",
+      "vehicle_class": "speeder",
+      "pilot_ids": [
+        "SyAbJp35ViM",
+        "r1fMkp25Njz"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "Byqf1ahcVsz"
+    },
+    {
+      "name": "Vulture Droid",
+      "model": "Vulture-class droid starfighter",
+      "manufacturer": "Haor Chall Engineering, Baktoid Armor Workshop",
+      "length": 3.5,
+      "max_atmosphering_speed": 1200,
+      "crew": 0,
+      "passengers": 0,
+      "cargo_capacity": 0,
+      "vehicle_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "rJifyan5Esf"
+    },
+    {
+      "name": "Multi-Troop Transport",
+      "model": "Multi-Troop Transport",
+      "manufacturer": "Baktoid Armor Workshop",
+      "cost_in_credits": 138000,
+      "length": 31,
+      "max_atmosphering_speed": 35,
+      "crew": 4,
+      "passengers": 112,
+      "cargo_capacity": 12000,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "By3GkpncEjf"
+    },
+    {
+      "name": "Armored Assault Tank",
+      "model": "Armoured Assault Tank",
+      "manufacturer": "Baktoid Armor Workshop",
+      "length": 9.75,
+      "max_atmosphering_speed": 55,
+      "crew": 4,
+      "passengers": 6,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "H1pfyp3qVoG"
+    },
+    {
+      "name": "Single Trooper Aerial Platform",
+      "model": "Single Trooper Aerial Platform",
+      "manufacturer": "Baktoid Armor Workshop",
+      "cost_in_credits": 2500,
+      "length": 2,
+      "max_atmosphering_speed": 400,
+      "crew": 1,
+      "passengers": 0,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "By0fy62qNiG"
+    },
+    {
+      "name": "C-9979 landing craft",
+      "model": "C-9979 landing craft",
+      "manufacturer": "Haor Chall Engineering",
+      "cost_in_credits": 200000,
+      "length": 210,
+      "max_atmosphering_speed": 587,
+      "crew": 140,
+      "passengers": 284,
+      "cargo_capacity": 1800000,
+      "consumables": "1 day",
+      "vehicle_class": "landing craft",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "rk1Qyah9NsG"
+    },
+    {
+      "name": "Tribubble bongo",
+      "model": "Tribubble bongo",
+      "manufacturer": "Otoh Gunga Bongameken Cooperative",
+      "length": 15,
+      "max_atmosphering_speed": 85,
+      "crew": 1,
+      "passengers": 2,
+      "cargo_capacity": 1600,
+      "vehicle_class": "submarine",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "rJlMJT25Njz2"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "BkeXkp2c4sG"
+    },
+    {
+      "name": "Sith speeder",
+      "model": "FC-20 speeder bike",
+      "manufacturer": "Razalon",
+      "cost_in_credits": 4000,
+      "length": 1.5,
+      "max_atmosphering_speed": 180,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 2,
+      "vehicle_class": "speeder",
+      "pilot_ids": [
+        "S1WGJ62cEjf4"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "Skka2cNjf2"
+    },
+    {
+      "name": "Zephyr-G swoop bike",
+      "model": "Zephyr-G swoop bike",
+      "manufacturer": "Mobquet Swoops and Speeders",
+      "cost_in_credits": 5750,
+      "length": 3.68,
+      "max_atmosphering_speed": 350,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 200,
+      "vehicle_class": "repulsorcraft",
+      "pilot_ids": [
+        "SyAbJp35ViM1"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Skka2cNjf4"
+    },
+    {
+      "name": "Koro-2 Exodrive airspeeder",
+      "model": "Koro-2 Exodrive airspeeder",
+      "manufacturer": "Desler Gizh Outworld Mobility Corporation",
+      "length": 6.6,
+      "max_atmosphering_speed": 800,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 80,
+      "vehicle_class": "airspeeder",
+      "pilot_ids": [
+        "Bk4fJp3cNjf0"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Skka2cNjf5"
+    },
+    {
+      "name": "XJ-6 airspeeder",
+      "model": "XJ-6 airspeeder",
+      "manufacturer": "Narglatch AirTech prefabricated kit",
+      "length": 6.23,
+      "max_atmosphering_speed": 720,
+      "crew": 1,
+      "passengers": 1,
+      "vehicle_class": "airspeeder",
+      "pilot_ids": [
+        "SyAbJp35ViM1"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Skka2cNjf6"
+    },
+    {
+      "name": "LAAT/i",
+      "model": "Low Altitude Assault Transport/infrantry",
+      "manufacturer": "Rothana Heavy Engineering",
+      "length": 17.4,
+      "max_atmosphering_speed": 620,
+      "crew": 6,
+      "passengers": 30,
+      "cargo_capacity": 170,
+      "vehicle_class": "gunship",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "B1TSka254if"
+    },
+    {
+      "name": "LAAT/c",
+      "model": "Low Altitude Assault Transport/carrier",
+      "manufacturer": "Rothana Heavy Engineering",
+      "length": 28.82,
+      "max_atmosphering_speed": 620,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 40000,
+      "vehicle_class": "gunship",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "ryRHyp2cVsG"
+    },
+    {
+      "name": "Tsmeu-6 personal wheel bike",
+      "model": "Tsmeu-6 personal wheel bike",
+      "manufacturer": "Z-Gomot Ternbuell Guppat Corporation",
+      "cost_in_credits": 15000,
+      "length": 3.5,
+      "max_atmosphering_speed": 330,
+      "crew": 1,
+      "passengers": 1,
+      "cargo_capacity": 10,
+      "vehicle_class": "wheeled walker",
+      "pilot_ids": [
+        "Bk4fJp3cNjf9"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H1x1T2cEiM0"
+    },
+    {
+      "name": "Emergency Firespeeder",
+      "model": "Fire suppression speeder",
+      "crew": 2,
+      "vehicle_class": "fire suppression ship",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H1x1T2cEiM2"
+    },
+    {
+      "name": "Droid tri-fighter",
+      "model": "tri-fighter",
+      "manufacturer": "Colla Designs, Phlac-Arphocc Automata Industries",
+      "cost_in_credits": 20000,
+      "length": 5.4,
+      "max_atmosphering_speed": 1180,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 0,
+      "vehicle_class": "droid starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H1x1T2cEiM7"
+    },
+    {
+      "name": "Oevvaor jet catamaran",
+      "model": "Oevvaor jet catamaran",
+      "manufacturer": "Appazanna Engineering Works",
+      "cost_in_credits": 12125,
+      "length": 15.1,
+      "max_atmosphering_speed": 420,
+      "crew": 2,
+      "passengers": 2,
+      "cargo_capacity": 50,
+      "consumables": "3 days",
+      "vehicle_class": "airspeeder",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H1x1T2cEiM9"
+    },
+    {
+      "name": "Raddaugh Gnasp fluttercraft",
+      "model": "Raddaugh Gnasp fluttercraft",
+      "manufacturer": "Appazanna Engineering Works",
+      "cost_in_credits": 14750,
+      "length": 7,
+      "max_atmosphering_speed": 310,
+      "crew": 2,
+      "passengers": 0,
+      "cargo_capacity": 20,
+      "vehicle_class": "air speeder",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1bJTnqEiz0"
+    },
+    {
+      "name": "Clone turbo tank",
+      "model": "HAVw A6 Juggernaut",
+      "manufacturer": "Kuat Drive Yards",
+      "cost_in_credits": 350000,
+      "length": 49.4,
+      "max_atmosphering_speed": 160,
+      "crew": 20,
+      "passengers": 300,
+      "cargo_capacity": 30000,
+      "consumables": "20 days",
+      "vehicle_class": "wheeled walker",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1bJTnqEiz1"
+    },
+    {
+      "name": "Corporate Alliance tank droid",
+      "model": "NR-N99 Persuader-class droid enforcer",
+      "manufacturer": "Techno Union",
+      "cost_in_credits": 49000,
+      "length": 10.96,
+      "max_atmosphering_speed": 100,
+      "crew": 0,
+      "passengers": 4,
+      "vehicle_class": "droid tank",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1bJTnqEiz2"
+    },
+    {
+      "name": "Droid gunship",
+      "model": "HMP droid gunship",
+      "manufacturer": "Baktoid Fleet Ordnance, Haor Chall Engineering",
+      "cost_in_credits": 60000,
+      "length": 12.3,
+      "max_atmosphering_speed": 820,
+      "crew": 0,
+      "passengers": 0,
+      "cargo_capacity": 0,
+      "vehicle_class": "airspeeder",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1bJTnqEiz3"
+    },
+    {
+      "name": "AT-RT",
+      "model": "All Terrain Recon Transport",
+      "manufacturer": "Kuat Drive Yards",
+      "cost_in_credits": 40000,
+      "length": 3.2,
+      "max_atmosphering_speed": 90,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 20,
+      "consumables": "1 day",
+      "vehicle_class": "walker",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1bJTnqEiz6"
+    },
+    {
+      "name": "AT-TE",
+      "model": "All Terrain Tactical Enforcer",
+      "manufacturer": "Rothana Heavy Engineering, Kuat Drive Yards",
+      "length": 13.2,
+      "max_atmosphering_speed": 60,
+      "crew": 6,
+      "passengers": 36,
+      "cargo_capacity": 10000,
+      "consumables": "21 days",
+      "vehicle_class": "walker",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "BJeFk6254of"
+    },
+    {
+      "name": "SPHA",
+      "model": "Self-Propelled Heavy Artillery",
+      "manufacturer": "Rothana Heavy Engineering",
+      "length": 140,
+      "max_atmosphering_speed": 35,
+      "crew": 25,
+      "passengers": 30,
+      "cargo_capacity": 500,
+      "consumables": "7 weeks",
+      "vehicle_class": "walker",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "r1-tJTn94sf"
+    },
+    {
+      "name": "Flitknot speeder",
+      "model": "Flitknot speeder",
+      "manufacturer": "Huppla Pasa Tisc Shipwrights Collective",
+      "cost_in_credits": 8000,
+      "length": 2,
+      "max_atmosphering_speed": 634,
+      "crew": 1,
+      "passengers": 0,
+      "vehicle_class": "speeder",
+      "pilot_ids": [
+        "HJ7Myp39Njf7"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "HJzKyahq4if"
+    },
+    {
+      "name": "Neimoidian shuttle",
+      "model": "Sheathipede-class transport shuttle",
+      "manufacturer": "Haor Chall Engineering",
+      "length": 20,
+      "max_atmosphering_speed": 880,
+      "crew": 2,
+      "passengers": 6,
+      "cargo_capacity": 1000,
+      "consumables": "7 weeks",
+      "vehicle_class": "transport",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "BJ7YJpn5EoG"
+    },
+    {
+      "name": "Geonosian starfighter",
+      "model": "Nantex-class territorial defense",
+      "manufacturer": "Huppla Pasa Tisc Shipwrights Collective",
+      "length": 9.8,
+      "max_atmosphering_speed": 20000,
+      "crew": 1,
+      "passengers": 0,
+      "vehicle_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Sy4tkphqVjz"
+    }
+  ],
+  "species": [
+    {
+      "name": "Hutt",
+      "classification": "gastropod",
+      "designation": "sentient",
+      "average_height": 300,
+      "skin_colors": "green, brown, tan",
+      "eye_colors": "yellow, red",
+      "average_lifespan": 1000,
+      "homeworld": "B17gkTncNoz4",
+      "language": "Huttese",
+      "people_ids": [
+        "SyAbJp35ViM6"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "HJFy629NoG"
+    },
+    {
+      "name": "Yoda's species",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 66,
+      "skin_colors": "green, yellow",
+      "hair_colors": "brown, white",
+      "eye_colors": "brown, green, yellow",
+      "average_lifespan": 900,
+      "homeworld": "B17gkTncNoz8",
+      "language": "Galactic basic",
+      "people_ids": [
+        "Hyyzkp2qEoG0"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "id": "HyckT29VjG"
+    },
+    {
+      "name": "Trandoshan",
+      "classification": "reptile",
+      "designation": "sentient",
+      "average_height": 200,
+      "skin_colors": "brown, green",
+      "hair_colors": "none",
+      "eye_colors": "yellow, orange",
+      "homeworld": "B17gkTncNoz9",
+      "language": "Dosh",
+      "people_ids": [
+        "Hyyzkp2qEoG4"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "Hkj1Th9Voz"
+    },
+    {
+      "name": "Mon Calamari",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 160,
+      "skin_colors": "red, blue, brown, magenta",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "homeworld": "SkElJp3q4sM1",
+      "language": "Mon Calamarian",
+      "people_ids": [
+        "Hyyzkp2qEoG7"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "rynJTn94of"
+    },
+    {
+      "name": "Ewok",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 100,
+      "skin_colors": "brown",
+      "hair_colors": "white, brown, black",
+      "eye_colors": "orange, brown",
+      "homeworld": "ry_xJph5EoG",
+      "language": "Ewokese",
+      "people_ids": [
+        "rJlMJT25Njz0"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "rJT1T3cEif"
+    },
+    {
+      "name": "Sullustan",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "pale",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "homeworld": "SkElJp3q4sM3",
+      "language": "Sullutese",
+      "people_ids": [
+        "rJlMJT25Njz1"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "Sy0yp3cEif"
+    },
+    {
+      "name": "Neimodian",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "grey, green",
+      "hair_colors": "none",
+      "eye_colors": "red, pink",
+      "homeworld": "S1G4J639EoM",
+      "language": "Neimoidia",
+      "people_ids": [
+        "rJlMJT25Njz3"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "S1yxy63q4if"
+    },
+    {
+      "name": "Gungan",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 190,
+      "skin_colors": "brown, green",
+      "hair_colors": "none",
+      "eye_colors": "orange",
+      "homeworld": "ByYe1T2c4sG",
+      "language": "Gungan basic",
+      "people_ids": [
+        "rJlMJT25Njz6",
+        "rJlMJT25Njz7",
+        "rJlMJT25Njz8"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "id": "S1egy63qNsG"
+    },
+    {
+      "name": "Toydarian",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 120,
+      "skin_colors": "blue, green, grey",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "average_lifespan": 91,
+      "homeworld": "SkElJp3q4sM4",
+      "language": "Toydarian",
+      "people_ids": [
+        "S1WGJ62cEjf0"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "id": "ByWl162qVoM"
+    },
+    {
+      "name": "Dug",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 100,
+      "skin_colors": "brown, purple, grey, red",
+      "hair_colors": "none",
+      "eye_colors": "yellow, blue",
+      "homeworld": "SkElJp3q4sM5",
+      "language": "Dugese",
+      "people_ids": [
+        "S1WGJ62cEjf1"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "S1fxyTn5EjG"
+    },
+    {
+      "name": "Twi'lek",
+      "classification": "mammals",
+      "designation": "sentient",
+      "average_height": 200,
+      "skin_colors": "orange, yellow, blue, green, pink, purple, tan",
+      "hair_colors": "none",
+      "eye_colors": "blue, brown, orange, pink",
+      "homeworld": "SkElJp3q4sM7",
+      "language": "Twi'leki",
+      "people_ids": [
+        "S1WGJ62cEjf5",
+        "S1WGJ62cEjf6"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "id": "SkzQkph9NsG"
+    },
+    {
+      "name": "Aleena",
+      "classification": "reptile",
+      "designation": "sentient",
+      "average_height": 80,
+      "skin_colors": "blue, gray",
+      "hair_colors": "none",
+      "average_lifespan": 79,
+      "homeworld": "SkElJp3q4sM8",
+      "language": "Aleena",
+      "people_ids": [
+        "S1WGJ62cEjf7"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "BJXXJa3cVoz"
+    },
+    {
+      "name": "Vulptereen",
+      "designation": "sentient",
+      "average_height": 100,
+      "skin_colors": "grey",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "homeworld": "SkElJp3q4sM9",
+      "language": "vulpterish",
+      "people_ids": [
+        "S1WGJ62cEjf8"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "B14X1TncVof"
+    },
+    {
+      "name": "Xexto",
+      "designation": "sentient",
+      "average_height": 125,
+      "skin_colors": "grey, yellow, purple",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "homeworld": "SkSl1a2qViM0",
+      "language": "Xextese",
+      "people_ids": [
+        "S1WGJ62cEjf9"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "rJrXyThqVsz"
+    },
+    {
+      "name": "Toong",
+      "designation": "sentient",
+      "average_height": 200,
+      "skin_colors": "grey, green, yellow",
+      "hair_colors": "none",
+      "eye_colors": "orange",
+      "homeworld": "SkSl1a2qViM1",
+      "language": "Tundan",
+      "people_ids": [
+        "r1fMkp25Njz0"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "ryLXyp25Noz"
+    },
+    {
+      "name": "Cerean",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 200,
+      "skin_colors": "pale pink",
+      "hair_colors": "red, blond, black, white",
+      "eye_colors": "hazel",
+      "homeworld": "SkSl1a2qViM3",
+      "language": "Cerean",
+      "people_ids": [
+        "r1fMkp25Njz2"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "HyPXkp39Niz"
+    },
+    {
+      "name": "Nautolan",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "green, blue, brown, red",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "average_lifespan": 70,
+      "homeworld": "SkSl1a2qViM4",
+      "language": "Nautila",
+      "people_ids": [
+        "r1fMkp25Njz3"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "H1dQk6394iM"
+    },
+    {
+      "name": "Zabrak",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "pale, brown, red, orange, yellow",
+      "hair_colors": "black",
+      "eye_colors": "brown, orange",
+      "homeworld": "SkSl1a2qViM5",
+      "language": "Zabraki",
+      "people_ids": [
+        "S1WGJ62cEjf4",
+        "r1fMkp25Njz4"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "B1YQJp2qViG"
+    },
+    {
+      "name": "Tholothian",
+      "classification": "mammal",
+      "designation": "sentient",
+      "skin_colors": "dark",
+      "eye_colors": "blue, indigo",
+      "homeworld": "SkSl1a2qViM6",
+      "people_ids": [
+        "r1fMkp25Njz5"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "HJcQkpnqEiG"
+    },
+    {
+      "name": "Iktotchi",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "pink",
+      "hair_colors": "none",
+      "eye_colors": "orange",
+      "homeworld": "SkSl1a2qViM7",
+      "language": "Iktotchese",
+      "people_ids": [
+        "r1fMkp25Njz6"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "HyoXJa3c4oG"
+    },
+    {
+      "name": "Quermian",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 240,
+      "skin_colors": "white",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "average_lifespan": 86,
+      "homeworld": "SkSl1a2qViM8",
+      "language": "Quermian",
+      "people_ids": [
+        "r1fMkp25Njz7"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "rk4IJphqEsG"
+    },
+    {
+      "name": "Kel Dor",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "peach, orange, red",
+      "hair_colors": "none",
+      "eye_colors": "black, silver",
+      "average_lifespan": 70,
+      "homeworld": "SkSl1a2qViM9",
+      "language": "Kel Dor",
+      "people_ids": [
+        "r1fMkp25Njz8"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "BkrL1phqEiz"
+    },
+    {
+      "name": "Chagrian",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 190,
+      "skin_colors": "blue",
+      "hair_colors": "none",
+      "eye_colors": "blue",
+      "homeworld": "HkIlkTnqEjG0",
+      "language": "Chagria",
+      "people_ids": [
+        "r1fMkp25Njz9"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "BJ8I1Tnc4jG"
+    },
+    {
+      "name": "Geonosian",
+      "classification": "insectoid",
+      "designation": "sentient",
+      "average_height": 178,
+      "skin_colors": "green, brown",
+      "hair_colors": "none",
+      "eye_colors": "green, hazel",
+      "homeworld": "By3lk6294sG",
+      "language": "Geonosian",
+      "people_ids": [
+        "HJ7Myp39Njf3"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "HyDLJ63q4of"
+    },
+    {
+      "name": "Mirialan",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "yellow, green",
+      "hair_colors": "black, brown",
+      "eye_colors": "blue, green, red, yellow, brown, orange",
+      "homeworld": "HkIlkTnqEjG1",
+      "language": "Mirialan",
+      "people_ids": [
+        "HJ7Myp39Njf4",
+        "HJ7Myp39Njf5"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "HyOLyah5NjM"
+    },
+    {
+      "name": "Clawdite",
+      "classification": "reptilian",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "green, yellow",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "average_lifespan": 70,
+      "homeworld": "HkIlkTnqEjG4",
+      "language": "Clawdite",
+      "people_ids": [
+        "Bk4fJp3cNjf0"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "S1t8yT25Njf"
+    },
+    {
+      "name": "Besalisk",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 178,
+      "skin_colors": "brown",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "average_lifespan": 75,
+      "homeworld": "HkIlkTnqEjG5",
+      "language": "besalisk",
+      "people_ids": [
+        "Bk4fJp3cNjf1"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Skq8yT294sG"
+    },
+    {
+      "name": "Kaminoan",
+      "classification": "amphibian",
+      "designation": "sentient",
+      "average_height": 220,
+      "skin_colors": "grey, blue",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "average_lifespan": 80,
+      "homeworld": "S1oxJanqVsG",
+      "language": "Kaminoan",
+      "people_ids": [
+        "Bk4fJp3cNjf2",
+        "Bk4fJp3cNjf3"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Hyj8yphc4jf"
+    },
+    {
+      "name": "Skakoan",
+      "classification": "mammal",
+      "designation": "sentient",
+      "skin_colors": "grey, green",
+      "hair_colors": "none",
+      "homeworld": "HkIlkTnqEjG6",
+      "language": "Skakoan",
+      "people_ids": [
+        "Bk4fJp3cNjf6"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "BynIJ62q4jf"
+    },
+    {
+      "name": "Muun",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 190,
+      "skin_colors": "grey, white",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "average_lifespan": 100,
+      "homeworld": "HkIlkTnqEjG7",
+      "language": "Muun",
+      "people_ids": [
+        "Bk4fJp3cNjf7"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "r1aUJ62cVjG"
+    },
+    {
+      "name": "Togruta",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "red, white, orange, yellow, green, blue",
+      "hair_colors": "none",
+      "eye_colors": "red, orange, yellow, green, blue, black",
+      "average_lifespan": 94,
+      "homeworld": "HkIlkTnqEjG8",
+      "language": "Togruti",
+      "people_ids": [
+        "Bk4fJp3cNjf8"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "BkStyThc4jz"
+    },
+    {
+      "name": "Kaleesh",
+      "classification": "reptile",
+      "designation": "sentient",
+      "average_height": 170,
+      "skin_colors": "brown, orange, tan",
+      "hair_colors": "none",
+      "eye_colors": "yellow",
+      "average_lifespan": 80,
+      "homeworld": "HkIlkTnqEjG9",
+      "language": "Kaleesh",
+      "people_ids": [
+        "Bk4fJp3cNjf9"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "SJ8Ky6h9Nsf"
+    },
+    {
+      "name": "Pau'an",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 190,
+      "skin_colors": "grey",
+      "hair_colors": "none",
+      "eye_colors": "black",
+      "average_lifespan": 700,
+      "homeworld": "SJhXJp294oz",
+      "language": "Utapese",
+      "people_ids": [
+        "S1BGJThqEoG3"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1PFyah5Vjz"
+    },
+    {
+      "name": "Wookiee",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 210,
+      "skin_colors": "gray",
+      "hair_colors": "black, brown",
+      "eye_colors": "blue, green, yellow, brown, golden, red",
+      "average_lifespan": 400,
+      "homeworld": "SyAmJ639Viz",
+      "language": "Shyriiwook",
+      "people_ids": [
+        "SyAbJp35ViM3",
+        "S1BGJThqEoG0"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "Sk6Zyp2c4oz",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "rJdFya25VjM"
+    },
+    {
+      "name": "Droid",
+      "classification": "artificial",
+      "designation": "sentient",
+      "average_lifespan": -1,
+      "people_ids": [
+        "Hyyzkp2qEoG",
+        "rJlMJT25Njz",
+        "S1BGJThqEoG",
+        "Hyyzkp2qEoG3",
+        "S1BGJThqEoG7"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "Sk6Zyp2c4oz",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "S1YtJ63qVoG"
+    },
+    {
+      "name": "Human",
+      "classification": "mammal",
+      "designation": "sentient",
+      "average_height": 180,
+      "skin_colors": "caucasian, black, asian, hispanic",
+      "hair_colors": "blonde, brown, black, red",
+      "eye_colors": "brown, blue, green, hazel, grey, amber",
+      "average_lifespan": 120,
+      "homeworld": "HJ5e1639Vsf",
+      "language": "Galactic Basic",
+      "people_ids": [
+        "SyAbJp35ViM",
+        "S1WGJ62cEjf",
+        "r1fMkp25Njz",
+        "HJ7Myp39Njf",
+        "Bk4fJp3cNjf",
+        "r1Lz1T2q4iM",
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1",
+        "SyAbJp35ViM2",
+        "SyAbJp35ViM4",
+        "SyAbJp35ViM8",
+        "SyAbJp35ViM9",
+        "Hyyzkp2qEoG1",
+        "Hyyzkp2qEoG2",
+        "Hyyzkp2qEoG5",
+        "Hyyzkp2qEoG6",
+        "Hyyzkp2qEoG8",
+        "Hyyzkp2qEoG9",
+        "rJlMJT25Njz2",
+        "rJlMJT25Njz4",
+        "S1WGJ62cEjf3",
+        "r1fMkp25Njz1",
+        "HJ7Myp39Njf0",
+        "HJ7Myp39Njf1",
+        "HJ7Myp39Njf2",
+        "HJ7Myp39Njf6",
+        "HJ7Myp39Njf7",
+        "HJ7Myp39Njf8",
+        "HJ7Myp39Njf9",
+        "Bk4fJp3cNjf4",
+        "S1BGJThqEoG1",
+        "S1BGJThqEoG4",
+        "S1BGJThqEoG5",
+        "S1BGJThqEoG6",
+        "rJlMJT25Njz5"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "Sk6Zyp2c4oz",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "BJcKJT2qViz"
+    },
+    {
+      "name": "Rodian",
+      "classification": "sentient",
+      "designation": "reptilian",
+      "average_height": 170,
+      "skin_colors": "green, blue",
+      "eye_colors": "black",
+      "homeworld": "B17gkTncNoz3",
+      "language": "Galactic Basic",
+      "people_ids": [
+        "SyAbJp35ViM5"
+      ],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "SksY1ah9NoG"
+    }
+  ],
+  "starships": [
+    {
+      "name": "Executor",
+      "model": "Executor-class star dreadnought",
+      "manufacturer": "Kuat Drive Yards, Fondor Shipyards",
+      "cost_in_credits": 1143350000,
+      "length": 19000,
+      "crew": 279144,
+      "passengers": 38000,
+      "cargo_capacity": 250000000,
+      "consumables": "6 years",
+      "hyperdrive_rating": 2,
+      "mglt": 40,
+      "starship_class": "Star dreadnought",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "BkpeJa25Voz"
+    },
+    {
+      "name": "Sentinel-class landing craft",
+      "model": "Sentinel-class landing craft",
+      "manufacturer": "Sienar Fleet Systems, Cyngus Spaceworks",
+      "cost_in_credits": 240000,
+      "length": 38,
+      "max_atmosphering_speed": 1000,
+      "crew": 5,
+      "passengers": 75,
+      "cargo_capacity": 180000,
+      "consumables": "1 month",
+      "hyperdrive_rating": 1,
+      "mglt": 70,
+      "starship_class": "landing craft",
+      "pilot_ids": [],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "BkAgyTh94jM"
+    },
+    {
+      "name": "Death Star",
+      "model": "DS-1 Orbital Battle Station",
+      "manufacturer": "Imperial Department of Military Research, Sienar Fleet Systems",
+      "cost_in_credits": 1000000000000,
+      "length": 120000,
+      "crew": 342953,
+      "passengers": 843342,
+      "cargo_capacity": 1000000000000,
+      "consumables": "3 years",
+      "hyperdrive_rating": 4,
+      "mglt": 10,
+      "starship_class": "Deep Space Mobile Battlestation",
+      "pilot_ids": [],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "S1JZJphcEoM"
+    },
+    {
+      "name": "Millennium Falcon",
+      "model": "YT-1300 light freighter",
+      "manufacturer": "Corellian Engineering Corporation",
+      "cost_in_credits": 100000,
+      "length": 34.37,
+      "max_atmosphering_speed": 1050,
+      "crew": 4,
+      "passengers": 6,
+      "cargo_capacity": 100000,
+      "consumables": "2 months",
+      "hyperdrive_rating": 0.5,
+      "mglt": 75,
+      "starship_class": "Light freighter",
+      "pilot_ids": [
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4",
+        "Hyyzkp2qEoG5",
+        "rJlMJT25Njz1"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "Sk6Zyp2c4oz",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "rJe-kah5NsM"
+    },
+    {
+      "name": "Y-wing",
+      "model": "BTL Y-wing",
+      "manufacturer": "Koensayr Manufacturing",
+      "cost_in_credits": 134999,
+      "length": 14,
+      "max_atmosphering_speed": 1000,
+      "crew": 2,
+      "passengers": 0,
+      "cargo_capacity": 110,
+      "consumables": "1 week",
+      "hyperdrive_rating": 1,
+      "mglt": 80,
+      "starship_class": "assault starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "SkZ-1p39ViM"
+    },
+    {
+      "name": "X-wing",
+      "model": "T-65 X-wing",
+      "manufacturer": "Incom Corporation",
+      "cost_in_credits": 149999,
+      "length": 12.5,
+      "max_atmosphering_speed": 1050,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 110,
+      "consumables": "1 week",
+      "hyperdrive_rating": 1,
+      "mglt": 100,
+      "starship_class": "Starfighter",
+      "pilot_ids": [
+        "SyAbJp35ViM",
+        "r1Lz1T2q4iM",
+        "SyAbJp35ViM8",
+        "SyAbJp35ViM9"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "HJMWJT254oG"
+    },
+    {
+      "name": "TIE Advanced x1",
+      "model": "Twin Ion Engine Advanced x1",
+      "manufacturer": "Sienar Fleet Systems",
+      "length": 9.2,
+      "max_atmosphering_speed": 1200,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 150,
+      "consumables": "5 days",
+      "hyperdrive_rating": 1,
+      "mglt": 105,
+      "starship_class": "Starfighter",
+      "pilot_ids": [
+        "S1WGJ62cEjf"
+      ],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "BJXbJT2qNiM"
+    },
+    {
+      "name": "Slave 1",
+      "model": "Firespray-31-class patrol and attack",
+      "manufacturer": "Kuat Systems Engineering",
+      "length": 21.5,
+      "max_atmosphering_speed": 1000,
+      "crew": 1,
+      "passengers": 6,
+      "cargo_capacity": 70000,
+      "consumables": "1 month",
+      "hyperdrive_rating": 3,
+      "mglt": 70,
+      "starship_class": "Patrol craft",
+      "pilot_ids": [
+        "Hyyzkp2qEoG2"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM"
+      ],
+      "id": "HkEWkTncEsf"
+    },
+    {
+      "name": "Imperial shuttle",
+      "model": "Lambda-class T-4a shuttle",
+      "manufacturer": "Sienar Fleet Systems",
+      "cost_in_credits": 240000,
+      "length": 20,
+      "max_atmosphering_speed": 850,
+      "crew": 6,
+      "passengers": 20,
+      "cargo_capacity": 80000,
+      "consumables": "2 months",
+      "hyperdrive_rating": 1,
+      "mglt": 50,
+      "starship_class": "Armed government transport",
+      "pilot_ids": [
+        "SyAbJp35ViM",
+        "SyAbJp35ViM3",
+        "SyAbJp35ViM4"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "S1HZya254iM"
+    },
+    {
+      "name": "EF76 Nebulon-B escort frigate",
+      "model": "EF76 Nebulon-B escort frigate",
+      "manufacturer": "Kuat Drive Yards",
+      "cost_in_credits": 8500000,
+      "length": 300,
+      "max_atmosphering_speed": 800,
+      "crew": 854,
+      "passengers": 75,
+      "cargo_capacity": 6000000,
+      "consumables": "2 years",
+      "hyperdrive_rating": 2,
+      "mglt": 40,
+      "starship_class": "Escort ship",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "Hk8WyT39Eof"
+    },
+    {
+      "name": "Calamari Cruiser",
+      "model": "MC80 Liberty type Star Cruiser",
+      "manufacturer": "Mon Calamari shipyards",
+      "cost_in_credits": 104000000,
+      "length": 1200,
+      "crew": 5400,
+      "passengers": 1200,
+      "consumables": "2 years",
+      "hyperdrive_rating": 1,
+      "mglt": 60,
+      "starship_class": "Star Cruiser",
+      "pilot_ids": [],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "rk8N1ah94jG"
+    },
+    {
+      "name": "A-wing",
+      "model": "RZ-1 A-wing Interceptor",
+      "manufacturer": "Alliance Underground Engineering, Incom Corporation",
+      "cost_in_credits": 175000,
+      "length": 9.6,
+      "max_atmosphering_speed": 1300,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 40,
+      "consumables": "1 week",
+      "hyperdrive_rating": 1,
+      "mglt": 120,
+      "starship_class": "Starfighter",
+      "pilot_ids": [
+        "Hyyzkp2qEoG9"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "BJPVyT3cEsM"
+    },
+    {
+      "name": "B-wing",
+      "model": "A/SF-01 B-wing starfighter",
+      "manufacturer": "Slayn & Korpil",
+      "cost_in_credits": 220000,
+      "length": 16.9,
+      "max_atmosphering_speed": 950,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 45,
+      "consumables": "1 week",
+      "hyperdrive_rating": 2,
+      "mglt": 91,
+      "starship_class": "Assault Starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "BkdVJan5ViG"
+    },
+    {
+      "name": "Republic Cruiser",
+      "model": "Consular-class cruiser",
+      "manufacturer": "Corellian Engineering Corporation",
+      "length": 115,
+      "max_atmosphering_speed": 900,
+      "crew": 9,
+      "passengers": 16,
+      "hyperdrive_rating": 2,
+      "starship_class": "Space cruiser",
+      "pilot_ids": [],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "SyKEJT2q4jz"
+    },
+    {
+      "name": "Naboo fighter",
+      "model": "N-1 starfighter",
+      "manufacturer": "Theed Palace Space Vessel Engineering Corps",
+      "cost_in_credits": 200000,
+      "length": 11,
+      "max_atmosphering_speed": 1100,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 65,
+      "consumables": "7 days",
+      "hyperdrive_rating": 1,
+      "starship_class": "Starfighter",
+      "pilot_ids": [
+        "SyAbJp35ViM1",
+        "HJ7Myp39Njf0",
+        "rJlMJT25Njz5"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "id": "HJ9E1ThcVif"
+    },
+    {
+      "name": "Naboo Royal Starship",
+      "model": "J-type 327 Nubian royal starship",
+      "manufacturer": "Theed Palace Space Vessel Engineering Corps, Nubia Star Drives",
+      "length": 76,
+      "max_atmosphering_speed": 920,
+      "crew": 8,
+      "hyperdrive_rating": 1.8,
+      "starship_class": "yacht",
+      "pilot_ids": [
+        "rJlMJT25Njz9"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "B1iEJpn5Niz"
+    },
+    {
+      "name": "Scimitar",
+      "model": "Star Courier",
+      "manufacturer": "Republic Sienar Systems",
+      "cost_in_credits": 55000000,
+      "length": 26.5,
+      "max_atmosphering_speed": 1180,
+      "crew": 1,
+      "passengers": 6,
+      "cargo_capacity": 2500000,
+      "consumables": "30 days",
+      "hyperdrive_rating": 1.5,
+      "starship_class": "Space Transport",
+      "pilot_ids": [
+        "S1WGJ62cEjf4"
+      ],
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "id": "By3VkT2cNsf"
+    },
+    {
+      "name": "J-type diplomatic barge",
+      "model": "J-type diplomatic barge",
+      "manufacturer": "Theed Palace Space Vessel Engineering Corps, Nubia Star Drives",
+      "cost_in_credits": 2000000,
+      "length": 39,
+      "max_atmosphering_speed": 2000,
+      "crew": 5,
+      "passengers": 10,
+      "consumables": "1 year",
+      "hyperdrive_rating": 0.7,
+      "starship_class": "Diplomatic barge",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Bkp41p3qVoG"
+    },
+    {
+      "name": "AA-9 Coruscant freighter",
+      "model": "Botajef AA-9 Freighter-Liner",
+      "manufacturer": "Botajef Shipyards",
+      "length": 390,
+      "passengers": 30000,
+      "starship_class": "freighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "SJA4JTh9Esz"
+    },
+    {
+      "name": "Jedi starfighter",
+      "model": "Delta-7 Aethersprite-class interceptor",
+      "manufacturer": "Kuat Systems Engineering",
+      "cost_in_credits": 180000,
+      "length": 8,
+      "max_atmosphering_speed": 1150,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 60,
+      "consumables": "7 days",
+      "hyperdrive_rating": 1,
+      "starship_class": "Starfighter",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "r1fMkp25Njz8"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "id": "BJJByp354jG"
+    },
+    {
+      "name": "H-type Nubian yacht",
+      "model": "H-type Nubian yacht",
+      "manufacturer": "Theed Palace Space Vessel Engineering Corps",
+      "length": 47.9,
+      "max_atmosphering_speed": 8000,
+      "crew": 4,
+      "hyperdrive_rating": 0.9,
+      "starship_class": "yacht",
+      "pilot_ids": [
+        "rJlMJT25Njz5"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "Hyuv1Tn9Viz"
+    },
+    {
+      "name": "Star Destroyer",
+      "model": "Imperial I-class Star Destroyer",
+      "manufacturer": "Kuat Drive Yards",
+      "cost_in_credits": 150000000,
+      "length": 1600,
+      "max_atmosphering_speed": 975,
+      "crew": 47060,
+      "passengers": 0,
+      "cargo_capacity": 36000000,
+      "consumables": "2 years",
+      "hyperdrive_rating": 2,
+      "mglt": 60,
+      "starship_class": "Star Destroyer",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "B1KwypncEif"
+    },
+    {
+      "name": "Trade Federation cruiser",
+      "model": "Providence-class carrier/destroyer",
+      "manufacturer": "Rendili StarDrive, Free Dac Volunteers Engineering corps.",
+      "cost_in_credits": 125000000,
+      "length": 1088,
+      "max_atmosphering_speed": 1050,
+      "crew": 600,
+      "passengers": 48247,
+      "cargo_capacity": 50000000,
+      "consumables": "4 years",
+      "hyperdrive_rating": 1.5,
+      "starship_class": "capital ship",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "BkAgyTh94jM9"
+    },
+    {
+      "name": "Theta-class T-2c shuttle",
+      "model": "Theta-class T-2c shuttle",
+      "manufacturer": "Cygnus Spaceworks",
+      "cost_in_credits": 1000000,
+      "length": 18.5,
+      "max_atmosphering_speed": 2000,
+      "crew": 5,
+      "passengers": 16,
+      "cargo_capacity": 50000,
+      "consumables": "56 days",
+      "hyperdrive_rating": 1,
+      "starship_class": "transport",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H1oDJ6hqEsG"
+    },
+    {
+      "name": "T-70 X-wing fighter",
+      "model": "T-70 X-wing fighter",
+      "manufacturer": "Incom",
+      "crew": 1,
+      "starship_class": "fighter",
+      "pilot_ids": [
+        "S1BGJThqEoG6"
+      ],
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "id": "Hy2vkp29Esf"
+    },
+    {
+      "name": "Rebel transport",
+      "model": "GR-75 medium transport",
+      "manufacturer": "Gallofree Yards, Inc.",
+      "length": 90,
+      "max_atmosphering_speed": 650,
+      "crew": 6,
+      "passengers": 90,
+      "cargo_capacity": 19000000,
+      "consumables": "6 months",
+      "hyperdrive_rating": 4,
+      "mglt": 20,
+      "starship_class": "Medium transport",
+      "pilot_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "id": "B1pw1Tn94jf"
+    },
+    {
+      "name": "Droid control ship",
+      "model": "Lucrehulk-class Droid Control Ship",
+      "manufacturer": "Hoersch-Kessel Drive, Inc.",
+      "length": 3170,
+      "crew": 175,
+      "passengers": 139000,
+      "cargo_capacity": 4000000000,
+      "consumables": "500 days",
+      "hyperdrive_rating": 2,
+      "starship_class": "Droid control ship",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "id": "B1KwypncEif2"
+    },
+    {
+      "name": "Republic Assault ship",
+      "model": "Acclamator I-class assault ship",
+      "manufacturer": "Rothana Heavy Engineering",
+      "length": 752,
+      "crew": 700,
+      "passengers": 16000,
+      "cargo_capacity": 11250000,
+      "consumables": "2 years",
+      "hyperdrive_rating": 0.6,
+      "starship_class": "assault ship",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "BkAgyTh94jM2"
+    },
+    {
+      "name": "Solar Sailer",
+      "model": "Punworcca 116-class interstellar sloop",
+      "manufacturer": "Huppla Pasa Tisc Shipwrights Collective",
+      "cost_in_credits": 35700,
+      "length": 15.2,
+      "max_atmosphering_speed": 1600,
+      "crew": 3,
+      "passengers": 11,
+      "cargo_capacity": 240,
+      "consumables": "7 days",
+      "hyperdrive_rating": 1.5,
+      "starship_class": "yacht",
+      "pilot_ids": [],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "BkAgyTh94jM8"
+    },
+    {
+      "name": "Republic attack cruiser",
+      "model": "Senator-class Star Destroyer",
+      "manufacturer": "Kuat Drive Yards, Allanteen Six shipyards",
+      "cost_in_credits": 59000000,
+      "length": 1137,
+      "max_atmosphering_speed": 975,
+      "crew": 7400,
+      "passengers": 2000,
+      "cargo_capacity": 20000000,
+      "consumables": "2 years",
+      "hyperdrive_rating": 1,
+      "starship_class": "star destroyer",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "HJWdy63cVof"
+    },
+    {
+      "name": "Naboo star skiff",
+      "model": "J-type star skiff",
+      "manufacturer": "Theed Palace Space Vessel Engineering Corps/Nubia Star Drives, Incorporated",
+      "length": 29.2,
+      "max_atmosphering_speed": 1050,
+      "crew": 3,
+      "passengers": 3,
+      "hyperdrive_rating": 0.5,
+      "starship_class": "yacht",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "rJlMJT25Njz5"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "HJL5kp25VjG"
+    },
+    {
+      "name": "Jedi Interceptor",
+      "model": "Eta-2 Actis-class light interceptor",
+      "manufacturer": "Kuat Systems Engineering",
+      "cost_in_credits": 320000,
+      "length": 5.47,
+      "max_atmosphering_speed": 1500,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 60,
+      "consumables": "2 days",
+      "hyperdrive_rating": 1,
+      "starship_class": "starfighter",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "SyAbJp35ViM1"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "SyvqyThqNoz"
+    },
+    {
+      "name": "arc-170",
+      "model": "Aggressive Reconnaissance-170 starfighte",
+      "manufacturer": "Incom Corporation, Subpro Corporation",
+      "cost_in_credits": 155000,
+      "length": 14.5,
+      "max_atmosphering_speed": 1000,
+      "crew": 3,
+      "passengers": 0,
+      "cargo_capacity": 110,
+      "consumables": "5 days",
+      "hyperdrive_rating": 1,
+      "mglt": 100,
+      "starship_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "ryd5k6n9Nif"
+    },
+    {
+      "name": "Belbullab-22 starfighter",
+      "model": "Belbullab-22 starfighter",
+      "manufacturer": "Feethan Ottraw Scalable Assemblies",
+      "cost_in_credits": 168000,
+      "length": 6.71,
+      "max_atmosphering_speed": 1100,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 140,
+      "consumables": "7 days",
+      "hyperdrive_rating": 6,
+      "starship_class": "starfighter",
+      "pilot_ids": [
+        "SyAbJp35ViM0",
+        "Bk4fJp3cNjf9"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "rkKqJ6ncEjz"
+    },
+    {
+      "name": "V-wing",
+      "model": "Alpha-3 Nimbus-class V-wing starfighter",
+      "manufacturer": "Kuat Systems Engineering",
+      "cost_in_credits": 102500,
+      "length": 7.9,
+      "max_atmosphering_speed": 1050,
+      "crew": 1,
+      "passengers": 0,
+      "cargo_capacity": 60,
+      "consumables": "15 hours",
+      "hyperdrive_rating": 1,
+      "starship_class": "starfighter",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "H159Jph9Vjz"
+    },
+    {
+      "name": "CR90 corvette",
+      "model": "CR90 corvette",
+      "manufacturer": "Corellian Engineering Corporation",
+      "cost_in_credits": 3500000,
+      "length": 150,
+      "max_atmosphering_speed": 950,
+      "crew": 165,
+      "passengers": 600,
+      "cargo_capacity": 3000000,
+      "consumables": "1 year",
+      "hyperdrive_rating": 2,
+      "mglt": 60,
+      "starship_class": "corvette",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "H1sq16h5Vif"
+    },
+    {
+      "name": "Banking clan frigate",
+      "model": "Munificent-class star frigate",
+      "manufacturer": "Hoersch-Kessel Drive, Inc, Gwori Revolutionary Industries",
+      "cost_in_credits": 57000000,
+      "length": 825,
+      "crew": 200,
+      "cargo_capacity": 40000000,
+      "consumables": "2 years",
+      "hyperdrive_rating": 1,
+      "starship_class": "cruiser",
+      "pilot_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "Bkhq16h54iz"
+    }
+  ],
+  "planets": [
+    {
+      "name": "Alderaan",
+      "rotation_period": 24,
+      "orbital_period": 364,
+      "diameter": 12500,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "grasslands, mountains",
+      "surface_water": 40,
+      "population": 2000000000,
+      "resident_ids": [
+        "r1fMkp25Njz",
+        "HJ7Myp39Njf8",
+        "S1BGJThqEoG1"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf",
+        "S1vZy63c4oz"
+      ],
+      "id": "B17gkTncNoz"
+    },
+    {
+      "name": "Yavin IV",
+      "rotation_period": 24,
+      "orbital_period": 4818,
+      "diameter": 10200,
+      "climate": "temperate, tropical",
+      "gravity": 1,
+      "terrain": "jungle, rainforests",
+      "surface_water": 8,
+      "population": 1000,
+      "resident_ids": [],
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "id": "SkElJp3q4sM"
+    },
+    {
+      "name": "Hoth",
+      "rotation_period": 23,
+      "orbital_period": 549,
+      "diameter": 7200,
+      "climate": "frozen",
+      "gravity": 1.1,
+      "terrain": "tundra, ice caves, mountain ranges",
+      "surface_water": 100,
+      "resident_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "SkSl1a2qViM"
+    },
+    {
+      "name": "Dagobah",
+      "rotation_period": 23,
+      "orbital_period": 341,
+      "diameter": 8900,
+      "climate": "murky",
+      "terrain": "swamp, jungles",
+      "surface_water": 8,
+      "resident_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "id": "HkIlkTnqEjG"
+    },
+    {
+      "name": "Bespin",
+      "rotation_period": 12,
+      "orbital_period": 5110,
+      "diameter": 118000,
+      "climate": "temperate",
+      "gravity": 1.5,
+      "terrain": "gas giant",
+      "surface_water": 0,
+      "population": 6000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG6"
+      ],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "SyvxkThq4oG"
+    },
+    {
+      "name": "Endor",
+      "rotation_period": 18,
+      "orbital_period": 402,
+      "diameter": 4900,
+      "climate": "temperate",
+      "gravity": 0.85,
+      "terrain": "forests, mountains, lakes",
+      "surface_water": 8,
+      "population": 30000000,
+      "resident_ids": [
+        "rJlMJT25Njz0"
+      ],
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "id": "ry_xJph5EoG"
+    },
+    {
+      "name": "Naboo",
+      "rotation_period": 26,
+      "orbital_period": 312,
+      "diameter": 12120,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "grassy hills, swamps, forests, mountains",
+      "surface_water": 12,
+      "population": 4500000000,
+      "resident_ids": [
+        "rJlMJT25Njz",
+        "Hyyzkp2qEoG1",
+        "rJlMJT25Njz6",
+        "rJlMJT25Njz7",
+        "rJlMJT25Njz8",
+        "rJlMJT25Njz9",
+        "S1WGJ62cEjf2",
+        "HJ7Myp39Njf0",
+        "HJ7Myp39Njf1",
+        "HJ7Myp39Njf6",
+        "rJlMJT25Njz5"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "id": "ByYe1T2c4sG"
+    },
+    {
+      "name": "Coruscant",
+      "rotation_period": 24,
+      "orbital_period": 368,
+      "diameter": 12240,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "cityscape, mountains",
+      "population": 1000000000000,
+      "resident_ids": [
+        "rJlMJT25Njz4",
+        "r1fMkp25Njz5",
+        "Bk4fJp3cNjf4"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "id": "HJ5e1639Vsf"
+    },
+    {
+      "name": "Kamino",
+      "rotation_period": 27,
+      "orbital_period": 463,
+      "diameter": 19720,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "ocean",
+      "surface_water": 100,
+      "population": 1000000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG2",
+        "Bk4fJp3cNjf2",
+        "Bk4fJp3cNjf3"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "S1oxJanqVsG"
+    },
+    {
+      "name": "Geonosis",
+      "rotation_period": 30,
+      "orbital_period": 256,
+      "diameter": 11370,
+      "climate": "temperate, arid",
+      "gravity": 0.9,
+      "terrain": "rock, desert, mountain, barren",
+      "surface_water": 5,
+      "population": 100000000000,
+      "resident_ids": [
+        "HJ7Myp39Njf3"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "id": "By3lk6294sG"
+    },
+    {
+      "name": "Utapau",
+      "rotation_period": 27,
+      "orbital_period": 351,
+      "diameter": 12900,
+      "climate": "temperate, arid, windy",
+      "gravity": 1,
+      "terrain": "scrublands, savanna, canyons, sinkholes",
+      "surface_water": 0.9,
+      "population": 95000000,
+      "resident_ids": [
+        "S1BGJThqEoG3"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "SJhXJp294oz"
+    },
+    {
+      "name": "Mustafar",
+      "rotation_period": 36,
+      "orbital_period": 412,
+      "diameter": 4200,
+      "climate": "hot",
+      "gravity": 1,
+      "terrain": "volcanoes, lava rivers, mountains, caves",
+      "surface_water": 0,
+      "population": 20000,
+      "resident_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "HkTX1Th5Esf"
+    },
+    {
+      "name": "Kashyyyk",
+      "rotation_period": 26,
+      "orbital_period": 381,
+      "diameter": 12765,
+      "climate": "tropical",
+      "gravity": 1,
+      "terrain": "jungle, forests, lakes, rivers",
+      "surface_water": 60,
+      "population": 45000000,
+      "resident_ids": [
+        "SyAbJp35ViM3",
+        "S1BGJThqEoG0"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "SyAmJ639Viz"
+    },
+    {
+      "name": "Polis Massa",
+      "rotation_period": 24,
+      "orbital_period": 590,
+      "diameter": 0,
+      "climate": "artificial temperate ",
+      "gravity": 0.56,
+      "terrain": "airless asteroid",
+      "surface_water": 0,
+      "population": 1000000,
+      "resident_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "Bky4k63c4oG"
+    },
+    {
+      "name": "Mygeeto",
+      "rotation_period": 12,
+      "orbital_period": 167,
+      "diameter": 10088,
+      "climate": "frigid",
+      "gravity": 1,
+      "terrain": "glaciers, mountains, ice canyons",
+      "population": 19000000,
+      "resident_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "B1xEk629EjG"
+    },
+    {
+      "name": "Felucia",
+      "rotation_period": 34,
+      "orbital_period": 231,
+      "diameter": 9100,
+      "climate": "hot, humid",
+      "gravity": 0.75,
+      "terrain": "fungus forests",
+      "population": 8500000,
+      "resident_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "Hy-4yphqEif"
+    },
+    {
+      "name": "Cato Neimoidia",
+      "rotation_period": 25,
+      "orbital_period": 278,
+      "diameter": 0,
+      "climate": "temperate, moist",
+      "gravity": 1,
+      "terrain": "mountains, fields, forests, rock arches",
+      "population": 10000000,
+      "resident_ids": [
+        "rJlMJT25Njz3"
+      ],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "S1G4J639EoM"
+    },
+    {
+      "name": "Saleucami",
+      "rotation_period": 26,
+      "orbital_period": 392,
+      "diameter": 14920,
+      "climate": "hot",
+      "terrain": "caves, desert, mountains, volcanoes",
+      "population": 1400000000,
+      "resident_ids": [],
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "id": "SkQEkT2cEsG"
+    },
+    {
+      "name": "Stewjon",
+      "diameter": 0,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "grass",
+      "resident_ids": [
+        "SyAbJp35ViM0"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz0"
+    },
+    {
+      "name": "Eriadu",
+      "rotation_period": 24,
+      "orbital_period": 360,
+      "diameter": 13490,
+      "climate": "polluted",
+      "gravity": 1,
+      "terrain": "cityscape",
+      "population": 22000000000,
+      "resident_ids": [
+        "SyAbJp35ViM2"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz1"
+    },
+    {
+      "name": "Corellia",
+      "rotation_period": 25,
+      "orbital_period": 329,
+      "diameter": 11000,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "plains, urban, hills, forests",
+      "surface_water": 70,
+      "population": 3000000000,
+      "resident_ids": [
+        "SyAbJp35ViM4",
+        "SyAbJp35ViM8"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz2"
+    },
+    {
+      "name": "Rodia",
+      "rotation_period": 29,
+      "orbital_period": 305,
+      "diameter": 7549,
+      "climate": "hot",
+      "gravity": 1,
+      "terrain": "jungles, oceans, urban, swamps",
+      "surface_water": 60,
+      "population": 1300000000,
+      "resident_ids": [
+        "SyAbJp35ViM5"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz3"
+    },
+    {
+      "name": "Nal Hutta",
+      "rotation_period": 87,
+      "orbital_period": 413,
+      "diameter": 12150,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "urban, oceans, swamps, bogs",
+      "population": 7000000000,
+      "resident_ids": [
+        "SyAbJp35ViM6"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz4"
+    },
+    {
+      "name": "Dantooine",
+      "rotation_period": 25,
+      "orbital_period": 378,
+      "diameter": 9830,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "oceans, savannas, mountains, grasslands",
+      "population": 1000,
+      "resident_ids": [],
+      "film_ids": [],
+      "id": "B17gkTncNoz5"
+    },
+    {
+      "name": "Bestine IV",
+      "rotation_period": 26,
+      "orbital_period": 680,
+      "diameter": 6400,
+      "climate": "temperate",
+      "terrain": "rocky islands, oceans",
+      "surface_water": 98,
+      "population": 62000000,
+      "resident_ids": [
+        "SyAbJp35ViM9"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz6"
+    },
+    {
+      "name": "Ord Mantell",
+      "rotation_period": 26,
+      "orbital_period": 334,
+      "diameter": 14050,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "plains, seas, mesas",
+      "surface_water": 10,
+      "population": 4000000000,
+      "resident_ids": [],
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "id": "B17gkTncNoz7"
+    },
+    {
+      "rotation_period": 0,
+      "orbital_period": 0,
+      "diameter": 0,
+      "gravity": null,
+      "resident_ids": [
+        "Hyyzkp2qEoG0",
+        "Hyyzkp2qEoG3",
+        "Hyyzkp2qEoG9",
+        "rJlMJT25Njz2",
+        "Bk4fJp3cNjf5",
+        "S1BGJThqEoG4",
+        "S1BGJThqEoG5",
+        "S1BGJThqEoG6",
+        "S1BGJThqEoG7",
+        "S1BGJThqEoG8"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz8"
+    },
+    {
+      "name": "Trandosha",
+      "rotation_period": 25,
+      "orbital_period": 371,
+      "diameter": 0,
+      "climate": "arid",
+      "gravity": 0.62,
+      "terrain": "mountains, seas, grasslands, deserts",
+      "population": 42000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG4"
+      ],
+      "film_ids": [],
+      "id": "B17gkTncNoz9"
+    },
+    {
+      "name": "Socorro",
+      "rotation_period": 20,
+      "orbital_period": 326,
+      "diameter": 0,
+      "climate": "arid",
+      "gravity": 1,
+      "terrain": "deserts, mountains",
+      "population": 300000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG5"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM0"
+    },
+    {
+      "name": "Mon Cala",
+      "rotation_period": 21,
+      "orbital_period": 398,
+      "diameter": 11030,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "oceans, reefs, islands",
+      "surface_water": 100,
+      "population": 27000000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG7"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM1"
+    },
+    {
+      "name": "Chandrila",
+      "rotation_period": 20,
+      "orbital_period": 368,
+      "diameter": 13500,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "plains, forests",
+      "surface_water": 40,
+      "population": 1200000000,
+      "resident_ids": [
+        "Hyyzkp2qEoG8"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM2"
+    },
+    {
+      "name": "Sullust",
+      "rotation_period": 20,
+      "orbital_period": 263,
+      "diameter": 12780,
+      "climate": "superheated",
+      "gravity": 1,
+      "terrain": "mountains, volcanoes, rocky deserts",
+      "surface_water": 5,
+      "population": 18500000000,
+      "resident_ids": [
+        "rJlMJT25Njz1"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM3"
+    },
+    {
+      "name": "Toydaria",
+      "rotation_period": 21,
+      "orbital_period": 184,
+      "diameter": 7900,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "swamps, lakes",
+      "population": 11000000,
+      "resident_ids": [
+        "S1WGJ62cEjf0"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM4"
+    },
+    {
+      "name": "Malastare",
+      "rotation_period": 26,
+      "orbital_period": 201,
+      "diameter": 18880,
+      "climate": "arid, temperate, tropical",
+      "gravity": 1.56,
+      "terrain": "swamps, deserts, jungles, mountains",
+      "population": 2000000000,
+      "resident_ids": [
+        "S1WGJ62cEjf1"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM5"
+    },
+    {
+      "name": "Dathomir",
+      "rotation_period": 24,
+      "orbital_period": 491,
+      "diameter": 10480,
+      "climate": "temperate",
+      "gravity": 0.9,
+      "terrain": "forests, deserts, savannas",
+      "population": 5200,
+      "resident_ids": [
+        "S1WGJ62cEjf4"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM6"
+    },
+    {
+      "name": "Ryloth",
+      "rotation_period": 30,
+      "orbital_period": 305,
+      "diameter": 10600,
+      "climate": "temperate, arid, subartic",
+      "gravity": 1,
+      "terrain": "mountains, valleys, deserts, tundra",
+      "surface_water": 5,
+      "population": 1500000000,
+      "resident_ids": [
+        "S1WGJ62cEjf5",
+        "S1WGJ62cEjf6"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM7"
+    },
+    {
+      "name": "Aleen Minor",
+      "gravity": null,
+      "resident_ids": [
+        "S1WGJ62cEjf7"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM8"
+    },
+    {
+      "name": "Vulpter",
+      "rotation_period": 22,
+      "orbital_period": 391,
+      "diameter": 14900,
+      "climate": "temperate, artic",
+      "gravity": 1,
+      "terrain": "urban, barren",
+      "population": 421000000,
+      "resident_ids": [
+        "S1WGJ62cEjf8"
+      ],
+      "film_ids": [],
+      "id": "SkElJp3q4sM9"
+    },
+    {
+      "name": "Troiken",
+      "terrain": "desert, tundra, rainforests, mountains",
+      "resident_ids": [
+        "S1WGJ62cEjf9"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM0"
+    },
+    {
+      "name": "Tund",
+      "rotation_period": 48,
+      "orbital_period": 1770,
+      "diameter": 12190,
+      "terrain": "barren, ash",
+      "population": 0,
+      "resident_ids": [
+        "r1fMkp25Njz0"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM1"
+    },
+    {
+      "name": "Haruun Kal",
+      "rotation_period": 25,
+      "orbital_period": 383,
+      "diameter": 10120,
+      "climate": "temperate",
+      "gravity": 0.98,
+      "terrain": "toxic cloudsea, plateaus, volcanoes",
+      "population": 705300,
+      "resident_ids": [
+        "r1fMkp25Njz1"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM2"
+    },
+    {
+      "name": "Cerea",
+      "rotation_period": 27,
+      "orbital_period": 386,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "verdant",
+      "surface_water": 20,
+      "population": 450000000,
+      "resident_ids": [
+        "r1fMkp25Njz2"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM3"
+    },
+    {
+      "name": "Glee Anselm",
+      "rotation_period": 33,
+      "orbital_period": 206,
+      "diameter": 15600,
+      "climate": "tropical, temperate",
+      "gravity": 1,
+      "terrain": "lakes, islands, swamps, seas",
+      "surface_water": 80,
+      "population": 500000000,
+      "resident_ids": [
+        "r1fMkp25Njz3"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM4"
+    },
+    {
+      "name": "Iridonia",
+      "rotation_period": 29,
+      "orbital_period": 413,
+      "terrain": "rocky canyons, acid pools",
+      "resident_ids": [
+        "r1fMkp25Njz4"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM5"
+    },
+    {
+      "name": "Tholoth",
+      "gravity": null,
+      "resident_ids": [],
+      "film_ids": [],
+      "id": "SkSl1a2qViM6"
+    },
+    {
+      "name": "Iktotch",
+      "rotation_period": 22,
+      "orbital_period": 481,
+      "climate": "arid, rocky, windy",
+      "gravity": 1,
+      "terrain": "rocky",
+      "resident_ids": [
+        "r1fMkp25Njz6"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM7"
+    },
+    {
+      "name": "Quermia",
+      "gravity": null,
+      "resident_ids": [
+        "r1fMkp25Njz7"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM8"
+    },
+    {
+      "name": "Dorin",
+      "rotation_period": 22,
+      "orbital_period": 409,
+      "diameter": 13400,
+      "climate": "temperate",
+      "gravity": 1,
+      "resident_ids": [
+        "r1fMkp25Njz8"
+      ],
+      "film_ids": [],
+      "id": "SkSl1a2qViM9"
+    },
+    {
+      "name": "Champala",
+      "rotation_period": 27,
+      "orbital_period": 318,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "oceans, rainforests, plateaus",
+      "population": 3500000000,
+      "resident_ids": [
+        "r1fMkp25Njz9"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG0"
+    },
+    {
+      "name": "Mirial",
+      "terrain": "deserts",
+      "resident_ids": [
+        "HJ7Myp39Njf4",
+        "HJ7Myp39Njf5"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG1"
+    },
+    {
+      "name": "Serenno",
+      "terrain": "rainforests, rivers, mountains",
+      "resident_ids": [
+        "HJ7Myp39Njf7"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG2"
+    },
+    {
+      "name": "Concord Dawn",
+      "terrain": "jungles, forests, deserts",
+      "resident_ids": [
+        "HJ7Myp39Njf9"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG3"
+    },
+    {
+      "name": "Zolan",
+      "gravity": null,
+      "resident_ids": [
+        "Bk4fJp3cNjf0"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG4"
+    },
+    {
+      "name": "Ojom",
+      "climate": "frigid",
+      "terrain": "oceans, glaciers",
+      "surface_water": 100,
+      "population": 500000000,
+      "resident_ids": [
+        "Bk4fJp3cNjf1"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG5"
+    },
+    {
+      "name": "Skako",
+      "rotation_period": 27,
+      "orbital_period": 384,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "urban, vines",
+      "population": 500000000000,
+      "resident_ids": [
+        "Bk4fJp3cNjf6"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG6"
+    },
+    {
+      "name": "Muunilinst",
+      "rotation_period": 28,
+      "orbital_period": 412,
+      "diameter": 13800,
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "plains, forests, hills, mountains",
+      "surface_water": 25,
+      "population": 5000000000,
+      "resident_ids": [
+        "Bk4fJp3cNjf7"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG7"
+    },
+    {
+      "name": "Shili",
+      "climate": "temperate",
+      "gravity": 1,
+      "terrain": "cities, savannahs, seas, plains",
+      "resident_ids": [
+        "Bk4fJp3cNjf8"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG8"
+    },
+    {
+      "name": "Kalee",
+      "rotation_period": 23,
+      "orbital_period": 378,
+      "diameter": 13850,
+      "climate": "arid, temperate, tropical",
+      "gravity": 1,
+      "terrain": "rainforests, cliffs, canyons, seas",
+      "population": 4000000000,
+      "resident_ids": [
+        "Bk4fJp3cNjf9"
+      ],
+      "film_ids": [],
+      "id": "HkIlkTnqEjG9"
+    },
+    {
+      "name": "Umbara",
+      "gravity": null,
+      "resident_ids": [
+        "S1BGJThqEoG2"
+      ],
+      "film_ids": [],
+      "id": "SyvxkThq4oG0"
+    },
+    {
+      "name": "Tatooine",
+      "rotation_period": 23,
+      "orbital_period": 304,
+      "diameter": 10465,
+      "climate": "arid",
+      "gravity": 1,
+      "terrain": "desert",
+      "surface_water": 1,
+      "population": 200000,
+      "resident_ids": [
+        "SyAbJp35ViM",
+        "Hyyzkp2qEoG",
+        "S1WGJ62cEjf",
+        "HJ7Myp39Njf",
+        "Bk4fJp3cNjf",
+        "S1BGJThqEoG",
+        "r1Lz1T2q4iM",
+        "SyAbJp35ViM1",
+        "S1WGJ62cEjf3",
+        "HJ7Myp39Njf2"
+      ],
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "id": "SkNak6hcEjf"
+    },
+    {
+      "name": "Jakku",
+      "terrain": "deserts",
+      "resident_ids": [],
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "id": "SyvxkThq4oG1"
+    }
+  ],
+  "people": [
+    {
+      "name": "Luke Skywalker",
+      "height": 172,
+      "mass": 77,
+      "hair_color": "blond",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "19BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "B1mJah9Eiz",
+        "Byqf1ahcVsz"
+      ],
+      "starship_ids": [
+        "HJMWJT254oG",
+        "S1HZya254iM"
+      ],
+      "id": "SyAbJp35ViM"
+    },
+    {
+      "name": "C-3PO",
+      "height": 167,
+      "mass": 75,
+      "skin_color": "gold",
+      "eye_color": "yellow",
+      "birth_year": "112BBY",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "S1YtJ63qVoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG"
+    },
+    {
+      "name": "R2-D2",
+      "height": 96,
+      "mass": 32,
+      "skin_color": "white, blue",
+      "eye_color": "red",
+      "birth_year": "33BBY",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "S1YtJ63qVoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz"
+    },
+    {
+      "name": "Darth Vader",
+      "height": 202,
+      "mass": 136,
+      "hair_color": "none",
+      "skin_color": "white",
+      "eye_color": "yellow",
+      "birth_year": "41.9BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "BJXbJT2qNiM"
+      ],
+      "id": "S1WGJ62cEjf"
+    },
+    {
+      "name": "Leia Organa",
+      "height": 150,
+      "mass": 49,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "birth_year": "19BBY",
+      "gender": "female",
+      "homeworld": "B17gkTncNoz",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "Byqf1ahcVsz"
+      ],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz"
+    },
+    {
+      "name": "Owen Lars",
+      "height": 178,
+      "mass": 120,
+      "hair_color": "brown, grey",
+      "skin_color": "light",
+      "eye_color": "blue",
+      "birth_year": "52BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf"
+    },
+    {
+      "name": "Beru Whitesun lars",
+      "height": 165,
+      "mass": 75,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "blue",
+      "birth_year": "47BBY",
+      "gender": "female",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf"
+    },
+    {
+      "name": "R5-D4",
+      "height": 97,
+      "mass": 32,
+      "skin_color": "white, red",
+      "eye_color": "red",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "S1YtJ63qVoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG"
+    },
+    {
+      "name": "Biggs Darklighter",
+      "height": 183,
+      "mass": 84,
+      "hair_color": "black",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "birth_year": "24BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "HJMWJT254oG"
+      ],
+      "id": "r1Lz1T2q4iM"
+    },
+    {
+      "name": "Obi-Wan Kenobi",
+      "height": 182,
+      "mass": 77,
+      "hair_color": "auburn, white",
+      "skin_color": "fair",
+      "eye_color": "blue-gray",
+      "birth_year": "57BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz0",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "BkeXkp2c4sG"
+      ],
+      "starship_ids": [
+        "BJJByp354jG",
+        "BkAgyTh94jM9",
+        "HJL5kp25VjG",
+        "SyvqyThqNoz",
+        "rkKqJ6ncEjz"
+      ],
+      "id": "SyAbJp35ViM0"
+    },
+    {
+      "name": "Anakin Skywalker",
+      "height": 188,
+      "mass": 84,
+      "hair_color": "blond",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "41.9BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "Skka2cNjf4",
+        "Skka2cNjf6"
+      ],
+      "starship_ids": [
+        "BkAgyTh94jM9",
+        "SyvqyThqNoz",
+        "HJ9E1ThcVif"
+      ],
+      "id": "SyAbJp35ViM1"
+    },
+    {
+      "name": "Wilhuff Tarkin",
+      "height": 180,
+      "mass": 0,
+      "hair_color": "auburn, grey",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "64BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz1",
+      "film_ids": [
+        "HycWyp39Nsf",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "SyAbJp35ViM2"
+    },
+    {
+      "name": "Chewbacca",
+      "height": 228,
+      "mass": 112,
+      "hair_color": "brown",
+      "eye_color": "blue",
+      "birth_year": "200BBY",
+      "gender": "male",
+      "homeworld": "SyAmJ639Viz",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "rJdFya25VjM"
+      ],
+      "vehicle_ids": [
+        "S1Ika2cVoG"
+      ],
+      "starship_ids": [
+        "rJe-kah5NsM",
+        "S1HZya254iM"
+      ],
+      "id": "SyAbJp35ViM3"
+    },
+    {
+      "name": "Han Solo",
+      "height": 180,
+      "mass": 80,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "brown",
+      "birth_year": "29BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz2",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "rJe-kah5NsM",
+        "S1HZya254iM"
+      ],
+      "id": "SyAbJp35ViM4"
+    },
+    {
+      "name": "Greedo",
+      "height": 173,
+      "mass": 74,
+      "skin_color": "green",
+      "eye_color": "black",
+      "birth_year": "44BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz3",
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "SksY1ah9NoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "SyAbJp35ViM5"
+    },
+    {
+      "name": "Jabba Desilijic Tiure",
+      "height": 175,
+      "mass": 1,
+      "skin_color": "green-tan, brown",
+      "eye_color": "orange",
+      "birth_year": "600BBY",
+      "gender": "hermaphrodite",
+      "homeworld": "B17gkTncNoz4",
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "HJFy629NoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "SyAbJp35ViM6"
+    },
+    {
+      "name": "Wedge Antilles",
+      "height": 170,
+      "mass": 77,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "hazel",
+      "birth_year": "21BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz2",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "B1mJah9Eiz"
+      ],
+      "starship_ids": [
+        "HJMWJT254oG"
+      ],
+      "id": "SyAbJp35ViM8"
+    },
+    {
+      "name": "Jek Tono Porkins",
+      "height": 180,
+      "mass": 110,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz6",
+      "film_ids": [
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "HJMWJT254oG"
+      ],
+      "id": "SyAbJp35ViM9"
+    },
+    {
+      "name": "Yoda",
+      "height": 66,
+      "mass": 17,
+      "hair_color": "white",
+      "skin_color": "green",
+      "eye_color": "brown",
+      "birth_year": "896BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "HyckT29VjG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG0"
+    },
+    {
+      "name": "Palpatine",
+      "height": 170,
+      "mass": 75,
+      "hair_color": "grey",
+      "skin_color": "pale",
+      "eye_color": "yellow",
+      "birth_year": "82BBY",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf",
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG1"
+    },
+    {
+      "name": "Boba Fett",
+      "height": 183,
+      "mass": 78.2,
+      "hair_color": "black",
+      "skin_color": "fair",
+      "eye_color": "brown",
+      "birth_year": "31.5BBY",
+      "gender": "male",
+      "homeworld": "S1oxJanqVsG",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "SJ_-J62qViM",
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "HkEWkTncEsf"
+      ],
+      "id": "Hyyzkp2qEoG2"
+    },
+    {
+      "name": "IG-88",
+      "height": 200,
+      "mass": 140,
+      "hair_color": "none",
+      "skin_color": "metal",
+      "eye_color": "red",
+      "birth_year": "15BBY",
+      "gender": "none",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "species_ids": [
+        "S1YtJ63qVoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG3"
+    },
+    {
+      "name": "Bossk",
+      "height": 190,
+      "mass": 113,
+      "hair_color": "none",
+      "skin_color": "green",
+      "eye_color": "red",
+      "birth_year": "53BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz9",
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "species_ids": [
+        "Hkj1Th9Voz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG4"
+    },
+    {
+      "name": "Lando Calrissian",
+      "height": 177,
+      "mass": 79,
+      "hair_color": "black",
+      "skin_color": "dark",
+      "eye_color": "brown",
+      "birth_year": "31BBY",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM0",
+      "film_ids": [
+        "Sy3WJT2qVsG",
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "rJe-kah5NsM"
+      ],
+      "id": "Hyyzkp2qEoG5"
+    },
+    {
+      "name": "Lobot",
+      "height": 175,
+      "mass": 79,
+      "hair_color": "none",
+      "skin_color": "light",
+      "eye_color": "blue",
+      "birth_year": "37BBY",
+      "gender": "male",
+      "homeworld": "SyvxkThq4oG",
+      "film_ids": [
+        "Sy3WJT2qVsG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG6"
+    },
+    {
+      "name": "Ackbar",
+      "height": 180,
+      "mass": 83,
+      "hair_color": "none",
+      "skin_color": "brown mottle",
+      "eye_color": "orange",
+      "birth_year": "41BBY",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM1",
+      "film_ids": [
+        "B1ibyphc4iG",
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "rynJTn94of"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG7"
+    },
+    {
+      "name": "Mon Mothma",
+      "height": 150,
+      "mass": 0,
+      "hair_color": "auburn",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "48BBY",
+      "gender": "female",
+      "homeworld": "SkElJp3q4sM2",
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Hyyzkp2qEoG8"
+    },
+    {
+      "name": "Arvel Crynyd",
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "brown",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "BJPVyT3cEsM"
+      ],
+      "id": "Hyyzkp2qEoG9"
+    },
+    {
+      "name": "Wicket Systri Warrick",
+      "height": 88,
+      "mass": 20,
+      "hair_color": "brown",
+      "skin_color": "brown",
+      "eye_color": "brown",
+      "birth_year": "8BBY",
+      "gender": "male",
+      "homeworld": "ry_xJph5EoG",
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "rJT1T3cEif"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz0"
+    },
+    {
+      "name": "Nien Nunb",
+      "height": 160,
+      "mass": 68,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "black",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM3",
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "Sy0yp3cEif"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "rJe-kah5NsM"
+      ],
+      "id": "rJlMJT25Njz1"
+    },
+    {
+      "name": "Qui-Gon Jinn",
+      "height": 193,
+      "mass": 89,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "92BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "BkeXkp2c4sG"
+      ],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz2"
+    },
+    {
+      "name": "Nute Gunray",
+      "height": 191,
+      "mass": 90,
+      "hair_color": "none",
+      "skin_color": "mottled green",
+      "eye_color": "red",
+      "gender": "male",
+      "homeworld": "S1G4J639EoM",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "S1yxy63q4if"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz3"
+    },
+    {
+      "name": "Finis Valorum",
+      "height": 170,
+      "mass": 0,
+      "hair_color": "blond",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "91BBY",
+      "gender": "male",
+      "homeworld": "HJ5e1639Vsf",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz4"
+    },
+    {
+      "name": "Jar Jar Binks",
+      "height": 196,
+      "mass": 66,
+      "hair_color": "none",
+      "skin_color": "orange",
+      "eye_color": "orange",
+      "birth_year": "52BBY",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "S1egy63qNsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz6"
+    },
+    {
+      "name": "Roos Tarpals",
+      "height": 224,
+      "mass": 82,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "orange",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "S1egy63qNsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz7"
+    },
+    {
+      "name": "Rugor Nass",
+      "height": 206,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "green",
+      "eye_color": "orange",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "S1egy63qNsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "rJlMJT25Njz8"
+    },
+    {
+      "name": "Ric Olié",
+      "height": 183,
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "B1iEJpn5Niz"
+      ],
+      "id": "rJlMJT25Njz9"
+    },
+    {
+      "name": "Watto",
+      "height": 137,
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "blue, grey",
+      "eye_color": "yellow",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM4",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "ByWl162qVoM"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf0"
+    },
+    {
+      "name": "Sebulba",
+      "height": 112,
+      "mass": 40,
+      "hair_color": "none",
+      "skin_color": "grey, red",
+      "eye_color": "orange",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM5",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "S1fxyTn5EjG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf1"
+    },
+    {
+      "name": "Quarsh Panaka",
+      "height": 183,
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "dark",
+      "eye_color": "brown",
+      "birth_year": "62BBY",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf2"
+    },
+    {
+      "name": "Shmi Skywalker",
+      "height": 163,
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "fair",
+      "eye_color": "brown",
+      "birth_year": "72BBY",
+      "gender": "female",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf3"
+    },
+    {
+      "name": "Darth Maul",
+      "height": 175,
+      "mass": 80,
+      "hair_color": "none",
+      "skin_color": "red",
+      "eye_color": "yellow",
+      "birth_year": "54BBY",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM6",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "B1YQJp2qViG"
+      ],
+      "vehicle_ids": [
+        "Skka2cNjf2"
+      ],
+      "starship_ids": [
+        "By3VkT2cNsf"
+      ],
+      "id": "S1WGJ62cEjf4"
+    },
+    {
+      "name": "Bib Fortuna",
+      "height": 180,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "pale",
+      "eye_color": "pink",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM7",
+      "film_ids": [
+        "B1ibyphc4iG"
+      ],
+      "species_ids": [
+        "SkzQkph9NsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf5"
+    },
+    {
+      "name": "Ayla Secura",
+      "height": 178,
+      "mass": 55,
+      "hair_color": "none",
+      "skin_color": "blue",
+      "eye_color": "hazel",
+      "birth_year": "48BBY",
+      "gender": "female",
+      "homeworld": "SkElJp3q4sM7",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "SkzQkph9NsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf6"
+    },
+    {
+      "name": "Dud Bolt",
+      "height": 94,
+      "mass": 45,
+      "hair_color": "none",
+      "skin_color": "blue, grey",
+      "eye_color": "yellow",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM9",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "B14X1TncVof"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf8"
+    },
+    {
+      "name": "Gasgano",
+      "height": 122,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "white, blue",
+      "eye_color": "black",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM0",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "rJrXyThqVsz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf9"
+    },
+    {
+      "name": "Ben Quadinaros",
+      "height": 163,
+      "mass": 65,
+      "hair_color": "none",
+      "skin_color": "grey, green, yellow",
+      "eye_color": "orange",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM1",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "ryLXyp25Noz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz0"
+    },
+    {
+      "name": "Mace Windu",
+      "height": 188,
+      "mass": 84,
+      "hair_color": "none",
+      "skin_color": "dark",
+      "eye_color": "brown",
+      "birth_year": "72BBY",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM2",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz1"
+    },
+    {
+      "name": "Ki-Adi-Mundi",
+      "height": 198,
+      "mass": 82,
+      "hair_color": "white",
+      "skin_color": "pale",
+      "eye_color": "yellow",
+      "birth_year": "92BBY",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM3",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "HyPXkp39Niz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz2"
+    },
+    {
+      "name": "Kit Fisto",
+      "height": 196,
+      "mass": 87,
+      "hair_color": "none",
+      "skin_color": "green",
+      "eye_color": "black",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM4",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "H1dQk6394iM"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz3"
+    },
+    {
+      "name": "Eeth Koth",
+      "height": 171,
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "brown",
+      "eye_color": "brown",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM5",
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "B1YQJp2qViG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz4"
+    },
+    {
+      "name": "Adi Gallia",
+      "height": 184,
+      "mass": 50,
+      "hair_color": "none",
+      "skin_color": "dark",
+      "eye_color": "blue",
+      "gender": "female",
+      "homeworld": "HJ5e1639Vsf",
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "HJcQkpnqEiG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz5"
+    },
+    {
+      "name": "Saesee Tiin",
+      "height": 188,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "pale",
+      "eye_color": "orange",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM7",
+      "film_ids": [
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "HyoXJa3c4oG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz6"
+    },
+    {
+      "name": "Yarael Poof",
+      "height": 264,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "white",
+      "eye_color": "yellow",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM8",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "rk4IJphqEsG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz7"
+    },
+    {
+      "name": "Plo Koon",
+      "height": 188,
+      "mass": 80,
+      "hair_color": "none",
+      "skin_color": "orange",
+      "eye_color": "black",
+      "birth_year": "22BBY",
+      "gender": "male",
+      "homeworld": "SkSl1a2qViM9",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BkrL1phqEiz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "BJJByp354jG"
+      ],
+      "id": "r1fMkp25Njz8"
+    },
+    {
+      "name": "Mas Amedda",
+      "height": 196,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "blue",
+      "eye_color": "blue",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG0",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "BJ8I1Tnc4jG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "r1fMkp25Njz9"
+    },
+    {
+      "name": "Gregar Typho",
+      "height": 185,
+      "mass": 85,
+      "hair_color": "black",
+      "skin_color": "dark",
+      "eye_color": "brown",
+      "gender": "male",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "HJ9E1ThcVif"
+      ],
+      "id": "HJ7Myp39Njf0"
+    },
+    {
+      "name": "Cordé",
+      "height": 157,
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "gender": "female",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf1"
+    },
+    {
+      "name": "Cliegg Lars",
+      "height": 183,
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "birth_year": "82BBY",
+      "gender": "male",
+      "homeworld": "SkNak6hcEjf",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf2"
+    },
+    {
+      "name": "Poggle the Lesser",
+      "height": 183,
+      "mass": 80,
+      "hair_color": "none",
+      "skin_color": "green",
+      "eye_color": "yellow",
+      "gender": "male",
+      "homeworld": "By3lk6294sG",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "HyDLJ63q4of"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf3"
+    },
+    {
+      "name": "Luminara Unduli",
+      "height": 170,
+      "mass": 56.2,
+      "hair_color": "black",
+      "skin_color": "yellow",
+      "eye_color": "blue",
+      "birth_year": "58BBY",
+      "gender": "female",
+      "homeworld": "HkIlkTnqEjG1",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "HyOLyah5NjM"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf4"
+    },
+    {
+      "name": "Barriss Offee",
+      "height": 166,
+      "mass": 50,
+      "hair_color": "black",
+      "skin_color": "yellow",
+      "eye_color": "blue",
+      "birth_year": "40BBY",
+      "gender": "female",
+      "homeworld": "HkIlkTnqEjG1",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "HyOLyah5NjM"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf5"
+    },
+    {
+      "name": "Dormé",
+      "height": 165,
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "gender": "female",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf6"
+    },
+    {
+      "name": "Dooku",
+      "height": 193,
+      "mass": 80,
+      "hair_color": "white",
+      "skin_color": "fair",
+      "eye_color": "brown",
+      "birth_year": "102BBY",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG2",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [
+        "HJzKyahq4if"
+      ],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf7"
+    },
+    {
+      "name": "Bail Prestor Organa",
+      "height": 191,
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "tan",
+      "eye_color": "brown",
+      "birth_year": "67BBY",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf8"
+    },
+    {
+      "name": "Jango Fett",
+      "height": 183,
+      "mass": 79,
+      "hair_color": "black",
+      "skin_color": "tan",
+      "eye_color": "brown",
+      "birth_year": "66BBY",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG3",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "HJ7Myp39Njf9"
+    },
+    {
+      "name": "Zam Wesell",
+      "height": 168,
+      "mass": 55,
+      "hair_color": "blonde",
+      "skin_color": "fair, green, yellow",
+      "eye_color": "yellow",
+      "gender": "female",
+      "homeworld": "HkIlkTnqEjG4",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "S1t8yT25Njf"
+      ],
+      "vehicle_ids": [
+        "Skka2cNjf5"
+      ],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf0"
+    },
+    {
+      "name": "Dexter Jettster",
+      "height": 198,
+      "mass": 102,
+      "hair_color": "none",
+      "skin_color": "brown",
+      "eye_color": "yellow",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG5",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "Skq8yT294sG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf1"
+    },
+    {
+      "name": "Lama Su",
+      "height": 229,
+      "mass": 88,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "black",
+      "gender": "male",
+      "homeworld": "S1oxJanqVsG",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "Hyj8yphc4jf"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf2"
+    },
+    {
+      "name": "Taun We",
+      "height": 213,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "black",
+      "gender": "female",
+      "homeworld": "S1oxJanqVsG",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "Hyj8yphc4jf"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf3"
+    },
+    {
+      "name": "Jocasta Nu",
+      "height": 167,
+      "mass": 0,
+      "hair_color": "white",
+      "skin_color": "fair",
+      "eye_color": "blue",
+      "gender": "female",
+      "homeworld": "HJ5e1639Vsf",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf4"
+    },
+    {
+      "name": "Ratts Tyerell",
+      "height": 79,
+      "mass": 15,
+      "hair_color": "none",
+      "skin_color": "grey, blue",
+      "gender": "male",
+      "homeworld": "SkElJp3q4sM8",
+      "film_ids": [
+        "H1YZyp3cVjf"
+      ],
+      "species_ids": [
+        "BJXXJa3cVoz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1WGJ62cEjf7"
+    },
+    {
+      "name": "R4-P17",
+      "height": 96,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "silver, red",
+      "eye_color": "red, blue",
+      "gender": "female",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf5"
+    },
+    {
+      "name": "Wat Tambor",
+      "height": 193,
+      "mass": 48,
+      "hair_color": "none",
+      "skin_color": "green, grey",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG6",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "BynIJ62q4jf"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf6"
+    },
+    {
+      "name": "San Hill",
+      "height": 191,
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "gold",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG7",
+      "film_ids": [
+        "SJ_-J62qViM"
+      ],
+      "species_ids": [
+        "r1aUJ62cVjG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf7"
+    },
+    {
+      "name": "Shaak Ti",
+      "height": 178,
+      "mass": 57,
+      "hair_color": "none",
+      "skin_color": "red, blue, white",
+      "eye_color": "black",
+      "gender": "female",
+      "homeworld": "HkIlkTnqEjG8",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BkStyThc4jz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "Bk4fJp3cNjf8"
+    },
+    {
+      "name": "Grievous",
+      "height": 216,
+      "mass": 159,
+      "hair_color": "none",
+      "skin_color": "brown, white",
+      "eye_color": "green, yellow",
+      "gender": "male",
+      "homeworld": "HkIlkTnqEjG9",
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "SJ8Ky6h9Nsf"
+      ],
+      "vehicle_ids": [
+        "H1x1T2cEiM0"
+      ],
+      "starship_ids": [
+        "rkKqJ6ncEjz"
+      ],
+      "id": "Bk4fJp3cNjf9"
+    },
+    {
+      "name": "Tarfful",
+      "height": 234,
+      "mass": 136,
+      "hair_color": "brown",
+      "skin_color": "brown",
+      "eye_color": "blue",
+      "gender": "male",
+      "homeworld": "SyAmJ639Viz",
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "rJdFya25VjM"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG0"
+    },
+    {
+      "name": "Raymus Antilles",
+      "height": 188,
+      "mass": 79,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz",
+      "film_ids": [
+        "HycWyp39Nsf",
+        "S1vZy63c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG1"
+    },
+    {
+      "name": "Sly Moore",
+      "height": 178,
+      "mass": 48,
+      "hair_color": "none",
+      "skin_color": "pale",
+      "eye_color": "white",
+      "gender": "female",
+      "homeworld": "SyvxkThq4oG0",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG2"
+    },
+    {
+      "name": "Tion Medon",
+      "height": 206,
+      "mass": 80,
+      "hair_color": "none",
+      "skin_color": "grey",
+      "eye_color": "black",
+      "gender": "male",
+      "homeworld": "SJhXJp294oz",
+      "film_ids": [
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "S1PFyah5Vjz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG3"
+    },
+    {
+      "name": "Finn",
+      "mass": 0,
+      "hair_color": "black",
+      "skin_color": "dark",
+      "eye_color": "dark",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG4"
+    },
+    {
+      "name": "Rey",
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "hazel",
+      "gender": "female",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG5"
+    },
+    {
+      "name": "Poe Dameron",
+      "mass": 0,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "gender": "male",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "Hy2vkp29Esf"
+      ],
+      "id": "S1BGJThqEoG6"
+    },
+    {
+      "name": "BB8",
+      "mass": 0,
+      "hair_color": "none",
+      "skin_color": "none",
+      "eye_color": "black",
+      "gender": "none",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [
+        "S1YtJ63qVoG"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG7"
+    },
+    {
+      "name": "Captain Phasma",
+      "mass": 0,
+      "gender": "female",
+      "homeworld": "B17gkTncNoz8",
+      "film_ids": [
+        "Sk6Zyp2c4oz"
+      ],
+      "species_ids": [],
+      "vehicle_ids": [],
+      "starship_ids": [],
+      "id": "S1BGJThqEoG8"
+    },
+    {
+      "name": "Padmé Amidala",
+      "height": 165,
+      "mass": 45,
+      "hair_color": "brown",
+      "skin_color": "light",
+      "eye_color": "brown",
+      "birth_year": "46BBY",
+      "gender": "female",
+      "homeworld": "ByYe1T2c4sG",
+      "film_ids": [
+        "SJ_-J62qViM",
+        "H1YZyp3cVjf",
+        "HycWyp39Nsf"
+      ],
+      "species_ids": [
+        "BJcKJT2qViz"
+      ],
+      "vehicle_ids": [],
+      "starship_ids": [
+        "Hyuv1Tn9Viz",
+        "HJL5kp25VjG",
+        "HJ9E1ThcVif"
+      ],
+      "id": "rJlMJT25Njz5"
+    }
+  ]
+}
