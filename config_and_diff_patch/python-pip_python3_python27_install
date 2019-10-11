@@ -1,0 +1,167 @@
+ Install pip
+ ===========
+
+ 1. download get-pip.py
+
+    # wget https://bootstrap.pypa.io/get-pip.py
+    # python get-pip.py; pip install docker-compose
+
+
+ 2. yum or apt-get
+      yum install python-pip
+      apt-get install python-pip
+
+
+
+Installation or Upgrade python3
+===============================
+(https://www.2daygeek.com/3-methods-to-install-latest-python3-package-on-centos-6-system/)
+
+    Using EPEL Repository (Extra Packages for Enterprise Linux)
+    EPEL stands for Extra Packages for Enterprise Linux maintained by Fedora Special Interest Group.
+    They creates, maintains, and manages a high quality set of additional packages for Enterprise Linux, 
+    including, but not limited to, Red Hat Enterprise Linux (RHEL), CentOS and Scientific Linux (SL), Oracle Linux (OL).
+    EPEL packages are usually based on their Fedora counterparts and will never conflict with or 
+    replace packages in the base Enterprise Linux distributions.
+    EPEL package is included in the CentOS Extras repository and enabled by default so, we can install 
+    this by running below command.
+
+
+    # yum install epel-release
+    Check the available python 3 version.
+
+    # yum --disablerepo="*" --enablerepo="epel" info python34
+    Loaded plugins: fastestmirror, security
+    Loading mirror speeds from cached hostfile
+     * epel: ewr.edge.kernel.org
+    Available Packages
+    Name        : python34
+    Arch        : x86_64
+    Version     : 3.4.5
+    Release     : 4.el6
+    Size        : 50 k
+    Repo        : epel
+    Summary     : Version 3 of the Python programming language aka Python 3000
+    URL         : http://www.python.org/
+    License     : Python
+    Description : Python 3 is a new version of the language that is incompatible with the 2.x
+                : line of releases. The language is mostly the same, but many details, especially
+                : how built-in objects like dictionaries and strings work, have changed
+                : considerably, and a lot of deprecated features have finally been removed.
+
+    Run the below command to install latest available python 3 package from EPEL repository.
+
+
+    # yum --disablerepo="*" --enablerepo="epel" install python34
+    By default this will not install matching pip & setuptools and we have to install by running below command.
+
+    # curl -O https://bootstrap.pypa.io/get-pip.py
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100 1603k  100 1603k    0     0  2633k      0 --:--:-- --:--:-- --:--:-- 4816k
+
+    # /usr/bin/python3.4 get-pip.py
+    Collecting pip
+      Using cached https://files.pythonhosted.org/packages/0f/74/ecd13431bcc456ed390b44c8a6e917c1820365cbebcb6a8974d1cd045ab4/pip-10.0.1-py2.py3-none-any.whl
+    Collecting setuptools
+      Downloading https://files.pythonhosted.org/packages/8c/10/79282747f9169f21c053c562a0baa21815a8c7879be97abd930dbcf862e8/setuptools-39.1.0-py2.py3-none-any.whl (566kB)
+        100% |████████████████████████████████| 573kB 4.0MB/s
+    Collecting wheel
+      Downloading https://files.pythonhosted.org/packages/1b/d2/22cde5ea9af055f81814f9f2545f5ed8a053eb749c08d186b369959189a8/wheel-0.31.0-py2.py3-none-any.whl (41kB)
+        100% |████████████████████████████████| 51kB 8.0MB/s
+    Installing collected packages: pip, setuptools, wheel
+    Successfully installed pip-10.0.1 setuptools-39.1.0 wheel-0.31.0
+    Run the below command to check installed python3 version.
+
+    # python3 --version
+    Python 3.4.5
+
+
+
+
+
+python 2.7 Install
+==================
+
+1. Download 
+    # cd /usr/src
+    # wget https://www.python.org/ftp/python/2.7.16/Python-2.7.16.tgz
+    # tar xzf Python-2.7.16.tgz
+
+
+2. Install
+
+    Now run the following commands to compile Python 2.7 and install on your system using altinstall.
+
+    # cd Python-2.7.16
+    # ./configure --enable-optimizations
+    # make altinstall
+
+    make altinstall is used to prevent replacing the default python binary file /usr/bin/python
+
+
+3. Check Python Version
+    Check the latest version installed of python using below command. 
+    During this installation, the latest Python binary was installed on path /usr/local/bin/python2.7. 
+    The existing binary was located under /usr/bin.
+
+    # /usr/local/bin/python2.7 -V
+
+    Python 2.7.16
+
+
+    Warning: Do not overwrite or link the original Python binary, This may damage your system.
+
+
+4. Install PIP
+    PIP is a useful utility to install and manage Python modules. 
+    Let’s install the PIP for the installed Python version.
+
+    # curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+    # python2.7 get-pip.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
