@@ -271,6 +271,11 @@ Check Dependencies and build
     -v: verbose including fils generated
     
 
+(7) build in different directory
+    Replace './...' with a path after $GOPATH/src/
+    (example)
+        go build github.com/osrg/gobgp/...
+
 
 
 Running

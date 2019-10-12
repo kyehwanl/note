@@ -26,6 +26,8 @@
 
 
 
+(2) gobgpd server
+    # /opt/project/gobgp_test/gowork/bin/dlv exec ./gobgpd -- -f ./gobgpd.conf -p -l debug
 
 
 2. GDB
