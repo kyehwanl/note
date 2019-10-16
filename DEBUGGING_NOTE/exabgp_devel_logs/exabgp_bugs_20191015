@@ -1,0 +1,85 @@
+
+ExaBGPSec Bugs
+==============
+
+
+1. When Key is not to be read properly from the config file, it will have an error
+
+
+ # Error Logs below
+
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (1 private and 0 public keys)!
+srxCryptoInit return value 1 (API_SUCCESS:1 or API_FAILURE:0)
+
+********************************************************************************
+EXABGP MISBEHAVED / HELP US FIX IT
+********************************************************************************
+
+Sorry, you encountered a problem with ExaBGP, as the problem only affects one
+peer, we are trying to keep the program running.
+
+There are a few things you can do to help us (and yourself):
+- make sure you are running the latest version of the code available at
+  https://github.com/Exa-Networks/exabgp/releases/latest
+- if so report the issue on https://github.com/Exa-Networks/exabgp/issues
+  so it can be fixed (github can be searched for similar reports)
+
+PLEASE, when reporting, do include as much information as you can:
+- do not obfuscate any data (feel free to send us a private  email with the
+  extra information if your business policy is strict on information sharing)
+  https://github.com/Exa-Networks/exabgp/wiki/FAQ
+- if you can reproduce the issue, run ExaBGP with the command line option -d
+  it provides us with much needed information to fix problems quickly
+- include the information presented below
+
+Should you not receive an acknowledgment of your issue on github (assignement,
+comment, or similar) within a few hours, feel free to email us to make sure
+it was not overlooked. (please keep in mind the authors are based in GMT/Europe)
+
+********************************************************************************
+-- Please provide ALL the information below on :
+-- https://github.com/Exa-Networks/exabgp/issues
+********************************************************************************
+
+ExaBGP version : 3.4.13
+Python version : 2.7.16 (default, Oct 10 2019, 23:11:13)  [GCC 4.4.7 20120313 (Red Hat 4.4.7-18)]
+System Uname   : #1 SMP Tue Mar 13 22:44:18 UTC 2018
+System MaxInt  : 9223372036854775807
+
+
+peer 129.6.141.7 ASN 61417
+
+<type 'exceptions.TypeError'>
+sequence item 21: expected string, NoneType found
+Traceback (most recent call last):
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/reactor/peer.py", line 587, in _run
+    for action in self._main(direction):
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/reactor/peer.py", line 537, in _main
+    new_routes.next()
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/reactor/protocol.py", line 269, in new_update
+    for message in update.messages(self.negotiated):
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py", line 128, in messages
+    attr = self.attributes.pack(negotiated,True, add_mp)
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py", line 204, in pack
+    message += default[code](local_asn,peer_asn).pack(negotiated)
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py", line 181, in <lambda>
+    default[Attribute.CODE.BGPSEC] = lambda l,r: BGPSEC(negotiated, add_mp)
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py", line 92, in __init__
+    battr = self.bgpsec_pack (negotiated, asns, skis)
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py", line 224, in bgpsec_pack
+    bgpsec_attr = self._secure_path(negotiated, asns) + self._signature_blocks(negotiated, asns, skis)
+  File "/opt/project/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py", line 214, in _signature_blocks
+    return "%s%s" % ( pack('!H', (self.signature_block_len+self.SIG_BLOCK_LEN)), ''.join(self.signature_block))
+TypeError: sequence item 21: expected string, NoneType found
+
+*
