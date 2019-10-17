@@ -1,0 +1,11 @@
+
+gobgp (client) bugs
+===================
+
+1. when first try to send bgpsec signing update and then, normal trying to send BGP-v4, it has error
+
+
+2019/10/16 01:41:56 BGP: 10.0.50.5 rcvd UPDATE w/ attr: nexthop 10.0.50.5, origin ?
+2019/10/16 01:41:56 BGP: 10.0.50.5 Missing well-known attribute 2.
+2019/10/16 01:41:56 BGP: Notification sent to neighbor 10.0.50.5: type 3/3
+ validate count reached 0 and terminate

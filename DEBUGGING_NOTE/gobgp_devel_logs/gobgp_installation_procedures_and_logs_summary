@@ -1,0 +1,166 @@
+
+
+Gobgp installation procedures
+=============================
+
+1. install go1.10.2
+    - Download go1.10.2.linux-amd64.tar.gz and untar
+    - copy go/ into /usr/local/
+
+    - environment variable setting for GOPATH and executable go/bin dir
+        export GOPATH=/opt/project/gobgp_test/gowork
+        export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+
+        * it canbe done with bash shell script
+        $ cat ~/.go
+        #!/bin/sh
+        export GOPATH=/opt/project/gobgp_test/gowork
+        export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+
+        Then, include '.go' into .bashrc
+
+    - confirm with 'go verion'
+
+
+
+2. install protocol buffer compiler, "protoc"
+    (1) download from https://github.com/protocolbuffers/protobuf/releases
+    (2) simply place this binary(protoc) somewhere in your PATH
+    (3) And place 'include' folder to somewhere CFLAGS is able to find (ex. /usr/include or /usr/local/include)
+    ** current version used
+        protoc-3.6.1-linux-x86_64.zip
+
+
+
+3. install Go protocol buffer plugin and grpc-go
+    go get -u github.com/golang/protobuf/protoc-gen-go
+    go get -u google.golang.org/grpc
+
+
+
+
+4. protocol buffer with gRPC compile:
+    protoc -I=$SRC_DIR --go_out=$DST_DIR $SRC_DIR/filename.proto                (without gRPC)
+    protoc -I=$SRC_DIR --go_out=plugins=gprc:$DST_DIR $SRC_DIR/filename.proto   (with gRPC)
+
+    (where SRC_DIR means the place where .proto file located)
+    (where DST_DIR means the place where the output file will be generated)
+
+
+    (example)
+    vmware.005-antd [1001]{.../gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto
+    ==> Then, gobgp.pb.go will be generated
+
+    vmware.005-antd [1003]{.../gobgp/api}-> protoc --version
+    libprotoc 3.6.1
+
+
+
+
+5. copy 'gobgp' into GOPATH 
+
+    5.1. temporarily copy to $GOPATH/gobgp
+        then, go to gobgp and briefly try to run "go get ./...", then stop.
+        --> to make directory strutures with running go get (download)
+        Result in, 
+            $GOPATH/src/github.com/osrg/gobgp/   <-- this is not the same with $GOPATH/gobgp
+            $GOPATH/bin
+            $GOPATH/pkg
+    
+
+    5.2 substitution and download external sources 
+        remove and replace $GOPATH/src/github.com/osrg/gobgp/ with the previous $GOPATH/gobgp 
+        then, go get ./... again to download external sources from github which are needed to compile with golang
+
+
+
+
+6. Issues in downloading and installation
+    6.1 influxdb and sirupsen
+
+    <issue>
+        idac.server02-antd [1295]{.../osrg/gobgp}-> go get ./...
+        package github.com/influxdata/influxdb/client/v2: cannot find package "github.com/influxdata/influxdb/client/v2" in any of:
+                /usr/local/go/src/github.com/influxdata/influxdb/client/v2 (from $GOROOT)
+                /opt/project/gobgp_test/gowork/src/github.com/influxdata/influxdb/client/v2 (from $GOPATH)
+        package github.com/sirupsen/logrus: case-insensitive import collision: "github.com/sirupsen/logrus" and "github.com/Sirupsen/logrus"
+
+    <Solve>
+        Just copy originals from vmware-005 and substitute them with originals
+
+
+
+    6.2 github.com/satori issue
+    
+    <issue>
+        idac.server02-antd [1297]{.../osrg/gobgp}-> go get ./...
+        # github.com/osrg/gobgp/table
+        table/path.go:340:37: multiple-value uuid.NewV4() in single-value context
+
+
+    <Solve> refer to @/DEBUGGING_NOTE/gobgp_bugs_on_installing,
+
+        id,_ := uuid.NewV4()
+
+        --> modify /table/path.go:340  with this,   path.OriginInfo().uuid, _ = uuid.NewV4()
+
+
+
+    6.3 srx installation
+
+    <issue>
+        idac.server02-antd [1321]{.../osrg/gobgp}-> go build ./...
+        # github.com/osrg/gobgp/server
+        server/bgpsec.go:8:26: fatal error: srxcryptoapi.h: No such file or directory
+         #include "srxcryptoapi.h"
+                                  ^
+        compilation terminated.
+
+    <solve>
+        install SRxCryptoAPI and set the config directory in gobgp
+
+        * easy way is just to copy the directory, /opt/project/gobgp_test/tools/go_srx_test
+            into idac-server02's same position
+
+
+
+
+7. building and install binary
+
+    then, finally try to build & install with following command,
+
+    go install -ldflags="-r /opt/project/gobgp_test/tools/go_srx_test" -gcflags='-N -l' ./...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

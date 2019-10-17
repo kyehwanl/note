@@ -1,0 +1,36 @@
+
+gobgp installing (possible) bugs 
+================================
+
+
+1. siruen
+
+    < error >
+   package github.com/sirupsen/logrus/examples/hook: case-insensitive import collision: "github.com/Sirupsen/logrus" and "github.com/sirupsen/logrus"
+
+    < cause >
+    
+
+    < solution>
+    copy Sirupsen from vmware-005 to the destination folder
+
+
+
+2. idac.server02-antd [1319]{.../gobgp/gobgpd}-> go build  ./...
+    # github.com/osrg/gobgp/tab
+    /table/path.go:340:37: multiple-value uuid.NewV4() in single-value context
+
+
+    <cause>
+    https://github.com/hlandau/acmetool/issues/293
+    This issue is due to an upstream API change in the github.com/satori/go.uuid package, 
+    specifically the change for satori/go.uuid#18. A number of people have raised issues against go.uuid 
+    about this being a breaking API change, so there's a chance that it will be reverted at some point.
+
+    (It's possible to work around this to build Acme with a small code change, or in go.uuid by checking 
+    out a version before this breaking API change.) 
+    
+    <solution>
+    id,_ := uuid.NewV4()
+
+    --> 340     path.OriginInfo().uuid, _ = uuid.NewV4()
