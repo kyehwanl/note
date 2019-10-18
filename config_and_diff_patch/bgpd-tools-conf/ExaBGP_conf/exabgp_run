@@ -13,3 +13,10 @@ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /
 1.2 using executable
 
  env exabgp.log.level=CRIT ../sbin/exabgp <conf>
+
+
+
+1.3 if root is used to run exabgp, there might have 'permission error' on running python script in process configuration,
+    Then, need to specify the user is root
+
+    env exabgp.daemon.user=root ./sbin/exabgp ./exa.bgpsec.conf

@@ -1,0 +1,23 @@
+
+SRxCryptoAPI openssl check Bug
+===============================
+
+1. srx_m4_check_openssl.m4
+
+   <status> not properly detect openssl's install location
+
+    <solve>
+  if test "x$openssl_dir" = "x"; then
+    AC_MSG_RESULT([default])
+    srx_m4_openssl_dir=$(which openssl 2>/dev/null | sed -e "s/\(.*\)\/bin\/openssl/\1/g")
+    +
+    +if test "x$srx_m4_openssl_dir" = "x"; then
+    +  srx_m4_openssl_dir="/usr/"
+    +  AC_MSG_RESULT([======== 111 ])
+    +fi
+    +
+  else
+    AC_MSG_RESULT([custom])
+    srx_m4_openssl_dir=$openssl_dir
+  fi
+ 

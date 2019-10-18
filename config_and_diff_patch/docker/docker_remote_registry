@@ -98,7 +98,9 @@
  (3) push / pull from Remote host to the Local Registry 
     using vmware-005 to access vmware-011's docker registry
 
-    * copy vmware011's certificate to vmware005
+    <UPDATE> latest version v19.03.3, Note that CA certificates should use the extension .crt
+
+    * copy vmware011's certificate to vmware005 (located in /etc/docker/certs.d/10.0.50.11\:5000/ca.cert or domain.cert on vm011)
           [root@vmware-011 registry_certs]# scp domain.cert kyehwanl@vmware-005:/tmp
           kyehwanl@vmware-005's password:
           domain.cert                       100% 1992     2.0MB/s   00:00
@@ -111,6 +113,8 @@
           [root@vmware-005 registry_certs]# ll /etc/docker/certs.d/10.0.50.11\:5000/
           total 4
           -rw-r----- 1 root root 1968 Mar  9 14:35 ca.crt
+
+          (if there is no directory structure under /etc/docker/, then mkdir -p "/etc/docker/certs.d/10.0.50.11:5000")
 
     * docker service reload
           [root@vmware-005 10.0.50.11:5000]# service docker reload

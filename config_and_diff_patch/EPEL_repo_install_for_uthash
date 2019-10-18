@@ -1,0 +1,51 @@
+
+
+EPEL (Extra Packages for Enterprise Linux) install
+==================================================
+
+https://www.liquidweb.com/kb/enable-epel-repository/
+
+
+
+1. What, Why EPEL repo
+
+  The EPEL repository is an additional package repository that provides easy access to install packages for commonly used software. 
+  This repo was created because Fedora contributors wanted to use Fedora packages they maintain on RHEL and other compatible distributions.
+  To put it simply the goal of this repo was to provide greater ease of access to software on Enterprise Linux compatible distributions.
+
+  The EPEL group creates, maintains and manages a high-quality set of additional packages. 
+  These packages may be software not included in the core repository, or sometimes updates which haven’t been provided yet.
+
+
+
+2. Installing EPEL on CentOS via yum
+    sudo yum install epel-release
+
+
+3. Installing EPEL on RHEL/CentOS/etc
+  If,for whatever reason, your version of CentOS is missing the CentOS Extras repo necessary 
+  for this to work you can follow the directions below
+
+      wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm (in case, centos 6)
+
+    Then,
+      yum install ./epel-release-latest-*.noarch.rpm
+      or rpm -Uvh epel-release*rpm
+    
+
+
+
+Uthash install
+==============
+https://centos.pkgs.org/7/epel-x86_64/uthash-devel-2.0.2-1.el7.noarch.rpm.html
+
+1. Install Howto
+    (1) Download latest epel-release rpm from
+        http://download-ib01.fedoraproject.org/pub/epel/7/x86_64/
+
+    (2) Install epel-release rpm:
+        # rpm -Uvh epel-release*rpm
+
+    (3) Install uthash-devel rpm package:
+        # yum install uthash-devel

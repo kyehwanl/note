@@ -64,13 +64,19 @@ Docker Tips
 
 9. docker image command
 
-    - Pull a base image
+    - search images
+        docker search centos
+
+    - Pull a base image (usage: docker pull NAME[:TAG])
         docker pull ubuntu
+        docker pull centos:latest
+        docker pull centos:centos7
+
 
     - To create an image from a running container, save into a new image 
             (for tag name, <username>/<imagename> is recommended)
         docker run -d ubuntu /bin/sh -c "apt-get install -y hello"
-        docker commit -m "My first container" `dl` tcnksm/hello
+        docker commit -m "My first container" `dl` tcnksm/hello  <-- 'dl': docker ps -ql, container id
 
     - To create a image with Dockerfile.
         echo -e "FROM base\nRUN apt-get install hello\nCMD hello" > Dockerfile
