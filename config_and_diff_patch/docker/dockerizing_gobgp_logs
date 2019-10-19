@@ -1,0 +1,1900 @@
+
+Dockerizing GoBGP on Centos7
+============================
+
+ - on idac-server03                                                                                                                
+ - command:   
+        docker commit -m 'gobgp container commit' eb758b kyehwanl/gobgp
+        docker tag kyehwanl/gobgpp 10.0.50.11:5000/gobgp 
+        docker push 10.0.50.11:5000/gobgp
+
+
+                                                                                                                                   
+
+
+Logs
+====
+
+idac.server03-antd [1407]{.../project/gobgp_test}-> sudo -s
+
+[root@idac-server03 gobgp_test]# yum install docer-ce
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirror.umd.edu
+ * centos-sclo-rh: mirror.umd.edu
+ * centos-sclo-sclo: repos-va.psychz.net
+ * epel: darkstar.cam.nist.gov
+ * extras: mirror.wdc1.us.leaseweb.net
+ * rpmforge: mirror.teklinks.com
+ * updates: mirrors.advancedhosters.com
+No package docer-ce available.
+Error: Nothing to do
+
+[root@idac-server03 gobgp_test]# yum install wget yum-utils device-mapper-persistent-data lvm2
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirror.umd.edu
+ * centos-sclo-rh: mirror.ash.fastserv.com
+ * centos-sclo-sclo: repos-va.psychz.net
+ * epel: darkstar.cam.nist.gov
+ * extras: mirror.umd.edu
+ * rpmforge: mirror.teklinks.com
+ * updates: mirrors.advancedhosters.com
+Package wget-1.14-18.el7_6.1.x86_64 already installed and latest version
+Package yum-utils-1.1.31-52.el7.noarch already installed and latest version
+Package device-mapper-persistent-data-0.8.5-1.el7.x86_64 already installed and latest version
+Package 7:lvm2-2.02.185-2.el7.x86_64 already installed and latest version
+Nothing to do
+
+[root@idac-server03 gobgp_test]# yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+Loaded plugins: fastestmirror, langpacks
+adding repo from: https://download.docker.com/linux/centos/docker-ce.repo
+grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo
+
+repo saved to /etc/yum.repos.d/docker-ce.repo
+[root@idac-server03 gobgp_test]# yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+Loaded plugins: fastestmirror, langpacks
+adding repo from: https://download.docker.com/linux/centos/docker-ce.repo
+grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo
+Could not fetch/save url https://download.docker.com/linux/centos/docker-ce.repo to file /etc/yum.repos.d/docker-ce.repo: [Errno 14] curl#35 - "TCP connection reset by peer"
+
+[root@idac-server03 gobgp_test]# yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+Loaded plugins: fastestmirror, langpacks
+adding repo from: https://download.docker.com/linux/centos/docker-ce.repo
+grabbing file https://download.docker.com/linux/centos/docker-ce.repo to /etc/yum.repos.d/docker-ce.repo
+repo saved to /etc/yum.repos.d/docker-ce.repo
+
+[root@idac-server03 gobgp_test]# yum install docker-ce -y
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+ * base: mirror.fileplanet.com
+ * centos-sclo-rh: mirror.jaleco.com
+ * centos-sclo-sclo: mirror.fileplanet.com
+ * epel: darkstar.cam.nist.gov
+ * extras: repo1.ash.innoscale.net
+ * rpmforge: mirror.teklinks.com
+ * updates: mirror.umd.edu
+Resolving Dependencies
+--> Running transaction check
+---> Package docker-ce.x86_64 3:19.03.4-3.el7 will be installed
+--> Processing Dependency: container-selinux >= 2:2.74 for package: 3:docker-ce-19.03.4-3.el7.x86_64
+--> Processing Dependency: containerd.io >= 1.2.2-3 for package: 3:docker-ce-19.03.4-3.el7.x86_64
+--> Processing Dependency: docker-ce-cli for package: 3:docker-ce-19.03.4-3.el7.x86_64
+--> Running transaction check
+---> Package container-selinux.noarch 2:2.107-3.el7 will be installed
+---> Package containerd.io.x86_64 0:1.2.10-3.2.el7 will be installed
+---> Package docker-ce-cli.x86_64 1:19.03.4-3.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================
+ Package                            Arch                    Version                             Repository                         Size
+========================================================================================================================================
+Installing:
+ docker-ce                          x86_64                  3:19.03.4-3.el7                     docker-ce-stable                   24 M
+Installing for dependencies:
+ container-selinux                  noarch                  2:2.107-3.el7                       extras                             39 k
+ containerd.io                      x86_64                  1.2.10-3.2.el7                      docker-ce-stable                   23 M
+ docker-ce-cli                      x86_64                  1:19.03.4-3.el7                     docker-ce-stable                   39 M
+
+Transaction Summary
+========================================================================================================================================
+Install  1 Package (+3 Dependent packages)
+
+Total size: 87 M
+Installed size: 362 M
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/docker-ce-stable/packages/docker-ce-cli-19.03.4-3.el7.x86_64.rpm: Header V4 RSA/SHA512 Signature, key ID 621e9f35: NOKEY
+Retrieving key from https://download.docker.com/linux/centos/gpg
+Importing GPG key 0x621E9F35:
+ Userid     : "Docker Release (CE rpm) <docker@docker.com>"
+ Fingerprint: 060a 61c5 1b55 8a7f 742b 77aa c52f eb6b 621e 9f35
+ From       : https://download.docker.com/linux/centos/gpg
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : 2:container-selinux-2.107-3.el7.noarch                                                                               1/4
+setsebool:  SELinux is disabled.
+  Installing : containerd.io-1.2.10-3.2.el7.x86_64                                                                                  2/4
+  Installing : 1:docker-ce-cli-19.03.4-3.el7.x86_64                                                                                 3/4
+  Installing : 3:docker-ce-19.03.4-3.el7.x86_64                                                                                     4/4
+  Verifying  : 1:docker-ce-cli-19.03.4-3.el7.x86_64                                                                                 1/4
+  Verifying  : 3:docker-ce-19.03.4-3.el7.x86_64                                                                                     2/4
+  Verifying  : containerd.io-1.2.10-3.2.el7.x86_64                                                                                  3/4
+  Verifying  : 2:container-selinux-2.107-3.el7.noarch                                                                               4/4
+
+Installed:
+  docker-ce.x86_64 3:19.03.4-3.el7
+
+Dependency Installed:
+  container-selinux.noarch 2:2.107-3.el7        containerd.io.x86_64 0:1.2.10-3.2.el7        docker-ce-cli.x86_64 1:19.03.4-3.el7
+
+Complete!
+[root@idac-server03 gobgp_test]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+     Docs: https://docs.docker.com
+[root@idac-server03 gobgp_test]# systemctl start docker
+[root@idac-server03 gobgp_test]# systemctl enable docker
+Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.
+[root@idac-server03 gobgp_test]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Fri 2019-10-18 13:47:23 EDT; 12s ago
+     Docs: https://docs.docker.com
+ Main PID: 3256 (dockerd)
+   CGroup: /system.slice/docker.service
+           └─3256 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Oct 18 13:47:22 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:22.284285173-04:00" level=info msg="Creating f...apper
+Oct 18 13:47:22 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:22.461875178-04:00" level=info msg="Successful...apper
+Oct 18 13:47:22 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:22.525418543-04:00" level=warning msg="[graphd...ease"
+Oct 18 13:47:22 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:22.634931704-04:00" level=info msg="Loading co...art."
+Oct 18 13:47:23 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:23.213852340-04:00" level=info msg="Default br...ress"
+Oct 18 13:47:23 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:23.503609428-04:00" level=info msg="Loading co...one."
+Oct 18 13:47:23 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:23.542677585-04:00" level=info msg="Docker dae....03.4
+Oct 18 13:47:23 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:23.542951303-04:00" level=info msg="Daemon has...tion"
+Oct 18 13:47:23 idac-server03.antd.nist.gov dockerd[3256]: time="2019-10-18T13:47:23.670292994-04:00" level=info msg="API listen...sock"
+Oct 18 13:47:23 idac-server03.antd.nist.gov systemd[1]: Started Docker Application Container Engine.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@idac-server03 gobgp_test]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+[root@idac-server03 gobgp_test]# dl
+bash: dl: command not found...
+Similar command is: 'ld'
+[root@idac-server03 gobgp_test]# ll /tmp/
+total 32
+-rw-r--r--  1 root     root  1250 Oct 16 20:24 anaconda.log
+-rw-r-----  1 kyehwanl admin 1992 Oct 18 13:55 ca.crt
+drwxr-xr-x 12 kyehwanl admin 4096 Jul  3 12:32 exabgp-3.4.13
+-rw-r--r--  1 root     root     0 Oct  8 11:33 ifcfg.log
+-rw-r--r--  1 root     root     0 Oct  8 11:33 packaging.log
+-rw-r--r--  1 root     root   214 Oct 16 20:24 program.log
+-rw-r--r--  1 root     root     0 Oct  8 11:33 sensitive-info.log
+-rw-r--r--  1 root     root     0 Oct  8 11:33 storage.log
+drwx------  3 root     root    24 Oct 16 20:24 systemd-private-eeaaaec1c92047a188d29529dc09dc07-chronyd.service-88muJ3
+drwx------  3 root     root    24 Oct 16 20:24 systemd-private-eeaaaec1c92047a188d29529dc09dc07-ypbind.service-4LmkJ3
+drwx------  2 kyehwanl admin   28 Oct 16 21:33 tmux-40021
+prw-------  1 kyehwanl admin    0 Oct 16 21:33 vifm-ipc-vifm
+prw-------  1 kyehwanl admin    0 Oct 16 21:33 vifm-ipc-vifm1
+-rw-------  1 root     root  1110 Oct 18 13:43 yum_save_tx.2019-10-18.13-43.GzfBTV.yumtx
+-rw-------  1 root     root  1110 Oct 18 13:43 yum_save_tx.2019-10-18.13-43.tR1xA_.yumtx
+-rw-------  1 root     root  1110 Oct 18 13:43 yum_save_tx.2019-10-18.13-43.VWSAwv.yumtx
+-rw-------  1 root     root  1110 Oct 18 13:43 yum_save_tx.2019-10-18.13-43.Y32gVa.yumtx
+[root@idac-server03 gobgp_test]# ll /etc/docker/
+total 4
+-rw------- 1 root root 244 Oct 18 13:47 key.json
+[root@idac-server03 gobgp_test]# cd /etc/docker/
+[root@idac-server03 docker]# mkdir -p "/etc/docker/certs.d/10.0.50.11:5000"
+[root@idac-server03 docker]# ll /etc/docker/certs.d/10.0.50.11\:5000/
+total 0
+[root@idac-server03 docker]# cp /tmp/ca.crt /etc/docker/certs.d/10.0.50.11\:5000/
+[root@idac-server03 docker]# docker pull 10.0.50.11:5000/srx
+Using default tag: latest
+latest: Pulling from srx
+5e35d10a3eba: Pull complete
+1fef669b9836: Pull complete
+f2d4b7968ad8: Pull complete
+5d6760f024df: Pull complete
+e852a6cfac93: Pull complete
+8315353d1a92: Pull complete
+e936c4f5c65b: Pull complete
+ba1032463fb0: Pull complete
+f58d0c9d1fae: Pull complete
+0cf0c2590e81: Pull complete
+Digest: sha256:2efa6cb266bd473459264681f5ab16b5286a0d7feffb7007c0d0b0fc3920034d
+Status: Downloaded newer image for 10.0.50.11:5000/srx:latest
+10.0.50.11:5000/srx:latest
+[root@idac-server03 docker]# docker pull centos:centos7
+Error response from daemon: Get https://registry-1.docker.io/v2/: read tcp 10.0.20.162:46656->54.210.105.17:443: read: connection reset by peer
+[root@idac-server03 docker]# docker pull centos:centos7
+centos7: Pulling from library/centos
+d8d02d457314: Pull complete
+Digest: sha256:307835c385f656ec2e2fec602cf093224173c51119bbebd602c53c3653a3d6eb
+Status: Downloaded newer image for centos:centos7
+docker.io/library/centos:centos7
+[root@idac-server03 docker]# docker images
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+centos                centos7             67fa590cfc1c        8 weeks ago         202MB
+10.0.50.11:5000/srx   latest              9d6bbfb1aea7        17 months ago       466MB
+[root@idac-server03 docker]# docker pull centos
+Using default tag: latest
+Error response from daemon: Get https://registry-1.docker.io/v2/: read tcp 10.0.20.162:44312->34.232.31.24:443: read: connection reset by peer
+[root@idac-server03 docker]# docker pull centos
+Using default tag: latest
+latest: Pulling from library/centos
+729ec3a6ada3: Pull complete
+Digest: sha256:f94c1d992c193b3dc09e297ffd54d8a4f1dc946c37cbeceb26d35ce1647f88d9
+Status: Downloaded newer image for centos:latest
+docker.io/library/centos:latest
+[root@idac-server03 docker]# qq
+bash: qq: command not found...
+[root@idac-server03 docker]# exit
+exit
+idac.server03-antd [1408]{.../project/gobgp_test}-> qq
+exit
+ /opt/project                                                        ~/proj-program_data
+  ../                                                  10/18 13:47    ../                                                  10/18 13:06
+  gobgp_test/                                          10/18 12:58   *gobgp/                                               10/16 23:12
+  gobgp/                                               10/16 23:12    srx_grpc/                                            10/04 14:01
+                                                                      exabgp-3.4.13/                                       07/03 12:32
+                                                                      UML/                                                 10/14 16:26
+                                                                      history_cmd/                                         04/10 14:17
+                                                                      ssh_key/                                             02/23 14:40
+                                                                      backups_shellconf/                                   12/16 14:41
+                                                                      vim_testing/                                         08/26 16:41
+                                                                      settingup_netkit.sh                                  03/02 11:46
+                                                                      netkit-lab_sources.tar.gz                            02/29 15:59
+                                                                      netkit-2.8-source.tar.gz                             02/28 15:26
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  gobgp_test/                                                       drwxr-x---   kyehwanl:admin              27 B          10/18 12:58
+idac.server03-antd [1430]{/opt/project}-> sudo -s                                                                                   2/3
+[root@idac-server03 project]# docker run --rm -it -v /opt/project:/opt/data centos:centos7 /bin/bash
+[root@eb758b069395 /]#
+[root@eb758b069395 /]#
+[root@eb758b069395 /]#
+[root@eb758b069395 /]# ll /opt/data
+total 4
+drwxr-x--- 17 40021 1000 4096 Oct 17 03:12 gobgp
+drwxr-x---  3 40021 1000   27 Oct 18 16:58 gobgp_test
+[root@eb758b069395 /]#
+[root@eb758b069395 /]#
+[root@eb758b069395 /]# cd /opt/data
+[root@eb758b069395 data]# ll
+total 4
+drwxr-x--- 17 40021 1000 4096 Oct 17 03:12 gobgp
+drwxr-x---  4 40021 1000  141 Oct 18 23:37 gobgp_test
+[root@eb758b069395 data]# cd gobgp_test/
+[root@eb758b069395 gobgp_test]# ll
+total 134556
+drwxr-x--- 11 40021 1000      4096 Apr 30  2018 go
+-rw-r-----  1 40021 1000 132481801 Oct 18 23:33 go1.10.2.linux-amd64.tar.gz
+drwxr-x---  2 40021 1000         6 Oct 18 16:58 gowork
+-rw-r-----  1 40021 1000   1423451 Oct 18 23:33 protoc-3.6.1-linux-x86_64.zip
+-rw-r-----  1 40021 1000   3869701 Oct 18 23:33 tools.tar.gz
+[root@eb758b069395 gobgp_test]# alias ll='ls -htrl'
+[root@eb758b069395 gobgp_test]# mv -rf go /usr/local/
+mv: invalid option -- 'r'
+Try 'mv --help' for more information.
+[root@eb758b069395 gobgp_test]# mv go /usr/local/
+[root@eb758b069395 gobgp_test]# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+[root@eb758b069395 gobgp_test]# go version
+bash: go: command not found
+[root@eb758b069395 gobgp_test]# /usr/local/go/bin/go version
+go version go1.10.2 linux/amd64
+[root@eb758b069395 gobgp_test]# vi ~/.bashrc
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+export GOPATH=/opt/project/gobgp_test/gowork
+export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+[root@eb758b069395 gobgp_test]# export GOPATH=/opt/project/gobgp_test/gowork
+[root@eb758b069395 gobgp_test]# export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+[root@eb758b069395 gobgp_test]# go version
+go version go1.10.2 linux/amd64
+
+[root@eb758b069395 gobgp_test]# cd protoc
+protoc-3.6.1-linux-x86_64.zip  protocol_buffer/
+
+[root@eb758b069395 gobgp_test]# cd protocol_buffer/
+[root@eb758b069395 protocol_buffer]# ll
+total 4.0K
+-rw-r--r-- 1 40021 1000 715 Jul 30  2018 readme.txt
+drwxr-xr-x 3 40021 1000  27 Jul 30  2018 include
+drwxr-xr-x 2 40021 1000  19 Jul 30  2018 bin
+[root@eb758b069395 protocol_buffer]# ll include/
+total 0
+drwxr-xr-x 3 40021 1000 29 Jul 30  2018 google
+[root@eb758b069395 protocol_buffer]# ll /usr/local/include/
+total 0
+[root@eb758b069395 protocol_buffer]# cp -rf include/ /usr/local/
+[root@eb758b069395 protocol_buffer]# ll /usr/local/include/
+total 0
+drwxr-xr-x 3 root root 22 Oct 19 01:27 google
+[root@eb758b069395 protocol_buffer]# ll
+total 4.0K
+-rw-r--r-- 1 40021 1000 715 Jul 30  2018 readme.txt
+drwxr-xr-x 3 40021 1000  27 Jul 30  2018 include
+drwxr-xr-x 2 40021 1000  19 Jul 30  2018 bin
+[root@eb758b069395 protocol_buffer]# ll bin/
+total 4.4M
+-rwxr-xr-x 1 40021 1000 4.4M Jul 27  2018 protoc
+[root@eb758b069395 protocol_buffer]# cp bin/protoc /usr/local/bin/
+[root@eb758b069395 protocol_buffer]# ll
+total 4.0K
+-rw-r--r-- 1 40021 1000 715 Jul 30  2018 readme.txt
+drwxr-xr-x 3 40021 1000  27 Jul 30  2018 include
+drwxr-xr-x 2 40021 1000  19 Jul 30  2018 bin
+[root@eb758b069395 protocol_buffer]# cd ../
+[root@eb758b069395 gobgp_test]#
+[root@eb758b069395 gobgp_test]# ll
+total 132M
+drwxr-x--- 2 40021 1000    6 Oct 18 16:58 gowork
+-rw-r----- 1 40021 1000 3.7M Oct 18 23:33 tools.tar.gz
+-rw-r----- 1 40021 1000 1.4M Oct 18 23:33 protoc-3.6.1-linux-x86_64.zip
+-rw-r----- 1 40021 1000 127M Oct 18 23:33 go1.10.2.linux-amd64.tar.gz
+drwxr-x--- 4 40021 1000   47 Oct 19 01:26 protocol_buffer
+[root@eb758b069395 gobgp_test]# cd gowork/
+[root@eb758b069395 gowork]# ll
+total 0
+[root@eb758b069395 gowork]# cd ../
+[root@eb758b069395 gobgp_test]# ll
+total 132M
+drwxr-x--- 2 40021 1000    6 Oct 18 16:58 gowork
+-rw-r----- 1 40021 1000 3.7M Oct 18 23:33 tools.tar.gz
+-rw-r----- 1 40021 1000 1.4M Oct 18 23:33 protoc-3.6.1-linux-x86_64.zip
+-rw-r----- 1 40021 1000 127M Oct 18 23:33 go1.10.2.linux-amd64.tar.gz
+drwxr-x--- 4 40021 1000   47 Oct 19 01:26 protocol_buffer
+[root@eb758b069395 gobgp_test]# cd ../
+[root@eb758b069395 data]#
+[root@eb758b069395 data]# ll
+total 4.0K
+drwxr-x--- 17 40021 1000 4.0K Oct 17 03:12 gobgp
+drwxr-x---  4 40021 1000  154 Oct 18 23:42 gobgp_test
+[root@eb758b069395 data]# cd gobgp
+[root@eb758b069395 gobgp]# source ~/.bashrc
+[root@eb758b069395 gobgp]# go version
+go version go1.10.2 linux/amd64
+[root@eb758b069395 gobgp]# ll
+total 6640
+-rw-r----- 1 40021 1000   11324 Mar  8  2017 LICENSE
+-rw-r----- 1 40021 1000    2623 Mar  8  2017 README.md
+-rw-r----- 1 40021 1000    1105 Oct 17 03:12 README_howto_Build_Run
+-rw-r----- 1 40021 1000       4 Mar  8  2017 VERSION
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:16 api
+drwxr-x--- 2 40021 1000      80 Oct 16 04:16 client
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:12 config
+drwxr-x--- 3 40021 1000      27 Mar  8  2017 contrib
+-rw-r----- 1 40021 1000    7021 Nov 21  2018 cscope.files
+-rw-r----- 1 40021 1000  286720 Nov 21  2018 cscope.in.out
+-rw-r----- 1 40021 1000 1828505 Nov 21  2018 cscope.out
+-rw-r----- 1 40021 1000 3241968 Nov 21  2018 cscope.po.out
+drwxr-x--- 3 40021 1000      28 Mar  8  2017 docs
+drwxr-x--- 4 40021 1000      56 Apr 12  2019 gobgp
+drwxr-x--- 2 40021 1000      72 Apr 12  2019 gobgpd
+drwxr-x--- 2 40021 1000      28 Mar  8  2017 gobmpd
+-rw-r----- 1 40021 1000 1380220 Nov 21  2018 gotags
+-rwxr--r-- 1 40021 1000     115 Sep 18  2018 make_gotags.sh
+drwxr-x--- 6 40021 1000      66 Mar  8  2017 packet
+drwxr-x--- 2 40021 1000    4096 Oct 16 19:51 server
+drwxr-x--- 2 40021 1000    4096 Oct 16 05:00 table
+drwxr-x--- 4 40021 1000      75 Mar  8  2017 test
+drwxr-x--- 7 40021 1000     110 Mar  8  2017 tools
+drwxr-x--- 2 40021 1000    4096 Mar  8  2017 zebra
+[root@eb758b069395 gobgp]# go get ./...
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/Sirupsen/logrus: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/golang/protobuf/proto: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/osrg/gobgp/config: exec: "git": executable file not found in $PATH
+package github.com/osrg/gobgp/packet/bgp: cannot find package "github.com/osrg/gobgp/packet/bgp" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/bgp (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp (from $GOPATH)
+package github.com/osrg/gobgp/server: cannot find package "github.com/osrg/gobgp/server" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/server (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server (from $GOPATH)
+package github.com/osrg/gobgp/table: cannot find package "github.com/osrg/gobgp/table" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/table (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table (from $GOPATH)
+go: missing Git command. See https://golang.org/s/gogetcmd
+package golang.org/x/net/context: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package google.golang.org/grpc: exec: "git": executable file not found in $PATH
+package github.com/osrg/gobgp/api: cannot find package "github.com/osrg/gobgp/api" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/api (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/api (from $GOPATH)
+package github.com/osrg/gobgp/packet/bmp: cannot find package "github.com/osrg/gobgp/packet/bmp" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/bmp (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bmp (from $GOPATH)
+package github.com/osrg/gobgp/packet/rtr: cannot find package "github.com/osrg/gobgp/packet/rtr" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/rtr (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/rtr (from $GOPATH)
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/spf13/viper: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/vishvananda/netlink: exec: "git": executable file not found in $PATH
+package github.com/osrg/gobgp/gobgp/cmd: cannot find package "github.com/osrg/gobgp/gobgp/cmd" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/gobgp/cmd (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd (from $GOPATH)
+package github.com/osrg/gobgp/client: cannot find package "github.com/osrg/gobgp/client" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/client (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client (from $GOPATH)
+package github.com/osrg/gobgp/packet/mrt: cannot find package "github.com/osrg/gobgp/packet/mrt" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/mrt (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/mrt (from $GOPATH)
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/spf13/cobra: exec: "git": executable file not found in $PATH
+package github.com/Sirupsen/logrus/hooks/syslog: cannot find package "github.com/Sirupsen/logrus/hooks/syslog" in any of:
+        /usr/local/go/src/github.com/Sirupsen/logrus/hooks/syslog (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/Sirupsen/logrus/hooks/syslog (from $GOPATH)
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/jessevdk/go-flags: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/kr/pretty: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/armon/go-radix: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/eapache/channels: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/influxdata/influxdb/client/v2: exec: "git": executable file not found in $PATH
+package github.com/osrg/gobgp/zebra: cannot find package "github.com/osrg/gobgp/zebra" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/zebra (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/zebra (from $GOPATH)
+go: missing Git command. See https://golang.org/s/gogetcmd
+package gopkg.in/tomb.v2: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/satori/go.uuid: exec: "git": executable file not found in $PATH
+go: missing Git command. See https://golang.org/s/gogetcmd
+package github.com/BurntSushi/toml: exec: "git": executable file not found in $PATH
+[root@eb758b069395 gobgp]# yum install git
+Loaded plugins: fastestmirror, ovl
+Determining fastest mirrors
+ * base: mirror.umd.edu
+ * extras: mirror.umd.edu
+ * updates: mirror.umd.edu
+base                                                                                                             | 3.6 kB  00:00:00
+extras                                                                                                           | 2.9 kB  00:00:00
+updates                                                                                                          | 2.9 kB  00:00:00
+(1/4): extras/7/x86_64/primary_db                                                                                | 152 kB  00:00:00
+(2/4): base/7/x86_64/group_gz                                                                                    | 165 kB  00:00:00
+(3/4): updates/7/x86_64/primary_db                                                                               | 1.9 MB  00:00:00
+(4/4): base/7/x86_64/primary_db                                                                                  | 6.0 MB  00:00:00
+Resolving Dependencies
+--> Running transaction check
+---> Package git.x86_64 0:1.8.3.1-20.el7 will be installed
+--> Processing Dependency: perl-Git = 1.8.3.1-20.el7 for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl >= 5.008 for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: rsync for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(warnings) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(vars) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(strict) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(lib) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(Term::ReadKey) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(Git) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(Getopt::Long) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::stat) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Temp) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Spec) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Path) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Find) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Copy) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(File::Basename) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(Exporter) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: perl(Error) for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: openssh-clients for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: less for package: git-1.8.3.1-20.el7.x86_64
+--> Processing Dependency: /usr/bin/perl for package: git-1.8.3.1-20.el7.x86_64
+--> Running transaction check
+---> Package less.x86_64 0:458-9.el7 will be installed
+--> Processing Dependency: groff-base for package: less-458-9.el7.x86_64
+---> Package openssh-clients.x86_64 0:7.4p1-21.el7 will be installed
+--> Processing Dependency: openssh = 7.4p1-21.el7 for package: openssh-clients-7.4p1-21.el7.x86_64
+--> Processing Dependency: fipscheck-lib(x86-64) >= 1.3.0 for package: openssh-clients-7.4p1-21.el7.x86_64
+--> Processing Dependency: libfipscheck.so.1()(64bit) for package: openssh-clients-7.4p1-21.el7.x86_64
+--> Processing Dependency: libedit.so.0()(64bit) for package: openssh-clients-7.4p1-21.el7.x86_64
+---> Package perl.x86_64 4:5.16.3-294.el7_6 will be installed
+--> Processing Dependency: perl-libs = 4:5.16.3-294.el7_6 for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl-libs for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(constant) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: perl(Carp) for package: 4:perl-5.16.3-294.el7_6.x86_64
+--> Processing Dependency: libperl.so()(64bit) for package: 4:perl-5.16.3-294.el7_6.x86_64
+---> Package perl-Error.noarch 1:0.17020-2.el7 will be installed
+---> Package perl-Exporter.noarch 0:5.68-3.el7 will be installed
+---> Package perl-File-Path.noarch 0:2.09-2.el7 will be installed
+---> Package perl-File-Temp.noarch 0:0.23.01-3.el7 will be installed
+---> Package perl-Getopt-Long.noarch 0:2.40-3.el7 will be installed
+--> Processing Dependency: perl(Pod::Usage) >= 1.14 for package: perl-Getopt-Long-2.40-3.el7.noarch
+--> Processing Dependency: perl(Text::ParseWords) for package: perl-Getopt-Long-2.40-3.el7.noarch
+---> Package perl-Git.noarch 0:1.8.3.1-20.el7 will be installed
+---> Package perl-PathTools.x86_64 0:3.40-5.el7 will be installed
+---> Package perl-TermReadKey.x86_64 0:2.30-20.el7 will be installed
+---> Package rsync.x86_64 0:3.1.2-6.el7_6.1 will be installed
+--> Running transaction check
+---> Package fipscheck-lib.x86_64 0:1.4.1-6.el7 will be installed
+--> Processing Dependency: /usr/bin/fipscheck for package: fipscheck-lib-1.4.1-6.el7.x86_64
+---> Package groff-base.x86_64 0:1.22.2-8.el7 will be installed
+---> Package libedit.x86_64 0:3.0-12.20121213cvs.el7 will be installed
+---> Package openssh.x86_64 0:7.4p1-21.el7 will be installed
+---> Package perl-Carp.noarch 0:1.26-244.el7 will be installed
+---> Package perl-Filter.x86_64 0:1.49-3.el7 will be installed
+---> Package perl-Pod-Simple.noarch 1:3.28-4.el7 will be installed
+--> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch
+--> Processing Dependency: perl(Encode) for package: 1:perl-Pod-Simple-3.28-4.el7.noarch
+---> Package perl-Pod-Usage.noarch 0:1.63-3.el7 will be installed
+--> Processing Dependency: perl(Pod::Text) >= 3.15 for package: perl-Pod-Usage-1.63-3.el7.noarch
+--> Processing Dependency: perl-Pod-Perldoc for package: perl-Pod-Usage-1.63-3.el7.noarch
+---> Package perl-Scalar-List-Utils.x86_64 0:1.27-248.el7 will be installed
+---> Package perl-Socket.x86_64 0:2.010-4.el7 will be installed
+---> Package perl-Storable.x86_64 0:2.45-3.el7 will be installed
+---> Package perl-Text-ParseWords.noarch 0:3.29-4.el7 will be installed
+---> Package perl-Time-HiRes.x86_64 4:1.9725-3.el7 will be installed
+---> Package perl-Time-Local.noarch 0:1.2300-2.el7 will be installed
+---> Package perl-constant.noarch 0:1.27-2.el7 will be installed
+---> Package perl-libs.x86_64 4:5.16.3-294.el7_6 will be installed
+---> Package perl-macros.x86_64 4:5.16.3-294.el7_6 will be installed
+---> Package perl-threads.x86_64 0:1.87-4.el7 will be installed
+---> Package perl-threads-shared.x86_64 0:1.43-6.el7 will be installed
+--> Running transaction check
+---> Package fipscheck.x86_64 0:1.4.1-6.el7 will be installed
+---> Package perl-Encode.x86_64 0:2.51-7.el7 will be installed
+---> Package perl-Pod-Escapes.noarch 1:1.04-294.el7_6 will be installed
+---> Package perl-Pod-Perldoc.noarch 0:3.20-4.el7 will be installed
+--> Processing Dependency: perl(parent) for package: perl-Pod-Perldoc-3.20-4.el7.noarch
+--> Processing Dependency: perl(HTTP::Tiny) for package: perl-Pod-Perldoc-3.20-4.el7.noarch
+---> Package perl-podlators.noarch 0:2.5.1-3.el7 will be installed
+--> Running transaction check
+---> Package perl-HTTP-Tiny.noarch 0:0.033-3.el7 will be installed
+---> Package perl-parent.noarch 1:0.225-244.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================
+ Package                                 Arch                    Version                                    Repository             Size
+========================================================================================================================================
+Installing:
+ git                                     x86_64                  1.8.3.1-20.el7                             base                  4.4 M
+Installing for dependencies:
+ fipscheck                               x86_64                  1.4.1-6.el7                                base                   21 k
+ fipscheck-lib                           x86_64                  1.4.1-6.el7                                base                   11 k
+ groff-base                              x86_64                  1.22.2-8.el7                               base                  942 k
+ less                                    x86_64                  458-9.el7                                  base                  120 k
+ libedit                                 x86_64                  3.0-12.20121213cvs.el7                     base                   92 k
+ openssh                                 x86_64                  7.4p1-21.el7                               base                  510 k
+ openssh-clients                         x86_64                  7.4p1-21.el7                               base                  655 k
+ perl                                    x86_64                  4:5.16.3-294.el7_6                         base                  8.0 M
+ perl-Carp                               noarch                  1.26-244.el7                               base                   19 k
+ perl-Encode                             x86_64                  2.51-7.el7                                 base                  1.5 M
+ perl-Error                              noarch                  1:0.17020-2.el7                            base                   32 k
+ perl-Exporter                           noarch                  5.68-3.el7                                 base                   28 k
+ perl-File-Path                          noarch                  2.09-2.el7                                 base                   26 k
+ perl-File-Temp                          noarch                  0.23.01-3.el7                              base                   56 k
+ perl-Filter                             x86_64                  1.49-3.el7                                 base                   76 k
+ perl-Getopt-Long                        noarch                  2.40-3.el7                                 base                   56 k
+ perl-Git                                noarch                  1.8.3.1-20.el7                             base                   55 k
+ perl-HTTP-Tiny                          noarch                  0.033-3.el7                                base                   38 k
+ perl-PathTools                          x86_64                  3.40-5.el7                                 base                   82 k
+ perl-Pod-Escapes                        noarch                  1:1.04-294.el7_6                           base                   51 k
+ perl-Pod-Perldoc                        noarch                  3.20-4.el7                                 base                   87 k
+ perl-Pod-Simple                         noarch                  1:3.28-4.el7                               base                  216 k
+ perl-Pod-Usage                          noarch                  1.63-3.el7                                 base                   27 k
+ perl-Scalar-List-Utils                  x86_64                  1.27-248.el7                               base                   36 k
+ perl-Socket                             x86_64                  2.010-4.el7                                base                   49 k
+ perl-Storable                           x86_64                  2.45-3.el7                                 base                   77 k
+ perl-TermReadKey                        x86_64                  2.30-20.el7                                base                   31 k
+ perl-Text-ParseWords                    noarch                  3.29-4.el7                                 base                   14 k
+ perl-Time-HiRes                         x86_64                  4:1.9725-3.el7                             base                   45 k
+ perl-Time-Local                         noarch                  1.2300-2.el7                               base                   24 k
+ perl-constant                           noarch                  1.27-2.el7                                 base                   19 k
+ perl-libs                               x86_64                  4:5.16.3-294.el7_6                         base                  688 k
+ perl-macros                             x86_64                  4:5.16.3-294.el7_6                         base                   44 k
+ perl-parent                             noarch                  1:0.225-244.el7                            base                   12 k
+ perl-podlators                          noarch                  2.5.1-3.el7                                base                  112 k
+ perl-threads                            x86_64                  1.87-4.el7                                 base                   49 k
+ perl-threads-shared                     x86_64                  1.43-6.el7                                 base                   39 k
+ rsync                                   x86_64                  3.1.2-6.el7_6.1                            base                  404 k
+
+Transaction Summary
+========================================================================================================================================
+Install  1 Package (+38 Dependent packages)
+
+Total download size: 19 M
+Installed size: 68 M
+Is this ok [y/d/N]: y
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/base/packages/fipscheck-lib-1.4.1-6.el7.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+Public key for fipscheck-lib-1.4.1-6.el7.x86_64.rpm is not installed
+(1/39): fipscheck-lib-1.4.1-6.el7.x86_64.rpm                                                                     |  11 kB  00:00:00
+(2/39): fipscheck-1.4.1-6.el7.x86_64.rpm                                                                         |  21 kB  00:00:00
+(3/39): less-458-9.el7.x86_64.rpm                                                                                | 120 kB  00:00:00
+(4/39): libedit-3.0-12.20121213cvs.el7.x86_64.rpm                                                                |  92 kB  00:00:00
+(5/39): git-1.8.3.1-20.el7.x86_64.rpm                                                                            | 4.4 MB  00:00:00
+(6/39): groff-base-1.22.2-8.el7.x86_64.rpm                                                                       | 942 kB  00:00:00
+(7/39): openssh-7.4p1-21.el7.x86_64.rpm                                                                          | 510 kB  00:00:00
+(8/39): openssh-clients-7.4p1-21.el7.x86_64.rpm                                                                  | 655 kB  00:00:00
+(9/39): perl-Carp-1.26-244.el7.noarch.rpm                                                                        |  19 kB  00:00:00
+(10/39): perl-Error-0.17020-2.el7.noarch.rpm                                                                     |  32 kB  00:00:00
+(11/39): perl-Exporter-5.68-3.el7.noarch.rpm                                                                     |  28 kB  00:00:00
+(12/39): perl-File-Path-2.09-2.el7.noarch.rpm                                                                    |  26 kB  00:00:00
+(13/39): perl-File-Temp-0.23.01-3.el7.noarch.rpm                                                                 |  56 kB  00:00:00
+(14/39): perl-Encode-2.51-7.el7.x86_64.rpm                                                                       | 1.5 MB  00:00:00
+(15/39): perl-5.16.3-294.el7_6.x86_64.rpm                                                                        | 8.0 MB  00:00:00
+(16/39): perl-Filter-1.49-3.el7.x86_64.rpm                                                                       |  76 kB  00:00:00
+(17/39): perl-HTTP-Tiny-0.033-3.el7.noarch.rpm                                                                   |  38 kB  00:00:00
+(18/39): perl-Getopt-Long-2.40-3.el7.noarch.rpm                                                                  |  56 kB  00:00:00
+(19/39): perl-Pod-Perldoc-3.20-4.el7.noarch.rpm                                                                  |  87 kB  00:00:00
+(20/39): perl-Git-1.8.3.1-20.el7.noarch.rpm                                                                      |  55 kB  00:00:00
+(21/39): perl-Pod-Usage-1.63-3.el7.noarch.rpm                                                                    |  27 kB  00:00:00
+(22/39): perl-Pod-Escapes-1.04-294.el7_6.noarch.rpm                                                              |  51 kB  00:00:00
+(23/39): perl-PathTools-3.40-5.el7.x86_64.rpm                                                                    |  82 kB  00:00:00
+(24/39): perl-Socket-2.010-4.el7.x86_64.rpm                                                                      |  49 kB  00:00:00
+(25/39): perl-Scalar-List-Utils-1.27-248.el7.x86_64.rpm                                                          |  36 kB  00:00:00
+(26/39): perl-TermReadKey-2.30-20.el7.x86_64.rpm                                                                 |  31 kB  00:00:00
+(27/39): perl-Pod-Simple-3.28-4.el7.noarch.rpm                                                                   | 216 kB  00:00:00
+(28/39): perl-Storable-2.45-3.el7.x86_64.rpm                                                                     |  77 kB  00:00:00
+(29/39): perl-Time-Local-1.2300-2.el7.noarch.rpm                                                                 |  24 kB  00:00:00
+(30/39): perl-Time-HiRes-1.9725-3.el7.x86_64.rpm                                                                 |  45 kB  00:00:00
+(31/39): perl-constant-1.27-2.el7.noarch.rpm                                                                     |  19 kB  00:00:00
+(32/39): perl-Text-ParseWords-3.29-4.el7.noarch.rpm                                                              |  14 kB  00:00:00
+(33/39): perl-parent-0.225-244.el7.noarch.rpm                                                                    |  12 kB  00:00:00
+(34/39): perl-macros-5.16.3-294.el7_6.x86_64.rpm                                                                 |  44 kB  00:00:00
+(35/39): perl-threads-1.87-4.el7.x86_64.rpm                                                                      |  49 kB  00:00:00
+(36/39): perl-podlators-2.5.1-3.el7.noarch.rpm                                                                   | 112 kB  00:00:00
+(37/39): perl-threads-shared-1.43-6.el7.x86_64.rpm                                                               |  39 kB  00:00:00
+(38/39): perl-libs-5.16.3-294.el7_6.x86_64.rpm                                                                   | 688 kB  00:00:00
+(39/39): rsync-3.1.2-6.el7_6.1.x86_64.rpm                                                                        | 404 kB  00:00:00
+----------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                    11 MB/s |  19 MB  00:00:01
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Importing GPG key 0xF4A80EB5:
+ Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+ Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+ Package    : centos-release-7-6.1810.2.el7.centos.x86_64 (@CentOS)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Is this ok [y/N]: y
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : fipscheck-1.4.1-6.el7.x86_64                                                                                        1/39
+  Installing : fipscheck-lib-1.4.1-6.el7.x86_64                                                                                    2/39
+  Installing : groff-base-1.22.2-8.el7.x86_64                                                                                       3/39
+  Installing : 1:perl-parent-0.225-244.el7.noarch                                                                                   4/39
+  Installing : perl-HTTP-Tiny-0.033-3.el7.noarch                                                                                    5/39
+  Installing : perl-podlators-2.5.1-3.el7.noarch                                                                                    6/39
+  Installing : perl-Pod-Perldoc-3.20-4.el7.noarch                                                                                   7/39
+  Installing : 1:perl-Pod-Escapes-1.04-294.el7_6.noarch                                                                             8/39
+  Installing : perl-Encode-2.51-7.el7.x86_64                                                                                        9/39
+  Installing : perl-Text-ParseWords-3.29-4.el7.noarch                                                                              10/39
+  Installing : perl-Pod-Usage-1.63-3.el7.noarch                                                                                    11/39
+  Installing : 4:perl-libs-5.16.3-294.el7_6.x86_64                                                                                 12/39
+  Installing : 4:perl-macros-5.16.3-294.el7_6.x86_64                                                                               13/39
+  Installing : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                                                                               14/39
+  Installing : perl-Exporter-5.68-3.el7.noarch                                                                                     15/39
+  Installing : perl-constant-1.27-2.el7.noarch                                                                                     16/39
+  Installing : perl-Time-Local-1.2300-2.el7.noarch                                                                                 17/39
+  Installing : perl-Socket-2.010-4.el7.x86_64                                                                                      18/39
+  Installing : perl-Carp-1.26-244.el7.noarch                                                                                       19/39
+  Installing : perl-Storable-2.45-3.el7.x86_64                                                                                     20/39
+  Installing : perl-PathTools-3.40-5.el7.x86_64                                                                                    21/39
+  Installing : perl-Scalar-List-Utils-1.27-248.el7.x86_64                                                                          22/39
+  Installing : perl-File-Temp-0.23.01-3.el7.noarch                                                                                 23/39
+  Installing : perl-File-Path-2.09-2.el7.noarch                                                                                    24/39
+  Installing : perl-threads-shared-1.43-6.el7.x86_64                                                                               25/39
+  Installing : perl-threads-1.87-4.el7.x86_64                                                                                      26/39
+  Installing : 1:perl-Pod-Simple-3.28-4.el7.noarch                                                                                 27/39
+  Installing : perl-Filter-1.49-3.el7.x86_64                                                                                       28/39
+  Installing : perl-Getopt-Long-2.40-3.el7.noarch                                                                                  29/39
+  Installing : 4:perl-5.16.3-294.el7_6.x86_64                                                                                      30/39
+  Installing : 1:perl-Error-0.17020-2.el7.noarch                                                                                   31/39
+  Installing : perl-TermReadKey-2.30-20.el7.x86_64                                                                                 32/39
+  Installing : less-458-9.el7.x86_64                                                                                               33/39
+  Installing : openssh-7.4p1-21.el7.x86_64                                                                                         34/39
+  Installing : libedit-3.0-12.20121213cvs.el7.x86_64                                                                               35/39
+  Installing : openssh-clients-7.4p1-21.el7.x86_64                                                                                 36/39
+  Installing : rsync-3.1.2-6.el7_6.1.x86_64                                                                                        37/39
+  Installing : perl-Git-1.8.3.1-20.el7.noarch                                                                                      38/39
+  Installing : git-1.8.3.1-20.el7.x86_64                                                                                           39/39
+  Verifying  : fipscheck-lib-1.4.1-6.el7.x86_64                                                                                     1/39
+  Verifying  : perl-HTTP-Tiny-0.033-3.el7.noarch                                                                                    2/39
+  Verifying  : perl-threads-shared-1.43-6.el7.x86_64                                                                                3/39
+  Verifying  : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                                                                                4/39
+  Verifying  : 1:perl-Pod-Escapes-1.04-294.el7_6.noarch                                                                             5/39
+  Verifying  : perl-Exporter-5.68-3.el7.noarch                                                                                      6/39
+  Verifying  : perl-constant-1.27-2.el7.noarch                                                                                      7/39
+  Verifying  : perl-PathTools-3.40-5.el7.x86_64                                                                                     8/39
+  Verifying  : rsync-3.1.2-6.el7_6.1.x86_64                                                                                         9/39
+  Verifying  : openssh-7.4p1-21.el7.x86_64                                                                                         10/39
+  Verifying  : 1:perl-parent-0.225-244.el7.noarch                                                                                  11/39
+  Verifying  : perl-TermReadKey-2.30-20.el7.x86_64                                                                                 12/39
+  Verifying  : fipscheck-1.4.1-6.el7.x86_64                                                                                        13/39
+  Verifying  : 4:perl-libs-5.16.3-294.el7_6.x86_64                                                                                 14/39
+  Verifying  : groff-base-1.22.2-8.el7.x86_64                                                                                      15/39
+  Verifying  : perl-File-Temp-0.23.01-3.el7.noarch                                                                                 16/39
+  Verifying  : perl-Git-1.8.3.1-20.el7.noarch                                                                                      17/39
+  Verifying  : perl-Time-Local-1.2300-2.el7.noarch                                                                                 18/39
+  Verifying  : 4:perl-macros-5.16.3-294.el7_6.x86_64                                                                               19/39
+  Verifying  : perl-Socket-2.010-4.el7.x86_64                                                                                      20/39
+  Verifying  : perl-Carp-1.26-244.el7.noarch                                                                                       21/39
+  Verifying  : 1:perl-Error-0.17020-2.el7.noarch                                                                                   22/39
+  Verifying  : openssh-clients-7.4p1-21.el7.x86_64                                                                                 23/39
+  Verifying  : git-1.8.3.1-20.el7.x86_64                                                                                           24/39
+  Verifying  : perl-Storable-2.45-3.el7.x86_64                                                                                     25/39
+  Verifying  : perl-Scalar-List-Utils-1.27-248.el7.x86_64                                                                          26/39
+  Verifying  : perl-Pod-Usage-1.63-3.el7.noarch                                                                                    27/39
+  Verifying  : perl-Encode-2.51-7.el7.x86_64                                                                                       28/39
+  Verifying  : perl-Pod-Perldoc-3.20-4.el7.noarch                                                                                  29/39
+  Verifying  : perl-podlators-2.5.1-3.el7.noarch                                                                                   30/39
+  Verifying  : perl-File-Path-2.09-2.el7.noarch                                                                                    31/39
+  Verifying  : libedit-3.0-12.20121213cvs.el7.x86_64                                                                               32/39
+  Verifying  : perl-threads-1.87-4.el7.x86_64                                                                                      33/39
+  Verifying  : 1:perl-Pod-Simple-3.28-4.el7.noarch                                                                                 34/39
+  Verifying  : perl-Filter-1.49-3.el7.x86_64                                                                                       35/39
+  Verifying  : perl-Getopt-Long-2.40-3.el7.noarch                                                                                  36/39
+  Verifying  : perl-Text-ParseWords-3.29-4.el7.noarch                                                                              37/39
+  Verifying  : 4:perl-5.16.3-294.el7_6.x86_64                                                                                      38/39
+  Verifying  : less-458-9.el7.x86_64                                                                                               39/39
+
+Installed:
+  git.x86_64 0:1.8.3.1-20.el7
+
+Dependency Installed:
+  fipscheck.x86_64 0:1.4.1-6.el7              fipscheck-lib.x86_64 0:1.4.1-6.el7          groff-base.x86_64 0:1.22.2-8.el7
+  less.x86_64 0:458-9.el7                     libedit.x86_64 0:3.0-12.20121213cvs.el7     openssh.x86_64 0:7.4p1-21.el7
+  openssh-clients.x86_64 0:7.4p1-21.el7       perl.x86_64 4:5.16.3-294.el7_6              perl-Carp.noarch 0:1.26-244.el7
+  perl-Encode.x86_64 0:2.51-7.el7             perl-Error.noarch 1:0.17020-2.el7           perl-Exporter.noarch 0:5.68-3.el7
+  perl-File-Path.noarch 0:2.09-2.el7          perl-File-Temp.noarch 0:0.23.01-3.el7       perl-Filter.x86_64 0:1.49-3.el7
+  perl-Getopt-Long.noarch 0:2.40-3.el7        perl-Git.noarch 0:1.8.3.1-20.el7            perl-HTTP-Tiny.noarch 0:0.033-3.el7
+  perl-PathTools.x86_64 0:3.40-5.el7          perl-Pod-Escapes.noarch 1:1.04-294.el7_6    perl-Pod-Perldoc.noarch 0:3.20-4.el7
+  perl-Pod-Simple.noarch 1:3.28-4.el7         perl-Pod-Usage.noarch 0:1.63-3.el7          perl-Scalar-List-Utils.x86_64 0:1.27-248.el7
+  perl-Socket.x86_64 0:2.010-4.el7            perl-Storable.x86_64 0:2.45-3.el7           perl-TermReadKey.x86_64 0:2.30-20.el7
+  perl-Text-ParseWords.noarch 0:3.29-4.el7    perl-Time-HiRes.x86_64 4:1.9725-3.el7       perl-Time-Local.noarch 0:1.2300-2.el7
+  perl-constant.noarch 0:1.27-2.el7           perl-libs.x86_64 4:5.16.3-294.el7_6         perl-macros.x86_64 4:5.16.3-294.el7_6
+  perl-parent.noarch 1:0.225-244.el7          perl-podlators.noarch 0:2.5.1-3.el7         perl-threads.x86_64 0:1.87-4.el7
+  perl-threads-shared.x86_64 0:1.43-6.el7     rsync.x86_64 0:3.1.2-6.el7_6.1
+
+Complete!
+[root@eb758b069395 gobgp]# go get ./...
+# cd .; git clone https://go.googlesource.com/sys /opt/project/gobgp_test/gowork/src/golang.org/x/sys
+Cloning into '/opt/project/gobgp_test/gowork/src/golang.org/x/sys'...
+fatal: unable to access 'https://go.googlesource.com/sys/': TCP connection reset by peer
+package golang.org/x/sys/unix: exit status 128
+package github.com/osrg/gobgp/config: cannot find package "github.com/osrg/gobgp/config" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/config (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/config (from $GOPATH)
+package github.com/osrg/gobgp/packet/bgp: cannot find package "github.com/osrg/gobgp/packet/bgp" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/bgp (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp (from $GOPATH)
+package github.com/osrg/gobgp/server: cannot find package "github.com/osrg/gobgp/server" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/server (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server (from $GOPATH)
+package github.com/osrg/gobgp/table: cannot find package "github.com/osrg/gobgp/table" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/table (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table (from $GOPATH)
+^C
+[root@eb758b069395 gobgp]# ll
+total 6640
+-rw-r----- 1 40021 1000   11324 Mar  8  2017 LICENSE
+-rw-r----- 1 40021 1000    2623 Mar  8  2017 README.md
+-rw-r----- 1 40021 1000    1105 Oct 17 03:12 README_howto_Build_Run
+-rw-r----- 1 40021 1000       4 Mar  8  2017 VERSION
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:16 api
+drwxr-x--- 2 40021 1000      80 Oct 16 04:16 client
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:12 config
+drwxr-x--- 3 40021 1000      27 Mar  8  2017 contrib
+-rw-r----- 1 40021 1000    7021 Nov 21  2018 cscope.files
+-rw-r----- 1 40021 1000  286720 Nov 21  2018 cscope.in.out
+-rw-r----- 1 40021 1000 1828505 Nov 21  2018 cscope.out
+-rw-r----- 1 40021 1000 3241968 Nov 21  2018 cscope.po.out
+drwxr-x--- 3 40021 1000      28 Mar  8  2017 docs
+drwxr-x--- 4 40021 1000      56 Apr 12  2019 gobgp
+drwxr-x--- 2 40021 1000      72 Apr 12  2019 gobgpd
+drwxr-x--- 2 40021 1000      28 Mar  8  2017 gobmpd
+-rw-r----- 1 40021 1000 1380220 Nov 21  2018 gotags
+-rwxr--r-- 1 40021 1000     115 Sep 18  2018 make_gotags.sh
+drwxr-x--- 6 40021 1000      66 Mar  8  2017 packet
+drwxr-x--- 2 40021 1000    4096 Oct 16 19:51 server
+drwxr-x--- 2 40021 1000    4096 Oct 16 05:00 table
+drwxr-x--- 4 40021 1000      75 Mar  8  2017 test
+drwxr-x--- 7 40021 1000     110 Mar  8  2017 tools
+drwxr-x--- 2 40021 1000    4096 Mar  8  2017 zebra
+[root@eb758b069395 gobgp]# cd ../
+[root@eb758b069395 data]# ll
+total 4
+drwxr-x--- 17 40021 1000 4096 Oct 17 03:12 gobgp
+drwxr-x---  4 40021 1000  154 Oct 18 23:42 gobgp_test
+[root@eb758b069395 data]# ll gobgp_test/
+total 134552
+-rw-r----- 1 40021 1000 132481801 Oct 18 23:33 go1.10.2.linux-amd64.tar.gz
+drwxr-x--- 2 40021 1000         6 Oct 18 16:58 gowork
+-rw-r----- 1 40021 1000   1423451 Oct 18 23:33 protoc-3.6.1-linux-x86_64.zip
+drwxr-x--- 4 40021 1000        47 Oct 19 01:26 protocol_buffer
+-rw-r----- 1 40021 1000   3869701 Oct 18 23:33 tools.tar.gz
+[root@eb758b069395 data]# ll gobgp_test/gowork/
+total 0
+[root@eb758b069395 data]# echo $GOPATH
+/opt/project/gobgp_test/gowork
+[root@eb758b069395 data]# cd -
+/opt/data/gobgp
+[root@eb758b069395 gobgp]# pwd
+/opt/data/gobgp
+[root@eb758b069395 gobgp]# ll
+total 6640
+-rw-r----- 1 40021 1000   11324 Mar  8  2017 LICENSE
+-rw-r----- 1 40021 1000    2623 Mar  8  2017 README.md
+-rw-r----- 1 40021 1000    1105 Oct 17 03:12 README_howto_Build_Run
+-rw-r----- 1 40021 1000       4 Mar  8  2017 VERSION
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:16 api
+drwxr-x--- 2 40021 1000      80 Oct 16 04:16 client
+drwxr-x--- 2 40021 1000    4096 Oct 16 04:12 config
+drwxr-x--- 3 40021 1000      27 Mar  8  2017 contrib
+-rw-r----- 1 40021 1000    7021 Nov 21  2018 cscope.files
+-rw-r----- 1 40021 1000  286720 Nov 21  2018 cscope.in.out
+-rw-r----- 1 40021 1000 1828505 Nov 21  2018 cscope.out
+-rw-r----- 1 40021 1000 3241968 Nov 21  2018 cscope.po.out
+drwxr-x--- 3 40021 1000      28 Mar  8  2017 docs
+drwxr-x--- 4 40021 1000      56 Apr 12  2019 gobgp
+drwxr-x--- 2 40021 1000      72 Apr 12  2019 gobgpd
+drwxr-x--- 2 40021 1000      28 Mar  8  2017 gobmpd
+-rw-r----- 1 40021 1000 1380220 Nov 21  2018 gotags
+-rwxr--r-- 1 40021 1000     115 Sep 18  2018 make_gotags.sh
+drwxr-x--- 6 40021 1000      66 Mar  8  2017 packet
+drwxr-x--- 2 40021 1000    4096 Oct 16 19:51 server
+drwxr-x--- 2 40021 1000    4096 Oct 16 05:00 table
+drwxr-x--- 4 40021 1000      75 Mar  8  2017 test
+drwxr-x--- 7 40021 1000     110 Mar  8  2017 tools
+drwxr-x--- 2 40021 1000    4096 Mar  8  2017 zebra
+[root@eb758b069395 gobgp]# go get ./...
+package github.com/osrg/gobgp/config: cannot find package "github.com/osrg/gobgp/config" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/config (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/config (from $GOPATH)
+package github.com/osrg/gobgp/packet/bgp: cannot find package "github.com/osrg/gobgp/packet/bgp" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/bgp (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bgp (from $GOPATH)
+package github.com/osrg/gobgp/server: cannot find package "github.com/osrg/gobgp/server" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/server (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/server (from $GOPATH)
+package github.com/osrg/gobgp/table: cannot find package "github.com/osrg/gobgp/table" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/table (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/table (from $GOPATH)
+package github.com/osrg/gobgp/packet/bmp: cannot find package "github.com/osrg/gobgp/packet/bmp" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/bmp (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/bmp (from $GOPATH)
+package github.com/osrg/gobgp/packet/rtr: cannot find package "github.com/osrg/gobgp/packet/rtr" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/rtr (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/rtr (from $GOPATH)
+package github.com/osrg/gobgp/gobgp/cmd: cannot find package "github.com/osrg/gobgp/gobgp/cmd" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/gobgp/cmd (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/gobgp/cmd (from $GOPATH)
+package github.com/osrg/gobgp/client: cannot find package "github.com/osrg/gobgp/client" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/client (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/client (from $GOPATH)
+package github.com/osrg/gobgp/packet/mrt: cannot find package "github.com/osrg/gobgp/packet/mrt" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/packet/mrt (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/packet/mrt (from $GOPATH)
+package github.com/sirupsen/logrus: case-insensitive import collision: "github.com/sirupsen/logrus" and "github.com/Sirupsen/logrus"
+package github.com/influxdata/influxdb/client/v2: cannot find package "github.com/influxdata/influxdb/client/v2" in any of:
+        /usr/local/go/src/github.com/influxdata/influxdb/client/v2 (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/influxdata/influxdb/client/v2 (from $GOPATH)
+package github.com/osrg/gobgp/zebra: cannot find package "github.com/osrg/gobgp/zebra" in any of:
+        /usr/local/go/src/github.com/osrg/gobgp/zebra (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/zebra (from $GOPATH)
+[root@eb758b069395 gobgp]# pwd
+/opt/data/gobgp
+[root@eb758b069395 gobgp]# ll /opt/project/gobgp_test/
+total 0
+drwxr-xr-x 3 root root 17 Oct 19 01:28 gowork
+[root@eb758b069395 gobgp]# ll /opt/project/gobgp_test/gowork/
+total 0
+drwxr-xr-x 6 root root 83 Oct 19 01:28 src
+[root@eb758b069395 gobgp]# cd src
+bash: cd: src: No such file or directory
+[root@eb758b069395 gobgp]# ll /opt/project/gobgp_test/gowork/
+total 0
+drwxr-xr-x 6 root root 83 Oct 19 01:28 src
+[root@eb758b069395 gobgp]# ll /opt/project/gobgp_test/gowork/src
+total 4
+drwxr-xr-x 21 root root 4096 Oct 19 01:32 github.com
+drwxr-xr-x  3 root root   15 Oct 19 01:28 golang.org
+drwxr-xr-x  4 root root   34 Oct 19 01:31 google.golang.org
+drwxr-xr-x  4 root root   36 Oct 19 01:32 gopkg.in
+[root@eb758b069395 gobgp]# ll /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/
+total 36
+-rw-r--r-- 1 root root  2066 Oct 19 01:30 BUILD.md
+-rw-r--r-- 1 root root   494 Oct 19 01:30 CODEOWNERS
+-rw-r--r-- 1 root root 11324 Oct 19 01:30 LICENSE
+-rw-r--r-- 1 root root  2412 Oct 19 01:30 README.md
+drwxr-xr-x 2 root root   138 Oct 19 01:30 api
+drwxr-xr-x 4 root root    33 Oct 19 01:30 cmd
+drwxr-xr-x 3 root root    21 Oct 19 01:30 docs
+-rw-r--r-- 1 root root  2092 Oct 19 01:30 go.mod
+-rw-r--r-- 1 root root  7685 Oct 19 01:30 go.sum
+drwxr-xr-x 3 root root    17 Oct 19 01:30 internal
+drwxr-xr-x 5 root root    48 Oct 19 01:30 pkg
+drwxr-xr-x 4 root root    62 Oct 19 01:30 test
+drwxr-xr-x 8 root root   154 Oct 19 01:30 tools
+[root@eb758b069395 gobgp]# cd /opt/project/gobgp_test/gowork/src/github.com/osrg/
+[root@eb758b069395 osrg]# pwd
+/opt/project/gobgp_test/gowork/src/github.com/osrg
+[root@eb758b069395 osrg]# rm -rf gobgp
+[root@eb758b069395 osrg]# cp -rf /opt/data/gobgp ./
+[root@eb758b069395 osrg]# ll
+total 4
+drwxr-x--- 17 root root 4096 Oct 19 01:36 gobgp
+[root@eb758b069395 osrg]# cd gobgp/
+[root@eb758b069395 gobgp]# go get ./...
+package github.com/influxdata/influxdb/client/v2: cannot find package "github.com/influxdata/influxdb/client/v2" in any of:
+        /usr/local/go/src/github.com/influxdata/influxdb/client/v2 (from $GOROOT)
+        /opt/project/gobgp_test/gowork/src/github.com/influxdata/influxdb/client/v2 (from $GOPATH)
+[root@eb758b069395 gobgp]# cd $GOPATH
+[root@eb758b069395 gowork]# ll
+total 0
+drwxr-xr-x 6 root root 83 Oct 19 01:28 src
+[root@eb758b069395 gowork]# cd src/
+[root@eb758b069395 src]# ll
+total 4
+drwxr-xr-x 21 root root 4096 Oct 19 01:32 github.com
+drwxr-xr-x  3 root root   15 Oct 19 01:28 golang.org
+drwxr-xr-x  4 root root   34 Oct 19 01:31 google.golang.org
+drwxr-xr-x  4 root root   36 Oct 19 01:32 gopkg.in
+[root@eb758b069395 src]# cd github.com/
+[root@eb758b069395 github.com]# ll
+total 0
+drwxr-xr-x 3 root root 18 Oct 19 01:32 BurntSushi
+drwxr-xr-x 3 root root 20 Oct 19 01:30 Sirupsen
+drwxr-xr-x 3 root root 22 Oct 19 01:32 armon
+drwxr-xr-x 4 root root 35 Oct 19 01:32 eapache
+drwxr-xr-x 3 root root 22 Oct 19 01:31 fsnotify
+drwxr-xr-x 3 root root 22 Oct 19 01:30 golang
+drwxr-xr-x 3 root root 17 Oct 19 01:32 hashicorp
+drwxr-xr-x 3 root root 22 Oct 19 01:32 influxdata
+drwxr-xr-x 3 root root 22 Oct 19 01:32 jessevdk
+drwxr-xr-x 4 root root 32 Oct 19 01:32 kr
+drwxr-xr-x 3 root root 24 Oct 19 01:32 magiconair
+drwxr-xr-x 3 root root 26 Oct 19 01:32 mitchellh
+drwxr-xr-x 3 root root 19 Oct 19 01:36 osrg
+drwxr-xr-x 3 root root 21 Oct 19 01:32 pelletier
+drwxr-xr-x 3 root root 21 Oct 19 01:32 satori
+drwxr-xr-x 3 root root 20 Oct 19 01:32 sirupsen
+drwxr-xr-x 8 root root 95 Oct 19 01:32 spf13
+drwxr-xr-x 3 root root 20 Oct 19 01:32 subosito
+drwxr-xr-x 4 root root 34 Oct 19 01:32 vishvananda
+[root@eb758b069395 github.com]# ll /opt/data
+total 8
+drwxr-x--- 17 40021 1000 4096 Oct 17 03:12 gobgp
+drwxr-x---  6 40021 1000 4096 Oct 19 01:42 gobgp_test
+[root@eb758b069395 github.com]# ll /opt/data/gobgp_test
+total 134552
+drwxr-x--- 3 40021 1000        19 Oct 19 01:42 Sirupsen
+-rw-r----- 1 40021 1000 132481801 Oct 18 23:33 go1.10.2.linux-amd64.tar.gz
+drwxr-x--- 2 40021 1000         6 Oct 18 16:58 gowork
+drwxr-x--- 4 40021 1000        52 Oct 19 01:42 influxdata
+-rw-r----- 1 40021 1000   1423451 Oct 18 23:33 protoc-3.6.1-linux-x86_64.zip
+drwxr-x--- 4 40021 1000        47 Oct 19 01:26 protocol_buffer
+-rw-r----- 1 40021 1000   3869701 Oct 18 23:33 tools.tar.gz
+[root@eb758b069395 github.com]# cp -rf /opt/data/gobgp_test/influxdata/ ./
+cp: overwrite './influxdata/influxdb/.git/hooks/applypatch-msg.sample'? y
+cp: overwrite './influxdata/influxdb/.git/hooks/commit-msg.sample'? ^C
+[root@eb758b069395 github.com]# ll
+total 0
+drwxr-xr-x 3 root root 18 Oct 19 01:32 BurntSushi
+drwxr-xr-x 3 root root 20 Oct 19 01:30 Sirupsen
+drwxr-xr-x 3 root root 22 Oct 19 01:32 armon
+drwxr-xr-x 4 root root 35 Oct 19 01:32 eapache
+drwxr-xr-x 3 root root 22 Oct 19 01:31 fsnotify
+drwxr-xr-x 3 root root 22 Oct 19 01:30 golang
+drwxr-xr-x 3 root root 17 Oct 19 01:32 hashicorp
+drwxr-xr-x 3 root root 22 Oct 19 01:32 influxdata
+drwxr-xr-x 3 root root 22 Oct 19 01:32 jessevdk
+drwxr-xr-x 4 root root 32 Oct 19 01:32 kr
+drwxr-xr-x 3 root root 24 Oct 19 01:32 magiconair
+drwxr-xr-x 3 root root 26 Oct 19 01:32 mitchellh
+drwxr-xr-x 3 root root 19 Oct 19 01:36 osrg
+drwxr-xr-x 3 root root 21 Oct 19 01:32 pelletier
+drwxr-xr-x 3 root root 21 Oct 19 01:32 satori
+drwxr-xr-x 3 root root 20 Oct 19 01:32 sirupsen
+drwxr-xr-x 8 root root 95 Oct 19 01:32 spf13
+drwxr-xr-x 3 root root 20 Oct 19 01:32 subosito
+drwxr-xr-x 4 root root 34 Oct 19 01:32 vishvananda
+[root@eb758b069395 github.com]# rm -rf influxdata/
+[root@eb758b069395 github.com]# rm -rf sirupsen/
+[root@eb758b069395 github.com]# cp -rf /opt/data/gobgp_test/influxdata/ ./
+[root@eb758b069395 github.com]# ll
+total 0
+drwxr-xr-x 3 root root 18 Oct 19 01:32 BurntSushi
+drwxr-xr-x 3 root root 20 Oct 19 01:30 Sirupsen
+drwxr-xr-x 3 root root 22 Oct 19 01:32 armon
+drwxr-xr-x 4 root root 35 Oct 19 01:32 eapache
+drwxr-xr-x 3 root root 22 Oct 19 01:31 fsnotify
+drwxr-xr-x 3 root root 22 Oct 19 01:30 golang
+drwxr-xr-x 3 root root 17 Oct 19 01:32 hashicorp
+drwxr-x--- 4 root root 42 Oct 19 01:44 influxdata
+drwxr-xr-x 3 root root 22 Oct 19 01:32 jessevdk
+drwxr-xr-x 4 root root 32 Oct 19 01:32 kr
+drwxr-xr-x 3 root root 24 Oct 19 01:32 magiconair
+drwxr-xr-x 3 root root 26 Oct 19 01:32 mitchellh
+drwxr-xr-x 3 root root 19 Oct 19 01:36 osrg
+drwxr-xr-x 3 root root 21 Oct 19 01:32 pelletier
+drwxr-xr-x 3 root root 21 Oct 19 01:32 satori
+drwxr-xr-x 8 root root 95 Oct 19 01:32 spf13
+drwxr-xr-x 3 root root 20 Oct 19 01:32 subosito
+drwxr-xr-x 4 root root 34 Oct 19 01:32 vishvananda
+[root@eb758b069395 github.com]# cp -rf /opt/data/gobgp_test/Sirupsen/ ./
+cp: overwrite './Sirupsen/logrus/.git/hooks/applypatch-msg.sample'? ^C
+[root@eb758b069395 github.com]# l
+bash: l: command not found
+[root@eb758b069395 github.com]# ll
+total 0
+drwxr-xr-x 3 root root 18 Oct 19 01:32 BurntSushi
+drwxr-xr-x 3 root root 20 Oct 19 01:30 Sirupsen
+drwxr-xr-x 3 root root 22 Oct 19 01:32 armon
+drwxr-xr-x 4 root root 35 Oct 19 01:32 eapache
+drwxr-xr-x 3 root root 22 Oct 19 01:31 fsnotify
+drwxr-xr-x 3 root root 22 Oct 19 01:30 golang
+drwxr-xr-x 3 root root 17 Oct 19 01:32 hashicorp
+drwxr-x--- 4 root root 42 Oct 19 01:44 influxdata
+drwxr-xr-x 3 root root 22 Oct 19 01:32 jessevdk
+drwxr-xr-x 4 root root 32 Oct 19 01:32 kr
+drwxr-xr-x 3 root root 24 Oct 19 01:32 magiconair
+drwxr-xr-x 3 root root 26 Oct 19 01:32 mitchellh
+drwxr-xr-x 3 root root 19 Oct 19 01:36 osrg
+drwxr-xr-x 3 root root 21 Oct 19 01:32 pelletier
+drwxr-xr-x 3 root root 21 Oct 19 01:32 satori
+drwxr-xr-x 8 root root 95 Oct 19 01:32 spf13
+drwxr-xr-x 3 root root 20 Oct 19 01:32 subosito
+drwxr-xr-x 4 root root 34 Oct 19 01:32 vishvananda
+[root@eb758b069395 github.com]# rm -rf Sirupsen/
+[root@eb758b069395 github.com]# cp -rf /opt/data/gobgp_test/Sirupsen/ ./
+[root@eb758b069395 github.com]# cd osrg/gobgp/
+[root@eb758b069395 gobgp]# go get ./...
+# github.com/osrg/gobgp/table
+table/path.go:340:37: multiple-value uuid.NewV4() in single-value context
+[root@eb758b069395 gobgp]# ll
+total 6640
+-rw-r----- 1 root root   11324 Oct 19 01:36 LICENSE
+-rw-r----- 1 root root    2623 Oct 19 01:36 README.md
+-rw-r----- 1 root root    1105 Oct 19 01:36 README_howto_Build_Run
+-rw-r----- 1 root root       4 Oct 19 01:36 VERSION
+drwxr-x--- 2 root root    4096 Oct 19 01:36 api
+drwxr-x--- 2 root root      67 Oct 19 01:36 client
+drwxr-x--- 2 root root    4096 Oct 19 01:36 config
+drwxr-x--- 3 root root      20 Oct 19 01:36 contrib
+-rw-r----- 1 root root    7021 Oct 19 01:36 cscope.files
+-rw-r----- 1 root root  286720 Oct 19 01:36 cscope.in.out
+-rw-r----- 1 root root 1828505 Oct 19 01:36 cscope.out
+-rw-r----- 1 root root 3241968 Oct 19 01:36 cscope.po.out
+drwxr-x--- 3 root root      21 Oct 19 01:36 docs
+drwxr-x--- 4 root root      43 Oct 19 01:36 gobgp
+drwxr-x--- 2 root root      59 Oct 19 01:36 gobgpd
+drwxr-x--- 2 root root      21 Oct 19 01:36 gobmpd
+-rw-r----- 1 root root 1380220 Oct 19 01:36 gotags
+-rwxr--r-- 1 root root     115 Oct 19 01:36 make_gotags.sh
+drwxr-x--- 6 root root      50 Oct 19 01:36 packet
+drwxr-x--- 2 root root    4096 Oct 19 01:36 server
+drwxr-x--- 2 root root    4096 Oct 19 01:36 table
+drwxr-x--- 4 root root      62 Oct 19 01:36 test
+drwxr-x--- 7 root root      91 Oct 19 01:36 tools
+drwxr-x--- 2 root root    4096 Oct 19 01:36 zebra
+[root@eb758b069395 gobgp]# vi table/path.go
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Copyright (C) 2014 Nippon Telegraph and Telephone Corporation.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+// implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package table
+
+import (
+        "bytes"
+        "encoding/json"
+        "fmt"
+        "math"
+        "net"
+        "sort"
+        "time"
+
+        log "github.com/Sirupsen/logrus"
+        "github.com/osrg/gobgp/config"
+        "github.com/osrg/gobgp/packet/bgp"
+        "github.com/satori/go.uuid"
+)
+
+const (
+        DEFAULT_LOCAL_PREF = 100
+)
+
+type Bitmap []uint64
+
+func (b Bitmap) Flag(i uint) {
+        b[i/64] |= 1 << uint(i%64)
+}
+
+func (b Bitmap) Unflag(i uint) {
+        b[i/64] &^= 1 << uint(i%64)
+}
+
+func (b Bitmap) GetFlag(i uint) bool {
+        return b[i/64]&(1<<uint(i%64)) > 0
+}
+
+func NewBitmap(size int) Bitmap {
+        return Bitmap(make([]uint64, (size+64-1)/64))
+}
+
+type originInfo struct {
+        nlri               bgp.AddrPrefixInterface
+        source             *PeerInfo
+        timestamp          time.Time
+        noImplicitWithdraw bool
+        validation         config.RpkiValidationResultType
+        bgpsecValidation   config.RpkiValidationResultType
+        isFromExternal     bool
+        key                string
+        uuid               uuid.UUID
+        eor                bool
+        stale              bool
+}
+
+type FlowSpecComponents []bgp.FlowSpecComponentInterface
+
+func (c FlowSpecComponents) Len() int {
+        return len(c)
+}
+
+func (c FlowSpecComponents) Swap(i, j int) {
+        c[i], c[j] = c[j], c[i]
+}
+
+func (c FlowSpecComponents) Less(i, j int) bool {
+:340
+}
+
+func (path *Path) NoImplicitWithdraw() bool {
+        return path.OriginInfo().noImplicitWithdraw
+}
+
+func (path *Path) Validation() config.RpkiValidationResultType {
+        return path.OriginInfo().validation
+}
+
+func (path *Path) BgpsecValidation() config.RpkiValidationResultType {
+        return path.OriginInfo().bgpsecValidation
+}
+
+func (path *Path) SetValidation(r config.RpkiValidationResultType) {
+        path.OriginInfo().validation = r
+}
+
+func (path *Path) SetBgpsecValidation(r config.RpkiValidationResultType) {
+        path.OriginInfo().bgpsecValidation = r
+}
+
+func (path *Path) IsFromExternal() bool {
+        return path.OriginInfo().isFromExternal
+}
+
+func (path *Path) SetIsFromExternal(y bool) {
+        path.OriginInfo().isFromExternal = y
+}
+
+func (path *Path) UUID() uuid.UUID {
+        return path.OriginInfo().uuid
+}
+
+func (path *Path) SetUUID(id []byte) {
+        path.OriginInfo().uuid = uuid.FromBytesOrNil(id)
+}
+
+func (path *Path) AssignNewUUID() {
+        path.OriginInfo().uuid,_ = uuid.NewV4()
+}
+
+func (path *Path) Filter(id string, reason PolicyDirection) {
+        path.filtered[id] = reason
+}
+
+func (path *Path) Filtered(id string) PolicyDirection {
+        return path.filtered[id]
+}
+
+func (path *Path) GetRouteFamily() bgp.RouteFamily {
+        return bgp.AfiSafiToRouteFamily(path.OriginInfo().nlri.AFI(), path.OriginInfo().nlri.SAFI())
+}
+
+func (path *Path) SetSource(source *PeerInfo) {
+        path.OriginInfo().source = source
+}
+func (path *Path) GetSource() *PeerInfo {
+        return path.OriginInfo().source
+}
+
+func (path *Path) MarkStale(s bool) {
+        path.OriginInfo().stale = s
+}
+
+func (path *Path) IsStale() bool {
+        return path.OriginInfo().stale
+}
+
+func (path *Path) IsLLGRStale() bool {
+        for _, c := range path.GetCommunities() {
+                if c == bgp.COMMUNITY_LLGR_STALE {
+                        return true
+                }
+        }
+        return false
+}
+
+func (path *Path) GetSourceAs() uint32 {
+[root@eb758b069395 gobgp]# go get ./...
+# github.com/osrg/gobgp/server
+exec: "gcc": executable file not found in $PATH
+[root@eb758b069395 gobgp]# yum install gcc
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: mirror.umd.edu
+ * extras: mirror.umd.edu
+ * updates: mirror.umd.edu
+Resolving Dependencies
+--> Running transaction check
+---> Package gcc.x86_64 0:4.8.5-39.el7 will be installed
+--> Processing Dependency: libgomp = 4.8.5-39.el7 for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: cpp = 4.8.5-39.el7 for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: libgcc >= 4.8.5-39.el7 for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: glibc-devel >= 2.2.90-12 for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: libmpfr.so.4()(64bit) for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: libmpc.so.3()(64bit) for package: gcc-4.8.5-39.el7.x86_64
+--> Processing Dependency: libgomp.so.1()(64bit) for package: gcc-4.8.5-39.el7.x86_64
+--> Running transaction check
+---> Package cpp.x86_64 0:4.8.5-39.el7 will be installed
+---> Package glibc-devel.x86_64 0:2.17-292.el7 will be installed
+--> Processing Dependency: glibc-headers = 2.17-292.el7 for package: glibc-devel-2.17-292.el7.x86_64
+--> Processing Dependency: glibc = 2.17-292.el7 for package: glibc-devel-2.17-292.el7.x86_64
+--> Processing Dependency: glibc-headers for package: glibc-devel-2.17-292.el7.x86_64
+---> Package libgcc.x86_64 0:4.8.5-36.el7_6.2 will be updated
+---> Package libgcc.x86_64 0:4.8.5-39.el7 will be an update
+---> Package libgomp.x86_64 0:4.8.5-39.el7 will be installed
+---> Package libmpc.x86_64 0:1.0.1-3.el7 will be installed
+---> Package mpfr.x86_64 0:3.1.1-4.el7 will be installed
+--> Running transaction check
+---> Package glibc.x86_64 0:2.17-260.el7_6.6 will be updated
+--> Processing Dependency: glibc = 2.17-260.el7_6.6 for package: glibc-common-2.17-260.el7_6.6.x86_64
+---> Package glibc.x86_64 0:2.17-292.el7 will be an update
+---> Package glibc-headers.x86_64 0:2.17-292.el7 will be installed
+--> Processing Dependency: kernel-headers >= 2.2.1 for package: glibc-headers-2.17-292.el7.x86_64
+--> Processing Dependency: kernel-headers for package: glibc-headers-2.17-292.el7.x86_64
+--> Running transaction check
+---> Package glibc-common.x86_64 0:2.17-260.el7_6.6 will be updated
+---> Package glibc-common.x86_64 0:2.17-292.el7 will be an update
+---> Package kernel-headers.x86_64 0:3.10.0-1062.1.2.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=========================================================================================================================================
+ Package                            Arch                       Version                                 Repository                   Size
+=========================================================================================================================================
+Installing:
+ gcc                                x86_64                     4.8.5-39.el7                            base                         16 M
+Installing for dependencies:
+ cpp                                x86_64                     4.8.5-39.el7                            base                        5.9 M
+ glibc-devel                        x86_64                     2.17-292.el7                            base                        1.1 M
+ glibc-headers                      x86_64                     2.17-292.el7                            base                        687 k
+ kernel-headers                     x86_64                     3.10.0-1062.1.2.el7                     updates                     8.7 M
+ libgomp                            x86_64                     4.8.5-39.el7                            base                        158 k
+ libmpc                             x86_64                     1.0.1-3.el7                             base                         51 k
+ mpfr                               x86_64                     3.1.1-4.el7                             base                        203 k
+Updating for dependencies:
+ glibc                              x86_64                     2.17-292.el7                            base                        3.6 M
+ glibc-common                       x86_64                     2.17-292.el7                            base                         11 M
+ libgcc                             x86_64                     4.8.5-39.el7                            base                        102 k
+
+Transaction Summary
+=========================================================================================================================================
+Install  1 Package  (+7 Dependent packages)
+Upgrade             ( 3 Dependent packages)
+
+Total download size: 48 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+(1/11): cpp-4.8.5-39.el7.x86_64.rpm                                                                               | 5.9 MB  00:00:00
+(2/11): glibc-2.17-292.el7.x86_64.rpm                                                                             | 3.6 MB  00:00:00
+(3/11): glibc-headers-2.17-292.el7.x86_64.rpm                                                                     | 687 kB  00:00:00
+(4/11): libgcc-4.8.5-39.el7.x86_64.rpm                                                                            | 102 kB  00:00:00
+(5/11): glibc-devel-2.17-292.el7.x86_64.rpm                                                                       | 1.1 MB  00:00:00
+(6/11): libgomp-4.8.5-39.el7.x86_64.rpm                                                                           | 158 kB  00:00:00
+(7/11): libmpc-1.0.1-3.el7.x86_64.rpm                                                                             |  51 kB  00:00:00
+(8/11): mpfr-3.1.1-4.el7.x86_64.rpm                                                                               | 203 kB  00:00:00
+(9/11): glibc-common-2.17-292.el7.x86_64.rpm                                                                      |  11 MB  00:00:02
+(10/11): gcc-4.8.5-39.el7.x86_64.rpm                                                                              |  16 MB  00:00:02
+(11/11): kernel-headers-3.10.0-1062.1.2.el7.x86_64.rpm                                                            | 8.7 MB  00:00:02
+-----------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                     16 MB/s |  48 MB  00:00:02
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : libgcc-4.8.5-39.el7.x86_64                                                                                           1/14
+  Updating   : glibc-common-2.17-292.el7.x86_64                                                                                     2/14
+  Updating   : glibc-2.17-292.el7.x86_64                                                                                            3/14
+warning: /etc/nsswitch.conf created as /etc/nsswitch.conf.rpmnew
+  Installing : mpfr-3.1.1-4.el7.x86_64                                                                                              4/14
+  Installing : libmpc-1.0.1-3.el7.x86_64                                                                                            5/14
+  Installing : cpp-4.8.5-39.el7.x86_64                                                                                              6/14
+  Installing : libgomp-4.8.5-39.el7.x86_64                                                                                          7/14
+  Installing : kernel-headers-3.10.0-1062.1.2.el7.x86_64                                                                            8/14
+  Installing : glibc-headers-2.17-292.el7.x86_64                                                                                    9/14
+  Installing : glibc-devel-2.17-292.el7.x86_64                                                                                     10/14
+  Installing : gcc-4.8.5-39.el7.x86_64                                                                                             11/14
+  Cleanup    : glibc-common-2.17-260.el7_6.6.x86_64                                                                                12/14
+  Cleanup    : glibc-2.17-260.el7_6.6.x86_64                                                                                       13/14
+  Cleanup    : libgcc-4.8.5-36.el7_6.2.x86_64                                                                                      14/14
+  Verifying  : glibc-devel-2.17-292.el7.x86_64                                                                                      1/14
+  Verifying  : kernel-headers-3.10.0-1062.1.2.el7.x86_64                                                                            2/14
+  Verifying  : glibc-2.17-292.el7.x86_64                                                                                            3/14
+  Verifying  : mpfr-3.1.1-4.el7.x86_64                                                                                              4/14
+  Verifying  : libgomp-4.8.5-39.el7.x86_64                                                                                          5/14
+  Verifying  : libmpc-1.0.1-3.el7.x86_64                                                                                            6/14
+  Verifying  : cpp-4.8.5-39.el7.x86_64                                                                                              7/14
+  Verifying  : gcc-4.8.5-39.el7.x86_64                                                                                              8/14
+  Verifying  : glibc-common-2.17-292.el7.x86_64                                                                                     9/14
+  Verifying  : libgcc-4.8.5-39.el7.x86_64                                                                                          10/14
+  Verifying  : glibc-headers-2.17-292.el7.x86_64                                                                                   11/14
+  Verifying  : glibc-common-2.17-260.el7_6.6.x86_64                                                                                12/14
+  Verifying  : glibc-2.17-260.el7_6.6.x86_64                                                                                       13/14
+  Verifying  : libgcc-4.8.5-36.el7_6.2.x86_64                                                                                      14/14
+
+Installed:
+  gcc.x86_64 0:4.8.5-39.el7
+
+Dependency Installed:
+  cpp.x86_64 0:4.8.5-39.el7                          glibc-devel.x86_64 0:2.17-292.el7        glibc-headers.x86_64 0:2.17-292.el7
+  kernel-headers.x86_64 0:3.10.0-1062.1.2.el7        libgomp.x86_64 0:4.8.5-39.el7            libmpc.x86_64 0:1.0.1-3.el7
+  mpfr.x86_64 0:3.1.1-4.el7
+
+Dependency Updated:
+  glibc.x86_64 0:2.17-292.el7               glibc-common.x86_64 0:2.17-292.el7               libgcc.x86_64 0:4.8.5-39.el7
+
+Complete!
+[root@eb758b069395 gobgp]# go get ./...
+# github.com/osrg/gobgp/server
+server/bgpsec.go:10:26: fatal error: srxcryptoapi.h: No such file or directory
+ #include "srxcryptoapi.h"
+                          ^
+compilation terminated.
+[root@eb758b069395 gobgp]# pwd
+/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp
+[root@eb758b069395 gobgp]# cd /opt/project/
+[root@eb758b069395 project]# ll
+total 0
+drwxr-xr-x 3 root root 20 Oct 19 01:28 gobgp_test
+[root@eb758b069395 project]# cd gobgp_test/
+[root@eb758b069395 gobgp_test]# ll
+total 0
+drwxr-xr-x 5 root root 39 Oct 19 01:44 gowork
+[root@eb758b069395 gobgp_test]# mkdir tools
+[root@eb758b069395 gobgp_test]# ll
+total 0
+drwxr-xr-x 5 root root 39 Oct 19 01:44 gowork
+drwxr-xr-x 2 root root  6 Oct 19 01:50 tools
+[root@eb758b069395 gobgp_test]# cd tools
+[root@eb758b069395 tools]# cp -rf /opt/data/gobgp_test/tools/go_srx_test/ ./
+[root@eb758b069395 tools]# ll
+total 4
+drwxr-x--- 3 root root 4096 Oct 19 01:52 go_srx_test
+[root@eb758b069395 tools]# cd go_srx_test/
+[root@eb758b069395 go_srx_test]# ll
+total 2676
+-rw-r-----  1 root root     134 Oct 19 01:52 README_howto_build_run
+-rw-r-----  1 root root    9402 Oct 19 01:52 hex_source_bgpsecData
+lrwxrwxrwx  1 root root      28 Oct 19 01:52 libSRxBGPSecOpenSSL.so -> libSRxBGPSecOpenSSL.so.3.0.0
+lrwxrwxrwx  1 root root      28 Oct 19 01:52 libSRxBGPSecOpenSSL.so.3 -> libSRxBGPSecOpenSSL.so.3.0.0
+-rwxr-x---  1 root root   52216 Oct 19 01:52 libSRxBGPSecOpenSSL.so.3.0.0
+lrwxrwxrwx  1 root root      24 Oct 19 01:52 libSRxCryptoAPI.so -> libSRxCryptoAPI.so.3.0.0
+lrwxrwxrwx  1 root root      24 Oct 19 01:52 libSRxCryptoAPI.so.3 -> libSRxCryptoAPI.so.3.0.0
+-rwxr-x---  1 root root   69080 Oct 19 01:52 libSRxCryptoAPI.so.3.0.0
+-rwxr-x---  1 root root 2139928 Oct 19 01:52 srxcgotest
+-rw-r-----  1 root root    9860 Oct 19 01:52 srxcgotest.go
+-rw-r-----  1 root root   14171 Oct 19 01:52 srxcgotest2.go
+drwxr-x--- 10 root root    4096 Oct 19 01:52 srxcryptoapi-0.3.0.0
+-rw-r-----  1 root root  371434 Oct 19 01:52 srxcryptoapi-0.3.0.0.tar.gz
+-rw-r-----  1 root root   36885 Oct 19 01:52 srxcryptoapi.h
+-rw-r-----  1 root root   10211 Oct 19 01:52 test_srxcryptoapi.go
+[root@eb758b069395 go_srx_test]# cd /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/
+[root@eb758b069395 gobgp]# go get ./...
+# github.com/osrg/gobgp/server
+/usr/bin/ld: warning: libconfig.so.9, needed by /opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxBGPSecOpenSSL.so, not found (try using -rpath or -rpath-link)
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_init'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_setting_lookup_string'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_lookup'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_lookup_string'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_read_file'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_destroy'
+/opt/project/gobgp_test/tools/go_srx_test/srxcryptoapi-0.3.0.0/_inst/lib64/srx/libSRxCryptoAPI.so: undefined reference to `config_lookup_int'
+collect2: error: ld returned 1 exit status
+[root@eb758b069395 gobgp]# yum install libconfig libconfig-devel
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: mirror.umd.edu
+ * extras: mirror.umd.edu
+ * updates: mirror.umd.edu
+Resolving Dependencies
+--> Running transaction check
+---> Package libconfig.x86_64 0:1.4.9-5.el7 will be installed
+---> Package libconfig-devel.x86_64 0:1.4.9-5.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=========================================================================================================================================
+ Package                               Arch                         Version                             Repository                  Size
+=========================================================================================================================================
+Installing:
+ libconfig                             x86_64                       1.4.9-5.el7                         base                        59 k
+ libconfig-devel                       x86_64                       1.4.9-5.el7                         base                       327 k
+
+Transaction Summary
+=========================================================================================================================================
+Install  2 Packages
+
+Total download size: 386 k
+Installed size: 535 k
+Is this ok [y/d/N]: y
+Downloading packages:
+(1/2): libconfig-1.4.9-5.el7.x86_64.rpm                                                                           |  59 kB  00:00:00
+(2/2): libconfig-devel-1.4.9-5.el7.x86_64.rpm                                                                     | 327 kB  00:00:00
+-----------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                    913 kB/s | 386 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : libconfig-1.4.9-5.el7.x86_64                                                                                          1/2
+  Installing : libconfig-devel-1.4.9-5.el7.x86_64                                                                                    2/2
+install-info: No such file or directory for /usr/share/info/libconfig.info
+  Verifying  : libconfig-devel-1.4.9-5.el7.x86_64                                                                                    1/2
+  Verifying  : libconfig-1.4.9-5.el7.x86_64                                                                                          2/2
+
+Installed:
+  libconfig.x86_64 0:1.4.9-5.el7                                   libconfig-devel.x86_64 0:1.4.9-5.el7
+
+Complete!
+[root@eb758b069395 gobgp]# go get ./...
+[root@eb758b069395 gobgp]# go install -ldflags="-r /opt/project/gobgp_test/tools/go_srx_test" -gcflags='-N -l' ./...
+[root@eb758b069395 gobgp]# cd ../../../..
+[root@eb758b069395 gowork]# cd bin/
+[root@eb758b069395 bin]# ll
+total 88860
+-rwxr-xr-x 1 root root 12093692 Oct 19 01:54 config
+-rwxr-xr-x 1 root root 20155272 Oct 19 01:54 gobgp
+-rwxr-xr-x 1 root root 23346576 Oct 19 01:54 gobgpd
+-rwxr-xr-x 1 root root  4553457 Oct 19 01:54 gobmpd
+-rwxr-xr-x 1 root root 18616680 Oct 19 01:54 lib
+-rwxr-xr-x 1 root root 12215276 Oct 19 01:54 route-server
+[root@eb758b069395 bin]# cd -
+/opt/project/gobgp_test/gowork
+[root@eb758b069395 gowork]# ll
+total 0
+drwxr-xr-x 2 root root 92 Oct 19 01:54 bin
+drwxr-xr-x 3 root root 25 Oct 19 01:44 pkg
+drwxr-xr-x 6 root root 83 Oct 19 01:28 src
+[root@eb758b069395 gowork]# cd src/github.com/osrg/gobgp/
+[root@eb758b069395 gobgp]# ll
+total 6640
+-rw-r----- 1 root root   11324 Oct 19 01:36 LICENSE
+-rw-r----- 1 root root    2623 Oct 19 01:36 README.md
+-rw-r----- 1 root root    1105 Oct 19 01:36 README_howto_Build_Run
+-rw-r----- 1 root root       4 Oct 19 01:36 VERSION
+drwxr-x--- 2 root root    4096 Oct 19 01:36 api
+drwxr-x--- 2 root root      67 Oct 19 01:36 client
+drwxr-x--- 2 root root    4096 Oct 19 01:36 config
+drwxr-x--- 3 root root      20 Oct 19 01:36 contrib
+-rw-r----- 1 root root    7021 Oct 19 01:36 cscope.files
+-rw-r----- 1 root root  286720 Oct 19 01:36 cscope.in.out
+-rw-r----- 1 root root 1828505 Oct 19 01:36 cscope.out
+-rw-r----- 1 root root 3241968 Oct 19 01:36 cscope.po.out
+drwxr-x--- 3 root root      21 Oct 19 01:36 docs
+drwxr-x--- 4 root root      43 Oct 19 01:36 gobgp
+drwxr-x--- 2 root root      59 Oct 19 01:36 gobgpd
+drwxr-x--- 2 root root      21 Oct 19 01:36 gobmpd
+-rw-r----- 1 root root 1380220 Oct 19 01:36 gotags
+-rwxr--r-- 1 root root     115 Oct 19 01:36 make_gotags.sh
+drwxr-x--- 6 root root      50 Oct 19 01:36 packet
+drwxr-x--- 2 root root    4096 Oct 19 01:36 server
+drwxr-x--- 2 root root    4096 Oct 19 01:45 table
+drwxr-x--- 4 root root      62 Oct 19 01:36 test
+drwxr-x--- 7 root root      91 Oct 19 01:36 tools
+drwxr-x--- 2 root root    4096 Oct 19 01:36 zebra
+[root@eb758b069395 gobgp]# cd /opt/project/gobgp_test/
+[root@eb758b069395 gobgp_test]# ll
+total 0
+drwxr-xr-x 5 root root 39 Oct 19 01:44 gowork
+drwxr-xr-x 3 root root 25 Oct 19 01:52 tools
+[root@eb758b069395 gobgp_test]# cd tools/
+[root@eb758b069395 tools]# ll
+total 4
+drwxr-x--- 3 root root 4096 Oct 19 01:52 go_srx_test
+[root@eb758b069395 tools]# ll go_srx_test/
+total 2676
+-rw-r-----  1 root root     134 Oct 19 01:52 README_howto_build_run
+-rw-r-----  1 root root    9402 Oct 19 01:52 hex_source_bgpsecData
+lrwxrwxrwx  1 root root      28 Oct 19 01:52 libSRxBGPSecOpenSSL.so -> libSRxBGPSecOpenSSL.so.3.0.0
+lrwxrwxrwx  1 root root      28 Oct 19 01:52 libSRxBGPSecOpenSSL.so.3 -> libSRxBGPSecOpenSSL.so.3.0.0
+-rwxr-x---  1 root root   52216 Oct 19 01:52 libSRxBGPSecOpenSSL.so.3.0.0
+lrwxrwxrwx  1 root root      24 Oct 19 01:52 libSRxCryptoAPI.so -> libSRxCryptoAPI.so.3.0.0
+lrwxrwxrwx  1 root root      24 Oct 19 01:52 libSRxCryptoAPI.so.3 -> libSRxCryptoAPI.so.3.0.0
+-rwxr-x---  1 root root   69080 Oct 19 01:52 libSRxCryptoAPI.so.3.0.0
+-rwxr-x---  1 root root 2139928 Oct 19 01:52 srxcgotest
+-rw-r-----  1 root root    9860 Oct 19 01:52 srxcgotest.go
+-rw-r-----  1 root root   14171 Oct 19 01:52 srxcgotest2.go
+drwxr-x--- 10 root root    4096 Oct 19 01:52 srxcryptoapi-0.3.0.0
+-rw-r-----  1 root root  371434 Oct 19 01:52 srxcryptoapi-0.3.0.0.tar.gz
+-rw-r-----  1 root root   36885 Oct 19 01:52 srxcryptoapi.h
+-rw-r-----  1 root root   10211 Oct 19 01:52 test_srxcryptoapi.go
+[root@eb758b069395 tools]# cd ../
+[root@eb758b069395 gobgp_test]# ll
+total 0
+drwxr-xr-x 5 root root 39 Oct 19 01:44 gowork
+drwxr-xr-x 3 root root 25 Oct 19 01:52 tools
+[root@eb758b069395 gobgp_test]# ll gowork/
+total 0
+drwxr-xr-x 2 root root 92 Oct 19 01:54 bin
+drwxr-xr-x 3 root root 25 Oct 19 01:44 pkg
+drwxr-xr-x 6 root root 83 Oct 19 01:28 src
+[root@eb758b069395 gobgp_test]# cd ../
+[root@eb758b069395 project]# ll
+total 0
+drwxr-xr-x 4 root root 33 Oct 19 01:50 gobgp_test
+[root@eb758b069395 project]# ll
+total 0
+drwxr-xr-x 4 root root 33 Oct 19 01:50 gobgp_test
+[root@eb758b069395 project]# cd ../
+[root@eb758b069395 opt]# ll
+total 0
+drwxr-x--- 4 40021 root 69 Oct 19 02:27 data
+drwxr-xr-x 3 root  root 24 Oct 19 01:28 project
+[root@eb758b069395 opt]# cd project/
+[root@eb758b069395 project]# cd ../data
+[root@eb758b069395 data]# ll
+total 12
+drwxr-x--- 17 40021 1000 4096 Oct 19 02:24 gobgp
+drwxr-x---  5 40021 1000 4096 Oct 19 01:47 gobgp_test
+-rw-r-----  1 40021 1000 2596 Oct 19 02:26 gobgpd.conf
+[root@eb758b069395 data]# mv gobgpd.conf /opt/project/gobgp_test/gowork/bin/
+[root@eb758b069395 data]# cd /opt/project/gobgp_test/gowork/bin
+[root@eb758b069395 bin]# ll
+total 88864
+-rwxr-xr-x 1 root  root 12093692 Oct 19 01:54 config
+-rwxr-xr-x 1 root  root 20155272 Oct 19 01:54 gobgp
+-rwxr-xr-x 1 root  root 23346576 Oct 19 01:54 gobgpd
+-rw-r----- 1 40021 1000     2596 Oct 19 02:26 gobgpd.conf
+-rwxr-xr-x 1 root  root  4553457 Oct 19 01:54 gobmpd
+-rwxr-xr-x 1 root  root 18616680 Oct 19 01:54 lib
+-rwxr-xr-x 1 root  root 12215276 Oct 19 01:54 route-server
+
+[root@eb758b069395 bin]# ./gobgpd -l info -f ./gobgpd.conf
+INFO[0000] Policy config is updated
+{"level":"info","msg":"gobgpd started","time":"2019-10-19T02:28:33Z"}
+{"Topic":"Config","level":"info","msg":"Finished reading the config file","time":"2019-10-19T02:28:33Z"}
+{"Topic":"bgpsec","level":"info","msg":"key path set: /opt/project/srx_test1/keys/","time":"2019-10-19T02:28:33Z"}
++ setKey path call testing...
+
+ sca_SetKeyPath called and param: /opt/project/srx_test1/keys/
+_keyPath: /opt/project/srx_test1/keys/
+ +++ sca_SetKeyPath _keyPath: /opt/project/srx_test1/keys/
+sca_SetKeyPath() return: 1
++ Init call testing...
+
++ str: PUB:/opt/project/srx_test1/keys//ski-list.txt;PRIV:/opt/project/srx_test1/keys//priv-ski-list.txt
++++ init called
+value: PUB:/opt/project/srx_test1/keys//ski-list.txt;PRIV:/opt/project/srx_test1/keys//priv-ski-list.txt
++++ logLevel: 7
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
++++ string: /opt/project/srx_test1/keys//ski-list.txt isPrivate: 0
+[SRxCryptoAPI - WARNING] Cannot find key-list file '/opt/project/srx_test1/keys//ski-list.txt'
++++ string: /opt/project/srx_test1/keys//priv-ski-list.txt isPrivate: 1
+[SRxCryptoAPI - WARNING] Cannot find key-list file '/opt/project/srx_test1/keys//priv-ski-list.txt'
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 0 public keys)!
+Init() return: 1
+{"level":"info","msg":"Peer 10.0.50.11 is added","time":"2019-10-19T02:28:33Z"}
+{"Topic":"Peer","level":"info","msg":"Add a peer configuration for:10.0.50.11","time":"2019-10-19T02:28:33Z"}
+{"level":"info","msg":"Peer 10.0.50.23 is added","time":"2019-10-19T02:28:33Z"}
+{"Topic":"Peer","level":"info","msg":"Add a peer configuration for:10.0.50.23","time":"2019-10-19T02:28:33Z"}
+^C
+[root@eb758b069395 bin]# ./gobgpd -l info -f ./gobgpd.conf  -p
+INFO[0000] Policy config is updated
+INFO[0000] gobgpd started
+INFO[0000] Finished reading the config file              Topic=Config
+INFO[0000] key path set: /opt/project/srx_test1/keys/    Topic=bgpsec
++ setKey path call testing...
+
+ sca_SetKeyPath called and param: /opt/project/srx_test1/keys/
+_keyPath: /opt/project/srx_test1/keys/
+ +++ sca_SetKeyPath _keyPath: /opt/project/srx_test1/keys/
+sca_SetKeyPath() return: 1
++ Init call testing...
+
++ str: PUB:/opt/project/srx_test1/keys//ski-list.txt;PRIV:/opt/project/srx_test1/keys//priv-ski-list.txt
++++ init called
+value: PUB:/opt/project/srx_test1/keys//ski-list.txt;PRIV:/opt/project/srx_test1/keys//priv-ski-list.txt
++++ logLevel: 7
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
++++ string: /opt/project/srx_test1/keys//ski-list.txt isPrivate: 0
+[SRxCryptoAPI - WARNING] Cannot find key-list file '/opt/project/srx_test1/keys//ski-list.txt'
++++ string: /opt/project/srx_test1/keys//priv-ski-list.txt isPrivate: 1
+[SRxCryptoAPI - WARNING] Cannot find key-list file '/opt/project/srx_test1/keys//priv-ski-list.txt'
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (0 private and 0 public keys)!
+Init() return: 1
+INFO[0000] Peer 10.0.50.11 is added
+INFO[0000] Add a peer configuration for:10.0.50.11       Topic=Peer
+INFO[0000] Peer 10.0.50.23 is added
+INFO[0000] Add a peer configuration for:10.0.50.23       Topic=Peer
+^C
+[root@eb758b069395 bin]# ll
+total 88864
+-rwxr-xr-x 1 root  root 12093692 Oct 19 01:54 config
+-rwxr-xr-x 1 root  root 20155272 Oct 19 01:54 gobgp
+-rwxr-xr-x 1 root  root 23346576 Oct 19 01:54 gobgpd
+-rw-r----- 1 40021 1000     2596 Oct 19 02:26 gobgpd.conf
+-rwxr-xr-x 1 root  root  4553457 Oct 19 01:54 gobmpd
+-rwxr-xr-x 1 root  root 18616680 Oct 19 01:54 lib
+-rwxr-xr-x 1 root  root 12215276 Oct 19 01:54 route-server
+[root@eb758b069395 bin]# ll /usr/local/etc/
+total 0
+[root@eb758b069395 bin]# vi gobgpd.conf
+[global.config]
+  as = 61702
+  router-id = "172.17.0.2"
+  key-path = "/opt/project//keys/"
+
+[global.apply-policy.config]
+#import-policy-list = ["rpki-valid", "bgpsec-invalid"]
+  import-policy-list = ["rpki-valid"]
+  export-policy-list = ["rpki-invalid", "rpki-not-found"]
+
+[[neighbors]]
+  [neighbors.config]
+    neighbor-address = "172.17.0.3"
+    peer-as = 61703
+    bgpsec-enable = true
+    SKI = "45CAD0AC44F77EFAA94602E9984305215BF47DCD"
+    #SKI = "C30433FA1975FF193181458FB902B501EA9789DC"
+
+[[neighbors]]
+  [neighbors.config]
+    neighbor-address = "172.17.0.4"
+    peer-as = 61704
+    bgpsec-enable = true
+    SKI = "C30433FA1975FF193181458FB902B501EA9789DC"
+
+
+[[rpki-servers]]
+  [rpki-servers.config]
+    address = "10.0.50.11"
+    port = 323
+
+
+[[policy-definitions]]
+  name="rpki-invalid"
+  [[policy-definitions.statements]]
+    [policy-definitions.statements.conditions.bgp-conditions]
+        rpki-validation-result = "invalid"
+    [policy-definitions.statements.actions]
+        #route-disposition = "reject-route"
+        route-disposition = "accept-route"
+
+[[policy-definitions]]
+  name="rpki-valid"
+  [[policy-definitions.statements]]
+    [policy-definitions.statements.conditions.bgp-conditions]
+        rpki-validation-result = "valid"
+    [policy-definitions.statements.actions]
+        route-disposition = "accept-route"
+
+[[policy-definitions]]
+  name="rpki-not-found"
+  [[policy-definitions.statements]]
+    [policy-definitions.statements.conditions.bgp-conditions]
+        rpki-validation-result = "not-found"
+    [policy-definitions.statements.actions]
+        #route-disposition = "reject-route"
+        route-disposition = "accept-route"
+
+
+[[policy-definitions]]
+  name="bgpsec-invalid"
+  [[policy-definitions.statements]]
+    [policy-definitions.statements.conditions.bgp-conditions]
+        bgpsec-validation-result = "invalid"
+    [policy-definitions.statements.actions]
+        route-disposition = "reject-route"
+        #route-disposition = "accept-route"
+
+[[policy-definitions]]
+  name="bgpsec-valid"
+  [[policy-definitions.statements]]
+    [policy-definitions.statements.conditions.bgp-conditions]
+        bgpsec-validation-result = "valid"
+    [policy-definitions.statements.actions]
+        route-disposition = "accept-route"
+
+[[policy-definitions]]
+  name="bgpsec-not-found"
+  [[policy-definitions.statements]]
+[root@eb758b069395 bin]# ll
+total 88864
+-rwxr-xr-x 1 root  root 12093692 Oct 19 01:54 config
+-rwxr-xr-x 1 root  root 20155272 Oct 19 01:54 gobgp
+-rwxr-xr-x 1 root  root 23346576 Oct 19 01:54 gobgpd
+-rw-r----- 1 40021 1000     2588 Oct 19 03:14 gobgpd.conf
+-rwxr-xr-x 1 root  root  4553457 Oct 19 01:54 gobmpd
+-rwxr-xr-x 1 root  root 18616680 Oct 19 01:54 lib
+-rwxr-xr-x 1 root  root 12215276 Oct 19 01:54 route-server
+[root@eb758b069395 bin]# cp gobgpd.conf /usr/local/etc/
+[root@eb758b069395 bin]# ll /usr/local/etc/
+total 4
+-rw-r----- 1 root root 2588 Oct 19 03:14 gobgpd.conf
+[root@eb758b069395 bin]#

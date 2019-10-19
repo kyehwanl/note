@@ -3,7 +3,8 @@ ExaBGPSec Bugs
 ==============
 
 
-1. When Key is not to be read properly from the config file, it will have an error
+1. When a Key is not to be found properly from the config file, it will have an error
+    (ASN, SKI pair is used to find a cert and private key in key-volt)
 
 
  # Error Logs below

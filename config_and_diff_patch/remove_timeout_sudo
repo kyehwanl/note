@@ -1,0 +1,10 @@
+
+Remove Timeout from using sudo 
+==============================
+
+1. sudo visudo or edit vim /etc/sudoers
+
+
+2. add this line to somewhere inside 
+
+    kyehwanl        ALL=(ALL)       NOPASSWD: ALL

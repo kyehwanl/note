@@ -607,7 +607,7 @@ So it only needs to configure a key location and flags (cflag, ldflag)
     Or 
       export CGO_LDFLAGS="-L/path/to/the/lib -Wl,-rpath -Wl,\$ORIGIN/../lib"
       export CGO_CFLAGS="-I/path/to/include/file/of/the/lib/include"
-      Run gobgpd
+      Run gobgpd (sudo gobgpd -f <conf> [options])
 
 
 
