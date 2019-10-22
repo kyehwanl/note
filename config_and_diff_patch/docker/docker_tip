@@ -413,4 +413,27 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
 
 
 
+24. host mode
+    To connect to an external host outside of docker network, 
+    simplest way is to use, 
+    
+    --network=host
+    Then, it will use the network resources of docker's host    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
