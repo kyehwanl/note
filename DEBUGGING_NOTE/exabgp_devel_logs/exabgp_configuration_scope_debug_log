@@ -753,3 +753,53 @@ Configuration switches
 2
 (Pdb)
 
+
+
+
+
+-------------------------------
+read_message --> unpack
+------------------------------
+
+1. starting point
+
+  (Pdb) bt
+    /usr/lib/python2.7/bdb.py(383)run()
+  -> exec cmd in globals, locals
+    <string>(1)<module>()
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+  -> main()
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+  -> run(env,comment,configurations)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+  -> ok = Reactor(configurations).run()
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+  -> action = peer.run()
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+  -> r = generator.next()
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+  -> for action in self._main(direction):
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+  -> for message in proto.read_message():
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+  -> message = Message.unpack(msg_id,body,self.negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+  -> return cls.klass(message).unpack_message(data,negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+  -> attributes = Attributes.unpack(_attributes,negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+  -> attributes = cls().parse(data,negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+  -> return self.parse(left,negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+  -> return self.parse(left,negotiated)
+    /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+  -> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+  > /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()-><exabgp....xa18934c>
+  -> return instance
+
+
+
+
+
+

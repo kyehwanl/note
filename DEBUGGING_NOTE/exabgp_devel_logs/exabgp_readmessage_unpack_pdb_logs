@@ -1,0 +1,2308 @@
+
+
+unpack pdb logs
+===============
+
+
+1. when receiving a bgpsec update from a peer, msg_id == 2
+2. tracing the procedures to call 'unpack()' on BGPSEC.py's method
+
+
+
+
+
+
+
+
+
+
+[kyehwanl@node3 exabgp]$ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(7)<module>()
+-> """
+(Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:153
+Breakpoint 1 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py:153
+(Pdb) c
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | environment file missing
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | generate it using "exabgp --fi > /etc/exabgp/exabgp.env"
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | reactor       | Performing reload of exabgp 3.4.13
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading | ####################################################
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading | group Core_v4 {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     hold-time 180;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     local-as 60004;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     peer-as 60005;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     router-id 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     graceful-restart 1200;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     #group-updates true; # DISABLE in order not to pack prefixes
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     # Route can be defined in either here, 'static' or using 'process-run' or both
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     static {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # Example - Announcing a /32 with one community
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #route 30.10.10.1/32 next-hop 10.1.1.4 community 65001:666;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #Example - Two communities
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       route 30.21.0.0/24 next-hop 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #route 30.31.0.0/24 next-hop 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #route 30.41.0.0/24 next-hop 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     neighbor 10.1.1.5 {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       local-address 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       description "Quagga";
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #================================= <BGPSec Options> ======================================================
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # enable bgpsec
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       bgpsec;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # set SKI and libraries' location
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       ski 492AAE72485D926CACDA2D259BE19DAE82DFBDE3;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       bgpsec_libloc /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |         #bgpsec_openssl_lib /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |         #bgpsec_crypto_init PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # to indicate direction in bgpsec capability : 0- receive, 1: send/receive both
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       bgpsec_send_receive 1;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #bgpsec_key_volt /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # --------------------------------------------------------------------------------
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # Multiple BGPSec Stacking
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #     bgpsec_pre_asns: previous ASNs in order of ASN-1 ASN-2 ... ASN-n(origin)
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #     bgpsec_pre_skis: previous SKIs in accordance with pre_asns variable above
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       # --------------------------------------------------------------------------------
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #bgpsec_pre_asns 60003;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #bgpsec_pre_skis 45CAD0AC44F77EFAA94602E9984305215BF47DCD;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       bgpsec_pre_asns 60003 60002;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       bgpsec_pre_skis 45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #==========================================================================================================
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       add-path send/receive;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       process parsed-route-backend {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |             receive {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |               parsed;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |               update;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |             }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |             run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |             #run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/log-1.py;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |           }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     process add-routes {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #encoder text;    # how the data to be serialized before sent to exaBGP
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |                         # provides the program with neighbor events
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       neighbor-changes;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |                         # (TCP connection established/closed, successful OPEN negotiation, OPENCONFIRM)
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       run /usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #'announce route 100.10.0.0/24 next-hop self'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |       #'announce route 200.20.0.0/24 next-hop self'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     #process loving-flaps {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     #  run /users/kyehwanl/Download/exabgp-3.4.13/flap.sh;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |     #}
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading | }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |    #neighbor 192.168.1.253 {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |    #     local-address 192.168.1.2;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |    #     description "IOS_XR";
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |    #     md5 S00pers3kretz;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | loading |    #}
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | configuration | 'group' 'core_v4' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'hold-time' '180' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'local-as' '60004' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'peer-as' '60005' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'router-id' '10.1.1.4' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'graceful-restart' '1200' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'static' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | static        | 'route' '30.21.0.0/24' 'next-hop' '10.1.1.4' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | static        | '}'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'neighbor' '10.1.1.5' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'local-address' '10.1.1.4' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'description' '"quagga"' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'bgpsec' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ bgpsec ENABLED
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'ski' '492aae72485d926cacda2d259be19dae82dfbde3' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ ski: 492aae72485d926cacda2d259be19dae82dfbde3
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'bgpsec_libloc' '/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ crypto library at: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'bgpsec_send_receive' '1' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ bgpsec capability : 1
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'bgpsec_pre_asns' '60003 60002' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ previous asn:  60003 60002
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'bgpsec_pre_skis' '45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | +++ previous ski:  45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'add-path' 'send/receive' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | 'process' 'parsed-route-backend' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | 'receive' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | receive       | 'parsed' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | receive       | 'update' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | receive       | '}'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | 'run' '/users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | '}'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | neighbor      | '}'
+bgpsec capability directions : 0
+bgpsec enabled
+ski ['492aae72485d926cacda2d259be19dae82dfbde3']
+bgpsec library location: ['/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so']
+bgpsec previous asns: ['60003', '60002']
+bgpsec previous skis: ['45CAD0AC44F77EFAA94602E9984305215BF47DCD', 'C30433FA1975FF193181458FB902B501EA9789DC']
+bgpsec capability directions : ['1']
+Mon, 21 Oct 2019 20:20:34 | WARNING  | 6037   | configuration | --------------------------------------------------------------------------------
+Mon, 21 Oct 2019 20:20:34 | WARNING  | 6037   | configuration | group-updates not enabled for peer 10.1.1.5, it surely should, the default will change to true soon
+Mon, 21 Oct 2019 20:20:34 | WARNING  | 6037   | configuration | --------------------------------------------------------------------------------
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | neighbor 10.1.1.5 {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   description "quagga";
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   router-id 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   local-address 10.1.1.4;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   local-as 60004;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   peer-as 60005;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   hold-time 180;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   manual-eor false;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   group-updates: ;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   auto-flush: true;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   adj-rib-out: true;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   ttl-security: ;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   capability {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     asn4 enable;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     route-refresh disable;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     graceful-restart 1200;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     add-path send/receive;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     multi-session disable;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     operational disable;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     aigp disable;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   family {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 unicast;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 multicast;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 nlri-mpls;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 mpls-vpn;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 flow;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet4 flow-vpn;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet6 unicast;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet6 mpls-vpn;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet6 flow;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     inet6 flow-vpn;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     l2vpn vpls;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   process {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     receive {
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |       update;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |       parsed;
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |     }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |   }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | }
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration |
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | 'process' 'add-routes' '{'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | 'neighbor-changes' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | 'run' '/usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py' ';'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | process       | '}'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | configuration | parsing | group         | '}'
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | reactor       | New peer setup: neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open
+Mon, 21 Oct 2019 20:20:34 | WARNING  | 6037   | configuration | Loaded new configuration successfully
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | processes     | Forked process parsed-route-backend
+Mon, 21 Oct 2019 20:20:34 | INFO     | 6037   | processes     | Forked process add-routes
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+(Pdb) pp msg_id
+1
+(Pdb) c
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+(Pdb) pp msg_id
+4
+(Pdb) c
+Mon, 21 Oct 2019 20:20:49 | INFO     | 6037   | network       | Connected to peer neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open (out)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+(Pdb) pp msg_id
+4
+(Pdb) c
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_isAlgorithmSupported' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - WARNING] - 'method_cleanKeys' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_cleanPrivateKeys' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "setDebugLevel" to default method!
+[SRxCryptoAPI - INFO] Linking "getDebugLevel" to default method!
+[SRxCryptoAPI - INFO] Linking "isAlgorithmSupported" to default method!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "cleanKeys" to default method!
+[SRxCryptoAPI - INFO] Linking "cleanPrivateKeys" to default method!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++++ init called
+value: PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt
++++ logLevel: 7
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
++++ string: /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt isPrivate: 0
++++ KEY ASN: 62ea0000 SKI: c304
++++ KEY ASN: 63ea0000 SKI: 45ca
++++ KEY ASN: 64ea0000 SKI: 492a
++++ string: /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt isPrivate: 1
++++ KEY ASN: 62ea0000 SKI: c304
++++ KEY ASN: 63ea0000 SKI: 45ca
++++ KEY ASN: 64ea0000 SKI: 492a
++++ KEY ASN: 65ea0000 SKI: ee50
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (4 private and 3 public keys)!
+srxCryptoInit return value 1 (API_SUCCESS:1 or API_FAILURE:0)
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0xa0e8550
+peerAS: 1676279808
+myHost: 0xa1139e0
+myHost: 0xa1139e0
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1659502592
+nlri: 0xa143ae8
+nlri: 0xa143ae8
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1659502592
+
+c3 04 33 fa 19 75 ff 19 31 81 45 8f b9 02 b5 01
+ea 97 89 dc 00 6b 65 74 2e 70 00 09 01 00 00 00
+
+ski: 0xa123b14
+algoID: 1
+status: 1
+hashMessage: (nil)
+hashMessage is NULL
+
+Hash(sign):
+00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 18 1e
+15 00
+
+Digest(sign):
+b2 2b 08 40 ad 78 6d cc 14 98 0b 5e 6e 39 75 18
+56 7c ea 1c e1 92 fe bc 87 7d 70 c6 d1 55 ab 9a
+
+30 44 02 20 32 3d bf 5b 44 eb f8 8d b8 cc d5 80
+f9 5b 3a 46 47 2b 44 6f af ce 04 da 20 0a 1f 88
+2f d2 2b de 02 20 6f b8 c3 ee 6b 58 a1 09 41 78
+aa a7 47 92 46 88 4f fa 97 aa c5 33 bf 5b 33 18
+de d6 10 55 68 d2
+sca_generateHashMessage function called
+data: 0xa0e9190
+data.myAS 62ea0000
+data.bgpsec_path_attr: a13771c
+data->hashMessage[0]: (nil)
+116 byte used from calling genenrate-HashMessage
+0x0 0x0 0xea 0x62 0x1 0x0 0x0 0x0 0xea 0x62 0x1 0x0 0x1 0x1 0x18 0x1e 0x15 0x0
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0xa155760
+peerAS: 1693057024
+myHost: 0xa1139e0
+myHost: 0xa1139e0
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1676279808
+nlri: 0x9fc4720
+nlri: 0x9fc4720
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1676279808
+
+45 ca d0 ac 44 f7 7e fa a9 46 02 e9 98 43 05 21
+5b f4 7d cd 00 65 e6 09 c0 80 db 09 01 00 00 00
+
+ski: 0xa123bd4
+algoID: 1
+status: 1
+hashMessage: 0xa0d8838
+hashMessage.ownedByAPI: 0
+hashMessage.bufferSize: 116
+hashMessage.buffer:
+hashMessage.segmentCount: 1
+hashMessage.hashMessageValPtr: 0x9df5328
+
+Hash(sign):
+00 00 ea 64 c3 04 33 fa 19 75 ff 19 31 81 45 8f
+b9 02 b5 01 ea 97 89 dc 00 46 30 44 02 20 32 3d
+bf 5b 44 eb f8 8d b8 cc d5 80 f9 5b 3a 46 47 2b
+44 6f af ce 04 da 20 0a 1f 88 2f d2 2b de 02 20
+6f b8 c3 ee 6b 58 a1 09 41 78 aa a7 47 92 46 88
+4f fa 97 aa c5 33 bf 5b 33 18 de d6 10 55 68 d2
+01 00 00 00 ea 63 01 00 00 00 ea 62 01 00 01 01
+18 1e 15 00
+
+Digest(sign):
+84 a2 7b 85 8a 2f 68 c0 3c be d4 e0 0b 26 da ca
+f1 9a 7c 4a 75 3e ee ae 68 8b 80 f0 d4 ba 15 8b
+
+30 45 02 20 44 52 ff 44 72 f1 c5 54 ae 73 30 c8
+45 3f a7 b3 cd e8 ec b0 0c 14 b0 92 ac 3b e9 aa
+68 35 75 ab 02 21 00 83 27 12 6d f4 14 c6 fe a7
+f1 f9 42 a1 c2 4d 63 cc 2e dc 3f b4 8f 6c 3f 1f
+33 c5 10 e8 7d c1 fa
+sca_generateHashMessage function called
+data: 0xa143b28
+data.myAS 63ea0000
+data.bgpsec_path_attr: a182e14
+data->hashMessage[0]: (nil)
+215 byte used from calling genenrate-HashMessage
+0x0 0x0 0xea 0x63 0xc3 0x4 0x33 0xfa 0x19 0x75 0xff 0x19 0x31 0x81 0x45 0x8f 0xb9 0x2 0xb5 0x1 0xea 0x97 0x89 0xdc 0x0 0x46 0x30 0x44 0x2 0x20 0x32 0x3d 0xbf 0x5b 0x44 0xeb 0xf8 0x8d 0xb8 0xcc 0xd5 0x80 0xf9 0x5b 0x3a 0x46 0x47 0x2b 0x44 0x6f 0xaf 0xce 0x4 0xda 0x20 0xa 0x1f 0x88 0x2f 0xd2 0x2b 0xde 0x2 0x20 0x6f 0xb8 0xc3 0xee 0x6b 0x58 0xa1 0x9 0x41 0x78 0xaa 0xa7 0x47 0x92 0x46 0x88 0x4f 0xfa 0x97 0xaa 0xc5 0x33 0xbf 0x5b 0x33 0x18 0xde 0xd6 0x10 0x55 0x68 0xd2 0x1 0x0 0x0 0x0 0xea 0x63 0x1 0x0 0x0 0x0 0xea 0x62 0x1 0x0 0x1 0x1 0x18 0x1e 0x15 0x0
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0xa0e8550
+peerAS: 1709834240
+myHost: 0xa1139e0
+myHost: 0xa1139e0
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1693057024
+nlri: 0xa143ae8
+nlri: 0xa143ae8
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1693057024
+
+49 2a ae 72 48 5d 92 6c ac da 2d 25 9b e1 9d ae
+82 df bd e3 00 79 2e 70 00 3e 00 00 80 3c 12 0a
+
+ski: 0xa123c34
+algoID: 1
+status: 1
+hashMessage: 0x9fc4720
+hashMessage.ownedByAPI: 0
+hashMessage.bufferSize: 215
+hashMessage.buffer:
+hashMessage.segmentCount: 2
+hashMessage.hashMessageValPtr: 0xa018250
+
+Hash(sign):
+00 00 ea 65 45 ca d0 ac 44 f7 7e fa a9 46 02 e9
+98 43 05 21 5b f4 7d cd 00 47 30 45 02 20 44 52
+ff 44 72 f1 c5 54 ae 73 30 c8 45 3f a7 b3 cd e8
+ec b0 0c 14 b0 92 ac 3b e9 aa 68 35 75 ab 02 21
+00 83 27 12 6d f4 14 c6 fe a7 f1 f9 42 a1 c2 4d
+63 cc 2e dc 3f b4 8f 6c 3f 1f 33 c5 10 e8 7d c1
+fa 01 00 00 00 ea 64 c3 04 33 fa 19 75 ff 19 31
+81 45 8f b9 02 b5 01 ea 97 89 dc 00 46 30 44 02
+20 32 3d bf 5b 44 eb f8 8d b8 cc d5 80 f9 5b 3a
+46 47 2b 44 6f af ce 04 da 20 0a 1f 88 2f d2 2b
+de 02 20 6f b8 c3 ee 6b 58 a1 09 41 78 aa a7 47
+92 46 88 4f fa 97 aa c5 33 bf 5b 33 18 de d6 10
+55 68 d2 01 00 00 00 ea 63 01 00 00 00 ea 62 01
+00 01 01 18 1e 15 00
+
+Digest(sign):
+29 c8 64 ea 39 ec 5a 1a e1 41 50 d8 0c 8c bf 6c
+c9 41 3d e5 cf 69 57 e2 9c 3d d5 0b de d2 4b c4
+
+30 44 02 20 53 61 9c 7c 43 02 32 14 58 59 fb f5
+cb de a3 16 89 f6 95 03 7b 08 8c d0 c3 47 62 da
+9c 30 57 f6 02 20 21 2a 20 53 fd 62 6b 0c 0d 73
+0b 51 1e 52 4e a8 1b 9c 53 ae 50 ff 0f 41 fc cf
+72 90 1e 96 ee 20
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+(Pdb) pp msg_id
+2
+(Pdb) l
+148                             yield _UPDATE
+149                             return
+150
+151                     self.logger.message(self.me('<< %s' % Message.CODE.name(msg_id)))
+152                     try:
+153 B->                         message = Message.unpack(msg_id,body,self.negotiated)
+154                     except (KeyboardInterrupt,SystemExit,Notify):
+155                             raise
+156                     except Exception,exc:
+157                             self.logger.message(self.me('Could not decode message "%d"' % msg_id))
+158                             self.logger.message(self.me('%s' % str(exc)))
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(123)unpack()
+-> @classmethod
+(Pdb) l
+118             def klass (cls, what):
+119                     if what in cls.registered_message:
+120                             return cls.registered_message[what]
+121                     raise cls.klass_notify(2,4,'can not handle message %s' % what)
+122
+123  ->         @classmethod
+124             def unpack (cls, message, data, negotiated):
+125                     if message in cls.registered_message:
+126                             return cls.klass(message).unpack_message(data,negotiated)
+127                     return cls.klass_unknown(message,data,negotiated)
+[EOF]
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(125)unpack()
+-> if message in cls.registered_message:
+(Pdb) pp cls
+<class 'exabgp.bgp.message.message.Message'>
+(Pdb) pp cls.registered_message
+{1: <class 'exabgp.bgp.message.open.Open'>,
+ 2: <class 'exabgp.bgp.message.update.Update'>,
+ 3: <class 'exabgp.bgp.message.notification.Notification'>,
+ 4: <class 'exabgp.bgp.message.keepalive.KeepAlive'>,
+ 5: <class 'exabgp.bgp.message.refresh.RouteRefresh'>,
+ 6: <class 'exabgp.bgp.message.operational.Operational'>}
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+(Pdb) pp data
+"\x00\x00\x00\x85@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) pp negotiated
+<exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0xa12adcc>
+(Pdb) pp message
+2
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(117)klass()
+-> @classmethod
+(Pdb) l
+112                     what = klass.TYPE if message is None else message
+113                     if what in Message.registered_message:
+114                             raise RuntimeError('only one class can be registered per message')
+115                     Message.registered_message[ord(what)] = klass
+116
+117  ->         @classmethod
+118             def klass (cls, what):
+119                     if what in cls.registered_message:
+120                             return cls.registered_message[what]
+121                     raise cls.klass_notify(2,4,'can not handle message %s' % what)
+122
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(119)klass()
+-> if what in cls.registered_message:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(120)klass()
+-> return cls.registered_message[what]
+(Pdb) p what
+2
+(Pdb) s
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(120)klass()-><class '....Update'>
+-> return cls.registered_message[what]
+(Pdb) n
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(252)unpack_message()
+-> @classmethod
+(Pdb) l
+247                                     packed_add += packed
+248
+249                     yield self._message(Update.prefix(packed_del) + Update.prefix(attr + packed_mp_del + packed_mp_add) + packed_add)
+250
+251             # XXX: FIXME: this can raise ValueError. IndexError,TypeError, struct.error (unpack) = check it is well intercepted
+252  ->         @classmethod
+253             def unpack_message (cls, data, negotiated):
+254                     logger = Logger()
+255
+256                     length = len(data)
+257
+(Pdb) btn
+*** NameError: name 'btn' is not defined
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(254)unpack_message()
+-> logger = Logger()
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(256)unpack_message()
+-> length = len(data)
+(Pdb) p data
+"\x00\x00\x00\x85@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(259)unpack_message()
+-> if length == 4 and data == '\x00\x00\x00\x00':
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(261)unpack_message()
+-> if length == 11 and data.startswith(EOR.NLRI.PREFIX):
+(Pdb) p length
+137
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(264)unpack_message()
+-> withdrawn, _attributes, announced = cls.split(data)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+(Pdb) pp _attributes
+"@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) l
+260                             return EOR(AFI.ipv4,SAFI.unicast,IN.ANNOUNCED)  # pylint: disable=E1101
+261                     if length == 11 and data.startswith(EOR.NLRI.PREFIX):
+262                             return EOR.unpack_message(data,negotiated)
+263
+264                     withdrawn, _attributes, announced = cls.split(data)
+265  ->                 attributes = Attributes.unpack(_attributes,negotiated)
+266
+267                     if not withdrawn:
+268                             logger.parser("no withdrawn NLRI")
+269                     if not announced:
+270                             logger.parser("no announced NLRI")
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(238)unpack()
+-> @classmethod
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(240)unpack()
+-> try:
+(Pdb) l
+235                 self._idx = '%s next-hop %s' % (idx,nexthop) if nexthop else idx
+236             return self._idx
+237
+238         @classmethod
+239         def unpack (cls, data, negotiated):
+240  ->         try:
+241                 if cls.cached:
+242                     if data == cls.previous:
+243                         return cls.cached
+244                     # # This code may mess with the cached data
+245                     # elif cls.previous and data.startswith(cls.previous):
+(Pdb) p cls
+<class 'exabgp.bgp.message.update.attribute.attributes.Attributes'>
+(Pdb) p cls.cached
+None
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(241)unpack()
+-> if cls.cached:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+(Pdb) p cls()
+{}
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(128)__init__()
+-> def __init__ (self):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(130)__init__()
+-> self._str = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(131)__init__()
+-> self._idx = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(132)__init__()
+-> self._json = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(134)__init__()
+-> self.cacheable = True
+(Pdb) l
+129             # cached representation of the object
+130             self._str = ''
+131             self._idx = ''
+132             self._json = ''
+133             # The parsed attributes have no mp routes and/or those are last
+134  ->         self.cacheable = True
+135
+136             # XXX: FIXME: surely not the best place for this
+137             Attribute.caching = environment.settings().cache.attributes
+138
+139         def has (self, k):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(137)__init__()
+-> Attribute.caching = environment.settings().cache.attributes
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(137)__init__()->None
+-> Attribute.caching = environment.settings().cache.attributes
+(Pdb)
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(281)parse()
+-> def parse (self, data, negotiated):
+(Pdb) locals
+<built-in function locals>
+(Pdb) pp local
+*** NameError: NameError("name 'local' is not defined",)
+(Pdb) pp locals
+<built-in function locals>
+(Pdb) locals()
+{'negotiated': <exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0xa12adcc>, 'data': "@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2", 'self': {}}
+(Pdb) pp locals()
+{'data': "@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2",
+ 'negotiated': <exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0xa12adcc>,
+ 'self': {}}
+(Pdb) l
+276                 return flag, attr, data[4:length+4]
+277             else:
+278                 length = ord(data[2])
+279                 return flag, attr, data[3:length+3]
+280
+281  ->     def parse (self, data, negotiated):
+282             if not data:
+283                 return self
+284
+285             # We do not care if the attribute are transitive or not as we do not redistribute
+286             flag = Attribute.Flag(ord(data[0]))
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(282)parse()
+-> if not data:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(286)parse()
+-> flag = Attribute.Flag(ord(data[0]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(287)parse()
+-> aid = Attribute.CODE(ord(data[1]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(289)parse()
+-> if flag & Attribute.Flag.EXTENDED_LENGTH:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(293)parse()
+-> length = ord(data[2])
+(Pdb) pp flag
+64
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(294)parse()
+-> offset = 3
+(Pdb) p length
+1
+(Pdb) p data
+"@\x01\x01\x00\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(296)parse()
+-> data = data[offset:]
+(Pdb) p offset
+3
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(297)parse()
+-> left = data[length:]
+(Pdb) p length
+1
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(298)parse()
+-> attribute = data[:length]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(300)parse()
+-> logger = Logger()
+(Pdb) p attribute
+'\x00'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(301)parse()
+-> logger.parser(LazyFormat("parsing flag %x type %02x (%s) len %02x %s" % (flag,int(aid),aid,length,'payload ' if length else ''),data[:length]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(304)parse()
+-> if aid in Attribute.attributes_optional:
+(Pdb) p Attribute.attributes_optional
+[17, 4, 7, 18, 8, 16, 9, 10, 14, 15, 22, 26, 33]
+(Pdb) p aid
+origin
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(309)parse()
+-> if Attribute.registered(aid,flag):
+(Pdb) p aid, flag
+(origin, 64)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(212)unpack()
+-> @classmethod
+(Pdb) pp locals
+<built-in function locals>
+(Pdb) pp locals()(
+*** SyntaxError: SyntaxError('unexpected EOF while parsing', ('<string>', 1, 9, 'locals()('))
+(Pdb) pp locals()
+{'attribute_id': origin,
+ 'cls': <class 'exabgp.bgp.message.update.attribute.attribute.Attribute'>,
+ 'data': '\x00',
+ 'flag': 64,
+ 'negotiated': <exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0xa12adcc>}
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(214)unpack()
+-> cache = cls.caching and cls.CACHING
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(216)unpack()
+-> if cache and data in cls.cache.get(cls.ID,{}):
+(Pdb) l
+211
+212         @classmethod
+213         def unpack (cls, attribute_id, flag, data, negotiated):
+214             cache = cls.caching and cls.CACHING
+215
+216  ->         if cache and data in cls.cache.get(cls.ID,{}):
+217                 return cls.cache[cls.ID].retrieve(data)
+218
+219             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+220             if key in Attribute.registered_attributes.keys():
+221                 instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(219)unpack()
+-> key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(220)unpack()
+-> if key in Attribute.registered_attributes.keys():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(223)unpack()
+-> if cache:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()
+-> return instance
+(Pdb) p cache
+False
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()-><exabgp....xa1890a4>
+-> return instance
+(Pdb) p instance
+<exabgp.bgp.message.update.attribute.origin.Origin object at 0xa1890a4>
+(Pdb) n
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(142)add()
+-> def add (self, attribute, _=None):
+(Pdb) l
+137             Attribute.caching = environment.settings().cache.attributes
+138
+139         def has (self, k):
+140             return k in self
+141
+142  ->     def add (self, attribute, _=None):
+143             # we return None as attribute if the unpack code must not generate them
+144             if attribute is None:
+145                 return
+146
+147             self._str = ''
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(144)add()
+-> if attribute is None:
+(Pdb) p attribute
+<exabgp.bgp.message.update.attribute.origin.Origin object at 0xa1890a4>
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(147)add()
+-> self._str = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(148)add()
+-> self._json = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(151)add()
+-> if attribute.ID in Attributes.MULTIPLE:
+(Pdb) pp attribute.ID
+origin
+(Pdb) pp attribute.MULTIPLE
+*** AttributeError: AttributeError("'Origin' object has no attribute 'MULTIPLE'",)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(153)add()
+-> elif attribute.ID in self:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(156)add()
+-> self[attribute.ID] = attribute
+(Pdb) pp self
+{}
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(156)add()->None
+-> self[attribute.ID] = attribute
+(Pdb) pp self
+{origin: <exabgp.bgp.message.update.attribute.origin.Origin object at 0xa1890a4>}
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb) p self
+{origin: <exabgp.bgp.message.update.attribute.origin.Origin object at 0xa1890a4>}
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(281)parse()
+-> def parse (self, data, negotiated):
+(Pdb) pp data
+"\x80\x04\x04\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(282)parse()
+-> if not data:
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(286)parse()
+-> flag = Attribute.Flag(ord(data[0]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(287)parse()
+-> aid = Attribute.CODE(ord(data[1]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(289)parse()
+-> if flag & Attribute.Flag.EXTENDED_LENGTH:
+(Pdb) p aid
+med
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(293)parse()
+-> length = ord(data[2])
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(294)parse()
+-> offset = 3
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(296)parse()
+-> data = data[offset:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(297)parse()
+-> left = data[length:]
+(Pdb) p data
+"\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(298)parse()
+-> attribute = data[:length]
+(Pdb) p data
+"\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) p length
+4
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(300)parse()
+-> logger = Logger()
+(Pdb) p data
+"\x00\x00\x00\x00\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) p attribute
+'\x00\x00\x00\x00'
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(301)parse()
+-> logger.parser(LazyFormat("parsing flag %x type %02x (%s) len %02x %s" % (flag,int(aid),aid,length,'payload ' if length else ''),data[:length]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(304)parse()
+-> if aid in Attribute.attributes_optional:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(305)parse()
+-> flag &= Attribute.Flag.MASK_PARTIAL & 0xFF
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(309)parse()
+-> if Attribute.registered(aid,flag):
+(Pdb) p left
+"\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(281)parse()
+-> def parse (self, data, negotiated):
+(Pdb) p data
+"\x80\x0e\x0b\x00\x01\x01\x04\n\x01\x01\x05\x00\x08(\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(282)parse()
+-> if not data:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(286)parse()
+-> flag = Attribute.Flag(ord(data[0]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(287)parse()
+-> aid = Attribute.CODE(ord(data[1]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(289)parse()
+-> if flag & Attribute.Flag.EXTENDED_LENGTH:
+(Pdb) p aid
+mp-reach-nlri
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(293)parse()
+-> length = ord(data[2])
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(294)parse()
+-> offset = 3
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(296)parse()
+-> data = data[offset:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(297)parse()
+-> left = data[length:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(298)parse()
+-> attribute = data[:length]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(300)parse()
+-> logger = Logger()
+(Pdb) p attribute
+'\x00\x01\x01\x04\n\x01\x01\x05\x00\x08('
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(301)parse()
+-> logger.parser(LazyFormat("parsing flag %x type %02x (%s) len %02x %s" % (flag,int(aid),aid,length,'payload ' if length else ''),data[:length]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(304)parse()
+-> if aid in Attribute.attributes_optional:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(305)parse()
+-> flag &= Attribute.Flag.MASK_PARTIAL & 0xFF
+(Pdb) p aid
+mp-reach-nlri
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(309)parse()
+-> if Attribute.registered(aid,flag):
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(212)unpack()
+-> @classmethod
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(214)unpack()
+-> cache = cls.caching and cls.CACHING
+(Pdb) l
+209                 return kls
+210             raise Notify (2,4,'can not handle attribute id %s' % attribute_id)
+211
+212         @classmethod
+213         def unpack (cls, attribute_id, flag, data, negotiated):
+214  ->         cache = cls.caching and cls.CACHING
+215
+216             if cache and data in cls.cache.get(cls.ID,{}):
+217                 return cls.cache[cls.ID].retrieve(data)
+218
+219             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(216)unpack()
+-> if cache and data in cls.cache.get(cls.ID,{}):
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(219)unpack()
+-> key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(220)unpack()
+-> if key in Attribute.registered_attributes.keys():
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) p key
+(mp-reach-nlri, 144)
+(Pdb) pp attribute_id
+mp-reach-nlri
+(Pdb) p flag
+128
+(Pdb) l
+216             if cache and data in cls.cache.get(cls.ID,{}):
+217                 return cls.cache[cls.ID].retrieve(data)
+218
+219             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+220             if key in Attribute.registered_attributes.keys():
+221  ->             instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+222
+223                 if cache:
+224                     cls.cache[cls.ID].cache(data,instance)
+225                 return instance
+226
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(198)klass()
+-> @classmethod
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(200)klass()
+-> key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(201)klass()
+-> if key in cls.registered_attributes:
+(Pdb) p key
+(mp-reach-nlri, 144)
+(Pdb) p cls
+<class 'exabgp.bgp.message.update.attribute.attribute.Attribute'>
+(Pdb) p cls.registered_attributes
+{(2, 80): <class 'exabgp.bgp.message.update.attribute.aspath.ASPath'>, (16, 208): <class 'exabgp.bgp.message.update.attribute.community.extended.communities.ExtendedCommunities'>, (33, 144): <class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>, (14, 144): <class 'exabgp.bgp.message.update.attribute.mprnlri.MPRNLRI'>, (5, 80): <class 'exabgp.bgp.message.update.attribute.localpref.LocalPreference'>, (10, 144): <class 'exabgp.bgp.message.update.attribute.clusterlist.ClusterList'>, (1, 80): <class 'exabgp.bgp.message.update.attribute.origin.Origin'>, (22, 208): <class 'exabgp.bgp.message.update.attribute.pmsi.PMSI'>, (4, 144): <class 'exabgp.bgp.message.update.attribute.med.MED'>, (18, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator4'>, (9, 144): <class 'exabgp.bgp.message.update.attribute.originatorid.OriginatorID'>, (7, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator'>, (3, 80): <class 'exabgp.bgp.message.update.attribute.nexthop.NextHop'>, (26, 144): <class 'exabgp.bgp.message.update.attribute.aigp.AIGP'>, (17, 208): <class 'exabgp.bgp.message.update.attribute.aspath.AS4Path'>, (8, 208): <class 'exabgp.bgp.message.update.attribute.community.communities.Communities'>, (15, 144): <class 'exabgp.bgp.message.update.attribute.mpurnlri.MPURNLRI'>, (6, 80): <class 'exabgp.bgp.message.update.attribute.atomicaggregate.AtomicAggregate'>}
+(Pdb) pp cls.registered_attributes
+{(1, 80): <class 'exabgp.bgp.message.update.attribute.origin.Origin'>,
+ (2, 80): <class 'exabgp.bgp.message.update.attribute.aspath.ASPath'>,
+ (3, 80): <class 'exabgp.bgp.message.update.attribute.nexthop.NextHop'>,
+ (4, 144): <class 'exabgp.bgp.message.update.attribute.med.MED'>,
+ (5, 80): <class 'exabgp.bgp.message.update.attribute.localpref.LocalPreference'>,
+ (6, 80): <class 'exabgp.bgp.message.update.attribute.atomicaggregate.AtomicAggregate'>,
+ (7, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator'>,
+ (8, 208): <class 'exabgp.bgp.message.update.attribute.community.communities.Communities'>,
+ (9, 144): <class 'exabgp.bgp.message.update.attribute.originatorid.OriginatorID'>,
+ (10, 144): <class 'exabgp.bgp.message.update.attribute.clusterlist.ClusterList'>,
+ (14, 144): <class 'exabgp.bgp.message.update.attribute.mprnlri.MPRNLRI'>,
+ (15, 144): <class 'exabgp.bgp.message.update.attribute.mpurnlri.MPURNLRI'>,
+ (16, 208): <class 'exabgp.bgp.message.update.attribute.community.extended.communities.ExtendedCommunities'>,
+ (17, 208): <class 'exabgp.bgp.message.update.attribute.aspath.AS4Path'>,
+ (18, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator4'>,
+ (22, 208): <class 'exabgp.bgp.message.update.attribute.pmsi.PMSI'>,
+ (26, 144): <class 'exabgp.bgp.message.update.attribute.aigp.AIGP'>,
+ (33, 144): <class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>}
+(Pdb) l
+196             return (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH) in cls.registered_attributes
+197
+198         @classmethod
+199         def klass (cls, attribute_id, flag):
+200             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+201  ->         if key in cls.registered_attributes:
+202                 kls = cls.registered_attributes[key]
+203                 kls.ID = attribute_id
+204                 return kls
+205             # XXX: we do see some AS4_PATH with the partial instead of transitive bit set !!
+206             if attribute_id == Attribute.CODE.AS4_PATH:
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(202)klass()
+-> kls = cls.registered_attributes[key]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(203)klass()
+-> kls.ID = attribute_id
+(Pdb) p kls
+<class 'exabgp.bgp.message.update.attribute.mprnlri.MPRNLRI'>
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(204)klass()
+-> return kls
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(204)klass()-><class '...MPRNLRI'>
+-> return kls
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(90)unpack()
+-> @classmethod
+(Pdb) help
+
+Documented commands (type help <topic>):
+========================================
+EOF    bt         cont      enable  jump  pp       run      unt
+a      c          continue  exit    l     q        s        until
+alias  cl         d         h       list  quit     step     up
+args   clear      debug     help    n     r        tbreak   w
+b      commands   disable   ignore  next  restart  u        whatis
+break  condition  down      j       p     return   unalias  where
+
+Miscellaneous help topics:
+==========================
+exec  pdb
+
+Undocumented commands:
+======================
+retval  rv
+
+(Pdb) help until
+unt(il)
+Continue execution until the line with a number greater than the current
+one is reached or until the current frame returns
+(Pdb) l
+ 85                     # return len(self.pack(False))
+ 86
+ 87             def __str__ (self):
+ 88                     return "MP_REACH_NLRI for %s %s with %d NLRI(s)" % (self.afi,self.safi,len(self.nlris))
+ 89
+ 90  ->         @classmethod
+ 91             def unpack (cls, data, negotiated):
+ 92                     nlris = []
+ 93
+ 94                     # -- Reading AFI/SAFI
+ 95                     afi,safi = unpack('!HB',data[:3])
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(92)unpack()
+-> nlris = []
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(95)unpack()
+-> afi,safi = unpack('!HB',data[:3])
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(96)unpack()
+-> offset = 3
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(99)unpack()
+-> if negotiated and (afi,safi) not in negotiated.families:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(103)unpack()
+-> len_nh = ord(data[offset])
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(104)unpack()
+-> offset += 1
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(106)unpack()
+-> rd = 0
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(109)unpack()
+-> if afi == AFI.ipv4:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(110)unpack()
+-> if safi in (SAFI.unicast,SAFI.multicast):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(111)unpack()
+-> if len_nh != 4:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(137)unpack()
+-> size = len_nh - rd
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(140)unpack()
+-> nhs = data[offset+rd:offset+rd+size]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(141)unpack()
+-> nexthops = [nhs[pos:pos+16] for pos in range(0,len(nhs),16)]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(141)unpack()
+-> nexthops = [nhs[pos:pos+16] for pos in range(0,len(nhs),16)]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(144)unpack()
+-> if rd and sum([int(ord(_)) for _ in data[offset:8]]) != 0:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(147)unpack()
+-> offset += len_nh
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(150)unpack()
+-> reserved = ord(data[offset])
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(151)unpack()
+-> offset += 1
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(153)unpack()
+-> if reserved != 0:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(157)unpack()
+-> addpath = negotiated.addpath.receive(afi,safi)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(160)unpack()
+-> data = data[offset:]
+(Pdb) p addpath
+False
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(162)unpack()
+-> if not data:
+(Pdb) p data
+'\x08('
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(165)unpack()
+-> while data:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(166)unpack()
+-> if nexthops:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(167)unpack()
+-> for nexthop in nexthops:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(168)unpack()
+-> length,nlri = NLRI.unpack(afi,safi,data,addpath,nexthop,IN.ANNOUNCED)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(169)unpack()
+-> nlris.append(nlri)
+(Pdb) p nlris
+[]
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(167)unpack()
+-> for nexthop in nexthops:
+(Pdb) p nlris
+[<exabgp.bgp.message.update.nlri.mpls.MPLS object at 0xa18b684>]
+(Pdb) p nlris[0]
+<exabgp.bgp.message.update.nlri.mpls.MPLS object at 0xa18b684>
+(Pdb) pp dir(nlris[0])
+['EOR',
+ '__class__',
+ '__cmp__',
+ '__delattr__',
+ '__dict__',
+ '__doc__',
+ '__eq__',
+ '__format__',
+ '__getattribute__',
+ '__hash__',
+ '__init__',
+ '__len__',
+ '__module__',
+ '__ne__',
+ '__new__',
+ '__reduce__',
+ '__reduce_ex__',
+ '__repr__',
+ '__setattr__',
+ '__sizeof__',
+ '__slotnames__',
+ '__slots__',
+ '__str__',
+ '__subclasshook__',
+ '__weakref__',
+ '_ip',
+ '_mask_to_bytes',
+ '_nlri',
+ 'action',
+ 'address',
+ 'afi',
+ 'extensive',
+ 'family',
+ 'getip',
+ 'has_label',
+ 'index',
+ 'ip',
+ 'json',
+ 'labels',
+ 'logger',
+ 'mask',
+ 'nexthop',
+ 'pack',
+ 'packed',
+ 'packed_ip',
+ 'path_info',
+ 'prefix',
+ 'rd',
+ 'register_nlri',
+ 'registered_nlri',
+ 'safi',
+ 'size',
+ 'unpack']
+(Pdb) p nlris[0].ip
+'40.0.0.0'
+(Pdb) p nlris[0].prefix
+<bound method MPLS.prefix of <exabgp.bgp.message.update.nlri.mpls.MPLS object at 0xa18b684>>
+(Pdb) p nlris[0].safi
+unicast
+(Pdb) p nlris[0].afi
+ipv4
+(Pdb) l
+162                     if not data:
+163                             raise Notify(3,0,'No data to decode in an MPREACHNLRI but it is not an EOR %d/%d' % (afi,safi))
+164
+165                     while data:
+166                             if nexthops:
+167  ->                                 for nexthop in nexthops:
+168                                             length,nlri = NLRI.unpack(afi,safi,data,addpath,nexthop,IN.ANNOUNCED)
+169                                             nlris.append(nlri)
+170                             else:
+171                                     length,nlri = NLRI.unpack(afi,safi,data,addpath,'',IN.ANNOUNCED)
+172                                     nlris.append(nlri)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(175)unpack()
+-> data = data[length:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(165)unpack()
+-> while data:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(176)unpack()
+-> return cls(afi,safi,nlris)
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/mprnlri.py(176)unpack()-><exabgp....xa18934c>
+-> return cls(afi,safi,nlris)
+(Pdb) l
+171                                     length,nlri = NLRI.unpack(afi,safi,data,addpath,'',IN.ANNOUNCED)
+172                                     nlris.append(nlri)
+173
+174                             # logger.parser(LazyFormat("parsed announce mp nlri %s payload " % nlri,data[:length]))
+175                             data = data[length:]
+176  ->                 return cls(afi,safi,nlris)
+177
+178     EMPTY_MPRNLRI  = MPRNLRI(AFI(AFI.undefined),SAFI(SAFI.undefined),[])
+[EOF]
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(223)unpack()
+-> if cache:
+(Pdb) p instance
+<exabgp.bgp.message.update.attribute.mprnlri.MPRNLRI object at 0xa18934c>
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()
+-> return instance
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()-><exabgp....xa18934c>
+-> return instance
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+-> for message in proto.read_message():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(225)unpack()-><exabgp....xa18934c>
+-> return instance
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(142)add()
+-> def add (self, attribute, _=None):
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(144)add()
+-> if attribute is None:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(147)add()
+-> self._str = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(148)add()
+-> self._json = ''
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(151)add()
+-> if attribute.ID in Attributes.MULTIPLE:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(152)add()
+-> self.setdefault(attribute.ID,[]).append(attribute)
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(152)add()->None
+-> self.setdefault(attribute.ID,[]).append(attribute)
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+-> for message in proto.read_message():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(152)add()->None
+-> self.setdefault(attribute.ID,[]).append(attribute)
+(Pdb) s
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(281)parse()
+-> def parse (self, data, negotiated):
+(Pdb) p data
+"\x90!\x00h\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(282)parse()
+-> if not data:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(286)parse()
+-> flag = Attribute.Flag(ord(data[0]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(287)parse()
+-> aid = Attribute.CODE(ord(data[1]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(289)parse()
+-> if flag & Attribute.Flag.EXTENDED_LENGTH:
+(Pdb) p aid
+unknown-attribute-0x21
+(Pdb) p data[1]
+'!'
+(Pdb) p data[0]
+'\x90'
+(Pdb) p ord(data[1])
+33
+(Pdb) pp Attribute.CODE
+<class 'exabgp.bgp.message.update.attribute.attribute.CODE'>
+(Pdb) pp Attribute.CODE.BGPSEC
+33
+(Pdb) p aid
+unknown-attribute-0x21
+(Pdb) l
+284
+285             # We do not care if the attribute are transitive or not as we do not redistribute
+286             flag = Attribute.Flag(ord(data[0]))
+287             aid = Attribute.CODE(ord(data[1]))
+288
+289  ->         if flag & Attribute.Flag.EXTENDED_LENGTH:
+290                 length = unpack('!H',data[2:4])[0]
+291                 offset = 4
+292             else:
+293                 length = ord(data[2])
+294                 offset = 3
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+-> for message in proto.read_message():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(289)parse()
+-> if flag & Attribute.Flag.EXTENDED_LENGTH:
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(290)parse()
+-> length = unpack('!H',data[2:4])[0]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(291)parse()
+-> offset = 4
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(296)parse()
+-> data = data[offset:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(297)parse()
+-> left = data[length:]
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(298)parse()
+-> attribute = data[:length]
+(Pdb) p left
+''
+(Pdb) pp data
+"\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2"
+(Pdb) p length
+104
+(Pdb) l
+293                 length = ord(data[2])
+294                 offset = 3
+295
+296             data = data[offset:]
+297             left = data[length:]
+298  ->         attribute = data[:length]
+299
+300             logger = Logger()
+301             logger.parser(LazyFormat("parsing flag %x type %02x (%s) len %02x %s" % (flag,int(aid),aid,length,'payload ' if length else ''),data[:length]))
+302
+303             # remove the PARTIAL bit before comparaison if the attribute is optional
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(300)parse()
+-> logger = Logger()
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(301)parse()
+-> logger.parser(LazyFormat("parsing flag %x type %02x (%s) len %02x %s" % (flag,int(aid),aid,length,'payload ' if length else ''),data[:length]))
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(304)parse()
+-> if aid in Attribute.attributes_optional:
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(305)parse()
+-> flag &= Attribute.Flag.MASK_PARTIAL & 0xFF
+(Pdb) p aid
+unknown-attribute-0x21
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(309)parse()
+-> if Attribute.registered(aid,flag):
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(194)registered()
+-> @classmethod
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(196)registered()
+-> return (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH) in cls.registered_attributes
+(Pdb) l
+191             else:
+192                 Attribute.attributes_well_know.append(aid)
+193
+194         @classmethod
+195         def registered (cls, attribute_id, flag):
+196  ->         return (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH) in cls.registered_attributes
+197
+198         @classmethod
+199         def klass (cls, attribute_id, flag):
+200             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+201             if key in cls.registered_attributes:
+(Pdb) p attribute_id, flag
+(unknown-attribute-0x21, 144)
+(Pdb) pp cls.registered_attributes
+{(1, 80): <class 'exabgp.bgp.message.update.attribute.origin.Origin'>,
+ (2, 80): <class 'exabgp.bgp.message.update.attribute.aspath.ASPath'>,
+ (3, 80): <class 'exabgp.bgp.message.update.attribute.nexthop.NextHop'>,
+ (4, 144): <class 'exabgp.bgp.message.update.attribute.med.MED'>,
+ (5, 80): <class 'exabgp.bgp.message.update.attribute.localpref.LocalPreference'>,
+ (6, 80): <class 'exabgp.bgp.message.update.attribute.atomicaggregate.AtomicAggregate'>,
+ (7, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator'>,
+ (8, 208): <class 'exabgp.bgp.message.update.attribute.community.communities.Communities'>,
+ (9, 144): <class 'exabgp.bgp.message.update.attribute.originatorid.OriginatorID'>,
+ (10, 144): <class 'exabgp.bgp.message.update.attribute.clusterlist.ClusterList'>,
+ (14, 144): <class 'exabgp.bgp.message.update.attribute.mprnlri.MPRNLRI'>,
+ (15, 144): <class 'exabgp.bgp.message.update.attribute.mpurnlri.MPURNLRI'>,
+ (16, 208): <class 'exabgp.bgp.message.update.attribute.community.extended.communities.ExtendedCommunities'>,
+ (17, 208): <class 'exabgp.bgp.message.update.attribute.aspath.AS4Path'>,
+ (18, 208): <class 'exabgp.bgp.message.update.attribute.aggregator.Aggregator4'>,
+ (22, 208): <class 'exabgp.bgp.message.update.attribute.pmsi.PMSI'>,
+ (26, 144): <class 'exabgp.bgp.message.update.attribute.aigp.AIGP'>,
+ (33, 144): <class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>}
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(196)registered()->True
+-> return (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH) in cls.registered_attributes
+(Pdb) s
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb) l
+305                 flag &= Attribute.Flag.MASK_PARTIAL & 0xFF
+306                 # flag &= ~Attribute.Flag.PARTIAL & 0xFF  # cleaner than above (python use signed integer for ~)
+307
+308             # handle the attribute if we know it
+309             if Attribute.registered(aid,flag):
+310  ->             self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+311                 return self.parse(left,negotiated)
+312             # XXX: FIXME: we could use a fallback function here like capability
+313
+314             # if we know the attribute but the flag is not what the RFC says. ignore it.
+315             if aid in Attribute.attributes_known:
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(212)unpack()
+-> @classmethod
+(Pdb) l
+207                 kls = cls.attributes_known[attribute_id]
+208                 kls.ID = attribute_id
+209                 return kls
+210             raise Notify (2,4,'can not handle attribute id %s' % attribute_id)
+211
+212  ->     @classmethod
+213         def unpack (cls, attribute_id, flag, data, negotiated):
+214             cache = cls.caching and cls.CACHING
+215
+216             if cache and data in cls.cache.get(cls.ID,{}):
+217                 return cls.cache[cls.ID].retrieve(data)
+(Pdb) pp locals()
+{'attribute_id': unknown-attribute-0x21,
+ 'cls': <class 'exabgp.bgp.message.update.attribute.attribute.Attribute'>,
+ 'data': "\x00\x08\x01\x00\x00\x00\xeae\x00`\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00G0E\x02!\x00\xc6%FIK\x88\x17\x02\xd7v\r\xa7\xa5\xe6\xeckA7\xdc;\x92'0C\x1d\x12\xdd\xe1\x8aI5\x17\x02 U&\x0ej\x93\x83\xd2\xcd\xdd\xc5\xeb\xfa\x08\xfe&\x93\xff\xf0\x10\x90pOCL&O\xde\xa8\xef\xd5a\xe2",
+ 'flag': 144,
+ 'negotiated': <exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0xa12adcc>}
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(214)unpack()
+-> cache = cls.caching and cls.CACHING
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(216)unpack()
+-> if cache and data in cls.cache.get(cls.ID,{}):
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(219)unpack()
+-> key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(220)unpack()
+-> if key in Attribute.registered_attributes.keys():
+(Pdb) p key
+(unknown-attribute-0x21, 144)
+(Pdb) l
+215
+216             if cache and data in cls.cache.get(cls.ID,{}):
+217                 return cls.cache[cls.ID].retrieve(data)
+218
+219             key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+220  ->         if key in Attribute.registered_attributes.keys():
+221                 instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+222
+223                 if cache:
+224                     cls.cache[cls.ID].cache(data,instance)
+225                 return instance
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) s
+--Call--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(198)klass()
+-> @classmethod
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(200)klass()
+-> key = (attribute_id,flag | Attribute.Flag.EXTENDED_LENGTH)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(201)klass()
+-> if key in cls.registered_attributes:
+(Pdb) pp key
+(unknown-attribute-0x21, 144)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(202)klass()
+-> kls = cls.registered_attributes[key]
+(Pdb) p kls
+*** NameError: NameError("name 'kls' is not defined",)
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(203)klass()
+-> kls.ID = attribute_id
+(Pdb) p kls
+<class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>
+(Pdb) p attribute_id
+unknown-attribute-0x21
+(Pdb) p kls.ID
+33
+(Pdb) n
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(204)klass()
+-> return kls
+(Pdb) p kls.ID
+unknown-attribute-0x21
+(Pdb) pp kls
+<class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(204)klass()-><class '....BGPSEC'>
+-> return kls
+(Pdb) s
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+-> for message in proto.read_message():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) s
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(221)unpack()->None
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+(Pdb) n
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb) s
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()->None
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+(Pdb) s
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb) s
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()->None
+-> return self.parse(left,negotiated)
+(Pdb) n
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()->None
+-> return self.parse(left,negotiated)
+(Pdb) n
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+(Pdb)
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()->None
+-> return self.parse(left,negotiated)
+(Pdb)
+TypeError: 'unpack() takes exactly 5 arguments (3 given)'
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+(Pdb)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(266)unpack()
+-> except IndexError:
+(Pdb) pp attributes
+*** NameError: NameError("name 'attributes' is not defined",)
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(266)unpack()->None
+-> except IndexError:
+(Pdb)
+TypeError: TypeErro...given)',)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+(Pdb) pp attributes
+*** NameError: NameError("name 'attributes' is not defined",)
+(Pdb) n
+--Return--
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()->None
+-> attributes = Attributes.unpack(_attributes,negotiated)
+(Pdb) pp attributes
+*** NameError: NameError("name 'attributes' is not defined",)
+(Pdb) l
+260                             return EOR(AFI.ipv4,SAFI.unicast,IN.ANNOUNCED)  # pylint: disable=E1101
+261                     if length == 11 and data.startswith(EOR.NLRI.PREFIX):
+262                             return EOR.unpack_message(data,negotiated)
+263
+264                     withdrawn, _attributes, announced = cls.split(data)
+265  ->                 attributes = Attributes.unpack(_attributes,negotiated)
+266
+267                     if not withdrawn:
+268                             logger.parser("no withdrawn NLRI")
+269                     if not announced:
+270                             logger.parser("no announced NLRI")
+(Pdb)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------
+ 2nd try
+-----------------
+
+[kyehwanl@node3 exabgp]$ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(7)<module>()
+-> """
+(Pdb) b /users/kyehwanl/srx_test1/exabgp-3.4.13/lib//exabgp/bgp/message/update/attribute/bgpsec.py:237
+Breakpoint 1 at /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py:237
+(Pdb) c
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | environment file missing
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | generate it using "exabgp --fi > /etc/exabgp/exabgp.env"
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | reactor       | Performing reload of exabgp 3.4.13
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading | ####################################################
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading | group Core_v4 {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     hold-time 180;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     local-as 60004;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     peer-as 60005;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     router-id 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     graceful-restart 1200;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     #group-updates true; # DISABLE in order not to pack prefixes
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     # Route can be defined in either here, 'static' or using 'process-run' or both
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     static {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # Example - Announcing a /32 with one community
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #route 30.10.10.1/32 next-hop 10.1.1.4 community 65001:666;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #Example - Two communities
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       route 30.21.0.0/24 next-hop 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #route 30.31.0.0/24 next-hop 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #route 30.41.0.0/24 next-hop 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     neighbor 10.1.1.5 {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       local-address 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       description "Quagga";
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #================================= <BGPSec Options> ======================================================
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # enable bgpsec
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       bgpsec;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # set SKI and libraries' location
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       ski 492AAE72485D926CACDA2D259BE19DAE82DFBDE3;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       bgpsec_libloc /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |         #bgpsec_openssl_lib /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |         #bgpsec_crypto_init PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # to indicate direction in bgpsec capability : 0- receive, 1: send/receive both
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       bgpsec_send_receive 1;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #bgpsec_key_volt /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # --------------------------------------------------------------------------------
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # Multiple BGPSec Stacking
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #     bgpsec_pre_asns: previous ASNs in order of ASN-1 ASN-2 ... ASN-n(origin)
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #     bgpsec_pre_skis: previous SKIs in accordance with pre_asns variable above
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       # --------------------------------------------------------------------------------
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #bgpsec_pre_asns 60003;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #bgpsec_pre_skis 45CAD0AC44F77EFAA94602E9984305215BF47DCD;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       bgpsec_pre_asns 60003 60002;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       bgpsec_pre_skis 45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #==========================================================================================================
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       add-path send/receive;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       process parsed-route-backend {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |             receive {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |               parsed;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |               update;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |             }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |             run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |             #run /users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/log-1.py;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |           }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     process add-routes {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #encoder text;    # how the data to be serialized before sent to exaBGP
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |                         # provides the program with neighbor events
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       neighbor-changes;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |                         # (TCP connection established/closed, successful OPEN negotiation, OPENCONFIRM)
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       run /usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #'announce route 100.10.0.0/24 next-hop self'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |       #'announce route 200.20.0.0/24 next-hop self'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     #process loving-flaps {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     #  run /users/kyehwanl/Download/exabgp-3.4.13/flap.sh;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |     #}
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading | }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |    #neighbor 192.168.1.253 {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |    #     local-address 192.168.1.2;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |    #     description "IOS_XR";
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |    #     md5 S00pers3kretz;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | loading |    #}
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | configuration | 'group' 'core_v4' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'hold-time' '180' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'local-as' '60004' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'peer-as' '60005' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'router-id' '10.1.1.4' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'graceful-restart' '1200' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'static' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | static        | 'route' '30.21.0.0/24' 'next-hop' '10.1.1.4' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | static        | '}'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'neighbor' '10.1.1.5' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'local-address' '10.1.1.4' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'description' '"quagga"' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'bgpsec' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ bgpsec ENABLED
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'ski' '492aae72485d926cacda2d259be19dae82dfbde3' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ ski: 492aae72485d926cacda2d259be19dae82dfbde3
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'bgpsec_libloc' '/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ crypto library at: /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'bgpsec_send_receive' '1' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ bgpsec capability : 1
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'bgpsec_pre_asns' '60003 60002' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ previous asn:  60003 60002
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'bgpsec_pre_skis' '45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | +++ previous ski:  45CAD0AC44F77EFAA94602E9984305215BF47DCD C30433FA1975FF193181458FB902B501EA9789DC
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'add-path' 'send/receive' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | 'process' 'parsed-route-backend' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | 'receive' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | receive       | 'parsed' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | receive       | 'update' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | receive       | '}'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | 'run' '/users/kyehwanl/srx_test1/exabgp-3.4.13/etc/exabgp/processes/syslog-1.py' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | '}'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | neighbor      | '}'
+bgpsec capability directions : 0
+bgpsec enabled
+ski ['492aae72485d926cacda2d259be19dae82dfbde3']
+bgpsec library location: ['/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxCryptoAPI.so']
+bgpsec previous asns: ['60003', '60002']
+bgpsec previous skis: ['45CAD0AC44F77EFAA94602E9984305215BF47DCD', 'C30433FA1975FF193181458FB902B501EA9789DC']
+bgpsec capability directions : ['1']
+Tue, 22 Oct 2019 13:19:10 | WARNING  | 7238   | configuration | --------------------------------------------------------------------------------
+Tue, 22 Oct 2019 13:19:10 | WARNING  | 7238   | configuration | group-updates not enabled for peer 10.1.1.5, it surely should, the default will change to true soon
+Tue, 22 Oct 2019 13:19:10 | WARNING  | 7238   | configuration | --------------------------------------------------------------------------------
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | neighbor 10.1.1.5 {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   description "quagga";
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   router-id 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   local-address 10.1.1.4;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   local-as 60004;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   peer-as 60005;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   hold-time 180;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   manual-eor false;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   group-updates: ;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   auto-flush: true;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   adj-rib-out: true;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   ttl-security: ;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   capability {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     asn4 enable;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     route-refresh disable;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     graceful-restart 1200;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     add-path send/receive;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     multi-session disable;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     operational disable;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     aigp disable;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   family {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 unicast;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 multicast;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 nlri-mpls;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 mpls-vpn;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 flow;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet4 flow-vpn;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet6 unicast;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet6 mpls-vpn;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet6 flow;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     inet6 flow-vpn;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     l2vpn vpls;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   process {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     receive {
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |       update;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |       parsed;
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |     }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |   }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | }
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration |
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | 'process' 'add-routes' '{'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | 'neighbor-changes' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | 'run' '/usr/bin/python /users/kyehwanl/srx_test1/exabgp-3.4.13/example.py' ';'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | process       | '}'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | configuration | parsing | group         | '}'
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | reactor       | New peer setup: neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open
+Tue, 22 Oct 2019 13:19:10 | WARNING  | 7238   | configuration | Loaded new configuration successfully
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | processes     | Forked process parsed-route-backend
+Tue, 22 Oct 2019 13:19:10 | INFO     | 7238   | processes     | Forked process add-routes
+Tue, 22 Oct 2019 13:19:13 | INFO     | 7238   | network       | Connected to peer neighbor 10.1.1.5 local-ip 10.1.1.4 local-as 60004 peer-as 60005 router-id 10.1.1.4 family-allowed in-open (out)
+[SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+[SRxCryptoAPI - INFO] Use crypto configuration located in /users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf
+[SRxCryptoAPI - INFO] Use configuration file "/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/api/../_inst/etc//srxcryptoapi.conf"
+[SRxCryptoAPI - INFO] - debug type: 7
+[SRxCryptoAPI - INFO] - key_volt="/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/"
+[SRxCryptoAPI - INFO] - key_ext_private="private"
+[SRxCryptoAPI - INFO] - key_ext_public="pub"
+[SRxCryptoAPI - INFO] - library_name="/users/kyehwanl/Quagga_test/Proces_Performance/QuaggaSRxSuite/_inst/lib/srx/libSRxBGPSecOpenSSL.so"
+[SRxCryptoAPI - INFO] - init_value="PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt"
+[SRxCryptoAPI - INFO] - method_init="init"
+[SRxCryptoAPI - INFO] - method_release="release"
+[SRxCryptoAPI - INFO] - method_freeHashMessage="freeHashMessage"
+[SRxCryptoAPI - INFO] - method_freeSignature="freeSignature"
+[SRxCryptoAPI - WARNING] - 'method_getDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_setDebugLevel' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_isAlgorithmSupported' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] - method_sign="sign"
+[SRxCryptoAPI - INFO] - method_validate="validate"
+[SRxCryptoAPI - INFO] - method_registerPrivateKey="registerPrivateKey"
+[SRxCryptoAPI - INFO] - method_unregisterPrivateKey="unregisterPrivateKey"
+[SRxCryptoAPI - INFO] - method_registerPublicKey="registerPublicKey"
+[SRxCryptoAPI - INFO] - method_unregisterPublicKey="unregisterPublicKey"
+[SRxCryptoAPI - WARNING] - 'method_cleanKeys' MISSING mapping information in configuration file!
+[SRxCryptoAPI - WARNING] - 'method_cleanPrivateKeys' MISSING mapping information in configuration file!
+[SRxCryptoAPI - INFO] Linking "init" to "init"!
+[SRxCryptoAPI - INFO] Linking "release" to "release"!
+[SRxCryptoAPI - INFO] Linking "freeHashMessage" to "freeHashMessage"!
+[SRxCryptoAPI - INFO] Linking "freeSignature" to "freeSignature"!
+[SRxCryptoAPI - INFO] Linking "setDebugLevel" to default method!
+[SRxCryptoAPI - INFO] Linking "getDebugLevel" to default method!
+[SRxCryptoAPI - INFO] Linking "isAlgorithmSupported" to default method!
+[SRxCryptoAPI - INFO] Linking "sign" to "sign"!
+[SRxCryptoAPI - INFO] Linking "validate" to "validate"!
+[SRxCryptoAPI - INFO] Linking "registerPublicKey" to "registerPublicKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPublicKey" to "unregisterPublicKey"!
+[SRxCryptoAPI - INFO] Linking "registerPrivateKey" to "registerPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "unregisterPrivateKey" to "unregisterPrivateKey"!
+[SRxCryptoAPI - INFO] Linking "cleanKeys" to default method!
+[SRxCryptoAPI - INFO] Linking "cleanPrivateKeys" to default method!
+[SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt'
++++ init called
+value: PUB:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt;PRIV:/users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt
++++ logLevel: 7
++--------------------------------------------------------------+
+| API: libBGPSec_OpenSSL.so                                    |
+| WARNING: This API provides a reference implementation for    |
+| BGPSec crypto processing. The key storage provided with this |
+| API does not provide a 'secure' key storage which protects   |
+| against malicious side attacks. Also it is not meant to be   |
+| a FIBS certified key storage.                                |
+| This API uses open source OpenSSL functions and checks, keys |
+| for their correctness and once done, uses it repeatedly!     |
++--------------------------------------------------------------+
++++ string: /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/ski-list.txt isPrivate: 0
++++ KEY ASN: 62ea0000 SKI: c304
++++ KEY ASN: 63ea0000 SKI: 45ca
++++ KEY ASN: 64ea0000 SKI: 492a
++++ string: /users/kyehwanl/proj-bgp/extras/srxcryptoapi/keys/priv-ski-list.txt isPrivate: 1
++++ KEY ASN: 62ea0000 SKI: c304
++++ KEY ASN: 63ea0000 SKI: 45ca
++++ KEY ASN: 64ea0000 SKI: 492a
++++ KEY ASN: 65ea0000 SKI: ee50
+[SRxCryptoAPI - INFO] The internal key initialized storage holds (4 private and 3 public keys)!
+srxCryptoInit return value 1 (API_SUCCESS:1 or API_FAILURE:0)
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0x9440198
+peerAS: 1676279808
+myHost: 0x94c6d40
+myHost: 0x94c6d40
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1659502592
+nlri: 0x949a980
+nlri: 0x949a980
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1659502592
+
+c3 04 33 fa 19 75 ff 19 31 81 45 8f b9 02 b5 01
+ea 97 89 dc 00 6b 65 74 2e 70 00 09 01 00 00 00
+
+ski: 0x94e5274
+algoID: 1
+status: 1
+hashMessage: (nil)
+hashMessage is NULL
+
+Hash(sign):
+00 00 ea 63 01 00 00 00 ea 62 01 00 01 01 18 1e
+15 00
+
+Digest(sign):
+b2 2b 08 40 ad 78 6d cc 14 98 0b 5e 6e 39 75 18
+56 7c ea 1c e1 92 fe bc 87 7d 70 c6 d1 55 ab 9a
+
+30 44 02 20 72 42 83 79 3c c4 14 57 47 99 07 15
+25 b7 30 66 e5 cf 5b 93 6d bb 52 da ba c0 06 2e
+e5 db 17 fa 02 20 4f 01 f8 a2 92 67 e3 b2 94 47
+dc ff 58 59 c8 d4 d2 34 cb 72 a3 5c 0f 45 3f e3
+14 ee 33 a7 d3 23
+sca_generateHashMessage function called
+data: 0x931cc28
+data.myAS 62ea0000
+data.bgpsec_path_attr: 94ea8b4
+data->hashMessage[0]: (nil)
+116 byte used from calling genenrate-HashMessage
+0x0 0x0 0xea 0x62 0x1 0x0 0x0 0x0 0xea 0x62 0x1 0x0 0x1 0x1 0x18 0x1e 0x15 0x0
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0x9532a20
+peerAS: 1693057024
+myHost: 0x94c6d40
+myHost: 0x94c6d40
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1676279808
+nlri: 0x93c0490
+nlri: 0x93c0490
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1676279808
+
+45 ca d0 ac 44 f7 7e fa a9 46 02 e9 98 43 05 21
+5b f4 7d cd 00 70 21 09 c0 90 16 09 b0 53 4e 09
+
+ski: 0x94e5364
+algoID: 1
+status: 1
+hashMessage: 0x94a2a50
+hashMessage.ownedByAPI: 0
+hashMessage.bufferSize: 116
+hashMessage.buffer:
+hashMessage.segmentCount: 1
+hashMessage.hashMessageValPtr: 0x91c2e60
+
+Hash(sign):
+00 00 ea 64 c3 04 33 fa 19 75 ff 19 31 81 45 8f
+b9 02 b5 01 ea 97 89 dc 00 46 30 44 02 20 72 42
+83 79 3c c4 14 57 47 99 07 15 25 b7 30 66 e5 cf
+5b 93 6d bb 52 da ba c0 06 2e e5 db 17 fa 02 20
+4f 01 f8 a2 92 67 e3 b2 94 47 dc ff 58 59 c8 d4
+d2 34 cb 72 a3 5c 0f 45 3f e3 14 ee 33 a7 d3 23
+01 00 00 00 ea 63 01 00 00 00 ea 62 01 00 01 01
+18 1e 15 00
+
+Digest(sign):
+1d 02 e6 17 8c b3 82 2c d1 93 1a f2 05 7e 62 39
+17 70 f4 4e 40 e2 d3 f3 39 77 c0 f5 86 03 9c c6
+
+30 46 02 21 00 93 a5 dc e0 55 75 38 52 35 50 15
+97 b9 5a ac 84 da 89 bb 87 a4 51 16 5a b4 3f 4f
+f5 ad 5f 2f c9 02 21 00 9c 60 2d 3c 70 8c 57 2a
+7c 82 1b 78 c9 2f 5e 53 91 a8 b8 40 bb 96 c6 2f
+7c a5 1b 84 fb e5 09 2e
+sca_generateHashMessage function called
+data: 0x949a948
+data.myAS 63ea0000
+data.bgpsec_path_attr: 952e76c
+data->hashMessage[0]: (nil)
+216 byte used from calling genenrate-HashMessage
+0x0 0x0 0xea 0x63 0xc3 0x4 0x33 0xfa 0x19 0x75 0xff 0x19 0x31 0x81 0x45 0x8f 0xb9 0x2 0xb5 0x1 0xea 0x97 0x89 0xdc 0x0 0x46 0x30 0x44 0x2 0x20 0x72 0x42 0x83 0x79 0x3c 0xc4 0x14 0x57 0x47 0x99 0x7 0x15 0x25 0xb7 0x30 0x66 0xe5 0xcf 0x5b 0x93 0x6d 0xbb 0x52 0xda 0xba 0xc0 0x6 0x2e 0xe5 0xdb 0x17 0xfa 0x2 0x20 0x4f 0x1 0xf8 0xa2 0x92 0x67 0xe3 0xb2 0x94 0x47 0xdc 0xff 0x58 0x59 0xc8 0xd4 0xd2 0x34 0xcb 0x72 0xa3 0x5c 0xf 0x45 0x3f 0xe3 0x14 0xee 0x33 0xa7 0xd3 0x23 0x1 0x0 0x0 0x0 0xea 0x63 0x1 0x0 0x0 0x0 0xea 0x62 0x1 0x0 0x1 0x1 0x18 0x1e 0x15 0x0
+_sign function called
+bgpsec_data parameter parsing...
+bgpsec_data: 0x9440198
+peerAS: 1709834240
+myHost: 0x94c6d40
+myHost: 0x94c6d40
+myHost.pCount: 1
+myHost.flags: 0
+myHost.asn: 1693057024
+nlri: 0x949a980
+nlri: 0x949a980
+nlri.afi: 100
+nlri.safi: 1
+nlri.length: 24
+nlri.addr.ipV4: 151e
+myASN: 1693057024
+
+49 2a ae 72 48 5d 92 6c ac da 2d 25 9b e1 9d ae
+82 df bd e3 00 79 2e 70 00 3e 00 00 e0 53 4e 09
+
+ski: 0x94e5394
+algoID: 1
+status: 1
+hashMessage: 0x93c0490
+hashMessage.ownedByAPI: 0
+hashMessage.bufferSize: 216
+hashMessage.buffer:
+hashMessage.segmentCount: 2
+hashMessage.hashMessageValPtr: 0x94b2f18
+
+Hash(sign):
+00 00 ea 65 45 ca d0 ac 44 f7 7e fa a9 46 02 e9
+98 43 05 21 5b f4 7d cd 00 48 30 46 02 21 00 93
+a5 dc e0 55 75 38 52 35 50 15 97 b9 5a ac 84 da
+89 bb 87 a4 51 16 5a b4 3f 4f f5 ad 5f 2f c9 02
+21 00 9c 60 2d 3c 70 8c 57 2a 7c 82 1b 78 c9 2f
+5e 53 91 a8 b8 40 bb 96 c6 2f 7c a5 1b 84 fb e5
+09 2e 01 00 00 00 ea 64 c3 04 33 fa 19 75 ff 19
+31 81 45 8f b9 02 b5 01 ea 97 89 dc 00 46 30 44
+02 20 72 42 83 79 3c c4 14 57 47 99 07 15 25 b7
+30 66 e5 cf 5b 93 6d bb 52 da ba c0 06 2e e5 db
+17 fa 02 20 4f 01 f8 a2 92 67 e3 b2 94 47 dc ff
+58 59 c8 d4 d2 34 cb 72 a3 5c 0f 45 3f e3 14 ee
+33 a7 d3 23 01 00 00 00 ea 63 01 00 00 00 ea 62
+01 00 01 01 18 1e 15 00
+
+Digest(sign):
+47 44 d1 16 5a d9 a3 2b ca e1 c5 30 c5 51 c9 a1
+f5 f2 5d a4 cc 45 c6 f3 ea 57 4b ff 5e 84 a0 f9
+
+30 45 02 20 62 9b a0 65 74 db 8b 92 ba ae 2e ea
+56 32 3b 10 54 42 3a e6 78 c0 0e 2e 40 27 91 be
+38 41 87 3d 02 21 00 f4 cd 71 d3 f1 e9 25 11 a5
+a1 ed 1b b0 0d 46 16 89 d4 f0 64 5a c1 1a 25 02
+41 e4 b5 da 0f 78 af
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py(237)unpack()
+-> mpnlri={}
+(Pdb) bt
+  /usr/lib/python2.7/bdb.py(383)run()
+-> exec cmd in globals, locals
+  <string>(1)<module>()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(308)<module>()
+-> main()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(221)main()
+-> run(env,comment,configurations)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py(260)run()
+-> ok = Reactor(configurations).run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/loop.py(202)run()
+-> action = peer.run()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(672)run()
+-> r = generator.next()
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(587)_run()
+-> for action in self._main(direction):
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/peer.py(456)_main()
+-> for message in proto.read_message():
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/reactor/protocol.py(153)read_message()
+-> message = Message.unpack(msg_id,body,self.negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/message.py(126)unpack()
+-> return cls.klass(message).unpack_message(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/__init__.py(265)unpack_message()
+-> attributes = Attributes.unpack(_attributes,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(253)unpack()
+-> attributes = cls().parse(data,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(311)parse()
+-> return self.parse(left,negotiated)
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attributes.py(310)parse()
+-> self.add(Attribute.unpack(aid,flag,attribute,negotiated))
+  /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/attribute.py(222)unpack()
+-> instance = cls.klass(attribute_id,flag).unpack(data,negotiated)
+> /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/bgp/message/update/attribute/bgpsec.py(237)unpack()
+-> mpnlri={}
+(Pdb) pp locals()
+{'cls': <class 'exabgp.bgp.message.update.attribute.bgpsec.BGPSEC'>,
+ 'data': '\x00\x08\x01\x00\x00\x00\xeae\x00a\x01\xeeP=f\x9a7Kr\x9f\xe6\xf8\xf6\x1bR\xa7x\xf8\xa6\xcc\xe9\x00H0F\x02!\x00\xcf\xc3g\xcd\x82%\xe6\xbc\xe6x]n\x94\xfc\xd1\x18\rD\xded\x8dD\x96/ef\xadiZ\x94\xe1\xc0\x02!\x00\xb3b\xb9\x08X\x18\xed\xa2\xbd\x9d\xeeb)\xee\x8dL\xea\x07=\x0e\xda\xe4\xdb\xed\xd6i\x93^{\xbf\xef\x9c',
+ 'negotiated': <exabgp.bgp.message.open.capability.negotiated.Negotiated object at 0x94ded6c>}
+(Pdb)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
