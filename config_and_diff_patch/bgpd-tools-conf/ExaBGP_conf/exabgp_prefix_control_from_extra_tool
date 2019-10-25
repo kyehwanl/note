@@ -1,0 +1,53 @@
+
+
+How to send prefixes 
+====================
+(source:https://fastnetmon.com/how-to-control-exabgp-from-external-tool/)
+
+
+ 1.  vim /etc/exabgp/exabgp_pipe_provider.sh
+
+    #!/bin/sh
+     
+     FIFO="/tmp/exabgp.cmd"
+     #FIFO="/var/run/exabgp.cmd"
+     #trap "rm -f $FIFO" SIGINT
+      
+      rm -f $FIFO
+      mkfifo $FIFO
+      tail -f $FIFO
+
+  2. chmod +x /etc/exabgp/exabgp_pipe_provider.sh
+
+
+  3. And add following (process service-dynamic ….) to ExaBGP config: /etc/exabgp.conf
+
+      group Core_v4 {
+          hold-time 180;
+          local-as 65001;
+          peer-as 1234;
+          router-id 10.0.3.114;
+          graceful-restart 1200;
+       
+          static {
+              route 10.10.10.1/32 next-hop 10.0.3.114 community 65001:666;
+          }   
+       
+          neighbor 10.0.3.115 {
+              local-address 10.0.3.114;
+              description "Quagga";
+          }   
+       
+          # Add this line for process management
+          process service-dynamic {
+              run /etc/exabgp/exabgp_pipe_provider.sh;
+          }   
+      }
+
+
+  4. Let’s add announce:
+
+        echo "announce route 10.10.10.123/32 next-hop 10.0.3.114 community 65001:666" > /tmp/exabgp.cmd
+
+      If you want to disable it please use this syntax:
+        echo "withdraw route 10.10.10.123/32" > /tmp/exabgp.cmd

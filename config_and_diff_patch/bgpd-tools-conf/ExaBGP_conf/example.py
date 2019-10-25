@@ -26,3 +26,12 @@ for message in messages:
 #Loop endlessly to allow ExaBGP to continue running
 while True:
     sleep(1)
+
+'''
+Important note
+==============
+
+Implementators using this API should keep in mind that read on STDIN are normally blocking. When using the same process for SENDING and receiving, ASYNC IO programming techniques should be used.
+
+However two processes, one for sending and one for receiving, can be used, which may make the programming task easier if shared states are stored in a common database / key store / NoSQL application.
+'''

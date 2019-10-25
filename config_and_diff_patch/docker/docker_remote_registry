@@ -206,6 +206,9 @@
           [root@vmware-011 registry_certs]# curl -k https://10.0.50.11:5000/v2/_catalog
           {"repositories":["bird","centos","quagga","quagga-test","registry-kyehwanl"]}
 
+          [root@idac-server02 exabgp-3.4.13]# curl -k https://10.0.50.11:5000/v2/exabgp/tags/list
+          {"name":"exabgp","tags":["latest","1.1"]}
+
 
 
      D. in case of uploading on the same server with the local registry server's location

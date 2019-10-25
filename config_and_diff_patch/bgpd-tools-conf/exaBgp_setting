@@ -11,6 +11,9 @@
  (3) env exabgp.daemon.user=root exabgp.daemon.daemonize=true exabgp.daemon.pid=/var/run/exabgp.pid exabgp.log.destination=/var/log/exabgp.log ./sbin/exabgp ./bgpd.exa.conf
 
 
+ (4) in case of running on root, 
+    env exabgp.daemon.user=root ./sbin/exabgp ./bgpd.exa.conf
+
 
 
 2. configuration
