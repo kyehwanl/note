@@ -184,7 +184,7 @@ tmux tips
 
     
     # these below are favorate colors personally
-    set -g status-bg colour53 --> dark purple                                                                                              set -g status-bg colour17 --> dark blue
+    set -g status-bg colour53 --> dark purple                                                                                               set -g status-bg colour17 --> dark blue
     set -g status-bg colour94 --> dark orange
     set -g status-bg colour240 --> dark gray
 
