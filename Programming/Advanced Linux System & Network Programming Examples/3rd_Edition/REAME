@@ -1,0 +1,261 @@
+
+
+https://sunyzero.tistory.com/242
+
+
+* 예제 소스 코드 파일 : (2018년 2월 6일 버전)
+
+ alsp_3rd_20180206.tar.xz
+
+* 압축을 풀면 하위 디렉토리가 생성됩니다. (소스 코드는 xz로 압축되었습니다. tar의 대문자 J 옵션으로 풀 수 있습니다. 아래 명령어를 참고하세요.)
+
+  압축 해제 명령 : tar xfJ alsp_3rd_20180206.tar.xz
+
+* 생성된 하위 디렉토리에서 make를 명령하면 하위 모든 예제가 컴파일 됩니다.
+
+* make clean을 하면 하위 모든 컴파일된 예제의 바이너리가 청소(삭제)됩니다.
+
+
+
+
+
+
+
+* 목차
+
+
+CHAPTER 00 들어가기 전에
+헤더 파일과 묵시적 선언
+Feature test macro와 표준
+유닉스 역사와 표준안, 용어 및 정의
+
+CHAPTER 01 프로세스
+프로세스, fork, exec(3) 계열 함수, posix_spawn 계열 함수
+
+CHAPTER 02 파일
+저수준/고수준 파일 처리의 사용, 저수준과 고수준 파일 처리의 혼용
+패딩(padding)/팩(pack)과 XDR, 대용량 파일 지원(LFS)
+
+CHAPTER 03 텍스트 처리
+정규 표현식(REGEX)의 이용, 새롭게 추가된 문자열 관련 함수
+
+CHAPTER 04 메모리
+메모리 영역, 메모리 락(memory lock)
+
+CHAPTER 05 IPC
+IPC(Inter-Process Communication)
+mmap(memory mapped I/O), 메모리 사용 패턴 조언(memory advice)
+mmap의 대용량 페이지 기능 : Huge Page
+SysV와 POSIX의 IPC
+공유 메모리(shared memory) : XSI/POSIX 공유 메모리
+세마포어(semaphore) : XSI/POSIX 세마포어
+메시지 큐(message queue) : XSI/POSIX 메시지 큐
+
+CHAPTER 06 I/O 인터페이스
+파이프(pipe)와 FIFO
+소켓(socket), 바이트 순서(byte order) : 빅 엔디안, 리틀 엔디안
+TCP 소켓의 기초(SOCK_STREAM 소켓), UDP 소켓의 기초(SOCK_DGRAM 소켓)
+유닉스 도메인 소켓
+TCP와 UDP 네트워크 비교, TCP의 효율적인 기법들
+IPv6로 확장된 소켓 프로그래밍
+소켓 옵션 제어, 기타 소켓 관련 함수들
+넌블록킹 모드
+TCP 소켓의 아웃 오브 밴드(Out-Of-Band) 처리
+I/O 인터페이스의 선택 기준에 대해
+
+CHAPTER 07 I/O 멀티플렉싱(Multiplexing)
+I/O 멀티플렉싱(Multiplexing)
+select, pselect의 사용, poll의 사용
+고성능 I/O 멀티플렉서 epoll(event poll)
+
+CHAPTER 08 스레드 프로그래밍
+멀티 스레딩과 성능 향상, 병렬 처리 패턴, 스레드 안전
+POSIX 스레드(pthread), OpenMP 프로그래밍
+성능을 고려한 프로그래밍, 가짜 공유 문제(false sharing)
+
+CHAPTER 09 시그널
+UNIX 표준 시그널 목록, 시그널과 시그널 핸들러
+SIGCHLD 시그널과 자식 프로세스
+시그널과 세션, 프로세스 그룹, 시그널 블록 마스크
+시그널 안전과 원자적 실행
+멀티 스레드 환경에서의 시그널 처리
+대체 시그널 스택
+
+CHAPTER 10 리얼타임 확장
+POSIX 리얼타임 확장
+리얼타임 시그널 이벤트(sigevent), 리얼타임 시그널(RTS), 리얼타임 시계
+비동기적 I/O(AIO, asynchronous I/O), 리얼타임 스케줄링
+
+CHAPTER 11 리눅스 비표준 기능
+리눅스 비표준 기능, timerfd, eventfd, signalfd 기법
+timerfd와 I/O 멀티플렉싱 기법의 응용 
+
+* 3판의 챕터별 업데이트 내용
+
+4장에 변경된 내용
+
+    메모리 락(mlock) 기법 내용 보강 : capability
+
+
+
+5장에 변경된 내용
+
+    대용량 페이지(Huge TLB) 지원 및 성능 이슈 추가
+
+    THP (Transparent Huge Page) 기능 및 성능 차이 
+
+
+
+6장에 변경된 내용
+
+    TIME_WAIT에 대한 내용 보강
+
+    TCP autotuning에 대한 내용 보강
+
+    IPv6의 scope id에 대한 내용 보강
+
+    SO_REUSEADDR 소켓 옵션에 대한 내용 보강
+
+    넌블록킹 모드에 대한 내용 보강
+
+
+
+9장에 변경된 내용
+
+    시그널에 대한 설명 보강
+
+    waitid 함수 추가
+
+
+
+10장에 변경된 내용
+
+    단조 시계에 대한 내용 보강
+
+    리눅스의 비표준 시계에 대한 내용 추가
+
+    CPU 시계에 대한 내용 보강
+
+
+
+11장 리눅스 비표준 기능 (새로 추가된 장)
+
+    timerfd, signalfd, eventfd 기능 추가
+
+
+
+
+
+* 2판의 챕터별 업데이트 내용
+
+
+
+1장에 변경된 내용
+
+    fork와 성능 문제에 대한 이슈
+
+    exec의 파일 기술자 상속에 대한 이슈
+
+    posix_spawn 함수 추가
+
+
+
+2장에 변경된 내용
+
+    dprintf : 저수준 파일 처리의 형식화된 출력기능으로 SUSv4에서 추가된 기능
+
+    posix_fadvise : 파일 사용 패턴 조언 기능
+
+
+
+3장에 변경된 내용
+
+    SUSv4의 새로운 문자열 함수들
+
+    (stpcpy, stpncpy, strnlen, strndup, strerror_r, getline, getdelim)
+
+
+
+5장에 변경된 내용
+
+    posix_madvise : 메모리 사용 패턴 조언 기능
+
+
+
+6장에 변경된 내용
+
+    IPv6으로 확장된 소켓 프로그래밍 기법 (기존 IPv4의 구식 기법은 일부 삭제)
+
+    getaddrinfo, getnameinfo 함수
+
+    TCP_CORK 소켓 옵션
+
+    sockatmark를 이용한 아웃오브밴드(OOB) 처리 수정(기존 ioctl은 삭제)
+
+
+
+7장에 변경된 내용
+
+    poll에 대한 추가 예제
+
+    poller를 통한 OOB데이터 처리 부분 오류 수정
+
+
+
+8장에 변경된 내용
+
+    쓰레드와 병렬 처리의 배경과 역사에 대한 부분 추가
+
+    쓰레드 안전, 비동기에 대한 SUSv4-2010의 정의 추가
+
+    비표준 기능의 삭제(비표준 뮤텍스 타입, rwlocks의 비표준 설정)
+
+    쓰레드 로컬 저장소(TLS) 내용 보완 및 수정
+
+    robust 뮤텍스 내용 추가(SUSv4-2008)
+
+    OpenMP 표준 추가
+
+
+
+9장에 변경된 내용
+
+    대체 시그널 스택: sigaltstack 기능 추가
+
+
+
+10장에 변경된 내용
+
+    실시간 스케줄링(realtime scheduling) 추가
+
+
+
+부록
+
+    부록 내용 삭제 (2판에서 지면이 너무 늘어나서 본문의 부연 설명에 해당되는 부록은 삭제됐습니다.)
+
+
+
+ pdf_alsp_ch09_signal.zip
+
+
+
+ pdf_alsp_ch10_posix1b_rt.zip
+
+
+
+
+
+* 히스토리
+
+2018-01-02 파일 정리
+
+2017-06-04 5장 IPC mmap예제 오타 수정
+
+2017-05-30 10장 예제 코드 보강
+
+2016-07-20 3장 예제 코드 makefile 수정 : PCRE2 미설치시 ignore error 지시어 삽입
+
+                -std=gnu99 스탠다드 지시어 적용
+
+2016-04-13 예제 올림
