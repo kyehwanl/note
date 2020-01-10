@@ -1,0 +1,10 @@
+
+gRPC enabled qsrx and srx server
+=================================
+
+1. in go-grpc, stream is not thread safe
+ (cf) https://groups.google.com/forum/#!topic/grpc-io/aI6L6M4fzQ0
+
+ - tried to use worker pool to generate multiple go-routines, but it happened 
+    that the stream object was shared among go-routines and resulting in recv() and any other 
+    functions were shared. Totally messed.
