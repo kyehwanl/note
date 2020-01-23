@@ -117,3 +117,81 @@ written by Kyehwan Lee
   +++ remove bridge interfaces
   +++ remove bridge:  br1
   +++ remove bgpd processes  
+
+
+
+
+5. Example of Experiment command
+================================
+
+(c: instance, b: bgpsec enable, n: ns only, x: number of prefix, d: dry-run, p: bgpd path)
+
+1. ns instantiate
+
+    sudo ./net_emulator.py -c 2 -b -n -o -x 10  -d -p /opt/project/srx_test1/_inst/sbin/
+
+     // TODO: ip netns exec ns1 ip route add default via 10.1.1.1
+
+
+
+2. files generation command
+
+    sudo ./net_emulator.py -c 2 -b -f -o -x 10 -d
+
+
+3. logs
+    vmware.005-antd [2001]{.../net_emul_test/net_emulator}-> sudo ./net_emulator.py -c 2 -b -n -o -x 10 -B 10.0.50.11 -d
+    DRY-RUN Test Start
+
+
+    -------------------------
+    init count   : 2
+    start point  : 0
+    bgpsec       : True
+    dry-run      : True
+    conf-only    : False
+    ns-only      : True
+    num-Prefix   : 10
+    path         : /opt/project/net_emul_test/net_emulator/
+    remove       : False
+    debug output : True
+    base address : 10.0.50.11
+    peer address : 10.1.1.
+    conf type:   : quagga
+    -------------------------
+
+    [+] prerequisite tasks: check netns support
+    [+] prerequisite tasks: check linux bridge instace
+    command:  brctl show | grep br1 | awk '{print $1}'
+    +++ bridge instance not exist --> configure bridge
+    +++ bridge configuration start
+     dry_run:  brctl addbr br1
+     dry_run:  brctl stp br1 off
+     dry_run:  ifconfig br1 10.1.1.1/24 up
+    [+] network namespace setting and bgp running
+    +++ create network namespace nodes [0]
+     dry_run:  ip netns add ns0
+     dry_run:  ip link add veth0 type veth peer name veth1
+     dry_run:  ip link set veth1 netns ns0
+     dry_run:  ip netns exec ns0 ifconfig lo up
+     dry_run:  ip netns exec ns0 ifconfig veth1 10.1.1.2/24 up
+     dry_run:  brctl addif br1 veth0
+     dry_run:  ip link set dev veth0 up
+    +++ run bgp routing [0]
+     dry_run:  ip netns exec ns0 bash -c 'ifconfig;pwd'
+     dry_run:  ip netns exec ns0 bash -c '/opt/project/net_emul_test/net_emulator/bgpd -f /opt/project/net_emul_test/net_emulator/bgpd.conf.n2.bgpsec -i /tmp/node2.pid -d'
+     dry_run:  ps aux | grep bgp[d] | grep n2 | awk '{print $2}'
+
+    +++ create network namespace nodes [1]
+     dry_run:  ip netns add ns1
+     dry_run:  ip link add veth2 type veth peer name veth3
+     dry_run:  ip link set veth3 netns ns1
+     dry_run:  ip netns exec ns1 ifconfig lo up
+     dry_run:  ip netns exec ns1 ifconfig veth3 10.1.1.3/24 up
+     dry_run:  brctl addif br1 veth2
+     dry_run:  ip link set dev veth2 up
+    +++ run bgp routing [1]
+     dry_run:  ip netns exec ns1 bash -c 'ifconfig;pwd'
+     dry_run:  ip netns exec ns1 bash -c '/opt/project/net_emul_test/net_emulator/bgpd -f /opt/project/net_emul_test/net_emulator/bgpd.conf.n3.bgpsec -i /tmp/node3.pid -d'
+     dry_run:  ps aux | grep bgp[d] | grep n3 | awk '{print $2}'
+

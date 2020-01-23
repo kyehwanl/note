@@ -46,12 +46,17 @@ def usage():
     print "\t-f, --conf-only  : generate bgp configuration only"
     print "\t-o, --output     : debug output enable/disable "
     print "\t-p, --path       : <path>, directory path for bgpd "
-    print "\t-r, --remove     : <0|1>, to remove setting"
+    print "\t-r, --remove     : to remove all settings"
     print "\t-x, --prefix     : <number>, the number of prefixes to be generated"
     print "\t-S, --SKI        : <hex bytes>, SKI value 20 byte long hex"
     print "\t-B, --base       : <ip address>, base ip address, in forms of A.B.C.D"
     print "\t-P, --peer       : <ip address>, peer ip address, in forms of A.B.C. "
     print "\t-h, --help       : help screen"
+    print
+    print
+    print "\t (example)"
+    print "\t           net_emulator.py -c 2 -b -f -o -x 10 -d"
+    print "\t           net_emulator.py -c 2 -b -n -o -x 10 -p /opt/project/srx_test1/_inst/sbin/ -d"
     print
 
 ##
@@ -210,6 +215,7 @@ def generateBaseHeader(f, i, bgpsec, ski):
             'srx bgpsec active 0\n',
             'srx connect localhost 17900\n',
             'srx evaluation bgpsec\n',
+            'srx evaluation bgpsec distributed \n',
             ]
 
     #bgpsecHeaders[0] = str(bgpsecHeaders[0]).replace("ski", "%s")
@@ -296,6 +302,7 @@ def generateNodeBodyTail(nodeFile, i, bgpsec, ski, mode):
             'srx bgpsec active 0 \n',
             'srx connect localhost 17900 \n',
             'srx evaluation bgpsec \n',
+            'srx evaluation bgpsec distributed \n',
             'neighbor '+base_ip+' bgpsec both \n',
             '\n'
             ]
@@ -337,10 +344,6 @@ def generateNodeBodyTail(nodeFile, i, bgpsec, ski, mode):
 
 def main():
 
-    # check root-level privileges
-    if  os.getuid() != 0:
-        print '\033[91m'+"Need root permissions to do this\n",'\033[0m'
-        sys.exit(1)
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "bc:dfhm:np:op:rs:S:vx:B:P:",
@@ -411,6 +414,11 @@ def main():
             assert False, "unhandled option"
     # ...
 
+
+    # check root-level privileges
+    if  os.getuid() != 0:
+        print '\033[91m'+"Need root permissions to do this\n",'\033[0m'
+        sys.exit(1)
 
 
     """
@@ -589,6 +597,11 @@ def main():
 
             strs = ["ip netns exec ns"+str(i), "ifconfig veth"+str(i*2+1),
                     "10.1.1."+str(start_ipaddr+i)+"/24 up"]
+            command = " ".join(strs)
+            retStr=cmdProcess(command)
+
+            # to enable route
+            strs = ["ip netns exec ns"+str(i), "ip route add default via "+base_ip]
             command = " ".join(strs)
             retStr=cmdProcess(command)
 
