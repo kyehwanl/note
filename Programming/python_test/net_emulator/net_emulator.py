@@ -128,7 +128,7 @@ def configure_bridge(bridge):
     command = " ".join(str2)
     retStr=cmdProcess(command)
 
-    str3 = ["ifconfig", bridge, "10.1.1.1/24 up"]
+    str3 = ["ifconfig", bridge, base_ip+"/24 up"]
     command = " ".join(str3)
     retStr=cmdProcess(command)
 
@@ -245,7 +245,6 @@ def generateNodeHeader(nodeFile, i, mode):
                 'hostname node'+str(i+2)+"\n",
                 'password z'+"\n",
                 'router bgp '+str(i+2+60000)+"\n",
-                #'bgp router-id 10.1.1.'+str(i+2)+"\n",
                 'bgp router-id '+peer_ip+str(i+2)+"\n",
                 'neighbor '+base_ip+' remote-as 60001'+"\n",
                 '\n'
@@ -596,7 +595,7 @@ def main():
             retStr=cmdProcess(command)
 
             strs = ["ip netns exec ns"+str(i), "ifconfig veth"+str(i*2+1),
-                    "10.1.1."+str(start_ipaddr+i)+"/24 up"]
+                    peer_ip+str(start_ipaddr+i)+"/24 up"]
             command = " ".join(strs)
             retStr=cmdProcess(command)
 
