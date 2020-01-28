@@ -1,0 +1,143 @@
+
+
+(http://wiki.networksecuritytoolkit.org/index.php/HowTo_Share_A_Terminal_Session_Using_Screen)
+Sharing A Screen Session With One Account
+=========================================
+
+If you have two people logged into the same account from remote locations, they can easily share a screen session (so what one types the other sees and vice versa). To do this:
+
+Create a named screen session:
+[devel@rice ~]$ screen -d -m -S dbgwindow
+
+Attach to the screen session in your terminal window
+[devel@rice ~]$ screen -x dbgwindow
+
+Have the other person (logged into the same account) also attach to the screen session
+[devel@rice ~]$ screen -x dbgwindow
+
+At this point both terminal windows should see the same thing.
+
+
+
+
+Sharing A Screen Session With Another User
+==========================================
+
+To share a screen session with another user (for teaching or when there isn't enough bandwidth for VNC), you need to:
+
+Attach to the screen session which you want to share
+[user1@rice ~]$ screen -r shared
+
+Enable multi-user mode
+[user1@rice tmp]$ Ctrl-a :multiuser on
+
+Add the desired user(s)
+[user1@rice tmp]$ Ctrl-a :acladd user2
+
+Tell the other user to try connecting to the same screen using the following command:
+[user2@rice ~]$ screen -x user1/shared
+
+
+
+At this point, you should both be connected to the same screen session and seeing the same thing.
+NOTE: Screen sharing with another account requires that the screen command be suid root. If it isn't, the other user will see something like the following when they try to connect to your shared screen session:
+
+[user2@rice ~]$ screen -x user1/shared
+Must run suid root for multiuser support.
+[user2@rice ~]$ 
+
+
+
+If you want to enable this multi-user screen sharing feature and you see that error, you will need to kill all of the running screen sessions and then run the following commands:
+
+[user1@rice ~]$ su -
+Password: 
+[root@rice ~]# chmod u+s $(which screen)
+[root@rice ~]# chmod 755 /var/run/screen
+[root@rice ~]# rm -fr /var/run/screen/*
+[root@rice ~]# exit
+logout
+[user1@rice ~]$
+
+I'm guessing that making the screen command suid root is a security issue (otherwise, wouldn't it already have been set this way). So, you may be better off making a third shared account which both users can log into to share a screen session with.
+
+
+
+
+
+
+
+
+
+Sharing Linux Terminal Sessions With Tmux and Screen
+====================================================
+(https://www.howtoforge.com/sharing-terminal-sessions-with-tmux-and-screen)
+
+On this page
+Basic Terminal Session Sharing With A Single Account
+Basic sharing with screen
+Basic sharing with tmux
+Sharing Terminal Sessions Between Two Different Accounts
+Sharing between two different accounts with tmux
+Sharing between two different accounts with screen
+Afterthought
+tmux and GNU Screen are well-known utilities which allow multiplexing of virtual consoles. Using either, it is possible to start a session, detach, move to a different machine and resume the session in uninterrupted progress. It's also possible to use these tools to share a single session between more than one user at the same time.
+
+Basic Terminal Session Sharing With A Single Account
+If an account is held jointly between two or more users, then the sharing of the terminal console is very simple. Neither tmux nor screen require anything out of the ordinary for basic sharing between a single account logged in multiple times. Basic sharing is very easy if you are both logged in as the same user.
+
+Basic sharing with screen
+In one terminal create a new session for screen, where foobar is the name of your screen session:
+
+screen -S foobar
+Then in the other terminal, attach to that session.
+
+screen -x foobar
+That's it, there were just two steps.
+
+Basic sharing with tmux
+Again, there are only two steps. In the first terminal, start tmux where shared is the session name:
+
+tmux new-session -s shared
+Then in the second terminal attach to the shared session.
+
+tmux attach-session -t shared
+That's it.
+
+Sharing Terminal Sessions Between Two Different Accounts
+Sharing between two different accounts requires some additional steps to grant the privileges necessary for one account to access another's session. In some cases, it will require help from the system administrator to prepare the setup.
+
+Sharing between two different accounts with tmux
+For different users, you have to set the permissions on the tmux socket so that both users can read and write it. There is only one prerequiste, that there be a group in common between the two users. If such a group does not exist it will be necessary to create one.
+
+In the first terminal, start tmux where shared is the session name and shareds is the name of the socket:
+
+tmux -S /tmp/shareds new -s shared
+Then chgrp the socket to a group that both users share in common. In this example, joint is the group that both users share. If there are other users in the group, then they also have access. So it might be recommended that the group have only the two members.
+
+chgrp joint /tmp/shareds
+In the second terminal attach using that socket and session.
+
+tmux -S /tmp/shareds attach -t shared
+That's it. The session can be made read-only for the second user, but only on a voluntary basis. The decision to work read-only is made when the second user attaches to the session.
+
+tmux -S /tmp/shareds attach -t shared -r
+Sharing between two different accounts with screen
+If you are logged in as two different users, there are three prerequisites to using screen. First, screen must be set SUID and it is necessary to remove group write access from /var/run/screen. The safety of using SUID in this context is something to consider. Then you must use screen's ACLs to grant permission to the second user.
+
+sudo chmod u+s /usr/bin/screen
+sudo chmod 755 /var/run/screen
+In the first user's terminal, start screen as in the basic sharing above, where foobar is the name of the screen session. Then turn on multiuser mode and add user2 to the ACL, where user2 is the second account to be sharing the session.
+
+screen -S foobar
+^A:multiuser on
+^A:acladd user2
+The session can be made read-only for the second user by entering the following ACL change: ^A:aclchg user2 -w "#?"
+
+Then in the other terminal, attach to the first user's session.
+
+screen -x user1/foobar
+It is also possible to put multiuser on and acladd user2 into .screenrc to have it take effect automatically upon starting screen. If the changes are not desired in all screen sessions, then a separate .screenrc configuration file can be specified by using the -c option when starting screen.
+
+Afterthought
+Be careful when exiting. If you just exit the shell, it will end the terminal session for all parties. If you instead detach the session then the other user can continue working uninterrupted. In tmux that is ^B-d and in screen that is ^A-d
