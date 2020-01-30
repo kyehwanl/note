@@ -1,0 +1,17 @@
+version: '3'
+services:
+    srx_server:
+        image: 10.0.50.11:5000/srx 
+        command:
+            srx_server
+
+    srx_node1:
+        image: 10.0.50.11:5000/srx
+        volumes: 
+            - /tmp/bgpd.n1.conf.bgpsec:/etc/quagga/bgpd.conf
+
+    srx_node2:
+        image: 10.0.50.11:5000/srx
+        volumes: 
+            - /tmp/bgpd.n2.conf.bgpsec:/etc/quagga/bgpd.conf
+
