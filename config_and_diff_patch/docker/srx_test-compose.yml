@@ -1,17 +1,53 @@
 version: '3'
 services:
     srx_server:
+        container_name: srx_server
         image: 10.0.50.11:5000/srx 
+        volumes: 
+            - /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/
+        ports:
+            - 17901:17901
         command:
             srx_server
+        networks:
+            bgp_net:
+                ipv4_address: 172.27.0.100
 
     srx_node1:
+        container_name: node1
         image: 10.0.50.11:5000/srx
         volumes: 
-            - /tmp/bgpd.n1.conf.bgpsec:/etc/quagga/bgpd.conf
+            - /opt/project/docker_test/srx/compose_test/bgpd.conf.compose.bgpsec.n1:/etc/quagga/bgpd.conf
+            - /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/
+        ports:
+            - 1791:179
+            - 2606:2605
+        privileged: true
+        networks:
+            bgp_net:
+                ipv4_address: 172.27.0.2
 
     srx_node2:
+        container_name: node2
         image: 10.0.50.11:5000/srx
         volumes: 
-            - /tmp/bgpd.n2.conf.bgpsec:/etc/quagga/bgpd.conf
+            - /opt/project/docker_test/srx/compose_test/bgpd.conf.compose.bgpsec.n2:/etc/quagga/bgpd.conf
+            - /opt/project/srx_test1/keys/:/var/lib/bgpsec-keys/
+        ports:
+            - 1792:179
+            - 2607:2605
+        privileged: true
+        networks:
+            bgp_net:
+                ipv4_address: 172.27.0.3
 
+
+
+networks:
+    bgp_net:
+        ipam:
+            driver: default
+            config: 
+                - subnet: 172.27.0.0/16
+
+        

@@ -1,0 +1,482 @@
+
+Nmap Usage and CheatSheet
+=========================
+(source: https://hackertarget.com/nmap-cheatsheet-a-quick-reference-guide/)
+
+
+1. Nmap Target Selection
+
+    Scan a single IP:
+        nmap 192.168.1.1
+
+    Scan a host:
+        nmap www.testhostname.com
+
+    Scan a range of IPs:
+        nmap 192.168.1.1-20
+
+    Scan a subnet:
+        nmap 192.168.1.0/24
+
+    Scan targets from a text file:   
+        nmap -iL list-of-ips.txt
+
+    ** These are all default scans, which will scan 1000 TCP ports. Host discovery will take place.
+
+
+
+2. Nmap Port Selection
+
+    Scan a single Port:  
+        nmap -p 22 192.168.1.1
+
+    Scan a range of ports:   
+        nmap -p 1-100 192.168.1.1
+
+    Scan 100 most common ports (Fast):   
+        nmap -F 192.168.1.1
+
+    Scan all 65535 ports:    
+        nmap -p- 192.168.1.1
+
+
+
+
+3. Nmap Port Scan types
+
+    Scan using TCP connect:
+       nmap -sT 192.168.1.1
+
+    Scan using TCP SYN scan (default):   
+        nmap -sS 192.168.1.1
+
+    Scan UDP ports:
+        nmap -sU -p 123,161,162 192.168.1.1
+
+    Scan selected ports - ignore discovery:
+        nmap -Pn -F 192.168.1.1
+
+
+    Privileged access is required to perform the default SYN scans. If privileges are insufficient 
+    a TCP connect scan will be used. A TCP connect requires a full TCP connection to be established 
+    and therefore is a slower scan. Ignoring discovery is often required as many firewalls or hosts 
+    will not respond to PING, so could be missed unless you select the -Pn parameter. 
+    Of course this can make scan times much longer as you could end up sending scan probes to hosts that are not there.
+
+    Take a look at the Nmap Tutorial for a detailed look at the scan process.
+
+
+
+4. Service and OS Detection
+
+    Detect OS and Services:
+        nmap -A 192.168.1.1
+
+    Standard service detection:  
+        nmap -sV 192.168.1.1
+
+    More aggressive Service Detection:  
+        nmap -sV --version-intensity 5 192.168.1.1
+
+    Lighter banner grabbing detection:   
+        nmap -sV --version-intensity 0 192.168.1.1
+
+
+    Service and OS detection rely on different methods to determine the operating system or service running on a particular port. 
+    The more aggressive service detection is often helpful if there are services running on unusual ports. On the other hand the 
+    lighter version of the service will be much faster as it does not really attempt to detect the service simply grabbing the 
+    banner of the open service.
+
+
+
+
+5. Nmap Output Formats
+
+    Save default output to file: 
+        nmap -oN outputfile.txt 192.168.1.1
+
+    Save results as XML: 
+        nmap -oX outputfile.xml 192.168.1.1
+
+    Save results in a format for grep:  
+        nmap -oG outputfile.txt 192.168.1.1
+
+    Save in all formats: 
+        nmap -oA outputfile 192.168.1.1
+
+
+    The default format could also be saved to a file using a simple file redirect command > file. 
+    Using the -oN option allows the results to be saved but also can be monitored in the terminal as the scan is under way.
+
+
+
+
+6. Digging deeper with NSE Scripts
+
+    Scan using default safe scripts:
+        nmap -sV -sC 192.168.1.1
+
+    Get help for a script:   
+        nmap --script-help=ssl-heartbleed
+
+    Scan using a specific NSE script:    
+        nmap -sV -p 443 –script=ssl-heartbleed.nse 192.168.1.1
+
+    Scan with a set of scripts: 
+        nmap -sV --script=smb* 192.168.1.1
+
+
+    According to my Nmap install there are currently 581 NSE scripts. 
+    The scripts are able to perform a wide range of security related testing and discovery functions. 
+    If you are serious about your network scanning you really should take the time to get familiar with some of them.
+
+    The option --script-help=$scriptname will display help for the individual scripts. 
+    To get an easy list of the installed scripts try locate nse | grep script.
+
+    You will notice I have used the -sV service detection parameter. 
+    Generally most NSE scripts will be more effective and you will get better coverage by including service detection.
+
+
+
+
+7. A scan to search for DDOS reflection UDP services
+
+    Scan for UDP DDOS reflectors:    
+        nmap –sU –A –PN –n –pU:19,53,123,161 –script=ntp-monlist,dns-recursion,snmp-sysdescr 192.168.1.0/24
+
+
+    UDP based DDOS reflection attacks are a common problem that network defenders come up against. 
+    This is a handy Nmap command that will scan a target list for systems with open UDP services that 
+    allow these attacks to take place. Full details of the command and the background can be found on 
+    the Sans Institute Blog where it was first posted.
+
+
+
+
+8. HTTP Service Information
+
+    Gather page titles from HTTP services:
+        nmap --script=http-title 192.168.1.0/24
+
+    Get HTTP headers of web services:
+        nmap --script=http-headers 192.168.1.0/24
+
+    Find web apps from known paths:  
+        nmap --script=http-enum 192.168.1.0/24
+
+
+    There are many HTTP information gathering scripts, here are a few that are simple but helpful when examining 
+    larger networks. Helps in quickly identifying what the HTTP service that is running on the open port. 
+    Note the http-enum script is particularly noisy. It is similar to Nikto in that it will attempt to enumerate 
+    known paths of web applications and scripts. This will inevitably generated hundreds of 404 HTTP responses 
+    in the web server error and access logs.
+
+
+
+
+9. Detect Heartbleed SSL Vulnerability
+
+    Heartbleed Testing:
+        nmap -sV -p 443 --script=ssl-heartbleed 192.168.1.0/24
+
+
+    Heartbleed detection is one of the available SSL scripts. 
+    It will detect the presence of the well known Heartbleed vulnerability in SSL services. 
+    Specify alternative ports to test SSL on mail and other protocols (Requires Nmap 6.46)
+
+
+
+
+10. IP Address information
+
+    Find Information about IP address:
+        nmap --script=asn-query,whois,ip-geolocation-maxmind 192.168.1.0/24
+
+
+    Gather information related to the IP address and netblock owner of the IP address. 
+    Uses ASN, whois and geoip location lookups. See the IP Tools for more information and similar IP 
+    address and DNS lookups.
+
+
+
+
+11. Remote Scanning
+    Testing your network perimeter from an external perspective is key when you wish to get the most accurate results. 
+    By assessing your exposure from the attackers perspective you can validate firewall rule audits and understand 
+    exactly what is allowed into your network. This is the reason we offer a hosted or online version of the Nmap 
+    port scanner. To enable remote scanning easily and effectively because anyone who has played with shodan.io 
+    knows very well how badly people test their perimeter networks.
+
+
+
+
+12. Additional Resources
+    The above commands are just a taste of the power of Nmap. 
+    Check out our Nmap Tutorial that has more information and tips.
+    You could also view the full set of features by running Nmap with no options. 
+    The creator of Nmap, Fyodor, has a book available that covers the tool in depth.
+
+
+
+
+
+Best 15 Nmap command examples
+=============================
+(source:https://securitytrails.com/blog/top-15-nmap-commands-to-scan-remote-hosts)
+
+1. Basic Nmap Scan against IP or host
+    nmap 1.1.1.1
+
+  Now, if you want to scan a hostname, simply replace the IP for the host, as you see below:
+    nmap cloudflare.com
+
+  These kinds of basic scans are perfect for your first steps when starting with Nmap.
+
+
+
+2. Scan specific ports or scan entire port ranges on a local or remote server
+    nmap -p 1-65535 localhost
+
+  In this example, we scanned all 65535 ports for our localhost computer.
+
+  Nmap is able to scan all possible ports, but you can also scan specific ports, 
+  which will report faster results. See below:
+
+    nmap -p 80,443 8.8.8.8
+
+
+
+
+3. Scan multiple IP addresses
+  Let’s try to scan multiple IP addresses. For this you need to use this syntax:
+
+    nmap 1.1.1.1 8.8.8.8
+
+  You can also scan consecutive IP addresses:
+
+    nmap -p 1.1.1.1,2,3,4
+
+  This will scan 1.1.1.1, 1.1.1.2, 1.1.1.3 and 1.1.1.4.
+
+
+
+4. Scan IP ranges
+  You can also use Nmap to scan entire CIDR IP ranges, for example:
+
+    nmap -p 8.8.8.0/28
+
+  This will scan 14 consecutive IP ranges, from 8.8.8.1 to 8.8.8.14.
+
+  An alternative is to simply use this kind of range:
+
+    nmap 8.8.8.1-14
+
+  You can even use wildcards to scan the entire C class IP range, for example:
+
+    nmap 8.8.8.*
+
+  This will scan 256 IP addresses from 8.8.8.1 to 8.8.8.256.
+
+  If you ever need to exclude certain IPs from the IP range scan, you can use the
+ “–exclude” option, as you see below:
+
+    nmap -p 8.8.8.* --exclude 8.8.8.1
+
+
+
+
+5. Scan the most popular ports
+  Using “–top-ports” parameter along with a specific number lets you scan the top X most common 
+  ports for that host, as we can see:
+
+    nmap --top-ports 20 192.168.1.106
+
+  Replace “20” with the desired number. Output example:
+
+    [root@securitytrails:~]nmap --top-ports 20 localhost
+    Starting Nmap 6.40 ( http://nmap.org ) at 2018-10-01 10:02 EDT
+    Nmap scan report for localhost (127.0.0.1)
+    Host is up (0.000016s latency).
+    Other addresses for localhost (not scanned): 127.0.0.1
+    PORT     STATE    SERVICE
+    21/tcp   closed   ftp
+    22/tcp   closed   ssh
+    23/tcp   closed   telnet
+    25/tcp   closed   smtp
+    53/tcp   closed   domain
+    80/tcp   filtered http
+    110/tcp  closed   pop3
+    111/tcp  closed   rpcbind
+    135/tcp  closed   msrpc
+    139/tcp  closed   netbios-ssn
+    143/tcp  closed   imap
+    443/tcp  filtered https
+    445/tcp  closed   microsoft-ds
+    993/tcp  closed   imaps
+    995/tcp  closed   pop3s
+    1723/tcp closed   pptp
+    3306/tcp closed   mysql
+    3389/tcp closed   ms-wbt-server
+    5900/tcp closed   vnc
+    8080/tcp closed   http-proxy
+
+
+
+
+6. Scan hosts and IP addresses reading from a text file
+  In this case, Nmap is also useful to read files that contain hosts and IPs inside.
+
+  Let’s suppose you create a list.txt file that contains these lines inside:
+
+    192.168.1.106
+    cloudflare.com
+    microsoft.com
+    securitytrails.com
+
+  The “-iL” parameter lets you read from that file, and scan all those hosts for you:
+
+    nmap -iL list.txt
+
+
+
+7. Save your Nmap scan results to a file
+  On the other hand, in the following example we will not be reading from a file, 
+  but exporting/saving our results into a text file:
+
+    nmap -oN output.txt securitytrails.com
+
+  Nmap has the ability to export files into XML format as well, see the next example:
+
+    nmap -oX output.xml securitytrails.com
+
+
+
+8. Disabling DNS name resolution
+  If you need to speed up your scans a little bit, you can always choose to disable 
+  reverse DNS resolution for all your scans. Just add the “-n” parameter.
+
+    [root@securitytrails:~]nmap -p 80 -n 8.8.8.8
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-10-01 09:15 -03
+    Nmap scan report for 8.8.8.8
+    Host is up (0.014s latency).
+    PORT   STATE    SERVICE
+    80/tcp filtered http
+
+  See the difference with a normal DNS-resolution enabled scan:
+
+    [root@securitytrails:~]nmap -p 80 8.8.8.8
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-10-01 09:15 -03
+    Nmap scan report for google-public-dns-a.google.com (8.8.8.8)
+    Host is up (0.014s latency).
+    PORT   STATE    SERVICE
+    80/tcp filtered http
+
+
+
+9. Scan + OS and service detection with fast execution
+  Using the “-A” parameter enables you to perform OS and service detection, 
+  and at the same time we are combining this with “-T4” for faster execution. 
+  See the example below:
+
+    nmap -A -T4 cloudflare.com
+
+
+
+
+10. Detect service/daemon versions
+  This can be done by using -sV parameters
+
+    nmap -sV localhost
+
+  As you can see here:
+
+    [root@securitytrails:~]nmap -sV localhost
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-10-01 09:28 -03
+    Nmap scan report for localhost (127.0.0.1)
+    Host is up (0.000020s latency).
+    Other addresses for localhost (not scanned): ::1
+    Not shown: 997 closed ports
+    PORT STATE SERVICE VERSION
+    111/tcp open rpcbind 2-4 (RPC #100000)
+    631/tcp open ipp CUPS 2.2
+    902/tcp open ssl/vmware-auth VMware Authentication Daemon 1.10 (Uses VNC, SOAP)
+
+    Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+    Nmap done: 1 IP address (1 host up) scanned in 7.96 seconds
+
+
+
+11. Scan using TCP or UDP protocols
+  One of the things we love most about Nmap is the fact that it works for both TCP and UDP protocols. 
+  And while most services run on TCP, you can also get a great advantage by scanning UDP-based services. Let’s see some examples.
+
+  Standard TCP scanning output:
+
+    [root@securitytrails:~]nmap -sT 192.168.1.1
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-10-01 09:33 -03
+    Nmap scan report for 192.168.1.1
+    Host is up (0.58s latency).
+    Not shown: 995 closed ports
+    PORT STATE SERVICE
+    80/tcp open http
+    1900/tcp open upnp
+    20005/tcp open btx
+    49152/tcp open unknown
+    49153/tcp open unknown
+    Nmap done: 1 IP address (1 host up) scanned in 1.43 seconds
+
+  UDP scanning results using “-sU” parameter:
+
+    [root@securitytrails:~]nmap -sU localhost
+    Starting Nmap 7.60 ( https://nmap.org ) at 2018-10-01 09:37 -03
+    Nmap scan report for localhost (127.0.0.1)
+    Host is up (0.000021s latency).
+    Other addresses for localhost (not scanned): ::1
+    Not shown: 997 closed ports
+    PORT STATE SERVICE
+    68/udp open|filtered dhcpc
+    111/udp open rpcbind
+    5353/udp open|filtered zeroconf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
