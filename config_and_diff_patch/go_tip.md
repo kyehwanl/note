@@ -62,7 +62,7 @@ installation
     - environment variable setting for GOPATH and executable go/bin dir
         export GOPATH=/opt/project/gobgp_test/gowork
         export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
-    - confirm with 'go verion'
+    - confirm with 'go version'
 
 
 Error 

@@ -1,0 +1,12 @@
+
+Docker Compose Tips
+===================
+
+
+1. depends_on
+    depends_on expresses start order (and implicitly image pulling order), which was a good side effect of links.
+
+    if using 'depends_on' option,   
+    it might be possible to get an order among generated docker instances for setting IP address ??
+
+
