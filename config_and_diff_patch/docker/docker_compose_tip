@@ -6,7 +6,54 @@ Docker Compose Tips
 1. depends_on
     depends_on expresses start order (and implicitly image pulling order), which was a good side effect of links.
 
+    (example)
+      version: "3.7"
+      services:
+        web:
+          build: .
+          depends_on:
+            - db
+            - redis
+        redis:
+          image: redis
+        db:
+          image: postgres
+
+
+
     if using 'depends_on' option,   
     it might be possible to get an order among generated docker instances for setting IP address ??
 
 
+
+
+2. docker-compose rm
+   : to remove docker instances (same as  "docker rm <container>" )
+
+    vmware.011-antd [2000]{.../srx/compose_test}-> sudo docker-compose -f ./srx_test-compose.yml rm
+    Going to remove node1, srx_server, node2                                                       
+    Are you sure? [yN] y                                                                           
+    Removing node1      ... done                                                                   
+    Removing srx_server ... done                                                                   
+    Removing node2      ... done
+
+
+
+3. docker-compose up
+
+    vmware.011-antd [2002]{.../srx/compose_test}-> sudo docker-compose -f ./srx_test-compose.yml up 
+    WARNING: The Docker Engine you're using is running in swarm mode.
+          
+    Compose does not use swarm mode to deploy services to multiple nodes in a swarm.
+    All containers will be scheduled on the current node. 
+    To deploy your application across the swarm, use `docker stack deploy`.
+    
+    Creating node1 ... done
+    Creating srx_server ...
+    Creating node1 ...
+    Attaching to node2, srx_server, node1
+
+
+4. joining same network on which docker-compose running 
+
+    docker run -it --rm --net composetest_bgp_net --ip 172.27.0.101 centos bash

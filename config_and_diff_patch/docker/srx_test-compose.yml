@@ -23,6 +23,8 @@ services:
             - 1791:179
             - 2606:2605
         privileged: true
+        depends_on: 
+            - srx_server
         networks:
             bgp_net:
                 ipv4_address: 172.27.0.2
@@ -37,10 +39,12 @@ services:
             - 1792:179
             - 2607:2605
         privileged: true
+        depends_on: 
+            - srx_server
+            - srx_node1
         networks:
             bgp_net:
                 ipv4_address: 172.27.0.3
-
 
 
 networks:
