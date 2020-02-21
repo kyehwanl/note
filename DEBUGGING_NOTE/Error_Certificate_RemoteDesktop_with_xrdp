@@ -1,0 +1,33 @@
+
+
+
+Errors in using Remote Desktop connecting to Centos 6
+
+
+문제점: Windows의 remote desktop을 이용해 centos 6 에 접근하려고 할때 XRDP 프로토콜이 필요하다
+여기서 xrdp 를 enable 시켜주고 접속하려고 할때 다음과 같은 오류가 뜰때가 있다 
+
+Because of a security error, the client could not connect to the remote computer. 
+Verify that you are logged onto the network and then try connecting again
+
+Microsoft 에서는 Terminal Server의 Certificate이 잘못되었단다
+https://support.microsoft.com/en-us/help/329896/because-of-a-security-error-the-client-could-not-connect-to-the-termin
+
+
+
+(Solution): 레지스트리키를 수정함으로 authentication을 건너뛰게 할수 있다
+http://issuesfixed.blogspot.com/2015/03/because-of-security-error-client-could.html
+
+Issue: 
+Connecting to another system with RDP fails. This system may successfully be able to handle RDP requests from other devices. This occured in a Windows RDP Client connecting to a Redhat XRDP Service.
+Environment:
+Windows workstation connecting to Redhat via XRDP.
+Symptoms:
+Connection appears to begin, but error message "Because of a security error, the client could not connect to the remote computer. Verify that you are logged onto the network and then try connecting again." appears.
+Solution:
+Although the following article may be helpful:
+https://support.microsoft.com/en-us/kb/329896
+The solution in this case was to disable the enforcement of FIPS. One method is to set the following value to 0:
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy
+
+
