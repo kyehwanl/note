@@ -69,6 +69,18 @@ gobgp configuration
 
 
 
+
+ (*) UPDATED
+  A. gobgp version 2.13 
+      - need go version > 1.13
+
+  B. go install 
+    - go get github.com/osrg/gobgp/cmd/gobgpd  
+
+
+
+
+
 (3) gobgpd config file (in toml form)
     --> refer to "bgpd-tools-conf/gobgpd.policy.conf" for more detail
 

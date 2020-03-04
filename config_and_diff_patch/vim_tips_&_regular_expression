@@ -53,3 +53,17 @@ General Tips
 
 (4) Environment variable TERM change at starting 
     $ TERM=screen-256color vim <file>
+
+
+
+(5) upper case
+    
+    Visual select the text, then U for uppercase or u for lowercase. 
+    To swap all casing in a visual selection, press ~ (tilde). 
+    
+    Without using a visual selection, gU<motion> will make the characters in motion uppercase, 
+    or use gu<motion> for lowercase.
+    (for example, in motion: 
+        gU then press '^', it converts the rest letters into upper case until the end of line)
+
+
