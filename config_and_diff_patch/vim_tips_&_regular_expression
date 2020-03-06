@@ -67,3 +67,28 @@ General Tips
         gU then press '^', it converts the rest letters into upper case until the end of line)
 
 
+
+
+Vimdiff tips
+============
+
+(1) Useful diff option
+
+    set diffopt=iwhite, filler  
+        (iwhite: ignore changes of white space, filler: insert lines at the same position to sync)
+
+
+(2) :diffthis : to compare this window to the next window
+    --> and then :diffget, or :diffput
+
+
+
+
+
+
+
+
+
+
+
+
