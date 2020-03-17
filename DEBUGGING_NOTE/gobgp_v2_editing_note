@@ -1,0 +1,40 @@
+
+Differences from the previous version (1.37)
+============================================
+
+0. compilation condition 
+    go version  - 1.13.7
+    protoc version - 3.7.1
+
+
+1. ShowRoute function changed into 
+
+  makeShowRouteArgs ()
+  /opt/project/gobgp_test/gobgp_v2_running_test/src/github.com/osrg/gobgp/cmd/gobgp/neighbor.go
+
+
+  Especially look at api.Roa functions 
+
+
+2. filterpath (gobgp/server/peer.go) --> filterPathFromSourcePeer 
+    - there is no filterpath in the new version
+
+    - seems it moved into filterpath at server.go
+    
+
+
+3. table.Path.Validation() --> struct Path.Validation
+    this function was removed and became a struct type
+
+
+
+4. createUpdateMsgFromPath  in message.go
+    --> packer...  
+
+
+
+
+
+
+    
+
