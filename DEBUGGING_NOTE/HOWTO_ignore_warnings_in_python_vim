@@ -1,0 +1,35 @@
+
+VIM pylint or pyflakes - ignore a certain warnings
+==================================================
+
+1. first see the config setting - python related bundles
+ (in .vimrc.bundles)
+    
+  ...
+  " Python
+  if count(g:spf13_bundle_groups, 'python')
+  " Pick either python-mode or pyflakes & pydoc
+  Bundle 'klen/python-mode'
+  Bundle 'python.vim'
+  Bundle 'python_match.vim'
+  Bundle 'pythoncomplete'
+  endif
+
+
+  Here 'klen/python-mode' is the one related syntatic checker
+
+
+
+2. go to .spf13-vim-3/.vim/bundle/python-mode/README.rst
+
+  " Skip errors and warnings
+  " E.g. "E501,W002", "E2,W" (Skip all Warnings and Errors startswith E2) and etc
+  let g:pymode_lint_ignore = "E501"
+
+  let g:pymode_lint_ignore = "E501,W802"
+
+3. try to find any other settings
+
+    
+
+    

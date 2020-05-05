@@ -1,0 +1,12 @@
+#! /bin/sh -x
+
+ip netns add ns1
+ip link add veth0 type veth peer name veth1
+ip link set veth1 netns ns1
+ip netns exec ns1 ifconfig lo up
+ip netns exec ns1 ifconfig veth1 10.1.1.2/24 up
+ifconfig veth0 10.1.1.1/24 up
+
+sleep 1
+#ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1>\"")
+iptables -I INPUT 1 -p tcp --dport 179 -j ACCEPT
