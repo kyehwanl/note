@@ -1,0 +1,10 @@
+
+
+1. SRx Suite installation from github
+
+ - ut-hash issues
+    - need to install manually
+    - download with wget and install with rpm
+
+    $ wget https://download-ib01.fedoraproject.org/pub/epel/7/aarch64/Packages/u/uthash-devel-2.0.2-1.el7.noarch.rpm
+    $ rpm -Uvh uthash-devel-2.0.2-1.el7.noarch.rpm

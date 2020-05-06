@@ -1,0 +1,49 @@
+
+
+Note for Installation SRx Suite from Github version
+====================================================
+
+
+1. pre-installed libraries
+
+  - openssl-devel, net-snmp-devel, libconfig-devel, readline-devel, ncurses-devel
+
+
+
+2. SRx Suite installation from github
+
+ - ut-hash issues
+    - need to install manually
+    - download with wget and install with rpm
+ wget https://download-ib01.fedoraproject.org/pub/epel/7/aarch64/Packages/u/uthash-devel-2.0.2-1.el7.noarch.rpm
+ rpm -Uvh uthash-devel-2.0.2-1.el7.noarch.rpm
+
+
+3. Openssl 
+
+ - need to fix m4 script NOT using '$'
+    srx_m4_libPath=$(/sbin/ldconfig -p | grep lib$srx_m4_libName.so$ | sed -e "s/.* => \(.*\)lib\(.*\)/\1/g")
+    srx_m4_libPath=$(/sbin/ldconfig -p | grep lib$srx_m4_libName.so | sed -e "s/.* => \(.*\)lib\(.*\)/\1/g")
+
+
+ - reason
+    At first time, it seemed libcrypto.so.10 exists
+
+    [kyehwanl@localhost srxcryptoapi-0.3.0.0]$ /sbin/ldconfig -p | grep libcrypto.so
+    libcrypto.so.10 (libc6,x86-64) => /lib64/libcrypto.so.10
+
+
+    Later, libcrypto.so is alos appeared (maybe after registering procedure at system?)
+
+    [kyehwanl@localhost srxcryptoapi-0.3.0.0]$ /sbin/ldconfig -p | grep libcrypto.so
+    libcrypto.so.10 (libc6,x86-64) => /lib64/libcrypto.so.10
+    libcrypto.so (libc6,x86-64) => /lib64/libcrypto.so
+
+
+
+
+
+
+
+
+

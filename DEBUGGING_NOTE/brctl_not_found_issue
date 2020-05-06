@@ -1,0 +1,7 @@
+
+ brctl (bridge control) in Centos NOT Found
+ ==========================================
+
+ 1. Solution
+
+    yum install bridge-utils

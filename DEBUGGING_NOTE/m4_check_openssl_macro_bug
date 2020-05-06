@@ -5,19 +5,45 @@ SRxCryptoAPI openssl check Bug
 1. srx_m4_check_openssl.m4
 
    <status> not properly detect openssl's install location
+    - There maybe 2 possible bugs
 
-    <solve>
-  if test "x$openssl_dir" = "x"; then
-    AC_MSG_RESULT([default])
-    srx_m4_openssl_dir=$(which openssl 2>/dev/null | sed -e "s/\(.*\)\/bin\/openssl/\1/g")
-    +
-    +if test "x$srx_m4_openssl_dir" = "x"; then
-    +  srx_m4_openssl_dir="/usr/"
-    +  AC_MSG_RESULT([======== 111 ])
-    +fi
-    +
-  else
-    AC_MSG_RESULT([custom])
-    srx_m4_openssl_dir=$openssl_dir
-  fi
+  (1) openssl dir in line 33,
+
+        <solve>
+      if test "x$openssl_dir" = "x"; then
+        AC_MSG_RESULT([default])
+        srx_m4_openssl_dir=$(which openssl 2>/dev/null | sed -e "s/\(.*\)\/bin\/openssl/\1/g")
+        +
+        +if test "x$srx_m4_openssl_dir" = "x"; then
+        +  srx_m4_openssl_dir="/usr/"
+        +  AC_MSG_RESULT([======== 111 ])
+        +fi
+        +
+      else
+        AC_MSG_RESULT([custom])
+        srx_m4_openssl_dir=$openssl_dir
+      fi
  
+
+  (2) libPath is wrong in line 62,
+
+      # Search for each required OpenSSL library
+        for srx_m4_libName in $srx_m4_check_libs; do
+                              
+          AC_MSG_CHECKING([for library $srx_m4_libName]) 
+                                                         
+          if test "x$openssl_dir" = "x"; then            
+            #                                            
+            # Default installation                       
+            #                                            
+            srx_m4_libPath=$(/sbin/ldconfig -p | grep lib$srx_m4_libName.so$ | sed -e "s/.* => \(.*\)lib\(.*\)/\1/g") 
+           +srx_m4_libPath=$(/sbin/ldconfig -p | grep lib$srx_m4_libName.so | sed -e "s/.* => \(.*\)lib\(.*\)/\1/g") 
+            if test "x$srx_m4_libPath" = "x"; then
+              AC_MSG_RESULT([not found])
+              AC_MSG_ERROR([            
+          -------------------------------------------------- 
+          No OpenSSL installation found!                     
+          --------------------------------------------------])
+            fi                                                
+            AC_MSG_RESULT([-l$srx_m4_libName]) 
+
