@@ -441,6 +441,18 @@ Useful Tips
 
 
 
+5. Download single file from github
+
+    wget https://raw.githubusercontent.com/username/reponame/branch/path/to/file
+
+    ex) wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/srxcryptoapi-0.3.0.0.tar.gz 
+
+
+
+
+
+
+
 
 
 

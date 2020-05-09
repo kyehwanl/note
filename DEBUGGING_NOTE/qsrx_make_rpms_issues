@@ -1,0 +1,113 @@
+
+1. requirement library
+=======================
+
+texinfo, texi2html
+
+
+
+2. build error
+==============
+
+(1) in case NOT found library,
+
+    checking for library SRxCryptoAPI V3... not found
+    configure: error:
+         ------------------------------------------------------------
+         Library SRxCryptoAPI V3 (libSRxCryptoAPI.so.3) not found.
+         ------------------------------------------------------------
+    error: Bad exit status from /var/tmp/rpm-tmp.gtSXdu (%build)
+
+
+    RPM build errors:
+        Macro %default_dist has empty body
+        bogus date in %changelog: Thu Sep 12 2005 Paul Jakma <paul@dishone.st>
+        bogus date in %changelog: Tue Mar 20 2003 Paul Jakma <paul@dishone.st>
+        bogus date in %changelog: Mon Mar 18 2003 Paul Jakma <paul@dishone.st>
+        Bad exit status from /var/tmp/rpm-tmp.gtSXdu (%build)
+    make: *** [rpms] Error 1
+
+
+    --> (Solution)
+    In quagga.spec and quagga.spec.in,
+    Change the line order with following line where sca_dir is described 
+
+
+    diff --git a/redhat/quagga.spec.in b/redhat/quagga.spec.in
+    index 766c880..5f5276f 100644
+    --- a/redhat/quagga.spec.in
+    +++ b/redhat/quagga.spec.in
+    @@ -244,8 +244,8 @@ developing OSPF-API and quagga applications.
+     %endif
+     --enable-netlink --enable-gcc-rdynamic \
+     --disable-babeld \
+    -sca_dir= srx_dir=
+    -#sca_dir=@sca_dir@ srx_dir=@srx_dir@
+    +sca_dir=@sca_dir@ srx_dir=@srx_dir@
+    +#sca_dir= srx_dir=
+
+    @@ -244,8 +244,8 @@ developing OSPF-API and quagga applicati
+    -sca_dir= srx_dir=
+    -#sca_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst/ srx_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst/
+    +sca_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst srx_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst
+    +#sca_dir= srx_dir=
+
+ 
+
+
+(2) Error Message: /usr/lib/rpm/debugedit: canonicalization unexpectedly shrank by one character
+
+    --> The reason is basically single extra '/' somewhere in the path
+
+    When configure, if sca_dir ends with /, then configure variable in redhat/quagga.spec has same end. 
+    so it has problem
+
+    (Solution) one charactier means '/' in configure variables
+
+    - eliminate '/' in quagga.spec
+        --> confer to sca_dir value in (1).Solution's diff of quagga.spec
+
+
+
+3. RPM installation issue
+=========================
+  (1) 
+   In orer to install rpms with accessing default location of library (/usr/lib64)
+   It needs to configure sca_dir=/usr srx_dir=/usr for later use of generating rpm files
+   Because the generated bgpd tries to find libraries in RPATH of configured location, i.e., /usr/path/of/sca_dir
+
+
+  (2) sepc file's version requirements should be matched like following
+  (in case of using QuaggaSRx-4.2.7, srx-0.5.1.0, srxcryptoapi-0.3.0)
+
+      # Needed for QuaggaSRx                                                             
+      Requires(pre): srxcryptoapi >= 0.3.0, srx-proxy >= 0.5.0                           
+      Requires: glibc >= 2.12, readline >= 6.0, srx-proxy >= 0.5.0, srxcryptoapi >= 0.3.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

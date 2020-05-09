@@ -1,0 +1,137 @@
+
+
+
+
+1. make dist, ocurred following errors:
+=======================================
+
+
+    make[1]: Entering directory `/opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/doc'
+    Updating ./version.texi
+    make  \
+      top_distdir="../quaggasrx-0.4.2.6" distdir="../quaggasrx-0.4.2.6/doc" \
+      dist-info
+    make[2]: Entering directory `/opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/doc'
+    restore=: && backupdir=".am$$" && \
+    am__cwd=`pwd` && CDPATH="${ZSH_VERSION+.}:" && cd . && \
+    rm -rf $backupdir && mkdir $backupdir && \
+    if (/bin/sh /opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/missing --run makeinfo --version) >/dev/null 2>&1; then \
+      for f in quagga.info quagga.info-[0-9] quagga.info-[0-9][0-9] quagga.i[0-9] quagga.i[0-9][0-9]; do \
+        if test -f $f; then mv $f $backupdir; restore=mv; else :; fi; \
+      done; \
+    else :; fi && \
+    cd "$am__cwd"; \
+    if /bin/sh /opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/missing --run makeinfo   -I . \
+     -o quagga.info quagga.texi; \
+    then \
+      rc=0; \
+      CDPATH="${ZSH_VERSION+.}:" && cd .; \
+    else \
+      rc=$?; \
+      CDPATH="${ZSH_VERSION+.}:" && cd . && \
+      $restore $backupdir/* `echo "./quagga.info" | sed 's|[^/]*$||'`; \
+    fi; \
+    rm -rf $backupdir; exit $rc
+    quagga.texi:4: warning: undefined flag: PACKAGE_NAME
+    ./basic.texi:583: warning: @item missing argument
+    ./ipv6.texi:139: warning: @deffn should only appear at a line beginning
+    ./ipv6.texi:140: warning: @deffnx should only appear at a line beginning
+    ./ipv6.texi:140: must be after `@deffn' to use `@deffnx'
+    ./basic.texi:26: warning: node next `Config Commands' in menu `Common Invocation Options' and in sectioning `Terminal Mode Commands' di$
+    fer
+    ./basic.texi:26: warning: node `Terminal Mode Commands' is prev for `Config Commands' in menu but not in sectioning
+    ./basic.texi:265: warning: node next `Terminal Mode Commands' in menu `Config Commands' and in sectioning `Common Invocation Options' d$
+    ffer
+    ./basic.texi:265: warning: node `Config Commands' is prev for `Terminal Mode Commands' in sectioning but not in menu
+    ./basic.texi:311: warning: node prev `Common Invocation Options' in menu `Config Commands' and in sectioning `Terminal Mode Commands' d$
+    ffer
+    make[2]: *** [quagga.info] Error 1
+    make[2]: Leaving directory `/opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/doc'
+    make[1]: *** [distdir] Error 2
+    make[1]: Leaving directory `/opt/project/TestBgpsecImple/NIST-BGP-SRx/quagga-srx/doc'
+    make: *** [distdir] Error 1
+
+
+
+2. Solution
+============
+(source: https://lists.quagga.net/pipermail/quagga-dev/2015-February/028636.html)
+
+    idac.server02-antd [1999]{.../qsrx/doc}-> git diff -w -b Makefile.am
+    diff --git a/doc/Makefile.am b/doc/Makefile.am
+    index db27640..5c302c2 100644
+    --- a/doc/Makefile.am
+    +++ b/doc/Makefile.am
+    @@ -44,7 +44,7 @@ info_TEXINFOS = quagga.texi
+     # because it cant just work from the png's directly it seems - contrary
+     # to the documentation...
+     quagga.pdf: $(info_TEXINFOS) $(figures_pdf) $(quagga_TEXINFOS)
+    -       $(TEXI2PDF) -o "$@" $<
+    +       $(TEXI2PDF) -o "$@" $< || true
+
+     quagga_TEXINFOS = appendix.texi babeld.texi basic.texi bgpd.texi filter.texi \
+            install.texi ipv6.texi kernel.texi main.texi ospf6d.texi ospfd.texi \
+
+    idac.server02-antd [2000]{.../qsrx/doc}-> git diff -w -b quagga.texi
+    diff --git a/doc/quagga.texi b/doc/quagga.texi
+    index ff913aa..5ab90bc 100644
+    --- a/doc/quagga.texi
+    +++ b/doc/quagga.texi
+    @@ -1,12 +1,12 @@
+     \input texinfo @c -*- texinfo -*-
+     @c %**start of header
+     @setchapternewpage odd
+    -@settitle @uref{http://www.quagga.net,,@value{PACKAGE_NAME}}
+     @setfilename quagga.info
+     @c %**end of header
+
+     @c Set variables - sourced from defines.texi
+     @include defines.texi
+    +@settitle @uref{http://www.quagga.net,,@value{PACKAGE_NAME}}
+
+     @c automake will automatically generate version.texi
+     @c and set EDITION, VERSION, UPDATED and UPDATED-MONTH
+
+
+    dac.server02-antd [2002]{.../qsrx/doc}-> git diff -w -b basic.texi ipv6.texi
+    diff --git a/doc/basic.texi b/doc/basic.texi
+    index b3b23ca..f65bd10 100644
+    --- a/doc/basic.texi
+    +++ b/doc/basic.texi
+    @@ -15,8 +15,8 @@ The following sections discuss commands common to all the routing
+     daemons.
+
+     @menu
+    -* Terminal Mode Commands::      Common commands used in a VTY
+     * Config Commands::             Commands used in config files
+    +* Terminal Mode Commands::      Common commands used in a VTY
+     * Common Invocation Options::   Starting the daemons
+     * Virtual Terminal Interfaces:: Interacting with the daemons
+     @end menu
+    @@ -580,8 +580,8 @@ Move up to previous line in the history buffer.
+     @kindex @key{TAB}
+     Use command line completion by typing @key{TAB}.
+
+    -@item
+    -@kindex ?
+    +@item ?
+    +@kindex @key{?}
+     You can use command line help by typing @code{help} at the beginning of
+     the line.  Typing @kbd{?} at any point in the line will show possible
+     completions.
+    diff --git a/doc/ipv6.texi b/doc/ipv6.texi
+    index b6cc437..2482c1c 100644
+    --- a/doc/ipv6.texi
+    +++ b/doc/ipv6.texi
+    @@ -136,8 +136,8 @@ for the lowest preference possible.
+     Default: 0
+     @end deffn
+
+    -+@deffn {Interface Command} {ipv6 nd home-agent-lifetime <0-65520>} {}
+    -+@deffnx {Interface Command} {no ipv6 nd home-agent-lifetime [<0-65520>]} {}
+    +@deffn {Interface Command} {ipv6 nd home-agent-lifetime <0-65520>} {}
+    +@deffnx {Interface Command} {no ipv6 nd home-agent-lifetime [<0-65520>]} {}
+     The value to be placed in Home Agent Option, when Home Agent config flag is set,
+     which indicates to hosts Home Agent Lifetime. The default value of 0 means to
+     place the current Router Lifetime value.
+
