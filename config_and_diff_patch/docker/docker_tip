@@ -271,6 +271,10 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
       dravetech/gobgp_2             latest              6527cc7ac969        13 days ago         951MB
 
 
+    - If want to remove the stopped containers,
+        docker ps --filter "status=exited"
+        docker rm $(docker ps --filter "status=exited" -q)
+
 
 
 17. IP address of the running docker container

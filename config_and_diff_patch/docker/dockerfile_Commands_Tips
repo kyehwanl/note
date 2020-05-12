@@ -68,3 +68,41 @@ ENV DB_URL mysql
 컨테이너에서 사용할 환경변수를 지정합니다. 컨테이너를 실행할 때 -e옵션을 사용하면 기존 값을 오버라이딩 하게 됩니다.
 
 여기까지 Dockerfile에서 가장 많이 사용하는 명령어에 대해 알아보았습니다. 모든 명령어가 궁금하신 분은 공식문서를 참고하세요.
+
+
+
+
+Dockerfile Build Tip
+====================
+
+1. print message while building images with 'docker build'
+(https://stackoverflow.com/questions/34213837/dockerfile-output-of-run-instruction-into-a-variable)
+
+    You cannot save a variable for later use in other Dockerfile commands (if that is your intention). 
+    This is because each RUN happens in a new shell.
+
+    However, if you just want to capture the output of ls you should be able to do it in one RUN compound command. 
+        For example:
+
+        RUN file="$(ls -1 /tmp/dir)" && echo $file
+
+        RUN p5="$(env)" && echo $p5
+        RUN p1="$(whereis go)" && echo $p1
+        RUN p2="$(go version)" && echo $p2
+        RUN p3="$(pwd)" && echo $p3
+        RUN p4="$(echo $PATH)" && echo $p4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
