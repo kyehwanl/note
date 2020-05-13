@@ -1,9 +1,9 @@
 ############################################################
 # Dockerfile to build gobgp QuaggaSRx container images 
-# Based on CentOS 7
+# Based on CentOS 8
 ############################################################
 #FROM centos:latest
-FROM srxcryptoapi:latest
+FROM srxcryptoapi:8
 MAINTAINER "Kyehwan Lee".
 ENV container docker
 

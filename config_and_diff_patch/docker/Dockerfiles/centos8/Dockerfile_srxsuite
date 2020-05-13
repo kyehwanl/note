@@ -1,0 +1,55 @@
+############################################################
+# Dockerfile to build gobgp QuaggaSRx container images 
+# Based on CentOS 8
+############################################################
+#FROM centos:latest
+FROM centos:8
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+RUN yum -y install wget libconfig openssl libcrypto.so.* telnet less net-snmp readline
+WORKDIR /root
+
+
+# KeyVolt configuration
+VOLUME ["/var/lib/bgpsec-keys/"]
+
+
+# SRxCryptoAPI configuration
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/srxcryptoapi-0.3.0.0-1.el7.x86_64.rpm
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/srxcryptoapi-devel-0.3.0.0-1.el7.x86_64.rpm
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/srx-0.5.1.0-1.el7.x86_64.rpm
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/srx-proxy-0.5.1.0-1.el7.x86_64.rpm
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/quaggasrx-0.4.2.7-22.el7.x86_64.rpm
+
+RUN rpm -ivh srxcryptoapi-0.3.0.0-1.el7.x86_64.rpm
+RUN rpm -ivh srxcryptoapi-devel-0.3.0.0-1.el7.x86_64.rpm
+RUN rpm -ivh srx-0.5.1.0-1.el7.x86_64.rpm
+
+### ERROR occurred ##################
+#    Step 14/18 : RUN rpm -ivh srx-0.5.1.0-1.el7.x86_64.rpm
+#     ---> Running in ece3fc8cf83f
+#    error: Failed dependencies:
+#            libreadline.so.6()(64bit) is needed by srx-0.5.1.0-1.el7.x86_64
+#    The command '/bin/sh -c rpm -ivh srx-0.5.1.0-1.el7.x86_64.rpm' returned a non-zero code: 1
+################################################
+
+
+RUN rpm -ivh srx-proxy-0.5.1.0-1.el7.x86_64.rpm
+RUN rpm -ivh quaggasrx-0.4.2.7-22.el7.x86_64.rpm
+
+RUN rm -rf *.rpm
+
+
+
+CMD ["sleep", "infinity"]
+
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 \
+#       -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf \
+#       -v $PWD/keys/:/var/lib/bgpsec-keys/ \
+#       <docker_name>
+##############################################################################

@@ -1,6 +1,6 @@
 ############################################################
 # Dockerfile to build gobgp QuaggaSRx container images 
-# Based on CentOS 8
+# Based on CentOS 7
 ############################################################
 #FROM centos:latest
 FROM centos:7
@@ -22,6 +22,8 @@ RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/
 RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/rpms/srxcryptoapi-devel-0.3.0.0-1.el7.x86_64.rpm
 RUN rpm -ivh srxcryptoapi-0.3.0.0-1.el7.x86_64.rpm
 RUN rpm -ivh srxcryptoapi-devel-0.3.0.0-1.el7.x86_64.rpm
+RUN rm -rf srxcryptoapi-0.3.0.0-1.el7.x86_64.rpm srxcryptoapi-devel-0.3.0.0-1.el7.x86_64.rpm
+
 
 
 #COPY srxcrpytoapi.conf /etc/srxcryptoapi.conf
