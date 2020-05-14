@@ -262,6 +262,7 @@ press '-' on gdb running (tui enable|disable)
 1. gcc -Wl, --verbose  (--> linker path, not dynamic-loader)
 2. ld --verbose | grep SEARCH_DIR | tr -s ' ;' \\012 or \\n  (--> linker search path)
 3. ldconfig -v 2>/dev/null | grep -v ^$'\t'
+    (c.f.) put user-defind library to /etc/ld.so.conf.d/*.conf and then, 'ldconfig' will update ld.so.cache
 4. gcc -print-search-dirs | sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | tr \; \\012
 5. gcc -m64 -Xlinker --verbose  2>/dev/null | grep SEARCH | sed 's/SEARCH_DIR("=\?\([^""]\+\)"); */\1\n/g'  | grep -vE '^$'
 

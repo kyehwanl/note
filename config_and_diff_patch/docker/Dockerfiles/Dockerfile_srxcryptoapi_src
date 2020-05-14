@@ -1,0 +1,43 @@
+############################################################
+# Dockerfile to build gobgp QuaggaSRx container images 
+# Based on CentOS 7
+############################################################
+#FROM centos:latest
+FROM centos:7
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+RUN yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* telnet less gcc
+
+# ut-hash configuration
+WORKDIR /root
+RUN wget https://download-ib01.fedoraproject.org/pub/epel/7/aarch64/Packages/u/uthash-devel-2.0.2-1.el7.noarch.rpm
+RUN rpm -Uvh uthash-devel-2.0.2-1.el7.noarch.rpm && rm -rf uthash-devel-2.0.2-1.el7.noarch.rpm
+
+# KeyVolt configuration
+VOLUME ["/var/lib/bgpsec-keys/"]
+
+
+# SRxCryptoAPI configuration
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/srxcryptoapi-0.3.0.0.tar.gz
+RUN tar zxvf srxcryptoapi-0.3.0.0.tar.gz
+
+WORKDIR /root/srxcryptoapi-0.3.0.0
+RUN ./configure --prefix=/usr CFLAGS="-O0 -g"
+RUN make all install 
+
+RUN cp -rf ./srxcryptoapi_lib64.conf /etc/ld.so.conf.d/
+RUN rm -rf /etc/ld.so.cache && ldconfig
+
+
+#COPY srxcrpytoapi.conf /etc/srxcryptoapi.conf
+CMD ["sleep", "infinity"]
+
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti \
+#       -v $PWD/keys/:/var/lib/bgpsec-keys/ \
+#       <docker_name>
+##############################################################################
