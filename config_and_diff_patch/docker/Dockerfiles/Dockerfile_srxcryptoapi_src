@@ -22,7 +22,8 @@ VOLUME ["/var/lib/bgpsec-keys/"]
 
 # SRxCryptoAPI configuration
 RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/srxcryptoapi-0.3.0.0.tar.gz
-RUN tar zxvf srxcryptoapi-0.3.0.0.tar.gz
+RUN tar zxvf srxcryptoapi-0.3.0.0.tar.gz && rm -rf srxcryptoapi-0.3.0.0.tar.gz
+
 
 WORKDIR /root/srxcryptoapi-0.3.0.0
 RUN ./configure --prefix=/usr CFLAGS="-O0 -g"

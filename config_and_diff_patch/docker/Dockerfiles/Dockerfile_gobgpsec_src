@@ -1,0 +1,77 @@
+############################################################
+# Dockerfile to build gobgp QuaggaSRx container images 
+# Based on CentOS 7
+############################################################
+#FROM centos:latest
+FROM srxcryptoapi_src:latest
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+
+RUN yum -y install git less gcc
+
+#RUN yum -y install go
+# gobgp 2.13 version needs go > 1.13
+#                   protoc version == 3.7.1
+WORKDIR /root
+RUN curl -kO https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz \
+    && tar zxvf ./go1.14.2.linux-amd64.tar.gz -C /usr/local \
+    && export GOPATH=/root \
+    && export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin \
+    && rm -rf ./go1.14.2.linux-amd64.tar.gz 
+
+RUN mkdir -p ./src/github.com/osrg \
+    && git clone --single-branch --branch bgpsec https://github.com/kyehwanl/gobgpsec_priv.git gobgp \
+    && mv gobgp ./src/github.com/osrg/ 
+
+
+# gobgp configuration
+WORKDIR /root/src/github.com/osrg/gobgp
+RUN export CGO_CFLAGS="-I/usr/include/srx" \
+    && export CGO_LDFLAGS="-L/usr/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/usr/lib64/srx" \
+    && export GOPATH=/root \
+    && export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin \
+    && go install ./...
+
+
+################## BEGIN CONFIGURATION ######################
+# Use the sample configurations as our production configs
+EXPOSE 179
+
+WORKDIR /root/bin
+#COPY gobgpd.conf gobgpd.conf
+VOLUME ["/root/bin"]
+
+ENV PATH /root/bin:/usr/local/go/bin:$PATH
+#ENTRYPOINT ["gobgpd", "-p"]
+CMD ["gobgpd", "-p", "-f", "/etc/gobgpd.conf", "--log-level=info"]
+#CMD ["sleep", "infinity"]
+
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 \ 
+#       -v $PWD/gobgpd.ns1.conf.bgpsec:/etc/gobgpd.conf \
+#       -v $PWD/keys/:/var/lib/bgpsec-keys/ \
+#       gobgpsec /bin/bash
+#
+#(example)
+# docker run --rm -it -p 179:179 [--network=host] \
+#       -v /opt/project/TestBgpsecImple/gobgpd.ns1.conf.bgpsec:/etc/gobgpd.conf \
+#       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
+#       gobgpsec \
+#       ./gobgpd -f ./gobgpd.conf -p
+##############################################################################
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#

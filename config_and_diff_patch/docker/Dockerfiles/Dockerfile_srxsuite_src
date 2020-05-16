@@ -1,0 +1,57 @@
+############################################################
+# Dockerfile to build gobgp QuaggaSRx container images 
+# Based on CentOS 7
+############################################################
+#FROM centos:latest
+FROM srxcryptoapi_src:latest
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+RUN yum -y install net-snmp readline-devel patch #automake rpm-build
+WORKDIR /root
+
+
+# KeyVolt configuration
+VOLUME ["/var/lib/bgpsec-keys/"]
+
+
+# SRxCryptoAPI configuration
+#  Done with srxcryptoapi_src:latest dockerfile
+
+
+# SRxServer configuration
+#
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/srx-0.5.1.0.tar.gz
+RUN tar zxvf srx-0.5.1.0.tar.gz && rm -rf srx-0.5.1.0.tar.gz
+
+WORKDIR /root/srx-0.5.1.0
+RUN ./configure --prefix=/usr sca_dir=/usr --cache-file=/dev/null --srcdir=.
+RUN make all install && ldconfig
+
+
+# QuaggaSRx configuration
+#
+WORKDIR /root
+RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/quaggasrx-0.4.2.7.tar.gz
+RUN tar zxvf quaggasrx-0.4.2.7.tar.gz && rm -rf quaggasrx-0.4.2.7.tar.gz
+
+WORKDIR /root/quaggasrx-0.4.2.7
+RUN ./configure --prefix=/usr --disable-snmp --disable-ospfapi --disable-ospfd --disable-ospf6d \
+    --disable-babeld --disable-doc --disable-tests --enable-user=root --enable-group=root \
+    --enable-configfile-mask=0644 --enable-logfile-mask=0644 \
+    --enable-srxcryptoapi sca_dir=/usr srx_dir=/usr
+RUN make all install && ldconfig
+
+EXPOSE 2605 179
+#ENTRYPOINT ["bgpd", "-u", "root"]
+CMD ["sleep", "infinity"]
+
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 \
+#       -v $PWD/bgpd.conf.bs1:/etc/quagga/bgpd.conf \
+#       -v $PWD/keys/:/var/lib/bgpsec-keys/ \
+#       <docker_name>
+##############################################################################

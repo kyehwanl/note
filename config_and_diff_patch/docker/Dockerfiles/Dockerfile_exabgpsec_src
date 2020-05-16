@@ -1,0 +1,39 @@
+############################################################
+# Dockerfile to build gobgp QuaggaSRx container images 
+# Based on CentOS 7
+############################################################
+FROM srxcryptoapi_src:latest
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+RUN yum -y install git python3
+
+RUN git clone --single-branch --branch bgpsec-4.1.2 https://github.com/kyehwanl/exabgpsec_priv.git exabgp
+WORKDIR /root/exabgp
+
+#RUN wget https://bootstrap.pypa.io/get-pip.py
+#RUN python get-pip.py
+#RUN pip install .
+
+
+################## BEGIN CONFIGURATION ######################
+# Use the sample configurations as our production configs
+EXPOSE 179
+VOLUME ["/root/exabgp"]
+ENV PATH /root/exabgp:/root/exabgp/sbin:$PATH
+#CMD ["env exabgp.daemon.user=root", "exabgp", "/etc/exabgp.conf"]
+CMD env exabgp.daemon.user=root exabgp /etc/exabgp.conf
+
+############# DOCKER RUN command example #####################################
+#(example)
+# docker run --rm -it -p 179:179  [--network=host] \ 
+#       -v /opt/project/TestBgpsecImple/exabgp.docker.conf:/etc/exabgp.conf \
+#       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
+#       exabgpsec \
+#       ./sbin/exabgp /etc/exabgp.conf
+##############################################################################
+#
+#
+#
