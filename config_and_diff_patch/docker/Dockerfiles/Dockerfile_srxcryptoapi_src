@@ -26,12 +26,17 @@ RUN tar zxvf srxcryptoapi-0.3.0.0.tar.gz && rm -rf srxcryptoapi-0.3.0.0.tar.gz
 
 
 WORKDIR /root/srxcryptoapi-0.3.0.0
-RUN ./configure --prefix=/usr CFLAGS="-O0 -g"
+RUN ./configure --prefix=/ CFLAGS="-O0 -g"
 RUN make all install 
 
-RUN cp -rf ./srxcryptoapi_lib64.conf /etc/ld.so.conf.d/
-RUN rm -rf /etc/ld.so.cache && ldconfig
 
+# SRxCryptoAPI post scripts 
+RUN mv -f /etc/srxcryptoapi.conf.sample /etc/srxcryptoapi.conf \
+        && touch /var/lib/bgpsec-keys/ski-list.txt \
+        && touch /var/lib/bgpsec-keys/priv-ski-list.txt \
+        && mv -f /etc/qsrx-router-key.cnf.sample /etc/qsrx-router-key.cnf \
+        && cp -rf ./srxcryptoapi_lib64.conf /etc/ld.so.conf.d/ \
+        && rm -rf /etc/ld.so.cache && ldconfig
 
 #COPY srxcrpytoapi.conf /etc/srxcryptoapi.conf
 CMD ["sleep", "infinity"]

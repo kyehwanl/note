@@ -10,6 +10,7 @@ ENV container docker
 ################## BEGIN INSTALLATION ######################
 RUN yum -y install git python3
 
+WORKDIR /root
 RUN git clone --single-branch --branch bgpsec-4.1.2 https://github.com/kyehwanl/exabgpsec_priv.git exabgp
 WORKDIR /root/exabgp
 
@@ -32,7 +33,7 @@ CMD env exabgp.daemon.user=root exabgp /etc/exabgp.conf
 #       -v /opt/project/TestBgpsecImple/exabgp.docker.conf:/etc/exabgp.conf \
 #       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
 #       exabgpsec \
-#       ./sbin/exabgp /etc/exabgp.conf
+#       [env exabgp.daemon.user=root ./sbin/exabgp /etc/exabgp.conf] [--debug]
 ##############################################################################
 #
 #

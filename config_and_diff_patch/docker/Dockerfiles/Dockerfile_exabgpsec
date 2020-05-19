@@ -32,7 +32,7 @@ CMD env exabgp.daemon.user=root exabgp /etc/exabgp.conf
 #       -v /opt/project/TestBgpsecImple/exabgp.docker.conf:/etc/exabgp.conf \
 #       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
 #       exabgpsec \
-#       ./sbin/exabgp /etc/exabgp.conf
+#       [env exabgp.daemon.user=root ./sbin/exabgp /etc/exabgp.conf] [--debug]
 ##############################################################################
 #
 #

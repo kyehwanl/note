@@ -29,7 +29,7 @@ RUN mkdir -p ./src/github.com/osrg \
 
 # gobgp configuration
 WORKDIR /root/src/github.com/osrg/gobgp
-RUN export CGO_CFLAGS="-I/usr/include/srx" \
+RUN export CGO_CFLAGS="-I/usr/include/srx -I/include/srx" \
     && export CGO_LDFLAGS="-L/usr/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/usr/lib64/srx" \
     && export GOPATH=/root \
     && export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin \
@@ -61,7 +61,7 @@ CMD ["gobgpd", "-p", "-f", "/etc/gobgpd.conf", "--log-level=info"]
 #       -v /opt/project/TestBgpsecImple/gobgpd.ns1.conf.bgpsec:/etc/gobgpd.conf \
 #       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
 #       gobgpsec \
-#       ./gobgpd -f ./gobgpd.conf -p
+#       [./gobgpd -f ./gobgpd.conf -p --log-level=info]
 ##############################################################################
 #
 #
