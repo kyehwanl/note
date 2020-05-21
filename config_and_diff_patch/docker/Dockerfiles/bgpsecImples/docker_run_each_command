@@ -1,0 +1,64 @@
+
+Docker Compose Test for BGPSec Imples
+=====================================
+
+1. srx-server
+    (1) direct run
+    docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.100 --name srx_server \
+    -p 17901:17901 -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \ 
+    -v /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf \
+    srxsuite_src srx_server
+
+    (2) with bash, running command inside docker container
+    srx_server
+
+
+2. quaggasrx
+    (1) direct run
+    docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.4 --name quaggasrx \ 
+    -p 1791:179 -p 2605:2605 -v /opt/project/docker_test/bgpsecImples/quaggasrx.docker.conf:/etc/quagga/bgpd.conf \ 
+    -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \ 
+    srxsuite_src bgpd -u root -f /etc/quagga/bgpd.conf
+
+    (2) with bash, running command inside docker container
+    bgpd -u root -f /etc/quagga/bgpd.conf
+
+    (3) exec
+    docker exec -it quaggasrx bash
+
+
+3. gobgpsec
+    (1) direct run
+    docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.3 --name gobgpsec \ 
+    -p 1793:179 -v /opt/project/docker_test/bgpsecImples/gobgpd.docker.conf:/etc/gobgpd.conf \
+    -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \ 
+    gobgpsec_src
+    
+    (2) with bash, running command inside docker container
+    gobgpd -p -f /etc/gobgpd.conf --log-level=info
+
+    (3) gobgp route injection
+    gobgp global rib add bgpsec -a ipv4 15.18.20.0/24 nexthop 10.0.50.5
+
+
+
+4. exabgpsec
+    (1) direct run
+    docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.2 --name exabgpsec \
+    -p 1792:179 -v /opt/project/docker_test/bgpsecImples/exabgp.docker.conf:/etc/exabgp.conf \ 
+    -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \ 
+    exabgpsec_src
+
+    (2) with bash, running command inside docker container
+    env exabgp.daemon.user=root exabgp /etc/exabgp.conf
+
+
+
+
+5. Docker Compose Run
+    (1) Run
+    docker-compose -f ./bgpsec-compose.yml up
+
+    (2) Remove
+    docker-compose -f ./bgpsec-compose.yml stop 
+    docker-compose -f ./bgpsec-compose.yml rm

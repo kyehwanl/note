@@ -57,3 +57,9 @@ Docker Compose Tips
 4. joining same network on which docker-compose running 
 
     docker run -it --rm --net composetest_bgp_net --ip 172.27.0.101 centos bash
+
+
+5. log
+    docker-compose logs <name-of-service>
+    
+    <CAUTION> in order to use logs, docker-compose file's name should be "docker-compose.yml"

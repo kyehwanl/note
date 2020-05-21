@@ -1,0 +1,74 @@
+version: '3'
+services:
+    srx_server:
+        container_name: srx_server
+        image: srxsuite_src 
+        volumes: 
+            - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
+            - /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf
+        ports:
+            - 17901:17901
+        depends_on: 
+            - gobgpsec
+            - exabgpsec
+        command:
+            srx_server
+        networks:
+            bgp_net:
+                ipv4_address: 172.37.0.100
+
+    quaggasrx:
+        container_name: quaggasrx
+        image: srxsuite_src
+        volumes: 
+            - /opt/project/docker_test/bgpsecImples/quaggasrx.docker.conf:/etc/quagga/bgpd.conf
+            - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
+        ports:
+            - 1791:179
+            - 2605:2605
+        privileged: true
+        command:
+            bgpd -u root -f /etc/quagga/bgpd.conf
+        depends_on: 
+            - srx_server
+        networks:
+            bgp_net:
+                ipv4_address: 172.37.0.4
+
+    exabgpsec:
+        container_name: exabgpsec
+        image: exabgpsec_src
+        volumes: 
+            - /opt/project/docker_test/bgpsecImples/exabgp.docker.conf:/etc/exabgp.conf 
+            - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
+        ports:
+            - 1792:179
+        privileged: true
+        depends_on: 
+            - gobgpsec
+        networks:
+            bgp_net:
+                ipv4_address: 172.37.0.2
+
+    gobgpsec:
+        container_name: gobgpsec
+        image: gobgpsec_src
+        volumes: 
+            - /opt/project/docker_test/bgpsecImples/gobgpd.docker.conf:/etc/gobgpd.conf 
+            - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
+        ports:
+            - 1793:179
+        privileged: true
+        networks:
+            bgp_net:
+                ipv4_address: 172.37.0.3
+
+
+networks:
+    bgp_net:
+        ipam:
+            driver: default
+            config: 
+                - subnet: 172.37.0.0/16
+
+        

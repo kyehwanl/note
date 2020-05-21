@@ -19,10 +19,12 @@ VOLUME ["/var/lib/bgpsec-keys/"]
 
 # SRxCryptoAPI configuration
 #  Done with srxcryptoapi_src:latest dockerfile
-
+WORKDIR /root/srxcryptoapi-0.3.0.0
+RUN make install prefix=/usr
 
 # SRxServer configuration
 #
+WORKDIR /root
 RUN wget https://raw.githubusercontent.com/kyehwanl/TestBgpsecImple/master/srx-0.5.1.0.tar.gz
 RUN tar zxvf srx-0.5.1.0.tar.gz && rm -rf srx-0.5.1.0.tar.gz
 
