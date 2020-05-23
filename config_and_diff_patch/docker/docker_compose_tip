@@ -22,8 +22,15 @@ Docker Compose Tips
 
 
     if using 'depends_on' option,   
-    it might be possible to get an order among generated docker instances for setting IP address ??
+    it might be possible to get an order among generated docker instances for setting IP address ?? YES
 
+    * 'build' can be used in the command "docker-compose build" (in this case, assume Dockerfile is in the current path)
+    ** specific name and path can be specified
+
+        image: srxsuite_src
+        build:
+            dockerfile: Dockerfile_srxsuite_src
+            context: /opt/project/docker_test/
 
 
 

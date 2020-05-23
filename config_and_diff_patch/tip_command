@@ -313,6 +313,20 @@ EOF
 
 
 
+
+(26) xclip to use copy / paste between Linux/Windows
+====================================================
+ xclip file_name            : copy/paste with a middle button of mouse
+ xclip -sel clip file_name  : copy / paste with CTRL-V or right button of mouse and select
+
+ Usage :
+    tail -n 30 logfile.log | xclip -sel clip
+    cat /etc/letsencrypt/live/website/fullchain.pem | xclip -sel clip
+    xclip -sel clip < ~/.ssh/id_rsa.pub  (Copies the contents of the id_rsa.pub file to your clipboard)
+
+
+
+
 (ETC)
 =================================
 A. show file types except source files in project directory

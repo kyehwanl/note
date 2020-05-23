@@ -3,6 +3,9 @@ services:
     srx_server:
         container_name: srx_server
         image: srxsuite_src 
+        build:
+            dockerfile: Dockerfile_srxsuite_src 
+            context: /opt/project/docker_test/
         volumes: 
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
             - /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf
@@ -38,6 +41,9 @@ services:
     exabgpsec:
         container_name: exabgpsec
         image: exabgpsec_src
+        build:
+            dockerfile: Dockerfile_exabgpsec_src
+            context: /opt/project/docker_test/
         volumes: 
             - /opt/project/docker_test/bgpsecImples/exabgp.docker.conf:/etc/exabgp.conf 
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
@@ -53,6 +59,9 @@ services:
     gobgpsec:
         container_name: gobgpsec
         image: gobgpsec_src
+        build:
+            dockerfile: Dockerfile_gobgpsec_src
+            context: /opt/project/docker_test/
         volumes: 
             - /opt/project/docker_test/bgpsecImples/gobgpd.docker.conf:/etc/gobgpd.conf 
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys

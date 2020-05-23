@@ -3,6 +3,9 @@ services:
     srx_server:
         container_name: srx_server
         image: srxsuite_src 
+        build:
+            dockerfile: Dockerfile_srxsuite_src 
+            context: /opt/project/docker_test/
         volumes: 
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
             - /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf
