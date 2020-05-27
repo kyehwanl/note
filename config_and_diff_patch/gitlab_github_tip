@@ -166,20 +166,18 @@
 2.2 push with ssh-key
     (1) change HTTPS with SSH url
 
-    $ git remote set-url nistgithub git@github.com:usnistgov/gobgpsec.git
+    $ git remote add nistgithub git@github.com:usnistgov/gobgpsec.git   
+    (OR  git remote set-url nistgithub git@github.com:usnistgov/gobgpsec.git)
 
     $ git remote -v
-    nist    https://gitlab.nist.gov/gitlab/kyehwanl/gobgpsec.git (fetch)
-    nist    https://gitlab.nist.gov/gitlab/kyehwanl/gobgpsec.git (push)
     nistgithub      git@github.com:usnistgov/gobgpsec.git (fetch)
     nistgithub      git@github.com:usnistgov/gobgpsec.git (push)
-    origin  https://github.com/kyehwanlee/gobgpsec.git (fetch)
-    origin  https://github.com/kyehwanlee/gobgpsec.git (push)
 
 
     (2) push with a specific ssh key
 
     $ ssh-agent bash -c "ssh-add ~/.ssh/id_rsa_github; git push nistgithub master"
+
     Identity added: /users/kyehwanl/.ssh/id_rsa_github (/users/kyehwanl/.ssh/id_rsa_github)
     Counting objects: 263, done.
     Delta compression using up to 2 threads.
