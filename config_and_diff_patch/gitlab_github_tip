@@ -177,7 +177,6 @@
     (2) push with a specific ssh key
 
     $ ssh-agent bash -c "ssh-add ~/.ssh/id_rsa_github; git push nistgithub master"
-
     Identity added: /users/kyehwanl/.ssh/id_rsa_github (/users/kyehwanl/.ssh/id_rsa_github)
     Counting objects: 263, done.
     Delta compression using up to 2 threads.
@@ -188,6 +187,18 @@
     To git@github.com:usnistgov/gobgpsec.git
      * [new branch]      master -> master
 
+
+    (3) clone
+
+    $ ssh-agent bash -c "ssh-add  ~/.ssh/id_rsa_github; git clone git@github.com:usnistgov/gobgpsec.git"
+    Identity added: /users/kyehwanl/.ssh/id_rsa_github (/users/kyehwanl/.ssh/id_rsa_github)
+    Cloning into 'gobgpsec'...
+    remote: Enumerating objects: 263, done.
+    remote: Counting objects: 100% (263/263), done.
+    remote: Compressing objects: 100% (224/224), done.
+    remote: Total 263 (delta 30), reused 263 (delta 30), pack-reused 0
+    Receiving objects: 100% (263/263), 1.04 MiB | 0 bytes/s, done.
+    Resolving deltas: 100% (30/30), done.
 
 
 
