@@ -61,6 +61,15 @@ Docker Compose Tips
     Attaching to node2, srx_server, node1
 
 
+    ** docker-compose up for only certain containers
+    $ docker-compose up [-d] <client1> [[client2]...]  (-d: detached mode)
+    $ docker-compose start <client1> [[client2]...] 
+    
+    start : assumes the container already exists and just starts it, 
+    up    : will pull images if necessary, create containers if necessary, then start the container
+
+
+
 4. joining same network on which docker-compose running 
 
     docker run -it --rm --net composetest_bgp_net --ip 172.27.0.101 centos bash
