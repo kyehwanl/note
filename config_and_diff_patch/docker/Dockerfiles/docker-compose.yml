@@ -2,38 +2,35 @@ version: '3'
 services:
     srx_server:
         container_name: srx_server
-        image: srxsuite_src 
+        image: srxsuite_src
         build:
-            dockerfile: Dockerfile_srxsuite_src 
+            dockerfile: Dockerfile_srxsuite_src
             context: /opt/project/docker_test/
-        volumes: 
+        volumes:
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
             - /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf
         ports:
             - 17901:17901
-        depends_on: 
-            - gobgpsec
-            - exabgpsec
         command:
             srx_server
         networks:
             bgp_net:
                 ipv4_address: 172.37.0.100
-
     quaggasrx:
         container_name: quaggasrx
         image: srxsuite_src
-        volumes: 
+        volumes:
             - /opt/project/docker_test/bgpsecImples/quaggasrx.docker.conf:/etc/quagga/bgpd.conf
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
+            - /opt/project/docker_test/bgpsecImples/srxcryptoapi.conf:/etc/srxcryptoapi.conf
         ports:
             - 1791:179
             - 2605:2605
         privileged: true
+        depends_on:
+            - srx_server
         command:
             bgpd -u root -f /etc/quagga/bgpd.conf
-        depends_on: 
-            - srx_server
         networks:
             bgp_net:
                 ipv4_address: 172.37.0.4
@@ -44,8 +41,8 @@ services:
         build:
             dockerfile: Dockerfile_exabgpsec_src
             context: /opt/project/docker_test/
-        volumes: 
-            - /opt/project/docker_test/bgpsecImples/exabgp.docker.conf:/etc/exabgp.conf 
+        volumes:
+            - /opt/project/docker_test/bgpsecImples/exabgp.docker.conf:/etc/exabgp.conf
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
         ports:
             - 1792:179
@@ -62,12 +59,14 @@ services:
         build:
             dockerfile: Dockerfile_gobgpsec_src
             context: /opt/project/docker_test/
-        volumes: 
-            - /opt/project/docker_test/bgpsecImples/gobgpd.docker.conf:/etc/gobgpd.conf 
+        volumes:
+            - /opt/project/docker_test/bgpsecImples/gobgpd.docker.conf:/etc/gobgpd.conf
             - /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys
         ports:
             - 1793:179
         privileged: true
+        depends_on:
+            - quaggasrx
         networks:
             bgp_net:
                 ipv4_address: 172.37.0.3
@@ -77,7 +76,7 @@ networks:
     bgp_net:
         ipam:
             driver: default
-            config: 
+            config:
                 - subnet: 172.37.0.0/16
 
-        
+

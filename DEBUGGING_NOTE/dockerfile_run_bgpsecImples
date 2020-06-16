@@ -1,0 +1,15 @@
+
+1. trying to run srx_server, quaggasrx, gobgpsec and exabgpsec using docker-compose
+
+    Errors: 
+        - quaggasrx eventually validates only one of BGPSec updates VALIAD, others are INVALID
+        - file location: /users/kyehwanl/config_and_diff_patch/docker/Dockerfiles/docker-compose.yml 
+
+    (Solve)
+        - tested with individual run i.e. "docker-compose up srx_server quaggasrx"
+        - Found out that running docker-compose up with exabgpsec resulted in INVALID situation
+        - Running services except exabgpsec was OK
+
+    (Solve2)
+        - Running exabgpsec at last, also resolve this issue in docker-compose.yml file using "depends_on" option
+

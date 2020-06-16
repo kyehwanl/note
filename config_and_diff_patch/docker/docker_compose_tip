@@ -34,15 +34,25 @@ Docker Compose Tips
 
 
 
-2. docker-compose rm
+2. docker-compose rm | down
    : to remove docker instances (same as  "docker rm <container>" )
 
-    vmware.011-antd [2000]{.../srx/compose_test}-> sudo docker-compose -f ./srx_test-compose.yml rm
-    Going to remove node1, srx_server, node2                                                       
-    Are you sure? [yN] y                                                                           
-    Removing node1      ... done                                                                   
-    Removing srx_server ... done                                                                   
-    Removing node2      ... done
+    (1) docker-compose rm
+      vmware.011-antd [2000]{.../srx/compose_test}-> sudo docker-compose -f ./srx_test-compose.yml rm
+      Going to remove node1, srx_server, node2                                                       
+      Are you sure? [yN] y                                                                           
+      Removing node1      ... done                                                                   
+      Removing srx_server ... done                                                                   
+      Removing node2      ... done
+
+        ** docker-compose rm -fs 
+            -f: Don't ask to confirm removal, 
+            -s: Stop the containers, if required, before removing
+
+
+    (2) docker-compose down:    
+        - can stop and remove containers
+        - But, it also stop/ remove sub-network 
 
 
 
