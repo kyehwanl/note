@@ -185,7 +185,7 @@ press '-' on gdb running (tui enable|disable)
 
 (14) rsync
 ====================
-1. backup:  rsync -avPz --delete <src> <dest>    (-z: zipped communication)
+1. backup:  rsync -avPzh --delete <src> <dest>    (-z: zipped communication, P:progressive, h:human readable)
 (example) rsync -avP config_and_diff_patch/tip_command bgp2.antd.nist.gov:~/config_and_diff_patch/
 2. view and diff: rsync -avni <src> <dest>
     <cf> -i(--itemize-changes): YXcstpoguax -- Y(<):sent(to remote), X(f):file, c:checksum, s:size, t:time, p:permission, o:owner...)
@@ -194,6 +194,7 @@ press '-' on gdb running (tui enable|disable)
   $  rsync -avPni  <source> <target>  --exclude='.git*' --exclude='test_install' --exclude="quaggasrx/[^b]*" --include="*/" --include="*.[ch]"  --exclude="*" --prune-empty-dirs
 4. using ssh-tunnel ( using -u, --update :  skip files that are newer on the receiver)
   $ rsync -avPuni -e 'ssh -p 12345' kyehwanl@localhost:/users/kyehwanl/config_and_diff_patch/ ./config_and_diff_patch/
+5. useful switches: avuzh (v:verbose, u: update only, z:compressed, h:human readable)
 
 
 (15) grep | egrep
