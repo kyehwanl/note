@@ -89,3 +89,17 @@ Docker Compose Tips
     docker-compose logs <name-of-service>
     
     <CAUTION> in order to use logs, docker-compose file's name should be "docker-compose.yml"
+
+
+6. scale 
+    same way as "replica" in swarm mode
+
+    docker-compose up --scale quaggasrx=5 --scale gobgpsec=3
+
+
+
+
+
+
+
+
