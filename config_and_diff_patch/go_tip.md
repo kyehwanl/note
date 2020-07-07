@@ -62,7 +62,7 @@ installation
     - environment variable setting for GOPATH and executable go/bin dir
         export GOPATH=/opt/project/gobgp_test/gowork
         export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
-    - confirm with 'go version'
+    - confirm with 'go verion'
 
 
 Error 
@@ -90,3 +90,41 @@ Result
     ---
     Installed Go for linux/386 in /users/kyehwanl/Download/go
     Installed commands in /users/kyehwanl/Download/go/bin
+
+
+
+
+
+
+
+5. go get
+    go get <package>@version
+
+    (example) $ go get rsc.io/sampler@v1.3.1
+
+    Note the explicit @v1.3.1 in the go get argument. 
+    In general each argument passed to go get can take an explicit version; the default is @latest, 
+    which resolves to the latest version as defined earlier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
