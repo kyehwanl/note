@@ -1,0 +1,76 @@
+
+
+(Error)
+-------
+
+[root@fbfc75f2f49b NIST-BGP-SRx]# cd srx-server/src/
+[root@fbfc75f2f49b src]# autoreconf -i
+automake: warnings are treated as errors
+Makefile.am:67: warning: source file '$(CLIENT_DIR)/client_connection_handler.c' is in a subdirectory,
+Makefile.am:67: but option 'subdir-objects' is disabled
+automake: warning: possible forward-incompatibility.
+automake: At least a source file is in a subdirectory, but the 'subdir-objects'
+automake: automake option hasn't been enabled.  For now, the corresponding output
+automake: object file(s) will be placed in the top-level directory.  However,
+automake: this behaviour will change in future Automake versions: they will
+automake: unconditionally cause object files to be placed in the same subdirectory
+automake: of the corresponding sources.
+automake: You are advised to start using 'subdir-objects' option throughout your
+automake: project, to avoid future incompatibilities.
+Makefile.am:67: warning: source file '$(CLIENT_DIR)/srx_api.c' is in a subdirectory,
+Makefile.am:67: but option 'subdir-objects' is disabled
+Makefile.am:29: warning: source file '$(SHARED_DIR)/srx_packets.c' is in a subdirectory,
+Makefile.am:29: but option 'subdir-objects' is disabled
+Makefile.am:29: warning: source file '$(SHARED_DIR)/srx_identifier.c' is in a subdirectory,
+Makefile.am:29: but option 'subdir-objects' is disabled
+Makefile.am:29: warning: source file '$(SHARED_DIR)/crc32.c' is in a subdirectory,
+Makefile.am:29: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/bgpsec_util.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/client_socket.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/debug.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/directory.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/io_util.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/log.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/multi_client_socket.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/mutex.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/packet.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/plugin.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+Makefile.am:34: warning: source file '$(UTIL_DIR)/prefix.c' is in a subdirectory,
+Makefile.am:34: but option 'subdir-objects' is disabled
+
+...
+
+Makefile.am:165: warning: source file '$(SERVER_DIR)/ski_cache.c' is in a subdirectory,
+Makefile.am:165: but option 'subdir-objects' is disabled
+autoreconf: automake failed with exit status: 1
+
+
+(Cause)
+-------
+in Centos 8, it occurs
+
+
+
+(Solution)
+-----------
+(https://github.com/BitzenyCoreDevelopers/cpuminer/issues/5)
+
+
+  There are 2 options to fix
+
+  a) adding subdir-objects to configure.ac like this
+  AM_INIT_AUTOMAKE([gnu subdir-objects])
+
+  b) adding AUTOMAKE_OPTIONS = subdir-objects to Makefile.am
+  AUTOMAKE_OPTIONS = subdir-objects
+

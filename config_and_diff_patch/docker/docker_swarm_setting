@@ -1028,3 +1028,42 @@
 
 
 
+
+5. Docker Swarm Tips
+--------------------
+  (1) To generate multiple images in swarm mode
+	--> define multiple services ?
+	--> Using Docker stack or Docker deploy with docker-compose file
+
+	  $ docker stack deploy --compose-file docker-compose.yml <image>
+	  $ docker deploy --compose-file docker-compose.yml
+
+	(https://codefresh.io/docker-tutorial/deploy-docker-compose-v3-swarm-mode-cluster/)
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

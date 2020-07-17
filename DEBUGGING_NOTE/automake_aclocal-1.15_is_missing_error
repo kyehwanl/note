@@ -1,0 +1,36 @@
+
+
+<error Message>
+---------------
+
+/root/NIST-BGP-SRx/srx-crypto-api/missing: line 81: aclocal-1.13: command not found
+WARNING: 'aclocal-1.13' is missing on your system.
+         You should only need it if you modified 'acinclude.m4' or
+         'configure.ac' or m4 files included by 'configure.ac'.
+         The 'aclocal' program is part of the GNU Automake package:
+         <http://www.gnu.org/software/automake>
+         It also requires GNU Autoconf, GNU m4 and Perl in order to run:
+         <http://www.gnu.org/software/autoconf>
+         <http://www.gnu.org/software/m4/>
+         <http://www.perl.org/>
+make: *** [Makefile:526: aclocal.m4] Error 127
+
+
+
+
+
+
+(Solution)
+----------
+(source:https://stackoverflow.com/questions/33278928/how-to-overcome-aclocal-1-15-is-missing-on-your-system-warning)
+Before running ./configure try running autoreconf -f -i. 
+The autoreconf program automatically runs autoheader, aclocal, automake, autopoint and libtoolize as required.
+
+
+
+(Cause)
+-------
+Edit to add: This is usually caused by checking out code from Git instead of extracting it from a .zip or .tar.gz archive. 
+In order to trigger rebuilds when files change, Git does not preserve files' timestamps, so the configure script might appear to be out of date. As others have mentioned, there are ways to get around this if you don't have a sufficiently recent version of autoreconf.
+
+Another edit: This error can also be caused by copying the source folder extracted from an archive with scp to another machine. The timestamps can be updated, suggesting that a rebuild is necessary. To avoid this, copy the archive and extract it in place.

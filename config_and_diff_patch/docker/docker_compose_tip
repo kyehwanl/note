@@ -97,6 +97,22 @@ Docker Compose Tips
     docker-compose up --scale quaggasrx=5 --scale gobgpsec=3
 
 
+7. Docker Stack / Deploy
+    In order to combine docker-compose file to swarm service
+    (https://docs.docker.com/engine/swarm/stack-deploy/)
+    (https://codefresh.io/docker-tutorial/deploy-docker-compose-v3-swarm-mode-cluster/)
+    
+    $ docker stack deploy --compose-file docker-compose.yml <image>
+    OR
+    
+    $ docker deploy --compose-file docker-compose.yml
+
+
+
+
+
+
+
 
 
 

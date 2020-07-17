@@ -28,8 +28,9 @@ Docker Tips
         docker logs -f
 
 
-6. naming docker container 
+6. naming docker container and change hostname
     docker run --name <NAME>
+    docker run --hostname <HOST>
 
 
 7. docker run --net=<mode>  
