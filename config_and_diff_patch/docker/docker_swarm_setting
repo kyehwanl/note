@@ -1042,7 +1042,16 @@
 
 	
 
+  (2) Display join token as worker or manager
+	# docker swarm join-token worker  
+	To add a worker to this swarm, run the following command: 
+		
+		docker swarm join --token SWMTKN-1-2dwv9ydi6l0gnikqs1i6ffmvcfthfmyvpaw8xoa3xpza8kryb5-azmpll9ef7jka1wdo128t05ha 10.0.20.162:2377    
 
+	# docker swarm join-token manager
+	To add a manager to this swarm, run the following command:
+
+		docker swarm join --token SWMTKN-1-2dwv9ydi6l0gnikqs1i6ffmvcfthfmyvpaw8xoa3xpza8kryb5-04regltv8mvj114hge03rhf0t 10.0.20.162:2377
 
 
 
