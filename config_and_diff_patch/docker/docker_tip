@@ -305,6 +305,7 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
     (1) status
         $ docker network ls
 
+
     (2) create user defined network
         + First you need to create you own docker network (mynet123)
             $ docker network create --subnet=172.18.0.0/16 mynet123
@@ -315,14 +316,16 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
         + then in ubuntu shell
             $ ip addr
 
+
     (3) Additionally you could use
         --hostname to specify a hostname
         --add-host to add more entries to /etc/hosts 
+        --attachable : for being able to be attachable with swarm mode
+
 
     (4) net host mode
         $ docker run --net=host -i -t <image>
             which picked up the static IP and assigned it to docker0 in the container
-
 
 
     (5) with network namespace (from the official Docker documentation)

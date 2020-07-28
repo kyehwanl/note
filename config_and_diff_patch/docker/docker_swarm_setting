@@ -921,11 +921,15 @@
 
 (1) create overlay network
 
-    [root@vmware-011 srx]# docker network create -d overlay srx-net
+    [root@vmware-011 srx]# docker network create -d overlay [--attachable] srx-net 
     o0n5b2c4jnz1x8sogmjrui5fi
 
+	(--attachable: in order to be shared srx-net with other containers)
+
+
     <CAUTION> firewall setting might prohibit from interconnection between overlay network
-        --> disable firewalld temporarily
+        --> disable firewalld temporarily Or Add a rule for firewall
+
 
 
 
@@ -1055,20 +1059,67 @@
 
 
 
+  (3) Expend the existing service with 'scale' (it also can be used before using "docker service create")
+	# docker service scale srx_service1=10
 
 
 
 
+  (4) update or change a non-attachable overlay network with a new attachable network
+
+	A. Remove the existed non-attachable network
+		# docker service update --network-rm srx-net srx_service1
+
+	B. Create attachable network
+		# docker network create --driver=overlay --attachable srx_net
+
+	C. Change with the new one
+		# docker service update --network-add srx_net srx_service1
+
+
+	<REASON to make an attachable overlay network>
+	--> It can be used to connect with the swarm's overlay network
 
 
 
+  (5) Visulizer (https://github.com/dockersamples/docker-swarm-visualizer)
+
+	To run:
+	# docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
+
+	To run in docker swarm:
+	# docker service create \
+	  --name=viz \
+	  --publish=8080:8080/tcp \
+	  --constraint=node.role==manager \
+	  --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+	  dockersamples/visualizer
 
 
 
+6. Examples in idac-server02 & 03
+----------------------------------
 
+	(0) Swarm Init on idac-server03 (manager)
+		# docker swarm init --advertise-addr 10.0.20.162
 
+		On idac-server02 (worker)
+		# docker swarm join --token SWMTKN-1-2dwv9ydi6l0gnikqs1i6ffmvcfthfm...ka1wdo128t05ha 10.0.20.162:2377
 
+		Need firewall rule inserted for 2377 on idac-server03, manager node, to allow worker to access
+		# iptables -I INPUT 2 -p tcp -m state --state NEW -m tcp --dport 2377 -j ACCEPT
 
+		This information can be found on manager node with following command
+		# docker swarm join-token worker
+
+	(1) docker network create for overlay swarm
+		# docker network create --driver=overlay --attachable srx_net
+
+	(2) Docker Swarm Service Create 
+		# docker service create --name srx_service1 \ 
+                            	--mount dst=/etc/quagga/,src=/opt/project/docker_test/bgpsecImples/,type=bind \
+                            	--mount src=/opt/project/docker_test/bgpsecImples/keys,dst=/var/lib/bgpsec-keys,type=bind \
+								--publish target=179,published=179 --replicas=5 --network srx_net srxsuite_src
 
 
 
