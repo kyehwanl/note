@@ -1096,6 +1096,13 @@
 	  dockersamples/visualizer
 
 
+  (6) For Swarm Networking, Open the following ports on the routers and firewalls between nodes:
+	* 2377/tcp: for secure client-to-swarm communication
+	* 7946/tcp and udp : for control plane gossip
+	* 4789/udp: for VXLAN-based overlay networks
+
+
+
 
 6. Examples in idac-server02 & 03
 ----------------------------------
