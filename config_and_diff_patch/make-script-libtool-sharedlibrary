@@ -1,12 +1,79 @@
 
-#! /bin/sh 
-set -x
-/bin/sh /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o util_time_measure.lo util_time_measure.c
-/bin/sh /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_util.la util_time_measure.lo -lrt -rpath `pwd`
+<Example.1>
+=============
+- Extracted from ..Programming/time-measure/tm-library/util_getrusage
 
-# main program compile
-# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
-#
+    #! /bin/sh 
+    set -x
+    /bin/sh /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o util_time_measure.lo util_time_measure.c
+    /bin/sh /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_util.la util_time_measure.lo -lrt -rpath `pwd`
+
+    @# main program compile
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
+
+
+
+<Example.2>
+============
+- Extracted from ..Programming/time-measure/tm-library/tm_rdtsc
+
+    /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o libtm_rdtsc.lo libtm_rdtsc.c
+    /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_rdtsc.la libtm_rdtsc.lo -lrt -rpath `pwd`
+
+    @# main program compile
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/users/kyehwanl/Programming/time-measure/tm-library/.libs/
+
+
+
+<Example.3>
+===========
+- Extracted from Net-Patricia's Makefile
+
+(Makefile)
+    all:
+        /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+        /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+        #/usr/bin/libtool --tag=CC   --mod=install cp libpatricia.la `pwd`
+        /usr/bin/libtool --tag=CC   --finish  `pwd`
+
+
+(Building Result)
+    -1-
+    /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+    libtool: compile:  gcc -DHAVE_IPV6 -I. -g -O0 -Wall -c patricia.c  -fPIC -DPIC -o .libs/patricia.o
+    libtool: compile:  gcc -DHAVE_IPV6 -I. -g -O0 -Wall -c patricia.c -o patricia.o >/dev/null 2>&1
+
+    -2-
+    /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+    libtool: link: gcc -shared  -fPIC -DPIC  .libs/patricia.o    -O0   -Wl,-soname -Wl,libpatricia.so.0 -o .libs/libpatricia.so.0.0.0
+    libtool: link: (cd ".libs" && rm -f "libpatricia.so.0" && ln -s "libpatricia.so.0.0.0" "libpatricia.so.0")
+    libtool: link: (cd ".libs" && rm -f "libpatricia.so" && ln -s "libpatricia.so.0.0.0" "libpatricia.so")
+    libtool: link: ar cru .libs/libpatricia.a  patricia.o
+    libtool: link: ranlib .libs/libpatricia.a
+    libtool: link: ( cd ".libs" && rm -f "libpatricia.la" && ln -s "../libpatricia.la" "libpatricia.la" )
+
+    -3-
+    /usr/bin/libtool --tag=CC   --finish  `pwd`
+    libtool: finish: PATH="/bin/:/sbin" ldconfig -n /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia
+    ----------------------------------------------------------------------
+    Libraries have been installed in:
+       /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia
+
+    If you ever happen to want to link against installed libraries
+    in a given directory, LIBDIR, you must either use libtool, and
+    specify the full pathname of the library, or use the `-LLIBDIR'
+    flag during linking and do at least one of the following:
+       - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+         during execution
+       - add LIBDIR to the `LD_RUN_PATH' environment variable
+         during linking
+       - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+       - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+    See any operating system documentation about shared libraries for
+    more information, such as the ld(1) and ld.so(8) manual pages.
+    ----------------------------------------------------------------------
 
 
 
@@ -276,5 +343,17 @@ more information, such as the ld(1) and ld.so(8) manual pages.
 ----------------------------------------------------------------------
 → libtool 의 finish 모드로 필요한 경로( ./test_install) 를 library path에 추가할 수 있다
 
-( -n: dry-run mode)
+( ldconfig : -n     Only process directories specified on the command line.  Don't build cache.)
+
+
+
+
+
+
+
+
+
+
+
+
 
