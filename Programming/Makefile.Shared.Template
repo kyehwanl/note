@@ -1,0 +1,49 @@
+<Example.1>
+===========
+- from Net-patricia 
+
+all: 
+	/usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+	/usr/bin/libtool --tag=CC   --mode=install cp libpatricia.la `pwd`
+	/usr/bin/libtool --tag=CC   --finish  `pwd`
+
+demo: demo.o
+	/usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+	@# main program compile
+	@#gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -g -O0 -I. -o demo demo.c -L./.libs/ -lpatricia -Wl,-rpath -Wl,`pwd`/.libs
+	gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -I. -g -O0 -Wall  -c -o demo.o demo.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o demo demo.o libpatricia.la -rpath `pwd`/.libs
+
+clean:
+	rm -rf *.o *.lo *.a *.la .libs
+
+
+
+<Example.2>
+=============
+- Extracted from ..Programming/time-measure/tm-library/util_getrusage
+
+    #! /bin/sh
+    set -x
+    /bin/sh /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o util_time_measure.lo util_time_measure.c
+    /bin/sh /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_util.la util_time_measure.lo -lrt -rpath `pwd`
+
+    @# main program compile
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
+
+
+
+<Example.3>
+============
+- Extracted from ..Programming/time-measure/tm-library/tm_rdtsc
+
+    /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -g -O0 -Wall  -c -o libtm_rdtsc.lo libtm_rdtsc.c
+    /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I.  -o libtm_rdtsc.la libtm_rdtsc.lo -lrt -rpath `pwd`
+
+    @# main program compile
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/dir/.libs
+    @# gcc -o util_main util_main.c -L./.libs/ -ltm_util -lrt -Wl,-rpath -Wl,/users/kyehwanl/Programming/time-measure/tm-library/.libs/
+
+

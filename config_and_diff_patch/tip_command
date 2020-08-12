@@ -1,13 +1,31 @@
 (1) cscope & ctags
 ====================
+* <Examples>
 
 find ./ -name '*.[ch]' | ctags -R -L -
 find ./ -name '*.[ch]' > cscope.files (or when you exclude something, use 'grep -v "something"')
  e.g., --> find ./ -name '*.[ch]' | grep -v 'test_install'
-cscope -b
+cscope -b[vq]
 
  <CAUTION>
  If vim cannot find headers or links, try to use physical path($PWD) instead of relative path(./) in 'find' command.
+
+
+* <Cscope insensitive search>
+To make cscope's search (all search methods, not only egrep) case-insensitive by default, 
+you must add the -C flag to your initialization command:
+
+   :cscope add cscope.out -C
+   or
+   set csprg=cscope\ -C
+
+
+* (Options)
+-b will build the database only, without accessing the CLI; 
+-R will recursively build the symbol database from the directory it’s executed, down. 
+-q for fast symbol lookup, at the expense of a larger database, cscope.in.out and cscope.po.out will be added.
+-v verbose in line mode
+
 
 
 (2) diff & patch

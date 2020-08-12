@@ -32,19 +32,19 @@
 
 (Makefile)
     all:
-        /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
-        /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
-        #/usr/bin/libtool --tag=CC   --mod=install cp libpatricia.la `pwd`
-        /usr/bin/libtool --tag=CC   --finish  `pwd`
+  (1)   /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+  (2)   /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+  (3)   /usr/bin/libtool --tag=CC   --mode=install cp libpatricia.la `pwd`
+  (4)   /usr/bin/libtool --tag=CC   --finish  `pwd`
 
 
 (Building Result)
-    -1-
+    -(1)-
     /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
     libtool: compile:  gcc -DHAVE_IPV6 -I. -g -O0 -Wall -c patricia.c  -fPIC -DPIC -o .libs/patricia.o
     libtool: compile:  gcc -DHAVE_IPV6 -I. -g -O0 -Wall -c patricia.c -o patricia.o >/dev/null 2>&1
 
-    -2-
+    -(2)-
     /usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
     libtool: link: gcc -shared  -fPIC -DPIC  .libs/patricia.o    -O0   -Wl,-soname -Wl,libpatricia.so.0 -o .libs/libpatricia.so.0.0.0
     libtool: link: (cd ".libs" && rm -f "libpatricia.so.0" && ln -s "libpatricia.so.0.0.0" "libpatricia.so.0")
@@ -53,7 +53,36 @@
     libtool: link: ranlib .libs/libpatricia.a
     libtool: link: ( cd ".libs" && rm -f "libpatricia.la" && ln -s "../libpatricia.la" "libpatricia.la" )
 
-    -3-
+    -(3)-
+    /usr/bin/libtool --tag=CC   --mode=install cp libpatricia.la `pwd`
+    libtool: install: cp .libs/libpatricia.so.0.0.0 /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia/libpatricia.so.0.0.0
+    libtool: install: (cd /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia && { ln -s -f libpatricia.so.0.0.0 libpatricia.so.0 || { rm -f libpatricia.so.0 && ln -s libpatricia.so.0.0.0 libpatricia.so.0; }; })
+    libtool: install: (cd /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia && { ln -s -f libpatricia.so.0.0.0 libpatricia.so || { rm -f libpatricia.so && ln -s libpatricia.so.0.0.0 libpatricia.so; }; })
+    libtool: install: cp .libs/libpatricia.lai /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia/libpatricia.la
+    libtool: install: cp .libs/libpatricia.a /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia/libpatricia.a
+    libtool: install: chmod 644 /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia/libpatricia.a
+    libtool: install: ranlib /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia/libpatricia.a
+    libtool: finish: PATH="/bin/:/sbin" ldconfig -n /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia
+    ----------------------------------------------------------------------
+    Libraries have been installed in:
+       /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia
+
+    If you ever happen to want to link against installed libraries
+    in a given directory, LIBDIR, you must either use libtool, and
+    specify the full pathname of the library, or use the `-LLIBDIR'
+    flag during linking and do at least one of the following:
+       - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+         during execution
+       - add LIBDIR to the `LD_RUN_PATH' environment variable
+         during linking
+       - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+       - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+    See any operating system documentation about shared libraries for
+    more information, such as the ld(1) and ld.so(8) manual pages.
+    ----------------------------------------------------------------------
+
+    -(4)-
     /usr/bin/libtool --tag=CC   --finish  `pwd`
     libtool: finish: PATH="/bin/:/sbin" ldconfig -n /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia
     ----------------------------------------------------------------------
