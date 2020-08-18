@@ -1,0 +1,59 @@
+
+ASPA Validation Pseudo Code
+===========================
+
+
+VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length, int AFI, ...)
+{
+  // Sanity Checks
+  if Check (AS_PATH_List [Last] != Direct Neighbor) // neighbor AS
+    return INVALID;
+
+  if Check (AS_PATH_List includes AS_SET)   // AS_SET
+    return UNVERIFIABLE
+
+  uint32_t customerAS, providerAS
+  bool DownStream = False
+
+  for id = range 0 ... as_path_length-1
+  {
+    customerAS = AS_PATH_List[id].ASN
+    providerAS = AS_PATH_List[id+1].ASN
+
+    Current_Result = ASPA_DB_Function(customerAS, providerAS, AFI)
+
+    if Current_Result == VALID or UNKNOWN
+      continue to next loop with id increased by 1
+
+    if Curent_Result == INVALID  && DownStream == False
+    {
+        // Check DownStream Orders
+        Swap (customerAS, providerAS)
+        Swap_Result = ASPA_DB_Function (customerAS, providerAS, AFI)
+
+        if Swap_Result == VALID
+          DownStream = True
+          continue to next loop with id increased by 1 and Swap id
+        else
+          return INVALID
+    }
+
+    return Current_Result
+}
+
+VAL_Result_t ASPA_DB_Function( uint32_t customerAS, providerAS, AFI)
+
+      ASPA_Record[] = LOOKUP_ASPA_DB (Key=customerAS & AFI);
+
+      // CustomerAS Check
+      if No Valid Record for customerAS in DB
+        return UNKNOWN
+
+      // ProviderAS Check
+      if Check (providerAS in ASPA_Record[])
+        return VALID
+
+      // in case there is no matching
+      else
+        return INVALID
+}
