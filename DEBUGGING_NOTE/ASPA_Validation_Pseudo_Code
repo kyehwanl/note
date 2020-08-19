@@ -3,7 +3,7 @@ ASPA Validation Pseudo Code
 ===========================
 
 
-VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length, int AFI, ...)
+VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length, uint8_t AFI, ...)
 {
   // Sanity Checks
   if Check (AS_PATH_List [Last] != Direct Neighbor) // neighbor AS
@@ -38,7 +38,7 @@ VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length,
           return INVALID
     }
 
-    return Current_Result
+    return Current_Result will be either VALID (only if there is no UNKNOWN), or UNKNOWN
 }
 
 VAL_Result_t ASPA_DB_Function( uint32_t customerAS, providerAS, AFI)
