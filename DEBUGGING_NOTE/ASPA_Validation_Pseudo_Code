@@ -5,16 +5,23 @@ ASPA Validation Pseudo Code
 
 VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length, uint8_t AFI, ...)
 {
-  // Sanity Checks
+  uint32_t customerAS, providerAS
+  bool     swap_flag = False
+
+  // Initial Checks
   if Check (AS_PATH_List [Last] != Direct Neighbor) // neighbor AS
     return INVALID;
 
   if Check (AS_PATH_List includes AS_SET)   // AS_SET
-    return UNVERIFIABLE
+    Current_Result = UNVERIFIABLE
 
-  uint32_t customerAS, providerAS
-  bool DownStream = False
+  if Check (AS_PATH_List is Upstream)  // UpStream or DownStream
+    then go to Upstream_Validation
+  else
+    then go to Downstream_Validation
 
+
+Upstream_Validation:
   for id = range 0 ... as_path_length-1
   {
     customerAS = AS_PATH_List[id].ASN
@@ -25,35 +32,44 @@ VAL_Result_t ASPA_Validation (AS_Segment AS_PATH_List[], uint8_t as_path_length,
     if Current_Result == VALID or UNKNOWN
       continue to next loop with id increased by 1
 
-    if Curent_Result == INVALID  && DownStream == False
+    if Current_Result == INVALID
+      return INVALID
+   }
+
+   return Return_Result will be VALID (only if there is no UNKNOWN, no UNVERIFIABLE in the Current_Result),
+                            or UNKNOWN
+                            or UNVERIFIABLE (once UNVERIFIABLE set and all other hops are VALID)
+
+
+Downstream_Validation:
+  for id = range 0 ... as_path_length-1
+  {
+    customerAS = AS_PATH_List[id].ASN
+    providerAS = AS_PATH_List[id+1].ASN
+
+    if (swap_flag == True)
+      Swap (customerAS, providerAS)
+
+    Current_Result = ASPA_DB_Function(customerAS, providerAS, AFI)
+
+    if Current_Result == VALID or UNKNOWN
+      continue to next loop with id increased by 1
+
+    if Current_Result == INVALID  && swap_flag == False
     {
-        // Check DownStream Orders
-        Swap (customerAS, providerAS)
-        Swap_Result = ASPA_DB_Function (customerAS, providerAS, AFI)
-
-        if Swap_Result == VALID
-          DownStream = True
-          continue to next loop with id increased by 1 and Swap id
-        else
-          return INVALID
+      swap_flag = True
+      continue to next loop with id increased by 1
     }
+    else
+      return INVALID
+  }
 
-    return Current_Result will be either VALID (only if there is no UNKNOWN), or UNKNOWN
+  return Return_Result will be VALID (only if there is no UNKNOWN, no UNVERIFIABLE in the Current_Result),
+                            or UNKNOWN
+                            or UNVERIFIABLE (once UNVERIFIABLE set and all other hops are VALID)
 }
 
-VAL_Result_t ASPA_DB_Function( uint32_t customerAS, providerAS, AFI)
 
-      ASPA_Record[] = LOOKUP_ASPA_DB (Key=customerAS & AFI);
 
-      // CustomerAS Check
-      if No Valid Record for customerAS in DB
-        return UNKNOWN
 
-      // ProviderAS Check
-      if Check (providerAS in ASPA_Record[])
-        return VALID
 
-      // in case there is no matching
-      else
-        return INVALID
-}
