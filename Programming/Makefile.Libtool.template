@@ -7,7 +7,8 @@ OBJEXT = o
 PERF_OBJECTS = perf_test.$(OBJEXT)
 DEPENDENCIES = libpatricia.la
 
-CFLAGS = -g -O0 -Wall -fno-omit-frame-pointer -std=gnu99 
+#CFLAGS = -g -O0 -Wall -fno-omit-frame-pointer -std=gnu99 
+CFLAGS = -g -O0 -Wall -std=gnu99 
 
 TM_CFLAGS  = -I/opt/project/tm-library/tm_rdtsc
 TM_LDFLAGS = -L/opt/project/tm-library/tm_rdtsc -ltm_rdtsc -Wl,-rpath -Wl,/opt/project/tm-library/tm_rdtsc/.libs

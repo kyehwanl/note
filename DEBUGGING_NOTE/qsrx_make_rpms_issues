@@ -2,7 +2,7 @@
 1. requirement library
 =======================
 
-texinfo, texi2html
+texinfo, texi2html, net-snmp-devel (if necessary)
 
 
 
@@ -28,7 +28,7 @@ texinfo, texi2html
     make: *** [rpms] Error 1
 
 
-    --> (Solution)
+    --> (Solution.1)
     In quagga.spec and quagga.spec.in,
     Change the line order with following line where sca_dir is described 
 
@@ -52,6 +52,9 @@ texinfo, texi2html
     +sca_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst srx_dir=/opt/project/TestBgpsecImple/test_install/qsrx/../_inst
     +#sca_dir= srx_dir=
 
+
+    --> (Solution.2)
+    Do rpm install SRxCryptoAPI's rpms with "rpm -ivh "  
  
 
 
@@ -66,6 +69,17 @@ texinfo, texi2html
 
     - eliminate '/' in quagga.spec
         --> confer to sca_dir value in (1).Solution's diff of quagga.spec
+
+
+
+(3) Net-snmp error
+    ...
+    checking whether we can link to Net-SNMP... no
+    configure: error: --enable-snmp given but not usable                                                                                    error: Bad exit status from /var/tmp/rpm-tmp.sPqZ2k (%build)
+    ...
+
+    --> (Solution)
+    yum install net-snmp-devel 
 
 
 
