@@ -210,8 +210,16 @@ tmux tips
     
 
 
+8. Resize Pane
+---------------
+    (1) in command line
+        ": resize-pane -U 50" -- upward 50 increase
+        ": resize-pane -D 20" -- downward 20 increase
 
-7. Other Useful config tips
+
+
+
+** Other Useful config tips
 ----------------------------
     # Switching tmux zoom between panes without zooming out
         bind -r a select-pane -t .+2 \;  resize-pane -Z
