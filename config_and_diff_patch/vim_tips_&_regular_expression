@@ -84,6 +84,16 @@ Vimdiff tips
 
 
 
+Bundle Tips
+===========
+
+(1) Status Bar displays various information including a function name
+    - Need bundle file:
+        vim-powerline and tagbar plugins
+
+    - in vimrc configuration, add followings:
+        Bundle 'Lokaltog/vim-powerline'
+        Bundle 'majutsushi/tagbar'
 
 
 

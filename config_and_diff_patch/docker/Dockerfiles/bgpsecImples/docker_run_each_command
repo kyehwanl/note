@@ -62,3 +62,16 @@ Docker Compose Test for BGPSec Imples
     (2) Remove
     docker-compose -f ./bgpsec-compose.yml stop 
     docker-compose -f ./bgpsec-compose.yml rm
+
+    ** docker-compose rm -fs
+            -f: Don't ask to confirm removal,
+            -s: Stop the containers, if required, before removing
+
+
+   
+6. Docker Swarm Run
+    docker service create --name srx_service1 \
+             --mount dst=/etc/quagga/,src=/opt/project/docker_test/bgpsecImples/,type=bind \
+             --mount src=/opt/project/docker_test/bgpsecImples/keys,dst=/var/lib/bgpsec-keys,type=bind \
+             -p 179:179 --replicas=10 --network srx_net \
+             srxsuite_src

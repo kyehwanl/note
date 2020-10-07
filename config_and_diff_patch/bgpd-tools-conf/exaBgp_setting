@@ -66,3 +66,8 @@ group Core_v4 {
 
     (command connected with &&)
     $ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /users/kyehwanl/srx_test1/exabgp-3.4.13/lib/exabgp/application/bgp.py /users/kyehwanl/srx_test1/exabgp-3.4.13/bgpd.exa.conf
+
+
+    (not sure) in case of using python3 and root authorization
+    # export PYTHONPATH=/root/exabgp/lib
+    # env exabgp.daemon.user=root python -m pdb /root/exabgp/lib/exabgp/application/bgp.py /etc/exabgp.conf 
