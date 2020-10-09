@@ -1,0 +1,58 @@
+
+
+The meaning of “__attribute__((packed, aligned(4))) ”
+===================================================
+
+(source: https://stackoverflow.com/questions/11770451/what-is-the-meaning-of-attribute-packed-aligned4)
+
+Data structure alignment is the way data is arranged and accessed in computer memory. It consists of two separate but related issues: data alignment and data structure padding.
+
+When a modern computer reads from or writes to a memory address, it will do this in word sized chunks (e.g. 4 byte chunks on a 32-bit system). Data alignment means putting the data at a memory offset equal to some multiple of the word size, which increases the system's performance due to the way the CPU handles memory.
+
+To align the data, it may be necessary to insert some meaningless bytes between the end of the last data structure and the start of the next, which is data structure padding.
+
+gcc provides functionality to disable structure padding. i.e to avoid these meaningless bytes in some cases. Consider the following structure:
+
+typedef struct
+{
+     char Data1;
+     int Data2;
+     unsigned short Data3;
+     char Data4;
+
+}sSampleStruct;
+sizeof(sSampleStruct) will be 12 rather than 8. Because of structure padding. By default, In X86, structures will be padded to 4-byte alignment:
+
+typedef struct
+{
+     char Data1;
+     //3-Bytes Added here.
+     int Data2;
+     unsigned short Data3;
+     char Data4;
+     //1-byte Added here.
+
+}sSampleStruct;
+We can use __attribute__((packed, aligned(X))) to insist particular(X) sized padding. X should be powers of two. Refer here
+
+typedef struct
+{
+     char Data1;
+     int Data2;
+     unsigned short Data3;
+     char Data4;
+
+}__attribute__((packed, aligned(1))) sSampleStruct;  
+so the above specified gcc attribute does not allow the structure padding. so the size will be 8 bytes.
+
+If you wish to do the same for all the structures, simply we can push the alignment value to stack using #pragma
+
+#pragma pack(push, 1)
+
+//Structure 1
+......
+
+//Structure 2
+......
+
+#pragma pack(pop)
