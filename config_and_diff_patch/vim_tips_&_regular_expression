@@ -96,6 +96,44 @@ Bundle Tips
         Bundle 'majutsushi/tagbar'
 
 
+Session 
+=======
+ 
+(1) to make the current session stored:
+    :mks[ession] ~/mysession.vim
+    
+(2) Then later you can source that vim file and you'll have your old session back:
+    :source ~/mysession.vim
+
+    or open vim with the -S option:
+    $ vim -S ~/mysession.vim
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

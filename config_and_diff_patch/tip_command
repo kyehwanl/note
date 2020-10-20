@@ -346,6 +346,22 @@ EOF
 
 
 
+(27) Vim - multiple sessions
+============================
+
+  1. To make the current session stored:
+      :mks[ession] ~/mysession.vim
+
+  2. Then later you can source that vim file and you'll have your old session back:
+      :source ~/mysession.vim
+
+      or open vim with the -S option:
+      $ vim -S ~/mysession.vim
+
+
+
+
+
 (ETC)
 =================================
 A. show file types except source files in project directory
