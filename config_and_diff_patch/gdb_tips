@@ -9,7 +9,7 @@ GDB
     + C-x 2 : layout at least 2 windows
 
 1. layout|focus <src|asm|cmd|split|regs|prev|next>
-2. winheight <name> <[+|-]count>
+2. winheight <name> <[+|-]count> - (for example: winheight src + 20)
 3. update: current win & execution point, 
 4. refresh(Ctrl-L)
 5. info win
@@ -24,6 +24,9 @@ GDB
 
    ** STRONGLY RECOMMEND WHEN TUI MODE --> disable first, and then enable once get TUI in 
 
+7. If there is window height issue (src height is very narrow when using splitting pane in tmux),
+        Then, zoom out and in again with refresh (ctrl+l)
+        
 
 
 (2) TUI configuration variables
