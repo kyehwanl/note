@@ -78,6 +78,10 @@
 Rsync Filtering and Excluding
 =============================
 
+  Basic: rsync [options] --exclude 'file.ext'
+    (example) rsync -avPuiz --exclude "*.pyc" <src> <dst>
+
+
   rsync -avzC --filter='-rs_*/.svn*' --include="*/" --include='*.js' \
        --include='*.php' --exclude="*" --delete dir1/ dir2/
 
