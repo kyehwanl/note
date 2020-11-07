@@ -82,9 +82,17 @@ MAILTO=""
 MAILTO=""
 15 0 * * * /users/kyehwanl/Emulab/Shell_Script/github_sync_vm005.sh > /tmp/crontab.log 2>&1
 17 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.sh > /tmp/crontab-exabgp.log 2>&1
-19 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.sh  > /tmp/crontab-gobgp.log 2>&1       
-21 20 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_sync_vm005.sh > /tmp/crontab-srx_grpc.log 2>&1 
-
+18 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.old.sh >> /tmp/crontab-exabgp.log 2>&1
+19 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.sh  > /tmp/crontab-gobgp.log 2>&1
+20 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.old.sh  >> /tmp/crontab-gobgp.log 2>&1
+21 20 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_sync_vm005.sh > /tmp/crontab-srx_grpc.log 2>&1
+22 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/srx_grpc/ ~/proj-program_data/srx_grpc/
+24 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/ ~/proj-program_data/gobgp/
+25 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gobgp_v2_running_test/src/github.com/osrg/gobgp ~/proj-program_data/gobgp_v2/
+26 0 * * * rsync -avPuiz --delete ~/Emulab/exabgp-3.4.13 ~/proj-program_data/
+27 0 * * * rsync -avPuiz --delete /opt/project/exabgp_test/exabgp-4.1.2 ~/proj-program_data/
+28 0 * * * rsync -avPuiz --delete /opt/project/Github_usnistgov ~/proj-program_data/
+29 0 * * * /users/kyehwanl/Emulab/Shell_Script/bgp-srx-suite_sync_klee_repo_vm005.sh > /tmp/crontab-bgp-srx-suite.log 2>&1
 
 
 
