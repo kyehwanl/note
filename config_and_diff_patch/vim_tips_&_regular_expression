@@ -111,7 +111,18 @@ Session
 
 
 
+Plugins
+=======
 
+(1) Disable auto-complete features (neocomplcache)
+    :let g:neocomplcache_disable_auto_complete=1
+    (https://stackoverflow.com/questions/21761953/how-to-disable-the-auto-complete-feature-on-periods)
+
+    - two options are already set because of 'neocomplcache'
+    :set completeopt=menuone,preview
+
+    What we need is just menu, so cut the preview, to remove preview,
+    :set completeopt-=preview
 
 
 

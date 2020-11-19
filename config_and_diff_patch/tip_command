@@ -330,6 +330,8 @@ EOF
 
  systemctl <status|stop|start> firewalld : Centos 7 later version
 
+ (other command)
+ firewall-cmd --add-port=3389/tcp --permanent
 
 
 
