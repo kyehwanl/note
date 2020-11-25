@@ -128,8 +128,47 @@ Plugins
 
 
 
+Map, noremap etc
+================
+
+  map is the "root" of all recursive mapping commands. The root form applies to all modes.
+  noremap is the "root" of all non-recursive mapping commands. The root form applies to all modes.
+  See below for what "recursive" means in this context.
+
+  Prepending mode letters like n makes the root forms work in normal mode, etc.
+  Use help map-modes will show you a few tables that explain how to control which modes the mapping applies to.
+
+  (Mode letters:)
+  n: normal only
+  v: visual and select
+  o: operator-pending
+  x: visual only
+  s: select only
+  i: insert
+  c: command-line
+  l: insert, command-line, regexp-search (and others. Collectively called "Lang-Arg" pseudo-mode)
+
+  "Recursive" means that the mapping is expanded to a result, then the result is expanded to another result, and so on.
+
+  The expansion stops when one of these is true:
+  the result is no longer mapped to anything else.
+  a non-recursive mapping has been applied (i.e. the "noremap" [or one of its ilk] is the final expansion).
+
+  At that point, vim's default "meaning" of the final result is applied/executed.
+  "Non-recursive" means the mapping is only expanded once, and that result is applied/executed.
+
+  (Example:)
+   nmap K H
+   nnoremap H G
+   nnoremap G gg
 
 
+  The above causes K to expand to H, then H to expand to G and stop. 
+  It stops because of the nnoremap, which expands and stops immediately. 
+  The meaning of G will be executed (i.e. "jump to last line"). 
+  At most one non-recursive mapping will ever be applied in an expansion chain (it would be the last expansion to happen).
+  The mapping of G to gg only applies if you press G, but not if you press K. 
+  This would be true regardless of whether G was mapped recursively or not, since it's line 2 that caused the expansion of K to stop.
 
 
 
