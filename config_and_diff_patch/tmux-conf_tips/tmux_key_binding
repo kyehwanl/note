@@ -1,0 +1,20 @@
+
+
+1. mapping keys
+===============
+
+bind-key [-cnr] [-t mode-table] [-T key-table] key command [arguments] (alias: bind)
+
+Bind key key to command. Keys are bound in a key table. By default (without -T), the key is bound in the prefix key table. This table is used for keys pressed after the prefix key (for example, by default ‘c’ is bound to new-window in the prefix table, so ‘C-b c’ creates a new window). The root table is used for keys pressed without the prefix key: binding ‘c’ to new-window in the root table (not recommended) means a plain ‘c’ will create a new window. -n is an alias for -T root. Keys may also be bound in custom key tables and the switch-client -T command used to switch to them from a key binding. The -r flag indicates this key may repeat, see the repeat-time option.
+
+Therefore, bind-key -n F1 next-window would allow you to hit fn-F1 on your macbook to switch to the next window in your tmux session.
+
+    
+  (1) show current key bindings : <prefix> + ?    
+
+  (2) my example settings
+  
+    bind-key -n F8 last-window     (-n : using root table, root tables means no need <prefix>)               
+    bind-key -n F9 previous-window
+    bind-key -n F10 next-window
+

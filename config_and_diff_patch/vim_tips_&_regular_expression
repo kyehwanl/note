@@ -100,10 +100,10 @@ Session
 =======
  
 (1) to make the current session stored:
-    :mks[ession] ~/mysession.vim
+    :mks[ession][!] ~/mysession.vim
     
 (2) Then later you can source that vim file and you'll have your old session back:
-    :source ~/mysession.vim
+    :so[urce] ~/mysession.vim
 
     or open vim with the -S option:
     $ vim -S ~/mysession.vim
@@ -115,13 +115,13 @@ Plugins
 =======
 
 (1) Disable auto-complete features (neocomplcache)
-    :let g:neocomplcache_disable_auto_complete=1
+    :let g:neocomplcache_disable_auto_complete=1 (Entirely Disable)
     (https://stackoverflow.com/questions/21761953/how-to-disable-the-auto-complete-feature-on-periods)
 
     - two options are already set because of 'neocomplcache'
     :set completeopt=menuone,preview
 
-    What we need is just menu, so cut the preview, to remove preview,
+    What we need is just menu, so cut the preview, to remove preview, (Recommended!!)
     :set completeopt-=preview
 
 

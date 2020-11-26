@@ -219,6 +219,31 @@ tmux tips
 
 
 
+9. Key Bindings for moving windows and panes
+============================================
+    (1) show current key bindings : <prefix> + ? 
+
+    (2) useful bindings
+
+      bind-key -n F8 last-window  
+      bind-key -n F9 previous-window
+      bind-key -n F10 next-window
+
+     (-n : using root table, root tables means no need <prefix>)
+
+     (-r : allows you to do PREFIX then hit several times the command bound)
+        for example: 
+        CTRL-B CTRL-J CTRL-J CTRL-J will extend the current pane by 3 lines 
+        instead of CTRL-B CTRL-J CTRL-B CTRL-J CTRL-B CTRL-J
+
+
+
+
+
+
+
+
+
 ** Other Useful config tips
 ----------------------------
     # Switching tmux zoom between panes without zooming out
@@ -231,7 +256,6 @@ tmux tips
     # prefix + Ctrl-s - save
     # prefix + Ctrl-r - restore
     set -g @plugin 'tmux-plugins/tmux-resurrect'
-
 
 
 
