@@ -12,9 +12,9 @@ Therefore, bind-key -n F1 next-window would allow you to hit fn-F1 on your macbo
     
   (1) show current key bindings : <prefix> + ?    
 
-  (2) my example settings
-  
-    bind-key -n F8 last-window     (-n : using root table, root tables means no need <prefix>)               
+  (2) my example settings (-n : using root table, root tables means no need <prefix>)
+    bind-key -n F7 select-pane -t :.+
+    bind-key -n F8 last-window     
     bind-key -n F9 previous-window
     bind-key -n F10 next-window
 
