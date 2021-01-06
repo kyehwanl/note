@@ -27,6 +27,14 @@ you must add the -C flag to your initialization command:
 -v verbose in line mode
 
 
+* <cscope egrep pattern for special character>
+ - (strings wanted to search): "[proxy] asPathList.length "
+ - pattern in vim
+     :cs f e [[]proxy[]][ ]  
+     -- special character(s) should be enclosed with '[ ]'
+     -- here '[', ']', ':space:' are targets  
+
+
 
 (2) diff & patch
 ==================
