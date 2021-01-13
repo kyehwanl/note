@@ -259,6 +259,8 @@ tmux tips
     set -g @plugin 'tmux-plugins/tmux-resurrect'
 
 
+    # send-keys
+    tmux send-keys -t {session}:{window}.{pane} C-m
 
 
 
