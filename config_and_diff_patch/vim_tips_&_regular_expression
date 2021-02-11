@@ -173,6 +173,26 @@ Map, noremap etc
 
 
 
+Cscope search with egrep
+========================
+
+1. Cscope insensitive search
+  To make cscope's search (all search methods, not only egrep) case-insensitive by default,
+  you must add the -C flag to your initialization command:
+
+     :cscope add cscope.out -C
+     or
+     set csprg=cscope\ -C
+
+               
+2. cscope egrep pattern for special character
+ - (strings wanted to search): "[proxy] asPathList.length "
+ - pattern in vim
+     :cs f e [[]proxy[]][ ] 
+     -- special character(s) should be enclosed with '[ ]'
+     -- here '[', ']', ':space:' are targets
+
+
 
 
 
