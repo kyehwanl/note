@@ -1,0 +1,32 @@
+
+[docker]  File mount does not update with changes from host in docker
+
+(source : https://github.com/moby/moby/issues/15793 )
+
+Docker 를 이용하여 file을 마운트 했을때 host에서 vim을 이용해서 파일을 수정했지만 docker에서 수정된 파일이 반영되지 않을경우
+
+이유와 해결책
+
+(Reason)
+1. Source에 있는 원인을 분석한 글들을 살펴보면
+다음과 같은 글을 볼 수 있다
+
+I bet I know what's happening here...
+If you are using some editor like vim, when you save the file it does not save the file directly, rather it creates a new file and copies it into place.
+This breaks the bind-mount, which is based on inode. Since saving the file effectively changes the inode, changes will not propagate into the container.
+When the container is restarted the new inode.
+If you edit the file in place you should see changes propagate.
+This is a known limitation of file-mounts and is not fixable.
+ 
+Closing, it's not really a bug, just how linux works unfortunately.
+ 
+즉 inode값이 변해서 그렇단다 ( inode 보는법은 https://www.cyberciti.biz/faq/linux-bsd-appleosx-unix-find-file-inode/ 여기를 참고)
+“ls -li <file>” or stat <file>
+
+(Solution)
+1. Volume mount를 할때 (-v) file보다는 directory를 해주면 쉽다
+2. 소스 링크에 있는 글에서 한 명이 테스트를 해서 알아냈는데, 다음과 같이 하면 vim에서 저장해도 inode를 변경시키지 않는단다
+      With or without set noswapfile the inode changes, everytime the file is saved, 
+        but I made a little research how to make vim don't change the inode of a file.
+      The result was to use set backupcopy=yes, I try and the inode don't change when the file is modified.
+3. Inode값이 동일한 file을 고쳐주면 된다

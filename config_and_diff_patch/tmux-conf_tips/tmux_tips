@@ -225,8 +225,9 @@ tmux tips
 
     (2) useful bindings
 
+      bind-key -n F6 last-window  
       bind-key -n F7 select-pane -t :.+
-      bind-key -n F8 last-window  
+      bind-key -n F8 select-pane -t :.-
       bind-key -n F9 previous-window
       bind-key -n F10 next-window
 
