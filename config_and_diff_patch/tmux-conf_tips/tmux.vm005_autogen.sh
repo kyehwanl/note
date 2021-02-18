@@ -36,7 +36,8 @@ tmux send-keys "$GOPATH/bin/gobgp global rib add bgpsec origin igp -a ipv4 25.18
 tmux select-pane -t 3
 tmux send-keys "sudo -s" C-m
 tmux send-keys 'ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1> \"")' C-m
-tmux send-keys "gdb --args /opt/project/Github_usnistgov/NIST-BGP-SRx/_inst/sbin/bgpd -f bgpd.n2.conf.bgpsec" C-m
+#tmux send-keys "gdb --args /opt/project/Github_usnistgov/NIST-BGP-SRx/_inst/sbin/bgpd -f bgpd.n2.conf.bgpsec" C-m
+tmux send-keys "gdb --args /opt/project/srx_test1/_inst/sbin/bgpd -f /opt/projct/bgpd.n2.conf.bgpsec" C-m
 tmux send-keys "c" C-m
 
 
