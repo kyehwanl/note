@@ -73,9 +73,26 @@ $ find . -name test -prune -o -print   (-o measn OR)
 $ find . \( -name "bgpd*" -o -name "ospfd*" \) -prune -o -print
 
 
+(4) If you want to exclude the misc directory just add a -path ./misc -prune -o
+    find . -path ./misc -prune -false -o -name '*.txt'
 
-6. With application  
-====================
+    (example for multiple directories)
+    find . -type d \( -path dir1 -o -path dir2 -o -path dir3 \) -prune -false -o -name '*.txt'
+
+        Here we exclude ./dir1, ./dir2 and ./dir3 in the current directory, since in find expressions 
+        it is an action that acts on the criteria -path dir1 -o -path dir2 -o -path dir3 
+        (if dir1 or dir2 or dir3), ANDed with type -d
+
+(5) To exclude directory name at any level, use -name
+    find . -type d \( -name node_modules -o -name dir2 -o -path name \) -prune -false -o -name '*.json'
+
+
+ (c.f) source link for (4,5) 
+    https://stackoverflow.com/questions/4210042/how-to-exclude-a-directory-in-find-command/49149445
+
+
+6. Examples at some casees with applications  
+============================================
 
 (1) cscope & ctags
 find ./ -name '*.[ch]' | ctags -R -L -
@@ -88,14 +105,14 @@ cscope -b
 
 
 (2) diff & patch
-find ./ -name '*.[ch]' -exec diff -wibuN {} ../0198-09-KH/{} \; > patch_09
+find ./ -name '*.[ch]' -exec diff -wibuNp {} ../0198-09-KH/{} \; > patch_09
 find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | less
 
 #practical example :  
     If there are two old-verion/  new-version/ directories,
     then "cd old-version" and command following line.
 
-    find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec diff -wibuN {} ../new/{} \; > patch.diff
+    find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec diff -wibuNp {} ../new/{} \; > patch.diff
     diff --exclude=.p4config -uNR quagga/Makefile.am quagga-mpls/Makefile.am
 
  <CAUTION>
@@ -103,7 +120,42 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
  Because -N option will generate lot's of new file lines unless either directory doesn't have same file.
 
 #practical examples with Regular expression in Find
-find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
+  find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
+  find -regex ".*\.\([ch]\|ac\|am\|in\|m4\)"
+
+  find -type d -path ./extras/local -prune -false -o -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" (Exclude ./extras/local dir)
+  find -type d -path ./extras/local -prune -false -o -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" -exec diff -wibuNp /dir1/{} /dir2/{} \; 
 
 #etc
-find ./ -name "filename" | xargs command
+  find ./ -name "filename" | xargs command
+
+
+
+
+
+7. 확장자 두개를 모두 찾기 위해서 '-o'를 사용 & regular expression
+==================================================================
+
+(1) find -name "*.xls" -o -name "*.csv"
+
+    If you absolutely want to use regex simply use (regular expression)
+    find -regex ".*\.\(xls\|csv\)"
+
+
+(2) find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | less
+    --> -exec를 두 개의 -name으로 찾은 것들에 모두 적용할 수 있다.
+
+(3) find ./ -name '*.[ch]' -o -name 'Makefile.am' -exec ls {} \; | less 
+    --> -exec가 마지막 것에만 적용됨
+
+    왜냐하면 -type f가 -o (or)로 찾은것을 모두 묶어서 포함시킨다  (Same as 5.(4) above)
+
+
+
+
+
+
+
+
+
+
