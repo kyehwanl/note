@@ -1,0 +1,37 @@
+
+
+1. issues:
+    - python dict_values object does not support indexing
+
+    <source code>
+        mp_nlris_values = mp_nlris.values()
+            for mp_nlri in mp_nlris_values[0].get(OUT.ANNOUNCE, []) : 
+
+    - Following error occurrs
+
+      <class 'TypeError'>
+      'dict_values' object does not support indexing
+      Traceback (most recent call last):
+        File "/etc/bgpsecImples/exabgp-4.1.2/lib/exabgp/reactor/peer.py", line 548, in _run
+          for action in self._main():
+        File "/etc/bgpsecImples/exabgp-4.1.2/lib/exabgp/reactor/peer.py", line 498, in _main
+          six.next(new_routes)
+        File "/etc/bgpsecImples/exabgp-4.1.2/lib/exabgp/reactor/protocol.py", line 344, in new_update
+          for message in update.messages(self.negotiated,include_withdraw):
+        File "/etc/bgpsecImples/exabgp-4.1.2/lib/exabgp/bgp/message/update/__init__.py", line 127, in messages
+          for mp_nlri in mp_nlris_values[0].get(OUT.ANNOUNCE, []) :
+      TypeError: 'dict_values' object does not support indexing
+
+
+    
+
+2. reason
+    - in Python3, dict.value() doesn't return a list ANY MORE.
+
+
+3. solution
+
+    -  need to wrap your call to dict.values()
+   (source: https://stackoverflow.com/questions/17431638/get-typeerror-dict-values-object-does-not-support-indexing-when-using-python)
+
+            for mp_nlri in list(mp_nlris_values)[0].get(OUT.ANNOUNCE, []) : 

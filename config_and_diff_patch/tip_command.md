@@ -150,6 +150,7 @@ press '-' on gdb running (tui enable|disable)
 (13) packet capture
 ====================
 1. tshark: sudo tshark -i eth23 -nn -f"tcp port 179" -x -V -R"bgp.type==2 || bgp.type==1"
+           sudo tshark -i veth0 -nn -f"tcp port 179" -x -V -Y"bgp.type==2 || bgp.type==1 and ip.src==10.1.1.1"
 2. sudo tcpdump -i eth23 -X -nnvv port 179 and \(tcp[0x54:1] == 0x02 \)
 3. capture traffic remotely over ssh: ssh node2 'sudo tshark -i eth30 -nn -f"tcp port 179" -w -' | wireshark -k -i -
     if "sudo: sorry, you must have a tty to run sudo" problem --> comment out "Default requiretty" in /etc/sudoers

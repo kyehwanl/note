@@ -81,7 +81,7 @@ Docker Tips
 
     - To create a image with Dockerfile.
         echo -e "FROM base\nRUN apt-get install hello\nCMD hello" > Dockerfile
-        docker build -t tcnksm/hello . <-- Don't forget the last dot !!
+        docker build -t tcnksm/hello . <-- Don't forget the last dot !!  (-t: tag list)
         or 
         docker build -f ./Dockerfile-devel -t srx-devel .
 

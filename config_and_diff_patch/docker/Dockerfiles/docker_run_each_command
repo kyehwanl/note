@@ -52,6 +52,9 @@ Docker Compose Test for BGPSec Imples
     (2) with bash, running command inside docker container
     env exabgp.daemon.user=root exabgp /etc/exabgp.conf
 
+    (3) Run with Debug logs
+    env exabgp.log.level=DEBUG exabgp.daemon.user=root ./sbin/exabgp /etc/exabgp.conf
+
 
 
 

@@ -13,6 +13,7 @@ export PYTHONPATH=/users/kyehwanl/srx_test1/exabgp-3.4.13/lib && python -m pdb /
 1.2 using executable
 
  env exabgp.log.level=CRIT ../sbin/exabgp <conf>
+ env exabgp.log.level=DEBUG ../sbin/exabgp <conf>
 
 
 

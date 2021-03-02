@@ -450,6 +450,14 @@ Useful Tips
 
 
 
+6. Patch & Apply
+
+    (1) creating a git patch with 'git diff'
+        $ git diff > patch.file
+
+
+    (2) apply the patch with 'git apply'
+        $ git apply patch.file
 
 
 
