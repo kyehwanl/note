@@ -123,7 +123,7 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
   find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
   find -regex ".*\.\([ch]\|ac\|am\|in\|m4\)"
 
-  find -type d -path ./extras/local -prune -false -o -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" (Exclude ./extras/local dir)
+  find -type d -path ./extras/local -prune -false -o -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" --> Exclude ./extras/local dir
   find -type d -path ./extras/local -prune -false -o -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" -exec diff -wibuNp /dir1/{} /dir2/{} \; 
 
 #etc
