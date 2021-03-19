@@ -56,6 +56,19 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
 
 
+* patch command
+    $ patch -i <patchFileName> -p <num of leading slashes> [--dry-run]
+
+    - instead of '-i' option, "< filename" can be used
+    - "-R" reverse patch
+
+    (example of -p option)
+    if a filename with dir is "/usr/bin/usrDir/filename", -p3 skips 3 leading slashes ("/usr/bin/" will be ignored) 
+    Then, it will be "usrDir/filename"
+
+
+
+
 (3) git 
 ==================
 1. <<find a certain file>>
