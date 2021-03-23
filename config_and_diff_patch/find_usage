@@ -153,6 +153,13 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 
 
 
+8. Recent Used Examples
+========================
+
+(1) For comparision between two git repositories 
+
+    find -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" -exec diff -wibuNp {} /opt/project/Github_usnistgov/NIST-GitLab/srx-server/{} \;
+    find -regex ".*\.\([ch]\|ac\|am\|in\|m4\)" -exec diff -wibuNp {} /opt/project/Github_usnistgov/NIST-GitLab/quagga-srx/{} \;
 
 
 
