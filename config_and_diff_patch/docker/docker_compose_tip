@@ -109,7 +109,9 @@ Docker Compose Tips
 
 
 
-
+    (1) in case docker stack deploy has error, "Pool overlaps with other one on this address space "
+    
+    --> docker system prune
 
 
 

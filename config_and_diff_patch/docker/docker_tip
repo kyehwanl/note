@@ -195,8 +195,6 @@ Docker Tips
 
 15. Overriding & Combining ENTRYPOINT and CMD in Dockerfile, 
 
-
-
     (1) default CMD can be overriden by specifying 'docker run <image> <desired-cmd>'
         The desired cmd can override "CMD <default-command>" in Dockerfile with the user-desired command.
 
@@ -238,7 +236,13 @@ Docker Tips
 Unlike the shell form, the exec form does not invoke a command shell. This means that normal shell processing does not happen. For example, RUN [ "echo", "$HOME" ] will not do variable substitution on $HOME. If you want shell processing then either use the shell form or execute a shell directly, for example: RUN [ "sh", "-c", "echo $HOME" ]. When using the exec form and executing a shell directly, as in the case for the shell form, it is the shell that is doing the environment variable expansion, not docker.
 
 
+
 16. Clean Up 
+
+    - Remove Build Cache
+    $ docker builder prune --all
+
+
     - If you have a bunch of stopped containers left on your host, Clean them up:
     $ docker system prune
 
@@ -252,7 +256,7 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
       ...
 
 
-      [root@vmware-011 srx]# docker system prune
+      [root@vmware-011 srx]# docker system prune 
       WARNING! This will remove:
               - all stopped containers
               - all networks not used by at least one container
@@ -432,7 +436,12 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
 
 
 
+25. Error when using gdb
+    "gdb warning: Error disabling address space randomization: Operation not permitted"
+    If you're using Docker, you probably need the --security-opt seccomp=unconfined option (as well as enabling ptrace):
+    (https://stackoverflow.com/questions/35860527/warning-error-disabling-address-space-randomization-operation-not-permitted)
 
+        docker run --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
 
 
 
