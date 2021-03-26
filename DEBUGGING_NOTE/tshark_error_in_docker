@@ -1,0 +1,32 @@
+
+
+tshark: Couldn't run /usr/sbin/dumpcap in child process: Operation not permitted
+
+
+$ whoami
+root
+
+$ tshark
+tshark: Couldn't run /usr/sbin/dumpcap in child process: Operation not permitted
+Are you a member of the 'wireshark' group? Try running
+'usermod -a -G wireshark _your_username_' as root.
+
+$ stat $(which dumpcap)
+  File: '/usr/sbin/dumpcap'
+  Size: 82360           Blocks: 168        IO Block: 4096   regular file
+Device: 2bh/43d Inode: 1787        Links: 1
+Access: (0750/-rwxr-x---)  Uid: (    0/    root)   Gid: (  998/wireshark)
+Access: 2017-12-05 11:23:48.456537251 +0000
+Modify: 2017-08-06 22:48:18.000000000 +0000
+Change: 2017-12-05 10:30:14.736537251 +0000
+
+$ getcap $(which dumpcap)
+/usr/sbin/dumpcap = cap_net_admin,cap_net_raw+ep
+
+
+(Consclution)
+ Docker container needs to have two switches when instantiating, "-cap-add=NET_RAW --cap-add=NET_ADMIN"
+    
+
+
+
