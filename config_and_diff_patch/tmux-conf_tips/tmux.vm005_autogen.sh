@@ -103,12 +103,32 @@ tmux select-pane -t 0
 tmux send-keys "cd" C-m
 tmux send-keys "export TERM=screen-256color" C-m
 tmux send-keys "./vf --select /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia --select /opt/project/docker_test/bgpsecImples" C-m
-
+# vifm --select <path> : open parent directory of the given path and select specified file in it
 
 tmux select-pane -t 1
 tmux send-keys "cd" C-m
 tmux send-keys "export TERM=screen-256color" C-m
 tmux send-keys "./vf --select /opt/project/Github_usnistgov/NIST-BGP-SRx --select /opt/project/srx_test1/test_install/Net-Patricia-1.15/libpatricia" C-m
+
+
+
+
+# setup a new window
+tmux new-window -t $SESSION:4 -n 'qsrx_with_vm011'
+tmux split-window -h    # -h: horizontal split [ | ], -v: vertical split [ - ]
+tmux select-pane -t 0
+tmux send-keys "cd /opt/project/srx_test1" C-m
+tmux send-keys "sudo $GOPATH/bin/gobgpd -f $GOPATH/bin/gobgpd.conf -p -l info"
+
+tmux split-window -v    # -h: horizontal split [ | ], -v: vertical split [ - ]
+tmux select-pane -t 1
+tmux send-keys "cd /opt/project/srx_test1/_inst/bin/" C-m
+tmux send-keys "./srx_server"
+
+tmux select-pane -t 2
+tmux send-keys "cd /opt/project/exabgp_test/exabgp-4.1.2" C-m
+tmux send-keys 'sudo tshark -i eno16777984 -nn -f"tcp port 179" -x -V -Y"bgp.type==2 and ip.src==10.0.50.11"'
+
 
 
 
