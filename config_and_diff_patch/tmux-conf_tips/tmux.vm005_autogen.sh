@@ -53,6 +53,7 @@ tmux send-keys "./srx_server" C-m
 # setup a new window
 tmux new-window -t $SESSION:1 -n 'vim-session'  # [-t target-window] [-n window-name]
 tmux select-pane -t 0   # -t [arget-pane]
+tmux send-keys "export TERM=screen-256color" C-m
 tmux send-keys "vim -S ~/workspace/vim-sessions/qsrx-attr.vim" C-m
 
 
