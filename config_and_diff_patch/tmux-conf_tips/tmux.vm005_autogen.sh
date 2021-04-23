@@ -64,6 +64,7 @@ tmux split-window -h    # -h: horizontal split [ | ], -v: vertical split [ - ]
 tmux select-pane -t 0
 tmux send-keys "sudo -s" C-m
 tmux send-keys "docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.2 --name exabgpsec02     -p 1792:179 -v /opt/project/docker_test/bgpsecImples/exabgp.docker.conf.bgpsec:/etc/exabgp.conf     -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys     exabgpsec_src  bash" C-m
+#tmux send-keys "docker run --rm -it --net bgpsecimples_bgp_net --ip 172.37.0.2 --name bgpsecio -p 1792:179 -v /opt/project/docker_test/bgpsecImples/bgpsecio.docker.conf:/etc/bgpsecio.conf     -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys  -v /opt/project/docker_test/bgpsecImples:/etc/bgpsecImples   bgpsecio_src  bash" C-m
 sleep 1
 tmux send-keys "env exabgp.daemon.user=root exabgp /etc/exabgp.conf" C-m
 
