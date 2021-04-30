@@ -65,3 +65,56 @@ SSH Tunnel from Macbook's virtualbox image to Macbook(toadyoon), and then ssh-tu
     [kyehwanl@localhost ~]$ rsync -avPuniz -e "ssh -p 12346" localhost:/users/kyehwanl/fs6/Emulab/config_and_diff_patch/ ~/config_and_diff_patch/ --delete
 
 
+
+
+
+
+ SSH tunnel to ANTD servers From Windows 10 NIST VPN
+=====================================================
+(http://woshub.com/ssh-tunnel-port-forward-windows/)
+
+1. in Windows 10 console, in order to make ssh tunnel
+
+    Z:\>ssh kyehwanl@access.antd.nist.gov -L 13389:vmware-011.antd.nist.gov:3389
+
+    The authenticity of host 'access.antd.nist.gov (129.6.140.223)' can't be established.
+    ECDSA key fingerprint is SHA256:eBeVyCWZowzBEvQQeV6foRfa2sUtRe5wbxM+Y6f861M.
+    Are you sure you want to continue connecting (yes/no)? yes
+    Warning: Permanently added 'access.antd.nist.gov,129.6.140.223' (ECDSA) to the list of known hosts.
+    kyehwanl@access.antd.nist.gov's password:
+    Last login: Thu Apr 29 13:04:07 2021 from 129.6.218.74
+
+
+    access.antd [1996]{~}-> 
+
+
+
+
+2. command type and run 'mstsc'(Remote Desktop Connection) in run dialog with 'localhost' in Computer section,
+
+    Computer: localhost:13389
+
+
+
+3. -f: background running
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
