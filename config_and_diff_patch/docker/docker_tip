@@ -79,6 +79,29 @@ Docker Tips
         docker run -d ubuntu /bin/sh -c "apt-get install -y hello"
         docker commit -m "My first container" `dl` tcnksm/hello  <-- 'dl': docker ps -ql, container id
 
+
+        *** How can we add capabilities to a running docker container? ***
+        (https://stackoverflow.com/questions/38758627/how-can-we-add-capabilities-to-a-running-docker-container)
+
+          1.Stop Container:
+            docker stop yourcontainer;
+
+          2.Get container id:
+            docker inspect yourcontainer;
+
+          3.Modify hostconfig.json(default docker path:/var/lib/docker, you can change yours)
+            vim /var/lib/docker/containers/containerid/hostconfig.json
+
+          4.Search "CapAdd", and modify null to ["NET_ADMIN"];
+            ....,"VolumesFrom":null,"CapAdd":["NET_ADMIN"],"CapDrop":null,....
+
+          5.Restart docker in host machine;
+            service docker restart;
+
+          6.Start yourconatiner;
+            docker start yourcontainer;
+
+
     - To create a image with Dockerfile.
         echo -e "FROM base\nRUN apt-get install hello\nCMD hello" > Dockerfile
         docker build -t tcnksm/hello . <-- Don't forget the last dot !!  (-t: tag list)

@@ -1,0 +1,10 @@
+
+
+RTNETLINK Operation Not Permitted when using Pipework or ip command with Docker containers?
+============================================================================================
+
+
+(Solution)
+Docker containers do not have full privileges by default. 
+Try adding this to the docker run command:
+    --cap-add=NET_ADMIN
