@@ -1,0 +1,100 @@
+
+Various Tips
+============
+(https://docs.google.com/document/d/1oxAZOSqccEK-2dHr4qpS9umGUZkRIvoqhCLnJBSwj_M/edit)
+
+(1) screen 이 holding되었을때, 
+    - screen -d pid로 우선 detach (여기서 성공적으로 detach되면 screen -r로 resume해보고 안되면 아래의 방법들로 계속)
+    - screen -f pid 를 통해 flow control
+    - screen -D -RR pid 를 통해 다시 획득 (Do whatever is needed to get a screen session)
+    - 위 방법이 안되면 멈춘 터미널을 disconnet시켰다가 다시 connect시켜서 screen -D -RR pid를 다시 실행
+ (2) copy mode ( c-a [ or ESC ), 
+    c or C to set the left or right margin respectively. If no repeat count is given, both default to the current cursor position
+    a and A to set to turn append mode on.
+        --> (for example) 
+            1. type 'c-a [  (or ESC)' , type space or enter to start selecting.
+            2. before ending of selection with space or enter again, type 'a' to turn append mode on. Then, hit enter or space to finish.
+                        or
+                     type 'A' to finish selecting. (automatically append mode on and finish to select, which is same effect hitting 'a' then 'space')
+                       
+            3. J(upper case) 키를 통해서 3가지모드 (라인 by 라인, 스페이스, 콤마)로 추가열을 붙인다. 언제 눌러도 상관없음
+    4. Additionally,'c-a >' to write contents of the paste buffer to the screen-exchange file (`/tmp/screen-exchange' per default)
+
+이 방법은 원래 paste buffer에 이전의 값이 들어가 있을때 새로운 내용을 추가하기 위해 다른 새로운 블럭을 선정할때  'a'를 눌러 append모드로 만들고 (두번째 space(or enter) 전에 누르기만 하면됨) 처음과동 일하게 space(or enter)다 통해 필요한 부분을 선택하여  paste buffer에 덧붙인다. append 모드로 하지않으면(default) 새로운 내용이 overwrtten된다
+    
+ (3) Split 
+    - ctrl+a S로 먼저 이등분( 한번더 하면 삼등분) 
+    - ctrl+a | ( vertical)
+    - ctrl+a Tab으로 이동, 만약 윈도우가 fit되지 않았다면 ctrl+a F로 fit
+    - ctrl+a X로 split해제 
+    - ctrl+a Q : 현재 window를 제외한 나머지를 모두 닫음
+
+ (4) windows renumbering
+    - ctrl+a :number  #  → change a current window into # window (ex. ctrl+a :number 3 )
+    - ctrl+a #         → just move to the # window  (ex. ctrl + a 4 )
+
+screen - 가상터미널 생성
+
+1. 여러 파일 수정에 용이
+
+2. 갑자기 접속을 잃었을때 screen의 세션은 그대로 유지되므로 유용
+  a. 복구 command --> screen -r or screen -r [세션명]
+ 
+(example.)
+- ssh로 접속후 screen을 동작시켜서 가상 터미널을 생성후 vim으로 파일을 수정하고 창을 그냥 과감하게 닫는다
+- 그런후 다시 접속해 screen -r 또는 screen -r [세션명] 명령을 내리면 편집중 화면을 다시 볼수 있다
+
+root@ubuntu:~# screen -r
+There are several suitable screens on:
+        10940.pts-14.ubuntu     (05/28/2011 01:07:05 PM)        (Detached)
+        10716.pts-14.ubuntu     (05/28/2011 12:42:58 PM)        (Detached)
+Type "screen [-d] -r [pid.]tty.host" to resume one of them.
+root@ubuntu:~# screen -r 10940.pts-14.ubuntu
+
+
+
+  b. 특정세션을 분리 : screen -D [세션명] 
+     - 여러개의 세션이 살아있어 그 중 하나를 분리해 다시 연결하고 싶다면, screen -D [세션명], screen -r [세션명]을 차례로 내려준다
+
+
+
+
+
+
+<표1> screen 명령후 사용되는 단축키 (* ','은 ctrl을 떼고 다음키를 누른다)
+
+Ctrl+a, '    : 화면 하단에 새로운 가상 터미널을 선택할 수 있는 입력 프롬프트
+Ctrl+a, "   : 현재 생성되어 있는 모든 가상 터미널이 나열되며 커서로 선택할 수 있음
+Ctrl+a,[N] :  N번째 가상터미널로 이동
+Ctrl+aa     : 바로 이전 가상터미널로 이동
+Ctrl+ac     : 새로운 가상터미널 생성 (create)
+Ctrl+a, K  : 현재 가상터미널 kill
+Ctrl+a,d    : 현재의 가상터미널을 닫음(detach) or 'exit' 입력
+Ctrl+ag    : visual bell on/off
+Ctrl+a,n    : next 가상터미널로 이동 or ' +SPACE'
+Ctrl+a,p    : previous 가상터미널로 이동 or ' +BACK_SPACE'
+
+Ctrl+a+ESC : copy mode
+
+Shift+[Page up]     :화면 위로 이동
+Shift+[Page down] :화면 아래로 이동
+
+Ctrl  +[Page up]    :화면 한줄 위로 이동
+Ctrl  +[Page down] :화면 한줄 아래로 이동
+
+
+
+
+
+
+
+
+ How to send a command to the detached screen
+===============================================
+(https://unix.stackexchange.com/questions/13953/sending-text-input-to-a-detached-screen)
+
+  (1) start a screen with the name "test1"
+        screen -dmS test1 (-dmS name :  Start as daemon: Screen session in detached mode)
+
+  (2) with -X stuff <command> to send a command to the screen 
+        screen -S test1 -p 0 -X stuff "ifconfig^M"   ('^M' is a character sent by "enter")
