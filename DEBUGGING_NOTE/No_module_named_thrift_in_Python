@@ -1,0 +1,13 @@
+
+
+No module named thrift in Python script
+=======================================
+
+(cause)
+python3 basically isn't compatible with thrift 
+
+(solution)
+1. download thrift version with git in https://thrift.apache.org/download
+2. go to the directory "lib/py" in thrift
+3. hit the command "python3 setup.py install"
+
