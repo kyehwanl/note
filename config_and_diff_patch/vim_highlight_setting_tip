@@ -1,5 +1,6 @@
 
 1. fg bg color
+==============
 (1) :set backgound=dark or light
 
 (2)     :highlight Normal ctermfg=grey ctermbg=darkblue 
@@ -20,3 +21,45 @@
         
         HACK    --> unavailable
         UNDONE  --> unavailable
+
+
+
+
+2. p4 Editing
+=============
+(https://github.com/jafingerhut/p4-guide/blob/master/README-editor-support.md)
+
+(1) vim
+
+  Vim color highlighting and auto-indenting
+  To change the mode for the current file being edited:
+
+  :set syntax=c RET
+  To cause all files with a suffix of .p4 in their file name to automatically use C/C++ mode when loaded, add lines like the following in your $HOME/.vimrc file:
+
+  augroup filetypedetect
+    au BufRead,BufNewFile *.p4 setfiletype c
+    " associate *.p4 with c filetype
+  augroup END
+
+
+(2) cscope & ctags
+
+  (2.1) cscope
+     find . -name '*.p4' -o -name '*.h' > cscope.files
+     cscope -bk
+
+
+  (2.2) ctags
+    To create a TAGS file for use with Emacs, for all source files with a .p4 or .h suffix in the current directory 
+    and all sub-directories, use this command:
+
+    ctags-exuberant -e -R
+
+    Remove the '-e' command line option if you want to generate a 'tags' file for Vim.
+
+    You can also give an explicit list of file names instead of the -R option,
+    if there are some files you do not wish to include. The following command achieves a similar
+    effect as the one above, but may be more easily modified to include or exclude the files you want:
+
+    find . -name '*.p4' -o -name '*.h' | xargs ctags-exuberant -e
