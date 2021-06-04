@@ -117,7 +117,7 @@ Applying: added measure until path validation done
 |/  
 * 844dacb BGPv4 unpacking enabled + measure1 rebased
 
-(참고로)여기서 unpacking으로 co후 git merge master를 하면 master와 unpacking이 동일 index를 가지게 할 수 있다
+(참고로)여기서 unpacking으로 check out후 git merge master를 하면 master와 unpacking이 동일 index를 가지게 할 수 있다
 
 
 (9) 일련의 merge과정을 거친후 index구조는 아래와 같다

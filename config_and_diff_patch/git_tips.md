@@ -436,7 +436,7 @@ Useful Tips
     git clone --branch <tag> <repo>
 
     (3) shallow clone (the history of commits specified by the option ,depth)
-    git clone -depth=1 <repo>    ( depth=1, most recent commit)
+    git clone --depth=1 <repo>    ( depth=1, most recent commit)
     
 
 
