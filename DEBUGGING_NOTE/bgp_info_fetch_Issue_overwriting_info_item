@@ -1,0 +1,170 @@
+
+
+1. Reason
+==========
+
+(1) When 2 updates with same prfix in bgpsecio traffic generator,
+
+  "10.20.0.0/20, 65015 65025 65020",      
+  "10.20.0.0/20, 65015 65025 65020 65030" 
+
+(2) Then, QuaggaSRx receives first one in bgp_update_main(),
+    After that, second message came in same routine below,
+
+
+    3510 bgp_update_main (struct peer *peer, struct prefix *p, struct attr *attr,                 
+    3511         afi_t afi, safi_t safi, int type, int sub_type,                                  
+    3512         struct prefix_rd *prd, u_char *tag, int soft_reconfig)                           
+    3513 {                                                                                        
+    3514   int ret;                                                                               
+    3515   int aspath_loop_count = 0;                                                             
+    3516   struct bgp_node *rn;                                                                   
+    3517   struct bgp *bgp;                                                                       
+    3518   struct attr new_attr;                                                                  
+    3519   struct attr_extra new_extra;                                                           
+    3520   struct attr *attr_new;
+    3521   struct bgp_info *ri;                                                                   
+    3522   struct bgp_info *new;                                                                  
+    3523   const char *reason;                                                                    
+    3524   char buf[SU_ADDRSTRLEN];                                                               
+    3525                                                                                          
+    3526   bgp = peer->bgp;
+    3527   rn = bgp_afi_node_get (bgp->rib[afi][safi], afi, safi, p, prd);                        
+    3528                                                                                          
+    3529   /* When peer's soft reconfiguration enabled.  Record input packet in                   
+    3530      Adj-RIBs-In.  */                                                                    
+    3531   if (! soft_reconfig && CHECK_FLAG (peer->af_flags[afi][safi], PEER_FLAG_SOFT_RECONFIG) 
+    3532       && peer != bgp->peer_self)
+    3533     bgp_adj_in_set (rn, peer, attr);                                                     
+    3534                                                                                          
+    3535   /* Check previously received route. */                                                 
+    3536   for (ri = rn->info; ri; ri = ri->next)                                                 
+    3537     if (ri->peer == peer && ri->type == type && ri->sub_type == sub_type)                
+    3538       break;
+
+    ....
+    3803       verify_update (bgp, ri, defRes, true); 
+
+
+(3) In line 3527,3536, eventually it gives same bgp_info (ri) pointer, then in 3803, verify_update called with same ri.
+
+
+(4) Later, in verify_update function, calling bgp_info_register with the same bgp_info above,
+
+    3315 void verify_update (struct bgp *bgp, struct bgp_info *info,              
+    3316                     SRxDefaultResult* defResult, bool doRegisterLocalID) 
+    ....
+    3370   if (info->localID > 0 && doRegisterLocalID)
+    3371   {
+    3372     bgp_info_register (bgp->info_lid_hash, info, info->localID);
+    3373   }
+
+
+
+(5) in bgp_info_hash.c, it stores into hash table --> Eventually identifier is  different, but info is same(overwritten)
+
+    252   new->identifier = identifier;
+    253   new->info       = info;
+    254
+    255   HASH_ADD(hh, hash->table, identifier, sizeof(uint32_t), new);
+
+
+
+(6) After that, fetching the info, in handleSRxValidationResult , in <bgp_route.c>
+
+    2530 bool handleSRxValidationResult (SRxUpdateID updateID, uint32_t localID,  
+    2531                                 ValidationResultType valType,            
+    2532                                 uint8_t roaResult, uint8_t bgpsecResult, 
+    2533                                 uint8_t aspaResult, void* bgpRouter)
+    ....
+    2601     info = bgp_info_fetch(bgp->info_uid_hash, updateID); 
+
+
+
+    in <bgp_info_hash.c>,
+
+    288 struct bgp_info* bgp_info_fetch (struct bgp_info_hash* hash,
+    289                                  uint32_t identifier)
+    290 {
+    291   struct bgp_info_hash_item* entry;
+    292
+    293   HASH_FIND (hh, hash->table, &identifier, sizeof(uint32_t), entry);
+    294
+    295   if(entry)
+    296   {
+    297     for( entry= hash->table; entry!=NULL;
+    298          entry=(struct bgp_info_hash_item*)(entry->hh.next))
+    299     {
+    300       if (entry->identifier == identifier)
+    301       {
+    302         return entry->info;
+    303       }
+    304     }
+    305   }
+    306   return NULL;
+    307 }
+
+
+    Here, the result value, entry, which was retrieved from HASH_FIND() might be compromized with the for loop
+    Because entry is used for iteration variable and substitute with hash->table first.
+    Even though identifier value might be same with hash->table, but 'info' might be compromized with the memory which might be already freed. 
+    Then, tring to dereferencing info, segmentation fault might happen.
+
+
+
+
+2. Solution
+============
+
+
+  vmware.005-antd [2008]{.../NIST-GitLab/quagga-srx}-> git diff -w -b debugging1
+  diff --git a/bgpd/bgp_info_hash.c b/bgpd/bgp_info_hash.c
+  index 79e30be..44f6d68 100644
+  --- a/bgpd/bgp_info_hash.c
+  +++ b/bgpd/bgp_info_hash.c
+  @@ -288,28 +288,20 @@ void bgp_info_unregister(struct bgp_info_hash* hash, uint32_t identifier)
+   struct bgp_info* bgp_info_fetch (struct bgp_info_hash* hash,
+                                    uint32_t identifier)
+   {
+  +  struct bgp_info_hash_item* entry, *entry_orig;
+  -  struct bgp_info_hash_item* entry;
+
+     HASH_FIND (hh, hash->table, &identifier, sizeof(uint32_t), entry);
+
+  +  entry_orig = entry;
+  +
+     if(entry)
+     {
+  +    /*
+       for( entry= hash->table; entry!=NULL;
+            entry=(struct bgp_info_hash_item*)(entry->hh.next))
+       {
+         if (entry->identifier == identifier)
+         {
+  +        if (entry_orig != entry)
+  +          printf("================== mismatch entry =============\n");
+           return entry->info;
+         }
+       }
+  +    */
+  +
+  +    return entry->info;
+     }
+     return NULL;
+   }
+
+
+3. Comments
+============
+This kind of error won't happen in a normal routing implementation.
+But like bgpsecio, it generates bgp message intentionally or mistakenly generate same prefix and same length with same peer
+and send to the peer.
+
+Normally Quagga or other routing implementation will ignore first one, if there is same bgp message arrives.
+But bgp_info_fetch was made in NIST developer other than Quagga, this might be different behavior.
+
+
+
+
+
+

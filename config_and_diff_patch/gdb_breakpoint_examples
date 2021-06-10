@@ -59,3 +59,30 @@ Num     Type           Disp Enb Address    What
   1       breakpoint     keep y   0x0000000000412736 in manageConnection at server/rpki_router_client.c:821
           stop only if client->lastRecv != 3
     
+
+
+3. Another example to set a watch point
+----------------------------------------
+
+
+Breakpoint 3, verify_update (bgp=0x5555559db080, info=0x5555559f1ee0, defResult=0x5555559f1c00, doRegisterLocalID=true) at bgp_route.c:3372                                
+3372        bgp_info_register (bgp->info_lid_hash, info, info->localID);
+(gdb) p info                                                                                                                                                     $207 = (struct bgp_info *) 0x5555559f1ee0 
+
+(gdb) p info->peer
+$208 = (struct peer *) 0x5555559f01c0
+
+(gdb) p info->peer->bgp
+$209 = (struct bgp *) 0x5555559db080
+
+(gdb) p &info->peer
+$210 = (struct peer **) 0x5555559f1ef0
+
+(gdb) p &info->peer->bgp 
+$211 = (struct bgp **) 0x5555559f01c0 
+
+(gdb) watch *((struct peer **) 0x5555559f1ef0)
+Hardware watchpoint 19: *((struct peer **) 0x5555559f1ef0)
+
+(gdb) watch *((struct bgp **) 0x5555559f01c0)
+Hardware watchpoint 20: *((struct bgp **) 0x5555559f01c0)
