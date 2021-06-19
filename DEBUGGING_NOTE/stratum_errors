@@ -1,0 +1,8 @@
+
+
+(1) W20210618 11:39:28.257392 19037 p4_service.cc:142] Empty forwarding pipeline configs file: /etc/stratum/pipeline_cfg.pb.txt
+
+on onl2 server, there is an empty file
+
+
+
