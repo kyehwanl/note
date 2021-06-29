@@ -1,0 +1,158 @@
+
+Insert P4Runtime table entries
+==============================
+(https://bbs.ruliweb.com/community/board/300143/read/52740383)
+It doesn't have a real execution command, so supplementing that command below
+
+
+
+1. a sort of basic information
+--------------------------------
+
+P4Runtime sh >>> tables
+IngressPipeImpl.acl_table
+IngressPipeImpl.l2_exact_table
+IngressPipeImpl.l2_ternary_table
+
+P4Runtime sh >>> actions
+IngressPipeImpl.clone_to_cpu
+IngressPipeImpl.drop
+IngressPipeImpl.send_to_cpu
+IngressPipeImpl.set_egress_port
+IngressPipeImpl.set_multicast_group
+NoAction
+
+P4Runtime sh >>> tables["IngressPipeImpl.l2_exact_table"]
+Out[12]:
+preamble {
+  id: 33605373
+  name: "IngressPipeImpl.l2_exact_table"
+  alias: "l2_exact_table"
+}
+match_fields {
+  id: 1
+  name: "hdr.ethernet.dst_addr"
+  bitwidth: 48
+  match_type: EXACT
+}
+action_refs {
+  id: 16812802 ("IngressPipeImpl.set_egress_port")
+}
+action_refs {
+  id: 16796182 ("IngressPipeImpl.drop")
+  annotations: "@defaultonly"
+  scope: DEFAULT_ONLY
+}
+const_default_action_id: 16796182 ("IngressPipeImpl.drop")
+direct_resource_ids: 318813612 ("l2_exact_table_counter")
+size: 1024
+
+
+
+
+
+
+
+2 matching MAC address1(::1B) to egress port number 4
+--------------------------------------------------------
+
+(1) To create a table entry object:
+P4Runtime sh >>> te = table_entry["P4INFO-TABLE-NAME"](action = "<P4INFO-ACTION-NAME>")
+
+    P4Runtime sh >>> te = table_entry["IngressPipeImpl.l2_exact_table"](action="IngressPipeImpl.set_egress_port")
+
+
+(2) To specify a match field:
+P4Runtime sh >>> te.match["P4INFO-MATCH-FIELD-NAME"] = ("VALUE")
+
+    P4Runtime sh >>> te.match["hdr.ethernet.dst_addr"]=("00:00:00:00:00:1B")
+    field_id: 1
+    exact {
+      value: "\000\000\000\000\000\033"
+    }
+
+
+(3) The specify the values for the table entry action parameters:
+P4Runtime sh >>> te.action["P4INFO-ACTION-PARAM-NAME"] = ("VALUE")
+
+    P4Runtime sh >>> te.action["port_num"]=("4")
+    param_id: 1
+    value: "\000\004"
+
+
+(4) Show Info
+
+    P4Runtime sh >>> print (te)
+    table_id: 33605373 ("IngressPipeImpl.l2_exact_table")
+    match {
+      field_id: 1 ("hdr.ethernet.dst_addr")
+      exact {
+        value: "\\x00\\x00\\x00\\x00\\x00\\x1b"
+      }
+    }
+    action {
+      action {
+        action_id: 16812802 ("IngressPipeImpl.set_egress_port")
+        params {
+          param_id: 1 ("None")
+          value: "\\x00\\x04"
+        }
+      }
+    }
+
+
+
+
+
+
+3. matching MAC address1(::1A) to egress port number 3
+--------------------------------------------------------
+
+(1) To create a table entry object:
+
+    P4Runtime sh >>> te2 = table_entry["IngressPipeImpl.l2_exact_table"](action="IngressPipeImpl.set_egress_port") 
+
+
+(2) To specify a match field:
+
+    P4Runtime sh >>> te2.match["hdr.ethernet.dst_addr"]=("00:00:00:00:00:1A") 
+    field_id: 1                                                               
+    exact {                                                                   
+      value: "\000\000\000\000\000\032"                                       
+    }                                                                         
+                                                                          
+                                                                          
+(3) The specify the values for the table entry action parameters:
+
+    P4Runtime sh >>> te2.action["port_num"]=("3")                             
+    param_id: 1                                                               
+    value: "\000\003"                                                         
+                                                                          
+                                                                          
+(4) Show Info
+    P4Runtime sh >>> print (te)                                               
+    table_id: 33605373 ("IngressPipeImpl.l2_exact_table")                     
+    match {                                                                   
+      field_id: 1 ("hdr.ethernet.dst_addr")                                   
+      exact {                                                                 
+        value: "\\x00\\x00\\x00\\x00\\x00\\x1b"                               
+      }                                                                       
+    }                                                                         
+    action {                                                                  
+      action {                                                                
+        action_id: 16812802 ("IngressPipeImpl.set_egress_port")               
+        params {                                                              
+          param_id: 1 ("None")                                                
+          value: "\\x00\\x04"                                                 
+        }                                                                     
+      }                                                                       
+    }                                                                
+
+
+
+
+
+
+
+
+

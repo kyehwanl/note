@@ -1,0 +1,1130 @@
+
+
+(1) W20210618 11:39:28.257392 19037 p4_service.cc:142] Empty forwarding pipeline configs file: /etc/stratum/pipeline_cfg.pb.txt
+
+on onl2 server, there is an empty file
+
+
+
+(2) Segmentation fault -  Inquiring about Build P4-stratum on a Edgecore Wedge100BF-32X
+(https://lists.stratumproject.org/archives/stratum-dev/2020-September/000146.html)
+
+[stratum-dev] [straum-dev] Inquiring about Build P4-stratum on a Edgecore Wedge100BF-32X
+ry-oogami at kddi.com ry-oogami at kddi.com
+Tue Sep 15 08:05:33 UTC 2020
+Previous message (by thread): [stratum-dev] Canceled event with note: Stratum TST Meeting @ Thu Sep 10, 2020 12:30pm - 1pm (PDT) (stratum-dev at lists.stratumproject.org)
+Next message (by thread): [stratum-dev] [straum-dev] Inquiring about Build P4-stratum on a Edgecore Wedge100BF-32X
+Messages sorted by: [ date ] [ thread ] [ subject ] [ author ]
+Hi Max,
+
+Thank you for answering my question issued on Aug 18th.
+I was able to add a table entry using P4 runtime.
+
+I'm currently trying to link up / down a port through gNMI,however, I faild it.
+
+The commands and logs are described below.
+According to the following log, command "push" seems to be successful.
+---
+I20200914 05:09:17.604884 32499 bf_switch.cc:63] Chassis config pushed successfully.
+---
+
+In order to up / down the port, is the following command description correct?
+---
+gNMI command
+root at localhost:~/stratum# bazel run //stratum/tools/gnmi:gnmi-cli -- --replace --bytes_val_file /root/stratum/temp.pb.txt set /
+---
+
+
+<stratum’s log>
+root at localhost:~# start-stratum.sh
+bf_kdrv_mod found! Unloading first...
+loading bf_kdrv_mod...
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x5644b1684020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->3 device_id:0 mac_block:21 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->4 device_id:0 mac_block:20 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->5 device_id:0 mac_block:19 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->6 device_id:0 mac_block:18 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->7 device_id:0 mac_block:17 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->8 device_id:0 mac_block:16 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->9 device_id:0 mac_block:15 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->10 device_id:0 mac_block:14 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->11 device_id:0 mac_block:13 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->12 device_id:0 mac_block:12 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->13 device_id:0 mac_block:11 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->14 device_id:0 mac_block:10 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->15 device_id:0 mac_block:9 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->16 device_id:0 mac_block:8 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->17 device_id:0 mac_block:7 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->18 device_id:0 mac_block:6 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->19 device_id:0 mac_block:5 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->20 device_id:0 mac_block:4 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->21 device_id:0 mac_block:3 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->22 device_id:0 mac_block:2 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->23 device_id:0 mac_block:1 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->24 device_id:0 mac_block:0 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->25 device_id:0 mac_block:31 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->26 device_id:0 mac_block:30 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->27 device_id:0 mac_block:29 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->28 device_id:0 mac_block:28 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->29 device_id:0 mac_block:26 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->30 device_id:0 mac_block:27 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->31 device_id:0 mac_block:24 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+bf_switchd: Credo python server thread initialized..Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+credo_python_intf: listen socket created
+credo_python_intf: bind done on port 9001, listening...
+credo_python_intf: listening for incoming connections...
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+Could not create logging file: No such file or directory
+COULD NOT CREATE A LOGGINGFILE 20200914-050910.32455!I20200914 05:09:10.989152 32455 main.cc:124] switchd started successfully
+Could not create logging file: No such file or directory
+COULD NOT CREATE A LOGGINGFILE 20200914-050910.32455!W20200914 05:09:10.989571 32455 credentials_manager.cc:45] Using insecure server credentials
+I20200914 05:09:10.990274 32455 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20200914 05:09:10.990386 32455 config_monitoring_service.cc:90] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+Could not create logging file: No such file or directory
+COULD NOT CREATE A LOGGINGFILE 20200914-050911.32455!E20200914 05:09:11.000291 32455 bf_chassis_manager.cc:543] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20200914 05:09:11.000746 32455 bf_switch.cc:98] Chassis config verified successfully.
+E20200914 05:09:11.002784 32455 phal.cc:96] No phal_config_file specified and no switch configurator found! This is probably not what you want. Did you forget to specify any '--define phal_with_*=true' Bazel flags?
+I20200914 05:09:11.004007 32455 attribute_database.cc:213] PhalDB service is listening to localhost:28003...
+I20200914 05:09:11.004081 32455 bf_chassis_manager.cc:820] Port status notification callback registered successfully
+I20200914 05:09:11.004714 32455 bf_chassis_manager.cc:71] Adding port 128 in node 1.
+I20200914 05:09:11.010711 32455 bf_chassis_manager.cc:98] Enabling port 128 in node 1.
+I20200914 05:09:11.010841 32455 bf_switch.cc:63] Chassis config pushed successfully.
+I20200914 05:09:11.014021 32455 p4_service.cc:118] Pushing the saved forwarding pipeline configs read from /var/run/stratum/pipeline_cfg.pb.txt...
+bf_switchd: starting warm init for dev_id 0 mode 1 serdes_upgrade 0
+Skip diag lib deinit
+\I20200914 05:09:12.576406 32455 bf_chassis_manager.cc:557] Replaying ports for node 1.
+I20200914 05:09:12.582643 32455 bf_switch.cc:111] P4-based forwarding pipeline config pushed successfully to node with ID 1.
+E20200914 05:09:12.585922 32455 hal.cc:223] Stratum external facing services are listening to 0.0.0.0:28000, 0.0.0.0:9339, localhost:28000...
+E20200914 05:09:12.593706 32455 hal.cc:365] StratumErrorSpace::ERR_INTERNAL: Failed to check in with procmon: failed to connect to all addresses
+E20200914 05:09:12.593993 32455 hal.cc:233] Error when checking in with procmon: Failed to check in with procmon: failed to connect to all addresses.
+I20200914 05:09:17.604761 32499 bf_switch.cc:98] Chassis config verified successfully.
+I20200914 05:09:17.604884 32499 bf_switch.cc:63] Chassis config pushed successfully.
+
+[File referenced by gNMI command]
+root at localhost:~/stratum# cat temp.pb.txt
+description: "Default Chassis Config for Edgecore Wedge100BF-32x"
+chassis {
+  platform: PLT_BAREFOOT_TOFINO
+  name: "Edgecore Wedge100BF-32x"
+}
+nodes {
+  id: 1
+  slot: 1
+  index: 1
+}
+singleton_ports {
+  id: 128
+  name: "1/0"
+  slot: 1
+  port: 1
+  speed_bps: 100000000000
+  config_params {
+    admin_state: ADMIN_STATE_ENABLED
+    autoneg: TRI_STATE_TRUE
+    fec_mode: FEC_MODE_ON
+  }
+  node: 1
+}
+root at localhost:~/stratum#
+
+-----Original Message-----
+From: Maximilian Pudelko <max at opennetworking.org> 
+Sent: Wednesday, August 19, 2020 6:49 AM
+To: 大上 涼太 <ry-oogami at kddi.com>
+Cc: stratum-dev at lists.stratumproject.org
+Subject: Re: [stratum-dev] [straum-dev] Inquiring about Build P4-stratum on a Edgecore Wedge100BF-32X
+
+Hi Ryota,
+
+From the logs it looks like you managed to compile and start Stratum correctly.
+The reason why p4rt-shell can't connect, is because there is a segfault in Stratum during the pipeline push.
+This happens when the SDE encounters an unexpected program or packing format.
+
+Looking at your p4c command, I noticed that you do not set the `--p4runtime-force-std-externs` flag. In our tests this is required for tna programs. Could you try adding that?
+
+
+Best,
+
+Max
+
+
+
+On Tue, Aug 18, 2020 at 2:54 AM ry-oogami--- via stratum-dev <stratum-dev at lists.stratumproject.org <mailto:stratum-dev at lists.stratumproject.org> > wrote:
+
+
+    Dear stratum-dev staff:
+    
+    I hope you do not mind my contacting you out of blue. My name is Ryota Ogami at KDDI Corporation.
+    I got a trouble on starting stratum and p4-runtime (unable to access stratum from p4-runtime).  
+            I reffered the git pages(https://github.com/stratum/stratum/blob/master/stratum/hal/bin/barefoot/README.md) ,
+            I applied the following configuration & steps (1 to 6) to build and install P4-runtime, SDE 9.2.0 and P4-stratum into an ONL host on a P4 swtich (Edgecore Wedge100BF-32X).
+    
+            1 Open Network Linux version
+            ```
+            root at p4-1$ uname -r   
+            4.14.151-OpenNetworkLinux
+            ```
+    
+            2 Install dependent packages
+            ```
+            root at p4-1$ source set_sde.bash
+            root at p4-1$ apt install autoconf libtool libc6-dev g++ git libboost-dev python-dev flex bison libevent-dev libboost-test-dev bridge-utils python-pip python-ply ethtool libssl-dev libpcap-dev libusb-1.0-0-dev libcurl4-gnutls-dev automake python-crcmod python-jsonschema xz-utils libbz2-dev python3 python3-pip python3-dev python3-crcmod python3-jsonschema python3-yaml pkg-config curl unzip python-ipaddr python-pyparsing doxygen python-ply python-simplejson python-packaging python-vcversioner python-functools32 python-six python-wheel python-futures python-enum34 python-coverage patch
+            root at p4-1$ cd dependencies
+            root at p4-1$ ./install.sh
+            root at p4-1$ dpkg -i onl-kernel-4.14-lts-x86-64-all_1.0.0_amd64.deb
+            root at p4-1$ ln -s /usr/share/onl/packages/amd64/onl-kernel-4.14-lts-x86-64-all/mbuilds/ /lib/modules/4.14.151-OpenNetworkLinux/build
+            ```
+    
+            3 Build SDE 9.2.0
+            ```
+            root at p4-1$ tar -xvf bf-sde-9.2.0.tar
+            root at p4-1$ tar -xvf bf-reference-bsp-9.2.0.tar
+            root at p4-1$ tar -zxvf dependencies.tar.gz
+            root at p4-1$ cd bf-sde-9.2.0
+            root at p4-1$ cd p4studio_build/profiles/
+            root at p4-1$ ./p4studio_build.py -up profiles/stratum_profile.yaml --bsp-path /root/bf-reference-bsp-9.2.0
+            ```
+    
+            4 Build P4 stratum
+            ```
+            root at p4-1$ git clone https://github.com/stratum/stratum.git
+            root at p4-1$ bazel build //stratum/hal/bin/barefoot:stratum_bf_deb --define phal_with_onlp=false --define sde_ver=9.2.0
+            root at p4-1$ apt-get update
+            root at p4-1$ apt-get install -y --reinstall ./stratum_bf_deb.deb
+            ```
+    
+            5 Install P4-Runtime
+            ```
+            root at p4-1$ git clone --recursive https://github.com/p4lang/p4runtime-shell
+            root at p4-1$ cd p4runtime-shell
+            root at p4-1$ docker build -t p4lang/p4runtime-sh .
+            ```
+    
+            6 Compile P4 program
+            ```
+            root at p4-1$ /root/bf-sde-9.2.0/install/bin/p4c -a tna -o /root/ --p4runtime-format text --p4runtime-files /tmp/basic.pb.txt /root/bf-sde-9.2.0/pkgsrc/p4-examples/p4_16_programs/tna_exact_match/tna_exact_match.p4
+            root at p4-1$ ./config_builders/tofino.py --ctx-json /root/pipe/context.json --tofino-bin /root/bf-sde-9.2.0/install/share/tofinopd/tna_exact_match/pipe/tofino.bin -p tna_exact_match -o out.bin
+            ```
+    
+            After building, I started stratum and P4-Runtime according to the steps 7 & 8. However, P4-runtime cannot access to stratum's IP adress and port number (10.0.2.3:28000 <http://10.0.2.3:28000> ), and the following error messages were created (see 9 and 10).
+    
+            7 starting stratum
+            ```
+            root at p4-1$ start-stratum.sh
+            ```
+    
+            8 starting P4-Runtime
+            ```
+            root at p4-1$ ./p4runtime-sh-docker --grpc-addr 10.0.2.3:28000 <http://10.0.2.3:28000>  --device-id 1 --election-id 0,1 --config /tmp/basic.pb.txt,out.bin
+            ```
+    
+            9 error messages start_stratum.sh
+            ```
+            root at localhost:~# start-stratum.sh
+            bf_kdrv_mod found! Unloading first...
+            loading bf_kdrv_mod...
+            bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+            Install dir: /usr (0x560423e04020)
+            bf_switchd: system services initialized
+            bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+            bf_switchd: processing device configuration...
+            Configuration for dev_id 0
+             Family        : Tofino
+             pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+             pci_domain    : 0
+             pci_bus       : 5
+             pci_fn        : 0
+             pci_dev       : 0
+             pci_int_mode  : 1
+             sbus_master_fw: /usr/
+             pcie_fw       : /usr/
+             serdes_fw     : /usr/
+             sds_fw_path   : /usr/
+             microp_fw_path:
+            bf_switchd: processing P4 configuration...
+            P4 profile for dev_id 0
+             p4_name: dummy
+               libpd:
+               libpdthrift:
+               context:
+               config:
+             diag:
+             accton diag:
+             board-port-map: /usr/share/port_map.json
+             non_default_port_ppgs: 0
+             SAI default initialize: 1
+            board-port-map path: /usr/share/port_map.json
+            bf_switchd: loading board-map conf file /usr/share/port_map.json...
+            enable-debug-log:yes
+            Parsing Board-lane-entries 33 found
+            num-of-connectors:33
+    
+            Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->3 device_id:0 mac_block:21 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->4 device_id:0 mac_block:20 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->5 device_id:0 mac_block:19 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->6 device_id:0 mac_block:18 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->7 device_id:0 mac_block:17 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->8 device_id:0 mac_block:16 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->9 device_id:0 mac_block:15 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->10 device_id:0 mac_block:14 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->11 device_id:0 mac_block:13 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->12 device_id:0 mac_block:12 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->13 device_id:0 mac_block:11 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->14 device_id:0 mac_block:10 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->15 device_id:0 mac_block:9 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->16 device_id:0 mac_block:8 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->17 device_id:0 mac_block:7 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->18 device_id:0 mac_block:6 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->19 device_id:0 mac_block:5 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->20 device_id:0 mac_block:4 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->21 device_id:0 mac_block:3 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->22 device_id:0 mac_block:2 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->23 device_id:0 mac_block:1 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->24 device_id:0 mac_block:0 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->25 device_id:0 mac_block:31 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->26 device_id:0 mac_block:30 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->27 device_id:0 mac_block:29 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->28 device_id:0 mac_block:28 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->29 device_id:0 mac_block:26 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->30 device_id:0 mac_block:27 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->31 device_id:0 mac_block:24 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+            tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    
+            Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+            lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+            lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+            lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+            tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+            lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+            tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+            Operational mode set to ASIC
+            ASIC detected at PCI /sys/class/bf/bf0/device
+            ASIC pci device id is 16
+            bf_switchd: drivers initialized
+            Skipping P4 program load for dev_id 0
+            detecting.. IOMMU not enabled on the platform
+            Setting core_pll_ctrl0=cd44cbfe
+    
+            bf_switchd: dev_id 0 initialized
+    
+            bf_switchd: initialized 1 devices
+            bf_switchd: Credo python server thread initialized..Skip p4 lib init
+            Skip mav diag lib init
+            bf_switchd: spawning cli server thread
+            credo_python_intf: listen socket created
+            credo_python_intf: bind done on port 9001, listening...
+            credo_python_intf: listening for incoming connections...
+            bf_switchd: running in background; driver shell is disabled
+            bf_switchd: server started - listening on port 9999
+            I0729 00:08:02.512548  3375 main.cc:124 <http://main.cc:124> ] switchd started successfully
+            W0729 00:08:02.513070  3375 credentials_manager.cc:45 <http://credentials_manager.cc:45> ] Using insecure server credentials
+            I0729 00:08:02.513619  3375 timer_daemon.cc:90 <http://timer_daemon.cc:90> ] The timer daemon has been started.
+            I0729 00:08:02.513737  3375 hal.cc:128 <http://hal.cc:128> ] Setting up HAL in COLDBOOT mode...
+            I0729 00:08:02.513847  3375 config_monitoring_service.cc:90 <http://config_monitoring_service.cc:90> ] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+            E0729 00:08:02.526157  3375 phal.cc:96 <http://phal.cc:96> ] No phal_config_file specified and no switch configurator found! This is probably not what you want. Did you forget to specify any '--define phal_with_*=true' Bazel flags?
+            I0729 00:08:02.527349  3375 attribute_database.cc:213 <http://attribute_database.cc:213> ] PhalDB service is listening to localhost:28003...
+            I0729 00:08:02.527417  3375 bf_chassis_manager.cc:788 <http://bf_chassis_manager.cc:788> ] Port status notification callback registered successfully
+            I0729 00:08:02.528173  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 128 in node 1.
+            I0729 00:08:02.534268  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 128 in node 1.
+            I0729 00:08:02.534374  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 136 in node 1.
+            I0729 00:08:02.554438  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 136 in node 1.
+            I0729 00:08:02.554538  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 144 in node 1.
+            I0729 00:08:02.580076  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 144 in node 1.
+            I0729 00:08:02.580164  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 152 in node 1.
+            I0729 00:08:02.605779  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 152 in node 1.
+            I0729 00:08:02.605870  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 160 in node 1.
+            I0729 00:08:02.632144  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 160 in node 1.
+            I0729 00:08:02.632297  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 168 in node 1.
+            I0729 00:08:02.658277  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 168 in node 1.
+            I0729 00:08:02.658442  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 176 in node 1.
+            I0729 00:08:02.684825  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 176 in node 1.
+            I0729 00:08:02.685006  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 184 in node 1.
+            I0729 00:08:02.711098  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 184 in node 1.
+            I0729 00:08:02.711333  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 60 in node 1.
+            I0729 00:08:02.738742  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 60 in node 1.
+            I0729 00:08:02.738965  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 52 in node 1.
+            I0729 00:08:02.765933  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 52 in node 1.
+            I0729 00:08:02.766140  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 44 in node 1.
+            I0729 00:08:02.794571  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 44 in node 1.
+            I0729 00:08:02.794782  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 36 in node 1.
+            I0729 00:08:02.822964  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 36 in node 1.
+            I0729 00:08:02.823189  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 28 in node 1.
+            I0729 00:08:02.851384  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 28 in node 1.
+            I0729 00:08:02.851619  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 20 in node 1.
+            I0729 00:08:02.879788  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 20 in node 1.
+            I0729 00:08:02.880071  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 12 in node 1.
+            I0729 00:08:02.914714  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 12 in node 1.
+            I0729 00:08:02.914990  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 4 in node 1.
+            I0729 00:08:02.939514  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 4 in node 1.
+            I0729 00:08:02.939772  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 0 in node 1.
+            I0729 00:08:02.969403  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 0 in node 1.
+            I0729 00:08:02.969648  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 8 in node 1.
+            I0729 00:08:02.999389  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 8 in node 1.
+            I0729 00:08:03.005864  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 16 in node 1.
+            I0729 00:08:03.035084  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 16 in node 1.
+            I0729 00:08:03.035384  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 24 in node 1.
+            I0729 00:08:03.075254  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 24 in node 1.
+            I0729 00:08:03.075557  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 32 in node 1.
+            I0729 00:08:03.100225  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 32 in node 1.
+            I0729 00:08:03.100484  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 40 in node 1.
+            I0729 00:08:03.141837  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 40 in node 1.
+            I0729 00:08:03.142086  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 48 in node 1.
+            I0729 00:08:03.167019  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 48 in node 1.
+            I0729 00:08:03.167284  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 56 in node 1.
+            I0729 00:08:03.208166  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 56 in node 1.
+            I0729 00:08:03.208426  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 188 in node 1.
+            I0729 00:08:03.233619  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 188 in node 1.
+            I0729 00:08:03.233870  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 180 in node 1.
+            I0729 00:08:03.275310  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 180 in node 1.
+            I0729 00:08:03.275593  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 172 in node 1.
+            I0729 00:08:03.301023  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 172 in node 1.
+            I0729 00:08:03.301263  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 164 in node 1.
+            I0729 00:08:03.343309  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 164 in node 1.
+            I0729 00:08:03.343560  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 148 in node 1.
+            I0729 00:08:03.369046  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 148 in node 1.
+            I0729 00:08:03.369292  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 156 in node 1.
+            I0729 00:08:03.400629  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 156 in node 1.
+            I0729 00:08:03.400827  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 132 in node 1.
+            I0729 00:08:03.444171  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 132 in node 1.
+            I0729 00:08:03.444409  3375 bf_chassis_manager.cc:71 <http://bf_chassis_manager.cc:71> ] Adding port 140 in node 1.
+            I0729 00:08:03.471109  3375 bf_chassis_manager.cc:98 <http://bf_chassis_manager.cc:98> ] Enabling port 140 in node 1.
+            I0729 00:08:03.471511  3375 bf_switch.cc:60 <http://bf_switch.cc:60> ] Chassis config pushed successfully.
+            I0729 00:08:03.540140  3375 p4_service.cc:118 <http://p4_service.cc:118> ] Pushing the saved forwarding pipeline configs read from /var/run/stratum/pipeline_cfg.pb.txt...
+            E0729 00:08:03.540207  3375 utils.cc:109 <http://utils.cc:109> ] StratumErrorSpace::ERR_FILE_NOT_FOUND: /var/run/stratum/pipeline_cfg.pb.txt not found.
+            E0729 00:08:03.540649  3375 utils.cc:65 <http://utils.cc:65> ] Return Error: ReadFileToString(filename, &text) failed with StratumErrorSpace::ERR_FILE_NOT_FOUND: /var/run/stratum/pipeline_cfg.pb.txt not found.
+            W0729 00:08:03.540683  3375 p4_service.cc:127 <http://p4_service.cc:127> ] No saved forwarding pipeline config found at /var/run/stratum/pipeline_cfg.pb.txt. This is normal when the switch is just installed and no master controller is connected yet.
+            E0729 00:08:03.541280  3375 hal.cc:223 <http://hal.cc:223> ] Stratum external facing services are listening to 0.0.0.0:28000 <http://0.0.0.0:28000> , 0.0.0.0:9339 <http://0.0.0.0:9339> , localhost:28000...
+            E0729 00:08:03.546200  3375 hal.cc:365 <http://hal.cc:365> ] StratumErrorSpace::ERR_INTERNAL: Failed to check in with procmon: failed to connect to all addresses
+            E0729 00:08:03.546463  3375 hal.cc:233 <http://hal.cc:233> ] Error when checking in with procmon: Failed to check in with procmon: failed to connect to all addresses.
+            I0729 00:08:09.126171  3419 p4_service.cc:695 <http://p4_service.cc:695> ] Controller (connection_id: 1, election_id: 1, uri: ipv4:172.17.0.2:47190 <http://172.17.0.2:47190> ) is connected as MASTER for node (aka device) with ID 1.
+            bf_switchd: starting warm init for dev_id 0 mode 1 serdes_upgrade 0
+            Skip diag lib deinit
+            2020-07-29 00:08:09.276447 BF_PI ERROR - handles_map_add: error when inserting into handles map
+            2020-07-29 00:08:09.444534 BF_PI ERROR - get_table_state: error when retrieving table state 33556279 for device 0
+            *** Aborted at 1595981289 (unix time) try "date -d @1595981289" if you are using GNU date ***
+            PC: @                0x0 (unknown)
+            *** SIGSEGV (@0x0) received by PID 3375 (TID 0x7f37cc7dc700) from PID 0; stack trace: ***
+               @     0x7f37e52be0e0 (unknown)
+               @     0x7f37e6e139f9 pi_state_table_id_to_handle
+               @     0x7f37e6e0c88b _pi_update_device_start
+               @     0x56042072c9b7 pi_update_device_start
+               @     0x56042060def1 pi::fe::proto::DeviceMgrImp::pipeline_config_set()
+               @     0x5604206058dd pi::fe::proto::DeviceMgr::pipeline_config_set()
+               @     0x560420539caf stratum::hal::pi::PINode::PushForwardingPipelineConfig()
+               @     0x56041fe9bb04 stratum::hal::barefoot::BFSwitch::PushForwardingPipelineConfig()
+               @     0x5604203bbc37 stratum::hal::P4Service::SetForwardingPipelineConfig()
+               @     0x56042069e0d9 std::__invoke_impl<>()
+               @     0x56042069d3ac std::__invoke<>()
+               @     0x56042069bcec _ZNKSt12_Mem_fn_baseIMN2p42v19P4Runtime7ServiceEFN4grpc6StatusEPN9grpc_impl13ServerContextEPKNS1_34SetForwardingPipelineConfigRequestEPNS1_35SetForwardingPipelineConfigResponseEELb1EEclIJPS3_S8_SB_SD_EEEDTcl8__invokedtdefpT6_M_pmfspcl7forwardIT_Efp_EEEDpOSJ_
+               @     0x5604206994bf std::_Function_handler<>::_M_invoke()
+               @     0x5604206ae808 std::function<>::operator()()
+               @     0x5604206a517e _ZZN9grpc_impl8internal16RpcMethodHandlerIN2p42v19P4Runtime7ServiceENS3_34SetForwardingPipelineConfigRequestENS3_35SetForwardingPipelineConfigResponseEE10RunHandlerERKN4grpc8internal13MethodHandler16HandlerParameterEENKUlvE_clEv
+               @     0x5604206ae84c _ZN9grpc_impl8internal23CatchingFunctionHandlerIZNS0_16RpcMethodHandlerIN2p42v19P4Runtime7ServiceENS4_34SetForwardingPipelineConfigRequestENS4_35SetForwardingPipelineConfigResponseEE10RunHandlerERKN4grpc8internal13MethodHandler16HandlerParameterEEUlvE_EENSA_6StatusEOT_
+               @     0x5604206a5233 grpc_impl::internal::RpcMethodHandler<>::RunHandler()
+               @     0x5604208874e1 grpc_impl::Server::SyncRequest::CallData::ContinueRunAfterInterception()
+               @     0x5604208872ff grpc_impl::Server::SyncRequest::CallData::Run()
+               @     0x560420887a97 grpc_impl::Server::SyncRequestThreadManager::DoWork()
+               @     0x5604208a41a7 grpc::ThreadManager::MainWorkLoop()
+               @     0x5604208a3815 grpc::ThreadManager::WorkerThread::Run()
+               @     0x5604208a36d4 _ZZN4grpc13ThreadManager12WorkerThreadC4EPS0_ENKUlPvE_clES3_
+               @     0x5604208a36f4 _ZZN4grpc13ThreadManager12WorkerThreadC4EPS0_ENUlPvE_4_FUNES3_
+               @     0x560420a8fe5c _ZZN9grpc_core12_GLOBAL__N_120ThreadInternalsPosixC4EPKcPFvPvES4_PbRKNS_6Thread7OptionsEENKUlS4_E_clES4_
+               @     0x560420a8fea1 _ZZN9grpc_core12_GLOBAL__N_120ThreadInternalsPosixC4EPKcPFvPvES4_PbRKNS_6Thread7OptionsEENUlS4_E_4_FUNES4_
+               @     0x7f37e52b44a4 start_thread
+               @     0x7f37e4bdbd0f clone
+               @                0x0 (unknown)
+            Segmentation fault
+            root at localhost:~#
+            ```
+    
+            10 error messages P4-runtime
+            ```
+            root at localhost:~/p4runtime-shell# ./p4runtime-sh-docker --grpc-addr 10.0.2.3:28000 <http://10.0.2.3:28000>   --device-id 1 --election-id 0,1 --config /tmp/basic.pb.txt,out.bin
+            CRITICAL:root:Error when setting config
+            CRITICAL:root:P4Runtime RPC error (UNAVAILABLE): Socket closed
+            CRITICAL:root:StreamChannel error, closing stream
+            CRITICAL:root:P4Runtime RPC error (UNAVAILABLE): Socket closed
+            root at localhost:~/p4runtime-shell#
+            ```
+    
+            Could you please tell me if something wrong in our procedure, or (if nothing wrong) show me some workaround on it.
+    
+    -------------------------------
+    Tomorrow, Together  KDDI
+    -------------------------------
+    ++++++++++++++++++++++++++++++++++++
+    Ryota Ogami
+    KDDI Corporation
+    AI-assisted Network Opetation Support Group
+    Operation Support System Development Department
+    Advanced Operations Management Division
+    
+    163-8003 Japan
+    KDDI Bldg,2-3-2,Nishishinjyuku,Shinjuku-ku,Tokyo
+    TEL:+81-80-5077-9690
+    E-mail：ry-oogami at kddi.com <mailto:ry-oogami at kddi.com> 
+    
+    =====================
+    NOTE: This electronic mail message may contain confidential and
+    　　  privileged information from KDDI Corporation.
+          If you are not the intended recipient, any disclosure,
+          photocopying, distribution or use of the contents of the received
+          information is prohibited. If you have received this e-mail in error,
+          please notify the sender immediately and permanently delete
+          this message and all related copies.
+    =====================
+    
+    
+    _______________________________________________
+    stratum-dev mailing list
+    stratum-dev at lists.stratumproject.org <mailto:stratum-dev at lists.stratumproject.org> 
+    https://lists.stratumproject.org/listinfo/stratum-dev
+
+Previous message (by thread): [stratum-dev] Canceled event with note: Stratum TST Meeting @ Thu Sep 10, 2020 12:30pm - 1pm (PDT) (stratum-dev at lists.stratumproject.org)
+Next message (by thread): [stratum-dev] [straum-dev] Inquiring about Build P4-stratum on a Edgecore Wedge100BF-32X
+Messages sorted by: [ date ] [ thread ] [ subject ] [ author ]
+More information about the stratum-dev mailing list
+
+
+
+ 
