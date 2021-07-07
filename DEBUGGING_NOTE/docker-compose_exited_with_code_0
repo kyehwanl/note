@@ -1,0 +1,27 @@
+
+Issue: docker-compose exited with code 0
+=========================================
+(https://stackoverflow.com/questions/37100358/docker-compose-with-multiple-services)
+
+<Cause>
+The thing is that you are using the option -t when running your container.
+    
+    docker -it
+
+    tty works because it creates a pseudo terminal. I had a similar problem with SQL Server 2017 container. It was running fine in standalone mode but was exiting in the docker-compose mode for multi-container scenario. Here is what I did with tty to fix it handsonarchitect.com/2018/01/… – Nilesh Gule Jan 14 '18 at 2:34
+
+    @NileshGule thanks for your time to explain why tty works, however, I'd like to know a little more, if you don't mind. How exactly creating a pseudo terminal will prevent from exiting? Thanks again. – Luis Milanese May 9 '19 at 1:46
+    3
+
+    @LuisMilanese generally when the foreground process completes within the docker container, it assumes that the job is completed and cleans up the container instance. But things like Database engine and web servers need to continue running. By creating a pseudo terminal the container remains alive. You can see this workflow by running the docker logs <<container name>> command with and without tty – Nilesh Gule May 11 '19 at 8:33
+
+
+<Solution>
+
+Add following option into yaml file
+
+    tty: true
+
+
+
+
