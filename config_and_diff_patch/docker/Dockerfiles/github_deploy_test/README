@@ -1,0 +1,20 @@
+
+1. Individual Execution 
+========================
+Without using docker-compose, followings are the good examples running indivisual docker containers
+Current directory($PWD) is supposed to be in the directory in which github files are downloaded
+(https://github.com/usnistgov/NIST-BGP-SRx/)
+
+
+(1)  QuaggaSRx
+docker run --rm -it -v $PWD/./examples/bgpsec-keys/:/usr/opt/bgp-srx-examples/bgpsec-keys -v $PWD/./quagga-srx/bgpd/bgpd.conf.sampleSRx:/usr/etc/bgpd.conf -p 179:179 -p 2605:2605 --privileged --net nistbgpsrx_bgp_net --ip 172.47.0.4 nist/bgp-srx bgpd -f /usr/etc/bgpd.conf
+
+
+(2) SRx Server
+docker run --rm -it -v $PWD/./examples/bgpsec-keys/:/usr/opt/bgp-srx-examples/bgpsec-keys -v $PWD/./srx-server/src/server/srx_server.conf:/usr/etc/srx_server.conf -p 17900:17900 -p 17901:17901 --privileged --net nistbgpsrx_bgp_net --ip 172.47.0.100 nist/bgp-srx srx_server -f /usr/etc/srx_server.conf
+
+
+(3) rpkirtr_server 
+--> need to prepare "rpkirtr_svr.conf" file in the current directory
+
+docker run --rm -it -v $PWD/./examples/bgpsec-keys/:/usr/opt/bgp-srx-examples/bgpsec-keys -v $PWD/./rpkirtr_svr.conf:/usr/etc/rpkirtr_svr.conf -p 323:323 --privileged --net nistbgpsrx_bgp_net --ip 172.47.0.101 nist/bgp-srx rpkirtr_svr -f /usr/etc/rpkirtr_svr.conf
