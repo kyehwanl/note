@@ -1,0 +1,151 @@
+
+
+1. Docker Requirements
+======================
+
+(1) Docker Version:  Docker Engine - Community version 18 or later is required.
+
+(2) Operating Systems: MacOS, Linux, Windows 10 Professional or Enterprise edition
+    (https://docs.docker.com/engine/install/) 
+
+(3) Docker-compose install links:  https://docs.docker.com/compose/install/
+
+
+
+
+2. Docker Running Examples
+===========================
+
+In order to edit QuaggaSRx, SRx Server and Rpkirtr server's configuration files in detail, 
+    please refer to each example files under the example directories.
+
+
+(1) Generate Docker image
+ To generate docker image, you need to run 'docker build' command with the Dockerfile
+
+ docker build -f <docker file> -t <docker image name> <path> 
+
+ In our example, 
+ # docker build -t nist/bgp-srx .  (Don't forget '.' at the last)
+
+
+
+(2) Running RPKI Rtr server tool
+
+ -- At first, need to prepare "rpkirtr_svr.conf" file in the current directory.
+
+    # echo "add 10.0.0.0/8 9 7675" > ./rpkirtr_svr.conf
+
+ -- then, run the docker container for rpkirtr server
+    # docker run --rm -it --name rpkirtr_server \
+         -v $PWD/./rpkirtr_svr.conf:/usr/etc/rpkirtr_svr.conf \
+         -p 323:323 \
+         nist/bgp-srx \
+         rpkirtr_svr -f /usr/etc/rpkirtr_svr.conf
+
+
+Or        
+Users may use pre-defined keys and config files in our example directories
+< This is general form of running command >
+    # docker run --rm -it --name rpkirtr_server \
+         -v <location/user-defined/rpkirtr_svr.conf:/usr/etc/rpkirtr_svr.conf \
+         -p 323:323 \
+         nist/bgp-srx \
+         rpkirtr_svr -f /usr/etc/rpkirtr_svr.conf
+
+
+
+(3) Running SRx server
+
+-- Open another terminal, enter the following command to indicate rpkirtr_server's ip address to connect
+
+    # sed "s/localhost/172.17.0.2/g" ./srx-server/src/server/srx_server.conf > /tmp/srx_server.conf
+
+-- in order to know the docker container's IP adress, 
+  docker inspect --format '{{ .NetworkSettings.IPAddress }}' <container name>
+
+    # docker inspect --format '{{ .NetworkSettings.IPAddress }}' rpkirtr_server 
+    172.17.0.2
+
+-- then, run srx_server docker container,
+
+    # docker run --rm -it --name srx_server \
+         -v /tmp/srx_server.conf:/usr/etc/srx_server.conf \
+         -v $PWD/./examples/bgpsec-keys/:/usr/opt/bgp-srx-examples/bgpsec-keys \
+         -p 17900:17900 -p 17901:17901 \
+         nist/bgp-srx \
+         srx_server -f /usr/etc/srx_server.conf
+
+
+Or        
+Users may use pre-defined keys and config files in our example directories
+< This is general form of running command >
+    # docker run --rm -it --name srx_server \
+         -v </location/user-defined/srx_server.config>:/usr/etc/srx_server.conf  \
+         -v </location/user-defined/keys/>:/usr/opt/bgp-srx-examples/bgpsec-keys \
+         -p 17900:17900 -p 17901:17901 \
+         nist/bgp-srx \
+         srx_server -f /usr/etc/srx_server.conf
+
+
+
+(4) running QuaggaSrx
+
+-- Open one more terminal for quaggasrx, and add srx_server's ip address into the quagga's configuration file, bgpd.conf.
+
+    # sed "s/srx connect/srx connect 172.17.0.3 17900/g" ./quagga-srx/bgpd/bgpd.conf.sampleSRx > /tmp/bgpd.conf
+
+-- in order to know the docker container's IP adress, 
+  docker inspect --format '{{ .NetworkSettings.IPAddress }}' <container name>
+    
+    # docker inspect --format '{{ .NetworkSettings.IPAddress }}' srx_server
+    172.17.0.3
+  
+
+-- then, 
+
+    # docker run --rm -it --name quaggasrx \
+         -v /tmp/bgpd.conf:/usr/etc/bgpd.conf \
+         -v $PWD/./examples/bgpsec-keys/:/usr/opt/bgp-srx-examples/bgpsec-keys \
+         -p 179:179 -p 2605:2605 \
+         nist/bgp-srx \
+         bgpd -f /usr/etc/bgpd.conf
+
+
+Or        
+Users may use pre-defined keys and config files in our example directories
+< This is general form of running command >
+    # docker run --rm -it --name quaggasrx \
+         -v </location/user-defined/quagga.config>:/usr/etc/bgpd.conf  \
+         -v </location/user-defined/keys/>:/usr/opt/bgp-srx-examples/bgpsec-keys \
+         -p 179:179 -p 2605:2605 \
+         nist/bgp-srx \
+         bgpd -f /usr/etc/bgpd.conf  
+
+
+
+
+3. Docker compose
+=================
+
+(https://docs.docker.com/compose/)
+Compose is a tool for defining and running multi-container Docker applications. 
+With Compose, you use a YAML file to configure your application’s services. 
+Then, with a single command, you create and start all the services from your configuration. 
+
+
+The following command will execute all three docker containers in the docker-compose.yml file.
+    # docker-compose up
+
+To stop and remove containers, simply Ctrl-C twice.
+
+or 
+    # docker-compose down
+
+
+
+
+
+
+
+
