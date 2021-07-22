@@ -245,9 +245,11 @@ tmux tips
 ----------------------
 
 (1) status bar left reset
-    # set -g status-left "[#S] "  --> tmux instance 
+    # set -g status-left "[#S] "  --> tmux session name
 
-(2) show current options (version 1.8)
+(2) show current options (version 1.8) in vmware-011
+
+(2-1) in vmware-011 status options
 
     > tmux show-options -g | grep status
     status on
@@ -271,76 +273,104 @@ tmux tips
     status-utf8 on
 
 
+(2-2) in vmware-059, Window options
 
-    ** FYI to show all configuration (version 1.8)
+    > tmux show-window-options -g | grep window
+    ...
+    window-status-current-format "#[fg=black]#[bg=white] #I #W #F"
+    window-status-format "#[fg=white]#[bg=colour53]#I #W #F #[fg=#44475a] "
+    ...
 
-    > tmux show-options -g      
-    assume-paste-time 1  
-    base-index 0
-    bell-action any
-    bell-on-alert off
-    default-command ""
-    default-path ""
-    default-shell "/bin/bash"
-    default-terminal "screen-256color"
-    destroy-unattached off
-    detach-on-destroy on
-    display-panes-active-colour red
-    display-panes-colour blue
-    display-panes-time 5000
-    display-time 2000
-    history-limit 20000
-    lock-after-time 0
-    lock-command "lock -np"
-    lock-server on
-    message-attr none
-    message-bg yellow
-    message-command-attr none
-    message-command-bg black
-    message-command-fg yellow
-    message-fg black
-    message-limit 20
-    mouse-resize-pane on
-    mouse-select-pane on
-    mouse-select-window off
-    mouse-utf8 on
-    pane-active-border-bg default
-    pane-active-border-fg green
-    pane-border-bg default
-    pane-border-fg default
-    prefix C-b
-    prefix2 none
-    renumber-windows off
-    repeat-time 500
-    set-remain-on-exit off
-    set-titles off
-    set-titles-string "#S:#I:#W - "#T""
-    status on
-    status-attr none
-    status-bg colour94
-    status-fg white
-    status-interval 15
-    status-justify left
-    status-keys emacs
-    status-left "[#S]"
-    status-left-attr none
-    status-left-bg default
-    status-left-fg default
-    status-left-length 10
-    status-position bottom
-    status-right ""#22T" %H:%M %d-%b-%y"
-    status-right-attr none
-    status-right-bg default
-    status-right-fg default
-    status-right-length 40
-    status-utf8 on
-    terminal-overrides "*88col*:colors=88,*256col*:colors=256,xterm*:XT:Ms=\E]52;%p1%s;%p2%s\007:Cc=\E]12;%p1%s\007:Cr=\E]112\007:Cs=\E[%p1%d q:Csr=\E[2 q,screen*:XT"
-    update-environment "DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY"
-    visual-activity on
-    visual-bell off
-    visual-content off
-    visual-silence off
-    word-separators " -_@"
+
+    #I : Window Index, #W: window name, #F: Flags
+
+
+    
+(2-3) in vmware-059, Window options
+
+    > tmux show-window-options -g | grep window
+    window-status-activity-style reverse
+    window-status-bell-style reverse
+    window-status-current-format "#[fg=#44475a]#[bg=#bd93f9]#[fg=#f8f8f2]#[bg=#bd93f9] #I #W #[fg=#bd93f9]#[bg=#44475a]"
+    window-status-current-style fg=colour212,bg=colour236
+    window-status-format "#[fg=#f8f8f2]#[bg=#44475a]#I #W #[fg=#44475a] "
+    window-status-last-style default
+    window-status-separator " "
+    window-status-style fg=colour141
+
+
+(3) tmux-mem-cpu-load
+
+    Example output:
+
+    2885/7987MB [|||||     ]  51.2% 2.11 2.35 2.44
+
+     ^    ^          ^         ^     ^    ^    ^
+     |    |          |         |     |    |    |
+     1    2          3         4     5    6    7
+    1. Currently used memory.
+    2. Available memory.
+    3. CPU usage bar graph.
+    4. CPU usage percentage.
+    5. Load average for the past minute.
+    6. Load average for the past 5 minutes.
+    7. Load average for the past 15 minutes.
+
+
+    Once installed (https://github.com/thewtex/tmux-mem-cpu-load), 
+    you can add the following lines to your ~/.tmux.config:
+
+
+      set -g status-interval 2
+      set -g status-left "#S #[fg=green,bg=black]#(tmux-mem-cpu-load --colors --interval 2)#[default]"
+      set -g status-left-length 60
+
+
+    Putting the lines below in ~/.tmux.conf , will produce the tmux status line in the screenshot below.
+
+        set-option -g status on
+        set-option -g status-interval 1
+        set-option -g status-justify centre
+        set-option -g status-keys vi
+        set-option -g status-position bottom
+        set-option -g status-style fg=colour136,bg=colour235
+        set-option -g status-left-length 20
+        set-option -g status-left-style default
+        set-option -g status-left "#[fg=green]#H #[fg=black]• #[fg=green,bright]#(uname -r)#[default]"
+        set-option -g status-right-length 140
+        set-option -g status-right-style default
+        set-option -g status-right "#[fg=green,bg=default,bright]#(tmux-mem-cpu-load) "
+        set-option -ag status-right "#[fg=red,dim,bg=default]#(uptime | cut -f 4-5 -d ' ' | cut -f 1 -d ',') "
+        set-option -ag status-right " #[fg=white,bg=default]%a%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d"
+        set-window-option -g window-status-style fg=colour244
+        set-window-option -g window-status-style bg=default
+        set-window-option -g window-status-current-style fg=colour166
+        set-window-option -g window-status-current-style bg=default
+
+
+
+    (*) To install tmux-mem-cpu-load, it needs cmake version > 3.5
+        - download here, https://github.com/Kitware/CMake/releases
+        - https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.sh
+        - run this shell program, it will extract itself. Then put 'cmake' into the /usr/bin or in the path 
+        - cd tmux-mem-cpu-load directory, and cmake . && make
+        - copy or move the executable file, tmux-mem-cpu-load in to the /usr/bin or in the path directory
+    
+
+
+    (*) simple applying without changing window style and colors
+
+        - tmux set-option -g status-right-length 140
+        - tmux set-option -g status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load --interval 2) "
+        - tmux set-option -ga status-right ""#22T" %H:%M %d-%b-%y"
+          (or status-right " "#{=21:pane_title}" %H:%M %d-%b-%y")
+          (or set-option -ag status-right " #[fg=white,bg=default]%a%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d")
+
+        or 
+        - tmux set-option -g status-right-length 140
+        - tmux set-option -g status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load --colors --interval 2)#[default]"
+
+
 
 
 

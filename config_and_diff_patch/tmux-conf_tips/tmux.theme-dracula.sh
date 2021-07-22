@@ -78,5 +78,29 @@ $PATH set -g window-status-format "#[fg=#f8f8f2]#[bg=#44475a]#I #W #[fg=#44475a]
 #set -g window-status-current-format "#[fg=cyan]#[bg=magenta]<#[fg=black]#[bg=white] #I #W #[fg=blue]#[bg=gray]"
 #set -g window-status-format "#[fg=white]#[bg=colour53]#I #W #[fg=#44475a] "
 
+
+# ---------------------------------------------------------------------
+# Simple version - just change current window and the rest windows color
+# ---------------------------------------------------------------------
+#
+# Example for setting for vm-005 in dark magenta
+#
+# setting for vm-005 in dark magenta
+# set -g window-status-current-format "#[fg=black]#[bg=white] #I #W #F"
+# set -g window-status-format "#[fg=white]#[bg=colour53]#I #W #F"
+
+
+
 # status bar left reset
-# set -g status-left "[#S] "  --> tmux instance 
+#-----------------------
+# set -g status-left "[#S] "  --> session name
+
+
+
+# CPU Mem monitoring
+
+$PATH set-option -g status-right-length 140
+$PATH set-option -g status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load --interval 2) "
+$PATH set-option -ga status-right ""#22T" %H:%M %d-%b-%y"
+# or 
+#$PATH set-option -ag status-right " #[fg=white,bg=default]%a%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d"
