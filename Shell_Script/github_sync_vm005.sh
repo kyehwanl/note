@@ -18,6 +18,7 @@ rsync -avPuiz --delete note0/Documents/ note/Documents/
 rsync -avPuiz --delete note0/Programming/ note/Programming/ --exclude='.git'
 
 cd note
+rm -rf /tmp/note/Shell_Script/input-expect.sh # in order not to include github token, otherwise the token will be revoked
 git add --all ./
 git commit -m "auto-updated $(date +"%D %T")"
 
