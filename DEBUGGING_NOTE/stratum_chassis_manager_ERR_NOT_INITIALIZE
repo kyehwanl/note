@@ -1,0 +1,85 @@
+
+0. using command
+    journalctl -u stratum_bf.service
+
+1. Stratum Errors 
+
+    bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZE
+
+
+2. full logs
+
+    -- Logs begin at Tue 2021-08-17 13:19:56 EDT, end at Tue 2021-08-24 12:59:57 EDT. --
+    Aug 17 13:19:57 onl2 systemd[1]: Started Stratum service.
+    Aug 17 13:19:57 onl2 stratum-bf[5171]: Mounting hugepages...
+    Aug 17 13:19:57 onl2 stratum-bf[5171]: loading bf_kdrv_mod...
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: Install dir: /usr (0x5561634ce020)
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_switchd: system services initialized
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_switchd: processing device configuration...
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: Configuration for dev_id 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   Family        : Tofino
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_domain    : 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_bus       : 5
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_fn        : 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_dev       : 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pci_int_mode  : 1
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   sbus_master_fw: /usr/
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   pcie_fw       : /usr/
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   serdes_fw     : /usr/
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   sds_fw_path   : /usr/
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   microp_fw_path:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_switchd: processing P4 configuration...
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: P4 profile for dev_id 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   p4_name: dummy
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:     libpd:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:     libpdthrift:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:     context:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:     config:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   diag:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   accton diag:
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   board-port-map: /usr/share/port_map.json
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   non_default_port_ppgs: 0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]:   SAI default initialize: 1
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: board-port-map path: /usr/share/port_map.json
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: bf_switchd: loading board-map conf file /usr/share/port_map.json...
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: enable-debug-log:yes
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: Parsing Board-lane-entries 33 found
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: num-of-connectors:33
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    Aug 17 13:19:58 onl2 stratum-bf[5171]: lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+    ...skipping...
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+    Aug 24 12:59:53 onl2 stratum-bf[15901]: lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: tx_eq_pre:0 tx_eq_post:0 tx_I20210824 12:59:57.240895 15901 main.cc:122] switchd started success
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: W20210824 12:59:57.241334 15901 credentials_manager.cc:45] Using insecure server credentials
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: I20210824 12:59:57.241652 15901 hal.cc:128] Setting up HAL in COLDBOOT mode...
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: I20210824 12:59:57.241732 15901 config_monitoring_service.cc:94] Pushing the saved chassis confi
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: E20210824 12:59:57.247743 15901 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZE
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: I20210824 12:59:57.247977 15901 bf_switch.cc:100] Chassis config verified successfully.
+    Aug 24 12:59:57 onl2 stratum-bf[15901]: I20210824 12:59:57.249025 15901 onlp_wrapper.cc:99] Initializing ONLP.
+
+
+
+
+
+
+
+
+
+
+
+

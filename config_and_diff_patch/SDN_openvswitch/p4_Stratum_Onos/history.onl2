@@ -1,0 +1,146 @@
+root@onl2:~# history
+    1  docker info
+    2  systemctl status docker
+    3  apt-get install git
+    4  apt-get install tcpdump wireshark quagga
+    5  ssh onl1
+    6  uname -a
+    7  ls
+    8  git clone git@github.com:stratum/stratum.git
+    9  apt-get install tcsh
+   10  cd stratum
+   11  ./stratum/hal/bin/barefoot/docker/start-stratum-container.sh
+   12  vi /etc/timezone
+   13  cd /etc
+   14  rm localtime
+   15  ln /usr/share/zoneinfo/EST5EDT localtime
+   16  date
+   17  ccd
+   18  cd
+   19  ls
+   20  stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh
+   21  cd /sys/bus/i2c/drivers/
+   22  ls
+   23  ls lm75
+   24  ls
+   25  ifconfig
+   26  vi /etc/resolv.conf
+   27  netstat -rn
+   28  ping gw1
+   29  hostname onl2
+   30  vi /etc/hostname
+   31  apt-get update
+   32  apt-get update
+   33  ifconfig
+   34  reboot
+   35  ls
+   36  ls -l
+   37  cd stratum/
+   38  ls
+   39  ls -l
+   40  more BUILD
+   41  file *
+   42  more Dockerfile*
+   43  ls
+   44  cd
+   45  ls
+   46  docker pull stratumproject/stratum-bf:21.03-9.3.1
+   47  ls
+   48  ls -alt
+   49  cd stratum/
+   50  ls -alt
+   51  date
+   52  more BUILD
+   53  ls
+   54  pwd
+   55  cd
+   56  ls
+   57  cd stratum/
+   58  ls
+   59  cd stratum/
+   60  ls
+   61  ccd
+   62  cd
+   63  find . -name start-stratum-container.sh -print
+   64  find / -name chassis_config.pb.txt -print
+   65  find / -name chassis_config.pb.txt -print | grep wedge
+   66  vi /root/stratum/stratum/hal/config/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt
+   67  cp /root/stratum/stratum/hal/config/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt .
+   68  ls
+   69  cat > runstratum
+   70  find . -name start-stratum-container.sh -print
+   71  cp ./stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh .
+   72  ls
+   73  ls -l
+   74  chmod +x runstratum
+   75  vi runstratum start-stratum-container.sh
+   76  ls
+   77  ./runstratum
+   78  cd
+   79  wget https://github.com/stratum/stratum/releases/download/2021-03-31/stratum-bf-21.03-9.3.1-amd64.deb
+   80  apt-get update
+   81  apt-get install --reinstall ./stratum-bf-21.03-9.3.1-amd64.deb
+   82  ls
+   83  ls -lt
+   84  start-stratum.sh
+   85  lsmod
+   86  docker images
+   87  more /etc/sysctl.conf
+   88  ls /mnt
+   89  df
+   90  mount -t hugetlbfs nodev /mnt/huge
+   91  ip link show
+   92  ifconfig
+   93  uname -a
+   94  ls
+   95  dmesg
+   96  ls
+   97  more runstratum
+   98  more chassis_config.pb.txt
+   99  ls
+  100  more chassis_config.pb.txt
+  101  ls
+  102  more chassis_config.pb.txt
+  103  ls
+  104  more runstratum
+  105  ls
+  106  ifconfig
+  107  cd /etc
+  108  vi group
+  109  ssh onl1
+  110  visudo
+  111  vi /etc/sudoers
+  112  vi /etc/group
+  113  vi /etc/passwd
+  114  adduser carson
+  115  vi /etc/passwd
+  116  chown -R carson /home/carson
+  117  vi /etc/group
+  118  ifconfig
+  119  tcpdump -n -i ma1 host 10.0.20.200
+	<What Mark did >
+  --------------------------------------------
+	<What I did in command line>
+  120  uname -a
+  121  ifconfig
+  122  exit
+  123  w
+  124  ifconfig
+  125  docker ps
+  126  exit
+  127  docker images
+  128  docker ps
+  129  docker images
+  130  last
+  131  ifconfig
+  132  ll
+  133  ifconfig
+  134  ip addr
+  135  cat /etc/hosts
+  136  cat /etc/hostname
+  137  ping onl2
+  138  ping 192.168.0.2
+  139  history
+  ---------------------------------------------
+root@onl2:~#
+

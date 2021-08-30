@@ -1,0 +1,41 @@
+
+1. To install simple_switch_CLI
+=================================
+
+1.1 python3 import issue for running simple_switch_CLI
+
+1.2 To resolve the problem, followings are the history of installation procedures including pyhton3 and thrift
+
+
+
+240  python3                                        
+241  whereis thrift                                 
+242  make install prefix=/usr/local                 
+243  whereis thrift                                 
+244  ldconfig                                       
+245  cat /etc/ld.so.conf                            
+246  ll                                             
+247  exit                                           
+248  pst                                            
+249  pstree -hup | grep vifm                        
+250  echo $$                                        
+251  pstree -hup | grep vifm                        
+252  exit                                           
+253  python3                                        
+254  exit                                           
+255  apt-get install thrift-compiler                
+256  whereis trift                                  
+257  whereis thrift                                 
+258  thrift --version                               
+259  simple_switch_CLI                              
+260  exit                                           
+261  qq                                             
+262  exit                                           
+263  git clone https://github.com/apache/thrift.git 
+264  ll                                             
+265  cd thrift/                                     
+266  ll                                             
+267  ./configure                                    
+268  exit                                           
+269  python3 setup.py install                       
+270  simple_switch_CLI 

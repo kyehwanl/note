@@ -1,0 +1,64 @@
+
+1. Use minicom
+===============
+
+(1) on Server2,
+    root@p4-server2:/raid/stratum.old/stratum.old# minicom -c on
+
+
+(2) display on switch
+
+    Welcome to minicom 2.7.1
+
+    OPTIONS: I18n
+    Compiled on May  6 2018, 08:02:47.
+    Port /dev/ttyS1, 16:32:41
+
+    Press CTRL-A Z for help on special keys
+
+
+    Open Network Linux OS ONL-onf-ONLPv2, 2021-04-12.20:50-9338f84
+
+    onl2 login: root
+    Password:  ( <-- here password is 'onl')
+    Last login: Mon Jun 14 16:31:12 EDT 2021 from 10.4.0.91 on pts/0
+    Linux onl2 4.14.49-OpenNetworkLinux #1 SMP Mon Apr 12 20:58:26 UTC 2021 x86_64
+                                                                                                                                                                                                                                                                          ^Croot@onl2:~#
+
+
+
+
+(3) Termniate/menu from other console
+
+    access.antd [2015]{~}-> screen -S pts-0.access -p 7 -X stuff "^AQ"
+
+    +----------------------+
+    | Leave without reset? |
+    |     Yes       No     |
+    +----------------------+
+
+
+    access.antd [2016]{~}-> screen -S pts-0.access -p 7 -X stuff "^AZ"
+
+    +-------------------------------------------------------------------+
+    |                      Minicom Command Summary                      |
+    |                                                                   |
+    |              Commands can be called by CTRL-A <key>               |
+    |                                                                   |
+    |               Main Functions                  Other Functions     |
+    |                                                                   |
+    | Dialing directory..D  run script (Go)....G | Clear Screen.......C |
+    | Send files.........S  Receive files......R | cOnfigure Minicom..O |
+    | comm Parameters....P  Add linefeed.......A | Suspend minicom....J |
+    | Capture on/off.....L  Hangup.............H | eXit and reset.....X |
+    | send break.........F  initialize Modem...M | Quit with no reset.Q |
+    | Terminal settings..T  run Kermit.........K | Cursor key mode....I |
+    | lineWrap on/off....W  local Echo on/off..E | Help screen........Z |
+    | Paste file.........Y  Timestamp toggle...N | scroll Back........B |
+    | Add Carriage Ret...U                                              |
+    |                                                                   |
+    |             Select function or press Enter for none.              |
+    +-------------------------------------------------------------------+
+
+
+

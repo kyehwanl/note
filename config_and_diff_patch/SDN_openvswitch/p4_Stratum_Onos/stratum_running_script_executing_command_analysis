@@ -1,0 +1,2805 @@
+
+1. script detail
+================
+
+root@onl2:~/stratum# cat stratum/hal/bin/barefoot/docker/start-stratum-container.sh
+#!/bin/bash
+# Copyright 2018-present Open Networking Foundation
+# SPDX-License-Identifier: Apache-2.0
+set -e
+
+LOG_DIR=${LOG_DIR:-/var/log}
+SDE_VERSION=${SDE_VERSION:-9.2.0}
+DOCKER_IMAGE=${DOCKER_IMAGE:-stratumproject/stratum-bf}
+DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG:-$SDE_VERSION}
+
+# Try to load the platform string if not already set.
+if [[ -z "$PLATFORM" ]] && [[ -f "/etc/onl/platform" ]]; then
+    PLATFORM=$(cat /etc/onl/platform)
+elif [[ -z "$PLATFORM" ]]; then
+    echo "PLATFORM variable must be set manually on non-ONL switches."
+    exit 255
+fi
+
+# Set Docker network options.
+if [[ "$PLATFORM" == 'barefoot-tofino-model' ]]; then
+    DOCKER_NET_OPTS="--network host "
+else
+    DOCKER_NET_OPTS="-p 28000:28000 "
+    DOCKER_NET_OPTS+="-p 9339:9339 "
+    DOCKER_NET_OPTS+="-p 9559:9559 "
+fi
+
+# Mount ONL related directories, if they exist.
+if [ -d "/etc/onl" ]; then
+    # Use ONLP to find platform and its library
+    ONLP_MOUNT=$(ls /lib/**/libonlp* | awk '{print "-v " $1 ":" $1 " " }')
+    ONLP_MOUNT="$ONLP_MOUNT \
+              -v /lib/platform-config:/lib/platform-config \
+              -v /etc/onl:/etc/onl"
+fi
+
+# Mount user configuration.
+if [ -n "$FLAG_FILE" ]; then
+    FLAG_FILE_MOUNT="-v $FLAG_FILE:/etc/stratum/stratum.flags"
+fi
+if [ -n "$CHASSIS_CONFIG" ]; then
+    CHASSIS_CONFIG_MOUNT="-v $CHASSIS_CONFIG:/etc/stratum/$PLATFORM/chassis_config.pb.txt"
+fi
+
+# Start Stratum.
+set -x
+docker run -it --rm --privileged \
+    -v /dev:/dev -v /sys:/sys  \
+    -v /lib/modules/$(uname -r):/lib/modules/$(uname -r) \
+    --env PLATFORM=$PLATFORM \
+    $DOCKER_NET_OPTS \
+    $ONLP_MOUNT \
+    $FLAG_FILE_MOUNT \
+    $CHASSIS_CONFIG_MOUNT \
+    -v $LOG_DIR:/var/log/stratum \
+    $DOCKER_IMAGE:$DOCKER_IMAGE_TAG \
+    $@
+
+root@onl2:~/stratum# echo $CHASSIS_CONFIG
+/root/chassis_config.pb.txt
+
+
+
+
+2. Running Result
+=================
+
+
+
+
+
+root@onl2:~# bash -x ./start-stratum-container.sh
++ set -e
++ LOG_DIR=/var/log
++ SDE_VERSION=9.2.0
++ DOCKER_IMAGE=stratumproject/stratum-bf
++ DOCKER_IMAGE_TAG=9.2.0
++ [[ -z '' ]]
++ [[ -f /etc/onl/platform ]]
+++ cat /etc/onl/platform
++ PLATFORM=x86-64-accton-wedge100bf-32x-r0
++ [[ x86-64-accton-wedge100bf-32x-r0 == \b\a\r\e\f\o\o\t\-\t\o\f\i\n\o\-\m\o\d\e\l ]]
++ DOCKER_NET_OPTS='-p 28000:28000 '
++ DOCKER_NET_OPTS+='-p 9339:9339 '
++ DOCKER_NET_OPTS+='-p 9559:9559 '
++ '[' -d /etc/onl ']'
+++ awk '{print "-v " $1 ":" $1 " " }'
+++ ls /lib/x86_64-linux-gnu/libonlp-platform-defaults.so /lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1 /lib/x86_64-linux-gnu/libonlp-platform.so /lib/x86_64-linux-gnu/libonlp-platform.so.1 /lib/x86_64-linux-gnu/libonlp.so /lib/x86_64-linux-gnu/libonlp.so.1 /lib/x861
++ ONLP_MOUNT='-v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so
+-v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1:/lib/x86_64-linux-gnu/libonlp-rm-defaults.so.1
+-v /lib/x86_6[2940244.260955] docker0: port 1(veth2ec7ce8) entered blocking state
+4-linux-gnu/libo[2940244.275987] docker0: port 1(veth2ec7ce8) entered disabled state
+nlp-platform.so:[2940244.291103] device veth2ec7ce8 entered promiscuous mode
+/lib/x86_64-linu[2940244.304746] IPv6: ADDRCONF(NETDEV_UP): veth2ec7ce8: link is not ready
+x-gnu/libonlp-platform.so
+-v /lib/x86_64-linux-gnu/libonlp-platform.so.1:/lib/x86_64-linux-gnu/libonlp-platform.so.1
+-v /lib/x86_64-linux-gnu/libonlp.so:/lib/x86_64-linux-gnu/libonlp.so
+-v /lib/x86_64-linux-gnu/libonlp.so.1:/lib/x86_64-linux-gnu/libonlp.so.1
+-v /lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1:/lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge1[2940244.385395] docker0: port 1(veth2ec7ce8) entered disabled state
+[2940244.400023] device veth2ec7ce8 left promiscuous mode
+
++ ONLP_MOUNT='-[2940244.412697] docker0: port 1(veth2ec7ce8) entered disabled state
+v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so
+-v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1
+-v /lib/x86_64-linux-gnu/libonlp-platform.so:/lib/x86_64-linux-gnu/libonlp-platform.so
+-v /lib/x86_64-linux-gnu/libonlp-platform.so.1:/lib/x86_64-linux-gnu/lilatform.so.1
+-v /lib/x86_64-linux-gnu/libonlp.so:/lib/x86_64-linux-gnu/libonlp.so
+-v /lib/x86_64-linux-gnu/libonlp.so.1:/lib/x86_64-linux-gnu/libonlp.so.1
+-v /lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1:/lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1                -v /lib/platform-config:/lib/platform-config               -v /etc/onl:/etc/onl'
++ '[' -n '' ']'
++ '[' -n /root/chassis_config.pb.txt ']'
++ CHASSIS_CONFIG_MOUNT='-v /root/chassis_config.pb.txt:/etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt'
++ set -x
+++ uname -r
+++ uname -r
++ docker run -it --rm --privileged -v /dev:/dev -v /sys:/sys -v /lib/modules/4.14.49-OpenNetworkLinux:/lib/modules/4.14.49-OpenNetworkLinux --env PLATFORM=x86-64-accton-wedge100bf-32x-r0 -p 28000:28000 -p 9339:9339 -p 9559:9559 -v /lib/x86_64-linux-gnu/libonlp-platform-de0
+docker: Error response from daemon: driver failed programming external connectivity on endpoint vigorous_wright (98faaeb865eab55ed868e4ff3286fe6b42ada525491ab36fb9eed77951b712ba): Error starting userland proxy: listen tcp 0.0.0.0:28000: bind: address already in use.
+root@onl2:~#
+
+
+
+
+
+
+
+
+
+root@onl2:~/stratum# ls /lib/**/libonlp* | awk '{print "-v " $1 ":" $1 " " }'
+-v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so
+-v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1
+-v /lib/x86_64-linux-gnu/libonlp-platform.so:/lib/x86_64-linux-gnu/libonlp-platform.so
+-v /lib/x86_64-linux-gnu/libonlp-platform.so.1:/lib/x86_64-linux-gnu/libonlp-platform.so.1
+-v /lib/x86_64-linux-gnu/libonlp.so:/lib/x86_64-linux-gnu/libonlp.so
+-v /lib/x86_64-linux-gnu/libonlp.so.1:/lib/x86_64-linux-gnu/libonlp.so.1
+-v /lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1:/lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1
+
+
+
+
+
+
+
+
+
+
+ Checking the syslog
+=====================
+
+root@onl2:~/stratum# tail -n 30 /var/log/syslog
+Jun 14 14:28:14 onl2 kernel: [5351382.553554] docker0: port 1(veth0f55c09) entered blocking state
+Jun 14 14:28:14 onl2 kernel: [5351382.568195] docker0: port 1(veth0f55c09) entered disabled state
+Jun 14 14:28:14 onl2 kernel: [5351382.583312] device veth0f55c09 entered promiscuous mode
+Jun 14 14:28:14 onl2 kernel: [5351382.597007] IPv6: ADDRCONF(NETDEV_UP): veth0f55c09: link is not ready
+Jun 14 14:28:14 onl2 systemd-udevd[5619]: Could not generate persistent MAC address for vetha81c1fe: No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5620]: Could not generate persistent MAC address for veth0f55c09: No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5621]: failed to execute '/sbin/initnetdev' '/sbin/initnetdev vetha81c1fe add': No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5622]: failed to execute '/sbin/initnetdev' '/sbin/initnetdev veth0f55c09 add': No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5620]: Process '/sbin/initnetdev veth0f55c09 add' failed with exit code 2.
+Jun 14 14:28:14 onl2 systemd-udevd[5619]: Process '/sbin/initnetdev vetha81c1fe add' failed with exit code 2.
+Jun 14 14:28:14 onl2 dockerd[5497]: time="2021-06-14T14:28:14.487262087-04:00" level=warning msg="Failed to allocate and map port 28000-28000: Error starting userland proxy: listen tcp 0.0.0.0:28000: bind: address already in use"
+Jun 14 14:28:14 onl2 kernel: [5351382.673187] docker0: port 1(veth0f55c09) entered disabled state
+Jun 14 14:28:14 onl2 kernel: [5351382.685854] device veth0f55c09 left promiscuous mode
+Jun 14 14:28:14 onl2 systemd-udevd[5656]: failed to execute '/sbin/initnetdev' '/sbin/initnetdev vetha81c1fe remove': No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5655]: Process '/sbin/initnetdev vetha81c1fe remove' failed with exit code 2.
+Jun 14 14:28:14 onl2 kernel: [5351382.696190] docker0: port 1(veth0f55c09) entered disabled state
+Jun 14 14:28:14 onl2 systemd-udevd[5663]: failed to execute '/sbin/initnetdev' '/sbin/initnetdev veth0f55c09 remove': No such file or directory
+Jun 14 14:28:14 onl2 systemd-udevd[5662]: Process '/sbin/initnetdev veth0f55c09 remove' failed with exit code 2.
+Jun 14 14:28:14 onl2 dockerd[5497]: time="2021-06-14T14:28:14.642533667-04:00" level=error msg="73664dd15cf7cf78d54d7e4931469f81ce1ddab7516e5118f12464141213fc04 cleanup: failed to delete container from containerd: no such container"
+Jun 14 14:28:14 onl2 dockerd[5497]: time="2021-06-14T14:28:14.663447633-04:00" level=error msg="Handler for POST /v1.40/containers/73664dd15cf7cf78d54d7e4931469f81ce1ddab7516e5118f12464141213fc04/start returned error: driver failed programming external connectivit"
+
+
+
+
+
+
+
+Running Stratum Natively
+=========================
+(1) Running command
+
+root@onl2:~/stratum# ps aux | grep stratum_bf
+
+/usr/bin/stratum_bf -chassis_config_file=/etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassiss_config.pb.txt -log_dir=/var/log/stratum -flagfile=/etc/stratum/stratum.flags
+
+
+
+
+(2) script location
+ cat stratum/stratum/hal/bin/barefoot/deb/start-stratum.sh
+
+
+
+
+(3) process
+root@onl2:~/stratum/stratum# systemctl status stratum_bf
+ stratum_bf.service - Stratum service
+   Loaded: loaded (/usr/lib/systemd/system/stratum_bf.service; enabled; vendor p
+   Active: active (running) since Tue 2021-04-13 15:58:55 EDT; 2 months 1 days a
+     Docs: https://www.opennetworking.org/stratum/
+ Main PID: 5171 (stratum_bf)
+    Tasks: 23 (limit: 4915)
+   Memory: 146.2M
+      CPU: 1month 2w 2d 9h 24min 50.962s
+   CGroup: /system.slice/stratum_bf.service
+           5171 /usr/bin/stratum_bf -chassis_config_file=/etc/stratum/x86-64-a
+
+Apr 13 23:44:37 onl2 stratum-bf[5171]: I20210413 23:44:37.706779  5171 bf_switch
+Apr 13 23:44:37 onl2 stratum-bf[5171]: I20210413 23:44:37.706856 22404 bf_chassi
+Apr 13 23:44:37 onl2 stratum-bf[5171]: I20210413 23:44:37.722034  5171 p4_servic
+Apr 13 23:44:37 onl2 stratum-bf[5171]: W20210413 23:44:37.722187  5171 p4_servic
+Apr 13 23:44:37 onl2 stratum-bf[5171]: E20210413 23:44:37.722560  5171 hal.cc:22
+Apr 13 23:44:37 onl2 stratum-bf[5171]: E20210413 23:44:37.747835  5171 hal.cc:36
+Apr 13 23:44:37 onl2 stratum-bf[5171]: E20210413 23:44:37.748041  5171 hal.cc:23
+Apr 13 23:44:39 onl2 stratum-bf[5171]: I20210413 23:44:39.858991 22404 bf_chassi
+Apr 13 23:44:39 onl2 stratum-bf[5171]: I20210413 23:44:39.859035 22404 bf_chassi
+Apr 13 23:44:40 onl2 stratum-bf[5171]: I20210413 23:44:40.620406 22404 bf_chassi
+
+
+
+(4) ports
+root@onl2:~/stratum/stratum# netstat -tapn | grep 28000
+tcp6       0      0 127.0.0.1:28000         :::*                    LISTEN      5171/stratum_bf
+tcp6       0      0 :::28000                :::*                    LISTEN      5171/stratum_bf
+
+
+
+
+
+
+
+
+
+Running Docker Container logs
+===============================
+root@onl2:~# ./start-stratum-container.sh
+++ uname -r
+++ uname -r
++ docker run -it --rm --privileged -v /dev:/dev -v /sys:/sys -v /lib/modules/4.14.49-OpenNetworkLinux:/lib/modules/4.14.49-OpenNetwoe
+[5353618.552234] docker0: port 1(vethfbf98be) entered disabled state
+rm-config -v /et[5353618.564530] device vethfbf98be entered promiscuous mode
+c/onl:/etc/onl -[5353618.578266] IPv6: ADDRCONF(NETDEV_UP): vethfbf98be: link is not ready
+v /var/log:/var/log/stratum stratumproject/stratum-bf:9.2.0
+[5353619.696495] eth0: renamed from veth97e3f75
+[5353619.744472] IPv6: ADDRCONF(NETDEV_CHANGE): vethfbf98be: link becomes ready
+[5353619.758673] docker0: port 1(vethfbf98be) entered blocking state
+[5353619.770894] docker0: port 1(vethfbf98be) entered forwarding state
+[5353619.783544] IPv6: ADDRCONF(NETDEV_CHANGE): docker0: link becomes ready
+Mounting hugepages...
+bf_kdrv_mod found! Unloading first...
+loading bf_kdrv_[5353619.971224] Use MSI interrupt
+mod...
+[5353619.978313] BF allocating legacy int vector 11
+[5353619.988686] bf 0000:05:00.0: bf device 0 registered with irq 11
+[5353620.000914] bf probe ok
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x55f6aef26020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->3 device_id:0 mac_block:21 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->4 device_id:0 mac_block:20 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->5 device_id:0 mac_block:19 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->6 device_id:0 mac_block:18 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->7 device_id:0 mac_block:17 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->8 device_id:0 mac_block:16 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->9 device_id:0 mac_block:15 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->10 device_id:0 mac_block:14 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->11 device_id:0 mac_block:13 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->12 device_id:0 mac_block:12 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->13 device_id:0 mac_block:11 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->14 device_id:0 mac_block:10 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->15 device_id:0 mac_block:9 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->16 device_id:0 mac_block:8 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->17 device_id:0 mac_block:7 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->18 device_id:0 mac_block:6 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->19 device_id:0 mac_block:5 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->20 device_id:0 mac_block:4 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->21 device_id:0 mac_block:3 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->22 device_id:0 mac_block:2 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->23 device_id:0 mac_block:1 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->24 device_id:0 mac_block:0 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->25 device_id:0 mac_block:31 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->26 device_id:0 mac_block:30 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->27 device_id:0 mac_block:29 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->28 device_id:0 mac_block:28 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->29 device_id:0 mac_block:26 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->30 device_id:0 mac_block:27 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->31 device_id:0 mac_block:24 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+bf_switchd: Credo python server thread initialized..Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+credo_python_intf: listen socket created
+credo_python_intf: bind done on port 9001, listening...
+credo_python_intf: listening for incoming connections...
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+I20210614 19:05:36.188728     1 main.cc:122] switchd started successfully
+W20210614 19:05:36.189467     1 credentials_manager.cc:45] Using insecure server credentials
+I20210614 19:05:36.192680     1 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20210614 19:05:36.192740     1 config_monitoring_service.cc:94] Pushing the saved chassis config read from /etc/stratum/x86-64-acct.
+E20210614 19:05:36.200292     1 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20210614 19:05:36.200423     1 bf_switch.cc:100] Chassis config verified successfully.
+I20210614 19:05:36.201697     1 onlp_wrapper.cc:99] Initializing ONLP.
+06-14 19:05:42.561205 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2)
+
+06-14 19:05:47.562390 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-14 19:05:52.563685 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-14 19:05:57.564770 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-14 19:06:02.566050 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-14 19:06:07.567138 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+....
+06-14 19:12:38.128746 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_pres)
+
+06-14 19:12:43.129792 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-14 19:12:48.130938 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-14 19:12:53.132103 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-14 19:12:58.133207 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-14 19:13:03.134394 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+^CI20210614 19:13:36.178807     1 hal.cc:242] Received signal: I[5354104.364094] stratum_bf[7206]: segfault at 0 ip 000055f6ad1955aa]
+nterrupt
+*** Aborted at 1623698016 (unix time) try "date -d @1623698016" if you are using GNU date ***
+PC: @                0x0 (unknown)
+*** SIGSEGV (@0x0) received by PID 1 (TID 0x7f9e0ed747c0) from PID 0; stack trace: ***
+    @     0x7f9dda5130e0 (unknown)
+    @     0x55f6ad1955aa (unknown)
+    @     0x7f9dd9d7b060 (unknown)
+    @     0x7f9dd9e2c467 syscall
+    @     0x55f6ad7aa449 (unknown)
+    @     0x55f6ad7aa2b2 (unknown)
+    @     0x55f6ad7a8bdd (unknown)
+    @     0x55f6ad7a9888 (unknown)
+    @     0x55f6ad7a9b58 (unknown)
+    @     0x55f6ad0a565a (unknown)
+    @     0x55f6ad7a9d1e (unknown)
+    @     0x55f6ad401466 (unknown)
+    @     0x55f6ad3d94d1 (unknown)
+    @     0x55f6ad3dc28c (unknown)
+    @     0x55f6ad3e726b (unknown)
+    @     0x55f6ad3d45ff (unknown)
+    @     0x55f6ad10dfb6 (unknown)
+    @     0x55f6ad1ecb81 (unknown)
+    @     0x55f6ad1ed1cc (unknown)
+    @     0x55f6ad1ed3bb (unknown)
+    @     0x55f6ad194bc1 (unknown)
+    @     0x55f6ad0ac829 (unknown)
+    @     0x55f6ad0a5e69 (unknown)
+    @     0x7f9dd9d682e1 __libc_start_main
+    @     0x55f6ad0abbaa (unknown)
+    @                0x0 (unknown)
+[5354104.803160] docker0: port 1(vethfbf98be) entered disabled state
+[5354104.815517] veth97e3f75: renamed from eth0
+[5354104.965856] docker0: port 1(vethfbf98be) entered disabled state
+[5354104.978667] device vethfbf98be left promiscuous mode
+[5354104.988986] docker0: port 1(vethfbf98be) entered disabled state
+root@onl2:~#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Natively Start Stratum
+=======================
+
+
+root@onl2:~# whereis start-stratum.sh    
+start-stratum: /usr/bin/start-stratum.sh 
+
+(1) Running Stratum
+
+root@onl2:~# start-stratum.sh
+bf_kdrv_mod found! Unloading first...
+loading bf_kdrv_mod...
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x5620f635a020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->3 device_id:0 mac_block:21 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->4 device_id:0 mac_block:20 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->5 device_id:0 mac_block:19 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->6 device_id:0 mac_block:18 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->7 device_id:0 mac_block:17 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->8 device_id:0 mac_block:16 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->9 device_id:0 mac_block:15 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->10 device_id:0 mac_block:14 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->11 device_id:0 mac_block:13 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->12 device_id:0 mac_block:12 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->13 device_id:0 mac_block:11 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->14 device_id:0 mac_block:10 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->15 device_id:0 mac_block:9 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->16 device_id:0 mac_block:8 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->17 device_id:0 mac_block:7 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->18 device_id:0 mac_block:6 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->19 device_id:0 mac_block:5 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->20 device_id:0 mac_block:4 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->21 device_id:0 mac_block:3 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->22 device_id:0 mac_block:2 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->23 device_id:0 mac_block:1 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->24 device_id:0 mac_block:0 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->25 device_id:0 mac_block:31 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->26 device_id:0 mac_block:30 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->27 device_id:0 mac_block:29 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->28 device_id:0 mac_block:28 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->29 device_id:0 mac_block:26 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->30 device_id:0 mac_block:27 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->31 device_id:0 mac_block:24 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+I20210616 14:23:56.429180 14440 main.cc:122] switchd started successfully
+W20210616 14:23:56.429425 14440 credentials_manager.cc:45] Using insecure server credentials
+I20210616 14:23:56.429632 14440 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20210616 14:23:56.429687 14440 config_monitoring_service.cc:94] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+E20210616 14:23:56.433013 14440 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20210616 14:23:56.433144 14440 bf_switch.cc:100] Chassis config verified successfully.
+I20210616 14:23:56.433722 14440 onlp_wrapper.cc:99] Initializing ONLP.
+
+
+
+
+
+
+(2) View Logs:
+	journalctl -u startum_bf.service
+
+
+Jun 17 10:21:56 onl2 systemd[1]: Started Stratum service.
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_kdrv_mod found! Unloading first...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: loading bf_kdrv_mod...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Install dir: /usr (0x55bc418ac020)
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_switchd: system services initialized
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_switchd: processing device configuration...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Configuration for dev_id 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   Family        : Tofino
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_domain    : 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_bus       : 5
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_fn        : 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_dev       : 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pci_int_mode  : 1
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   sbus_master_fw: /usr/
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   pcie_fw       : /usr/
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   serdes_fw     : /usr/
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   sds_fw_path   : /usr/
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   microp_fw_path:
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_switchd: processing P4 configuration...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: P4 profile for dev_id 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   p4_name: dummy
+Jun 17 10:21:56 onl2 stratum-bf[26445]:     libpd:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:     libpdthrift:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:     context:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:     config:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   diag:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   accton diag:
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   board-port-map: /usr/share/port_map.json
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   non_default_port_ppgs: 0
+Jun 17 10:21:56 onl2 stratum-bf[26445]:   SAI default initialize: 1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: board-port-map path: /usr/share/port_map.json
+Jun 17 10:21:56 onl2 stratum-bf[26445]: bf_switchd: loading board-map conf file /usr/share/port_map.json...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: enable-debug-log:yes
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Parsing Board-lane-entries 33 found
+Jun 17 10:21:56 onl2 stratum-bf[26445]: num-of-connectors:33
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+...
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+Jun 17 10:21:56 onl2 stratum-bf[26445]: Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+Jun 17 10:21:56 onl2 stratum-bf[26445]: lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+Jun 17 10:22:00 onl2 stratum-bf[26445]: tx_eq_pre:0 tx_eq_post:0 tx_I20210617 10:22:00.345654 26445 main.cc:122] switchd started succ
+Jun 17 10:22:00 onl2 stratum-bf[26445]: W20210617 10:22:00.346160 26445 credentials_manager.cc:45] Using insecure server credentials
+Jun 17 10:22:00 onl2 stratum-bf[26445]: I20210617 10:22:00.346577 26445 hal.cc:128] Setting up HAL in COLDBOOT mode...
+Jun 17 10:22:00 onl2 stratum-bf[26445]: I20210617 10:22:00.346689 26445 config_monitoring_service.cc:94] Pushing the saved chassis co
+Jun 17 10:22:00 onl2 stratum-bf[26445]: E20210617 10:22:00.353603 26445 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIAL
+Jun 17 10:22:00 onl2 stratum-bf[26445]: I20210617 10:22:00.353818 26445 bf_switch.cc:100] Chassis config verified successfully.
+Jun 17 10:22:00 onl2 stratum-bf[26445]: I20210617 10:22:00.355360 26445 onlp_wrapper.cc:99] Initializing ONLP.
+
+
+
+
+
+
+(3) Natively running -  Segment Fault occurred
+
+root@onl2:~# start-stratum.sh
+bf_kdrv_mod found! Unloading first...
+loading bf_kdrv_mod...
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x564a85f96020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+...
+
+Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+I20210618 09:49:20.497413 19037 main.cc:122] switchd started successfully
+W20210618 09:49:20.497646 19037 credentials_manager.cc:45] Using insecure server credentials
+I20210618 09:49:20.497821 19037 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20210618 09:49:20.497869 19037 config_monitoring_service.cc:94] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+E20210618 09:49:20.501011 19037 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20210618 09:49:20.501132 19037 bf_switch.cc:100] Chassis config verified successfully.
+I20210618 09:49:20.501691 19037 onlp_wrapper.cc:99] Initializing ONLP.
+
+
+** 여기에 멈춰있다가 갑자기 한시간이나 지난후에 다음과 같은 로그로 세팅이 되었다 
+** 이전꺼지 안열려있던 28000 port까지 열렸다
+** Initializing ONLP가 오래 걸린걸까?
+
+
+
+
+I20210618 11:39:27.318697 19037 attribute_database.cc:213] PhalDB service is listening to localhost:28003...
+I20210618 11:39:27.318763 19037 bf_chassis_manager.cc:1077] Port status notification callback registered successfully
+I20210618 11:39:27.320120 19037 bf_chassis_manager.cc:87] Adding port 1 in node 1 (SDK Port 128).
+I20210618 11:39:27.326937 19037 bf_chassis_manager.cc:116] Enabling port 1 in node 1 (SDK Port 128).
+I20210618 11:39:27.327133 19037 bf_chassis_manager.cc:87] Adding port 2 in node 1 (SDK Port 136).
+I20210618 11:39:27.346289 19037 bf_chassis_manager.cc:116] Enabling port 2 in node 1 (SDK Port 136).
+I20210618 11:39:27.346379 19037 bf_chassis_manager.cc:87] Adding port 3 in node 1 (SDK Port 144).
+I20210618 11:39:27.371408 19037 bf_chassis_manager.cc:116] Enabling port 3 in node 1 (SDK Port 144).
+I20210618 11:39:27.371486 19037 bf_chassis_manager.cc:87] Adding port 4 in node 1 (SDK Port 152).
+I20210618 11:39:27.396847 19037 bf_chassis_manager.cc:116] Enabling port 4 in node 1 (SDK Port 152).
+I20210618 11:39:27.396960 19037 bf_chassis_manager.cc:87] Adding port 5 in node 1 (SDK Port 160).
+I20210618 11:39:27.423235 19037 bf_chassis_manager.cc:116] Enabling port 5 in node 1 (SDK Port 160).
+I20210618 11:39:27.423399 19037 bf_chassis_manager.cc:87] Adding port 6 in node 1 (SDK Port 168).
+I20210618 11:39:27.449043 19037 bf_chassis_manager.cc:116] Enabling port 6 in node 1 (SDK Port 168).
+I20210618 11:39:27.449214 19037 bf_chassis_manager.cc:87] Adding port 7 in node 1 (SDK Port 176).
+I20210618 11:39:27.475261 19037 bf_chassis_manager.cc:116] Enabling port 7 in node 1 (SDK Port 176).
+I20210618 11:39:27.475443 19037 bf_chassis_manager.cc:87] Adding port 8 in node 1 (SDK Port 184).
+I20210618 11:39:27.501168 19037 bf_chassis_manager.cc:116] Enabling port 8 in node 1 (SDK Port 184).
+I20210618 11:39:27.501366 19037 bf_chassis_manager.cc:87] Adding port 9 in node 1 (SDK Port 60).
+I20210618 11:39:27.527952 19037 bf_chassis_manager.cc:116] Enabling port 9 in node 1 (SDK Port 60).
+I20210618 11:39:27.528115 19037 bf_chassis_manager.cc:87] Adding port 10 in node 1 (SDK Port 52).
+I20210618 11:39:27.555943 19037 bf_chassis_manager.cc:116] Enabling port 10 in node 1 (SDK Port 52).
+I20210618 11:39:27.556134 19037 bf_chassis_manager.cc:87] Adding port 11 in node 1 (SDK Port 44).
+I20210618 11:39:27.584132 19037 bf_chassis_manager.cc:116] Enabling port 11 in node 1 (SDK Port 44).
+I20210618 11:39:27.584312 19037 bf_chassis_manager.cc:87] Adding port 12 in node 1 (SDK Port 36).
+I20210618 11:39:27.612525 19037 bf_chassis_manager.cc:116] Enabling port 12 in node 1 (SDK Port 36).
+I20210618 11:39:27.612710 19037 bf_chassis_manager.cc:87] Adding port 13 in node 1 (SDK Port 28).
+I20210618 11:39:27.641021 19037 bf_chassis_manager.cc:116] Enabling port 13 in node 1 (SDK Port 28).
+I20210618 11:39:27.641239 19037 bf_chassis_manager.cc:87] Adding port 14 in node 1 (SDK Port 20).
+I20210618 11:39:27.669939 19037 bf_chassis_manager.cc:116] Enabling port 14 in node 1 (SDK Port 20).
+I20210618 11:39:27.670158 19037 bf_chassis_manager.cc:87] Adding port 15 in node 1 (SDK Port 12).
+I20210618 11:39:27.699095 19037 bf_chassis_manager.cc:116] Enabling port 15 in node 1 (SDK Port 12).
+I20210618 11:39:27.699308 19037 bf_chassis_manager.cc:87] Adding port 16 in node 1 (SDK Port 4).
+I20210618 11:39:27.727952 19037 bf_chassis_manager.cc:116] Enabling port 16 in node 1 (SDK Port 4).
+I20210618 11:39:27.728157 19037 bf_chassis_manager.cc:87] Adding port 17 in node 1 (SDK Port 0).
+I20210618 11:39:27.757390 19037 bf_chassis_manager.cc:116] Enabling port 17 in node 1 (SDK Port 0).
+I20210618 11:39:27.757591 19037 bf_chassis_manager.cc:87] Adding port 18 in node 1 (SDK Port 8).
+I20210618 11:39:27.787600 19037 bf_chassis_manager.cc:116] Enabling port 18 in node 1 (SDK Port 8).
+I20210618 11:39:27.791564 19037 bf_chassis_manager.cc:87] Adding port 19 in node 1 (SDK Port 16).
+I20210618 11:39:27.819273 19037 bf_chassis_manager.cc:116] Enabling port 19 in node 1 (SDK Port 16).
+I20210618 11:39:27.819473 19037 bf_chassis_manager.cc:87] Adding port 20 in node 1 (SDK Port 24).
+I20210618 11:39:27.858309 19037 bf_chassis_manager.cc:116] Enabling port 20 in node 1 (SDK Port 24).
+I20210618 11:39:27.858522 19037 bf_chassis_manager.cc:87] Adding port 21 in node 1 (SDK Port 32).
+I20210618 11:39:27.882604 19037 bf_chassis_manager.cc:116] Enabling port 21 in node 1 (SDK Port 32).
+I20210618 11:39:27.882809 19037 bf_chassis_manager.cc:87] Adding port 22 in node 1 (SDK Port 40).
+I20210618 11:39:27.923059 19037 bf_chassis_manager.cc:116] Enabling port 22 in node 1 (SDK Port 40).
+I20210618 11:39:27.923257 19037 bf_chassis_manager.cc:87] Adding port 23 in node 1 (SDK Port 48).
+I20210618 11:39:27.947507 19037 bf_chassis_manager.cc:116] Enabling port 23 in node 1 (SDK Port 48).
+I20210618 11:39:27.947711 19037 bf_chassis_manager.cc:87] Adding port 24 in node 1 (SDK Port 56).
+I20210618 11:39:27.988884 19037 bf_chassis_manager.cc:116] Enabling port 24 in node 1 (SDK Port 56).
+I20210618 11:39:27.989085 19037 bf_chassis_manager.cc:87] Adding port 25 in node 1 (SDK Port 188).
+I20210618 11:39:28.014204 19037 bf_chassis_manager.cc:116] Enabling port 25 in node 1 (SDK Port 188).
+I20210618 11:39:28.014401 19037 bf_chassis_manager.cc:87] Adding port 26 in node 1 (SDK Port 180).
+I20210618 11:39:28.055089 19037 bf_chassis_manager.cc:116] Enabling port 26 in node 1 (SDK Port 180).
+I20210618 11:39:28.055285 19037 bf_chassis_manager.cc:87] Adding port 27 in node 1 (SDK Port 172).
+I20210618 11:39:28.079941 19037 bf_chassis_manager.cc:116] Enabling port 27 in node 1 (SDK Port 172).
+I20210618 11:39:28.080138 19037 bf_chassis_manager.cc:87] Adding port 28 in node 1 (SDK Port 164).
+I20210618 11:39:28.121848 19037 bf_chassis_manager.cc:116] Enabling port 28 in node 1 (SDK Port 164).
+I20210618 11:39:28.122053 19037 bf_chassis_manager.cc:87] Adding port 29 in node 1 (SDK Port 148).
+I20210618 11:39:28.146993 19037 bf_chassis_manager.cc:116] Enabling port 29 in node 1 (SDK Port 148).
+I20210618 11:39:28.147208 19037 bf_chassis_manager.cc:87] Adding port 30 in node 1 (SDK Port 156).
+I20210618 11:39:28.178620 19037 bf_chassis_manager.cc:116] Enabling port 30 in node 1 (SDK Port 156).
+I20210618 11:39:28.178833 19037 bf_chassis_manager.cc:87] Adding port 31 in node 1 (SDK Port 132).
+I20210618 11:39:28.209903 19037 bf_chassis_manager.cc:116] Enabling port 31 in node 1 (SDK Port 132).
+I20210618 11:39:28.210111 19037 bf_chassis_manager.cc:87] Adding port 32 in node 1 (SDK Port 140).
+I20210618 11:39:28.241497 19037 bf_chassis_manager.cc:116] Enabling port 32 in node 1 (SDK Port 140).
+I20210618 11:39:28.241796 19037 bf_switch.cc:65] Chassis config pushed successfully.
+I20210618 11:39:28.241874 23168 bf_chassis_manager.cc:1008] Transceiver event for port (slot: 1, port: 1): HW_STATE_PRESENT.
+I20210618 11:39:28.257256 19037 p4_service.cc:121] Pushing the saved forwarding pipeline configs read from /etc/stratum/pipeline_cfg.pb.txt...
+W20210618 11:39:28.257392 19037 p4_service.cc:142] Empty forwarding pipeline configs file: /etc/stratum/pipeline_cfg.pb.txt.
+E20210618 11:39:28.257773 19037 hal.cc:221] Stratum external facing services are listening to 0.0.0.0:28000, 0.0.0.0:9339, 0.0.0.0:9559, localhost:28000...
+E20210618 11:39:28.259799 19037 hal.cc:363] StratumErrorSpace::ERR_INTERNAL: Failed to check in with procmon: failed to connect to all addresses
+E20210618 11:39:28.259897 19037 hal.cc:231] Error when checking in with procmon: Failed to check in with procmon: failed to connect to all addresses.
+I20210618 11:39:33.058773 23168 bf_chassis_manager.cc:1057] Transceiver (slot: 1, port: 1) is ready.
+I20210618 11:39:33.058816 23168 bf_chassis_manager.cc:1008] Transceiver event for port (slot: 1, port: 2): HW_STATE_PRESENT.
+I20210618 11:39:47.055888 23168 bf_chassis_manager.cc:1057] Transceiver (slot: 1, port: 2) is ready.
+I20210618 11:41:16.237962 23173 p4_service.cc:771] Controller (connection_id: 1, election_id: 640, uri: ipv4:10.4.0.91:37966) is connected as MASTER for node (aka device) with ID 1.
+E20210618 11:41:16.307318 23242 bf_pipeline_utils.cc:43] StratumErrorSpace::ERR_INVALID_PARAM: Unknown format for p4_device_config.
+bf_switchd: starting warm init for dev_id 0 mode 1 serdes_upgrade 0
+Skip diag lib deinit
+2021-06-18 11:41:16.358759 BF_PIPE ERROR - /tmp/bf_sde.RGLhYw/pkgsrc/bf-drivers/src/ctx_json/ctx_json_utils.c:525: Invalid ContextJSON format: could not find cJSON property "direct_resources".
+2021-06-18 11:41:16.358853 BF_PIPE ERROR - /tmp/bf_sde.RGLhYw/pkgsrc/bf-drivers/src/pipe_mgr/pipe_mgr_ctx_json_rmt_cfg.c:4097: An error has occurred while parsing the Context JSON. Function ctx_json_parse_rmt_cfg_default_spec cannot continue.
+2021-06-18 11:41:16.358877 BF_PIPE ERROR - /tmp/bf_sde.RGLhYw/pkgsrc/bf-drivers/src/pipe_mgr/pipe_mgr_ctx_json_rmt_cfg.c:4965: An error has occurred. Function ctx_json_parse_rmt_cfg_match_table_json cannot continue.
+2021-06-18 11:41:16.358896 BF_PIPE ERROR - Dev 0 Failed to parse profile 0 table tbl_act
+2021-06-18 11:41:16.358917 BF_PIPE ERROR - /tmp/bf_sde.RGLhYw/pkgsrc/bf-drivers/src/pipe_mgr/pipe_mgr_ctx_json_rmt_cfg.c:5999: An error has occurred. Function ctx_json_parse_rmt_cfg_tables_json cannot continue.
+2021-06-18 11:41:16.358934 BF_PIPE ERROR - ctx_json_parse:6659: Failed to RMT table information from ContextJSON.
+2021-06-18 11:41:16.367590 BF_PIPE ERROR - pipe_mgr_rmt_import : Error in parsing the context jSON file
+2021-06-18 11:41:16.367640 BF_PIPE ERROR - pipe_mgr_add_rmt_device: failed to import rmt config
+*** Aborted at 1624030876 (unix time) try "date -d @1624030876" if you are using GNU date ***
+PC: @                0x0 (unknown)
+*** SIGSEGV (@0x0) received by PID 19037 (TID 0x7fbf5ac59700) from PID 0; stack trace: ***
+    @     0x7fbf75ac40e0 (unknown)
+    @     0x7fbf777c071b bf_map_destroy
+    @     0x7fbf7722561a pipe_mgr_add_rmt_device
+    @     0x7fbf771eac25 (unknown)
+    @     0x7fbf77123dd0 bf_drv_notify_clients_dev_add
+    @     0x7fbf77120e05 bf_device_add
+    @     0x564a83bc2e29 (unknown)
+    @     0x564a83bc3857 (unknown)
+    @     0x7fbf777aeb85 _pi_update_device_start
+    @     0x564a83c15be8 (unknown)
+    @     0x564a83bdd5df (unknown)
+    @     0x564a83bdde44 (unknown)
+    @     0x564a83bbde3a (unknown)
+    @     0x564a83b99e8b (unknown)
+    @     0x564a83e47c92 (unknown)
+    @     0x564a83ea7c37 (unknown)
+    @     0x564a83eaa3f5 (unknown)
+    @     0x564a83ead2ed (unknown)
+    @     0x564a83f93db1 (unknown)
+    @     0x564a83f9645f (unknown)
+    @     0x564a83fa2054 (unknown)
+    @     0x564a83fa21c4 (unknown)
+    @     0x564a840e3075 (unknown)
+    @     0x7fbf75aba4a4 start_thread
+    @     0x7fbf753e1d0f clone
+    @                0x0 (unknown)
+Segmentation fault
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(4)  Using 'bash -x' to show all parameters 
+
+root@onl2:~# bash -x start-stratum.sh
++ FLAG_FILE=/etc/stratum/stratum.flags
++ '[' -z '' ']'
+++ uname -r
++ KERNEL_VERSION=4.14.49-OpenNetworkLinux
++ '[' -f /usr/lib/modules/4.14.49-OpenNetworkLinux/bf_kdrv.ko ']'
++ KDRV_PATH=/usr/lib/modules/4.14.49-OpenNetworkLinux/bf_kdrv.ko
++ [[ -z '' ]]
++ [[ -f /etc/onl/platform ]]
+++ cat /etc/onl/platform
++ PLATFORM=x86-64-accton-wedge100bf-32x-r0
++ '[' '!' -f /etc/stratum/stratum.flags ']'
+++ cat /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
++ nr_hugepages=128
+++ cat /sys/kernel/mm/hugepages/hugepages-2048kB/free_hugepages
++ free_hugepages=128
++ [[ 128 -lt 128 ]]
++ [[ 128 -lt 128 ]]
++ grep hugetlbfs /etc/mtab
++ grep -q /mnt/huge
++ PORT_MAP=/etc/stratum/x86-64-accton-wedge100bf-32x-r0/port_map.json
++ '[' '!' -f /etc/stratum/x86-64-accton-wedge100bf-32x-r0/port_map.json ']'
++ ln -f -s /etc/stratum/x86-64-accton-wedge100bf-32x-r0/port_map.json /usr/share/port_map.json
++ '[' -f /usr/lib/modules/4.14.49-OpenNetworkLinux/bf_kdrv.ko ']'
++ lsmod
++ grep kdrv
++ [[ 0 == 0 ]]
++ echo 'bf_kdrv_mod found! Unloading first...'
+bf_kdrv_mod found! Unloading first...
++ rmmod bf_kdrv
++ echo 'loading bf_kdrv_mod...'
+loading bf_kdrv_mod...
++ insmod /usr/lib/modules/4.14.49-OpenNetworkLinux/bf_kdrv.ko intr_mode=msi
++ mkdir -p /var/run/stratum /var/log/stratum
++ exec /usr/bin/stratum_bf -chassis_config_file=/etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt -log_dir=/var/log/stratum -flagfile=/etc/stratum/stratum.flags
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x56068bfd8020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+...
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+I20210618 11:47:32.998709 23474 main.cc:122] switchd started successfully
+W20210618 11:47:32.998950 23474 credentials_manager.cc:45] Using insecure server credentials
+I20210618 11:47:32.999137 23474 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20210618 11:47:32.999188 23474 config_monitoring_service.cc:94] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+E20210618 11:47:33.002132 23474 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20210618 11:47:33.002251 23474 bf_switch.cc:100] Chassis config verified successfully.
+I20210618 11:47:33.002768 23474 onlp_wrapper.cc:99] Initializing ONLP.
+
+
+
+
+
+
+(5) Docker Running Stratum with ONOS
+
+- 신기하게도 한참을 기다렸다가 ONOS와 연결이 되고 ONOS GUI에서 테이블들과 인터페이스가 사용가능한거 같다
+- ONOS GUI는 vmware-011에서 http://10.0.20.91:8181/onos/ui/#/pipeconf?devId=device:my-tofino-switch 를 이용했음
+- ID/pw == onos:onos
+
+
+root@onl2:~# ./runstratum
+++ uname -r
+++ uname -r
++ docker run -it --rm --privileged -v /dev:/dev -v /sys:/sys -v /lib/modules/4.14.49-OpenNetworkLinux:/lib/modules/4.14.49-OpenNetworkLinux --env PLATFORM=x86-64-accton-wedge100bf-32x-r0 -p 28000:28000 -p 9339:9339 -p 9559:9559 -v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so -v /lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1:/lib/x86_64-linux-gnu/libonlp-platform-defaults.so.1 -v /lib/x86_64-linux-gnu/libonlp-platform.so:/lib/x86_64-linux-gnu/libonlp-platform.so -v /lib/x86_64-linux-gnu/libonlp-platform.so.1:/lib/x86_64-linux-gnu/libonlp-platform.so.1 -v /lib/x86_64-linux-gnu/libonlp.so:/lib/x86_64-linux-gnu/libonlp.so -v /lib/x86_64-linux-gnu/libonlp.so.1:/lib/x86_64-linux-gnu/libonlp.so.1 -v /lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1:/lib/x86_64-linux-gnu/libonlp-x86-64-accton-wedge100bf-32x.so.1 -v /lib/platform-config:/lib/platform-config -v /etc/onl:/etc/onl -v /root/chassis_config.pb.txt:/etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt -v /var/log:/var/log/stratum stratumproject/stratum-bf:9.2.0
+Mounting hugepages...
+bf_kdrv_mod found! Unloading first...
+loading bf_kdrv_mod...
+bf_sysfs_fname /sys/class/bf/bf0/device/dev_add
+Install dir: /usr (0x561b23cd2020)
+bf_switchd: system services initialized
+bf_switchd: loading conf_file /usr/share/stratum/tofino_skip_p4_no_bsp.conf...
+bf_switchd: processing device configuration...
+Configuration for dev_id 0
+  Family        : Tofino
+  pci_sysfs_str : /sys/devices/pci0000:00/0000:00:03.0/0000:05:00.0
+  pci_domain    : 0
+  pci_bus       : 5
+  pci_fn        : 0
+  pci_dev       : 0
+  pci_int_mode  : 1
+  sbus_master_fw: /usr/
+  pcie_fw       : /usr/
+  serdes_fw     : /usr/
+  sds_fw_path   : /usr/
+  microp_fw_path:
+bf_switchd: processing P4 configuration...
+P4 profile for dev_id 0
+  p4_name: dummy
+    libpd:
+    libpdthrift:
+    context:
+    config:
+  diag:
+  accton diag:
+  board-port-map: /usr/share/port_map.json
+  non_default_port_ppgs: 0
+  SAI default initialize: 1
+board-port-map path: /usr/share/port_map.json
+bf_switchd: loading board-map conf file /usr/share/port_map.json...
+enable-debug-log:yes
+Parsing Board-lane-entries 33 found
+num-of-connectors:33
+
+Connector->1 device_id:0 mac_block:23 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->2 device_id:0 mac_block:22 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->3 device_id:0 mac_block:21 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->4 device_id:0 mac_block:20 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->5 device_id:0 mac_block:19 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->6 device_id:0 mac_block:18 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->7 device_id:0 mac_block:17 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->8 device_id:0 mac_block:16 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->9 device_id:0 mac_block:15 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->10 device_id:0 mac_block:14 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->11 device_id:0 mac_block:13 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->12 device_id:0 mac_block:12 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->13 device_id:0 mac_block:11 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->14 device_id:0 mac_block:10 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->15 device_id:0 mac_block:9 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->16 device_id:0 mac_block:8 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->17 device_id:0 mac_block:7 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->18 device_id:0 mac_block:6 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->19 device_id:0 mac_block:5 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->20 device_id:0 mac_block:4 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->21 device_id:0 mac_block:3 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->22 device_id:0 mac_block:2 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->23 device_id:0 mac_block:1 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->24 device_id:0 mac_block:0 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->25 device_id:0 mac_block:31 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->26 device_id:0 mac_block:30 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->27 device_id:0 mac_block:29 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->28 device_id:0 mac_block:28 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->29 device_id:0 mac_block:26 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->30 device_id:0 mac_block:27 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->31 device_id:0 mac_block:24 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->32 device_id:0 mac_block:25 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:2, rx_lane:2, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:3, rx_lane:3, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:1
+tx_eq_pre:6 tx_eq_post:0 tx_eq_attn:0
+
+Connector->33 device_id:0 mac_block:32 media:copper enable-auto-neg:1
+lane0 mac_ch:0 tx_lane:1, rx_lane:1, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane1 mac_ch:1 tx_lane:2, rx_lane:2, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane2 mac_ch:2 tx_lane:0, rx_lane:0, tx_pn_swap:1 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+lane3 mac_ch:3 tx_lane:3, rx_lane:3, tx_pn_swap:0 rx_pn_swap:0
+tx_eq_pre:0 tx_eq_post:0 tx_eq_attn:0
+Operational mode set to ASIC
+ASIC detected at PCI /sys/class/bf/bf0/device
+ASIC pci device id is 16
+bf_switchd: drivers initialized
+Skipping P4 program load for dev_id 0
+detecting.. IOMMU not enabled on the platform
+Setting core_pll_ctrl0=cd44cbfe
+
+bf_switchd: dev_id 0 initialized
+
+bf_switchd: initialized 1 devices
+bf_switchd: Credo python server thread initialized..Skip p4 lib init
+Skip mav diag lib init
+bf_switchd: spawning cli server thread
+credo_python_intf: listen socket created
+credo_python_intf: bind done on port 9001, listening...
+credo_python_intf: listening for incoming connections...
+bf_switchd: running in background; driver shell is disabled
+bf_switchd: server started - listening on port 9999
+I20210621 16:39:41.857332     1 main.cc:122] switchd started successfully
+W20210621 16:39:41.857669     1 credentials_manager.cc:45] Using insecure server credentials
+I20210621 16:39:41.858062     1 hal.cc:128] Setting up HAL in COLDBOOT mode...
+I20210621 16:39:41.858136     1 config_monitoring_service.cc:94] Pushing the saved chassis config read from /etc/stratum/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt...
+E20210621 16:39:41.864580     1 bf_chassis_manager.cc:785] StratumErrorSpace::ERR_NOT_INITIALIZED: Not initialized!
+I20210621 16:39:41.864751     1 bf_switch.cc:100] Chassis config verified successfully.
+I20210621 16:39:41.865377     1 onlp_wrapper.cc:99] Initializing ONLP.
+06-21 16:39:48.317529 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 16:39:53.318696 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-21 16:39:58.319786 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-21 16:40:03.320883 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-21 16:40:08.321914 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 16:40:13.322877 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 16:40:18.323920 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 16:40:23.324975 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0049/temp1_input)
+
+06-21 16:40:28.336480 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 16:40:33.337524 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 16:40:38.338647 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:40:43.339794 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:40:48.340918 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:40:53.342015 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:40:58.343165 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:41:04.200576 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:41:09.201637 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:41:14.702753 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan5_input)
+
+06-21 16:41:19.703920 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:41:25.205417 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan9_input)
+
+06-21 16:41:30.206764 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 16:41:35.207877 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-21 16:41:40.208872 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-21 16:41:45.209856 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-21 16:41:50.211016 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 16:41:55.212115 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 16:42:00.213285 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 16:42:05.214485 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/8-0049/temp1_input
+) timed out
+
+06-21 16:42:10.725667 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 16:42:16.226975 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_output_pwr_sts)
+
+06-21 16:42:21.228053 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:42:26.229272 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:42:31.230613 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:42:36.231706 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:42:41.232931 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:42:46.586633 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 16:42:47.086876 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu2_present
+) timed out
+
+06-21 16:42:57.098465 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 16:43:02.099604 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 16:43:12.101948 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan1_input)
+
+06-21 16:43:17.103070 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:43:22.604367 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan5_input)
+
+06-21 16:43:27.605541 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:43:33.106869 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan9_input)
+
+06-21 16:43:38.469768 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 16:43:43.470767 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-21 16:44:18.988739 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_output_pwr_sts)
+
+06-21 16:44:23.989918 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 16:44:29.491343 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan1_input)
+
+06-21 16:44:34.492484 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:44:39.993868 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan5_input)
+
+06-21 16:44:44.994949 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:44:50.496277 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan9_input)
+
+06-21 16:44:55.849738 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 16:44:56.349947 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:56.850162 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:57.350326 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:57.850530 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:58.350720 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:58.850889 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:59.351168 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:44:59.851340 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:00.351510 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:00.851701 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:00.851774 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+)
+
+06-21 16:45:01.351901 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:01.852074 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:02.352271 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:02.852428 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:03.352566 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:03.852772 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:04.352952 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:04.853102 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:05.353298 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:05.853475 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:05.853563 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+)
+
+06-21 16:45:06.353748 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 16:45:11.854754 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-21 16:45:16.855961 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-21 16:45:21.857117 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 16:45:26.858184 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 16:45:31.859442 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 16:45:36.860549 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0049/temp1_input)
+
+06-21 16:46:21.879954 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 16:46:26.881119 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 16:46:31.882281 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:46:41.884421 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan3_input)
+
+06-21 16:46:46.885595 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 16:46:52.386939 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan7_input)
+
+06-21 16:46:57.387987 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+
+
+
+
+
+
+
+
+
+
+
+06-21 17:15:00.940245 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:06.452273 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan1_input)
+
+06-21 17:15:11.453540 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:11.453670 [onlp] fani info get fan-1 failed: E_INTERNAL
+E20210621 17:15:11.453805     1 onlp_wrapper.cc:164] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_fan_info_get(oid, &fan_info))' is false. Failed to get FAN info for OID 67108865.
+E20210621 17:15:11.453861     1 onlp_fan_datasource.cc:29] Return Error: onlp_interface->GetFanInfo(fan_oid) at stratum/hal/lib/phal/onlp/onlp_fan_datasource.cc:29
+E20210621 17:15:11.453900     1 onlp_switch_configurator.cc:355] Return Error: OnlpFanDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:355
+06-21 17:15:16.966289 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan3_input)
+
+06-21 17:15:21.967429 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:27.468804 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fan3_input)
+
+06-21 17:15:27.468931 [onlp] fani info get fan-2 failed: E_INTERNAL
+E20210621 17:15:27.469050     1 onlp_wrapper.cc:164] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_fan_info_get(oid, &fan_info))' is false. Failed to get FAN info for OID 67108866.
+E20210621 17:15:27.469115     1 onlp_fan_datasource.cc:29] Return Error: onlp_interface->GetFanInfo(fan_oid) at stratum/hal/lib/phal/onlp/onlp_fan_datasource.cc:29
+E20210621 17:15:27.469161     1 onlp_switch_configurator.cc:355] Return Error: OnlpFanDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:355
+06-21 17:15:32.489229 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:37.501115 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:42.502355 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:42.502479 [onlp] fani info get fan-3 failed: E_INTERNAL
+E20210621 17:15:42.502579     1 onlp_wrapper.cc:164] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_fan_info_get(oid, &fan_info))' is false. Failed to get FAN info for OID 67108867.
+E20210621 17:15:42.502631     1 onlp_fan_datasource.cc:29] Return Error: onlp_interface->GetFanInfo(fan_oid) at stratum/hal/lib/phal/onlp/onlp_fan_datasource.cc:29
+E20210621 17:15:42.502661     1 onlp_switch_configurator.cc:355] Return Error: OnlpFanDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:355
+06-21 17:15:47.515161 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:52.516339 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:57.517567 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:15:57.517703 [onlp] fani info get fan-4 failed: E_INTERNAL
+E20210621 17:15:57.517825     1 onlp_wrapper.cc:164] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_fan_info_get(oid, &fan_info))' is false. Failed to get FAN info for OID 67108868.
+E20210621 17:15:57.517889     1 onlp_fan_datasource.cc:29] Return Error: onlp_interface->GetFanInfo(fan_oid) at stratum/hal/lib/phal/onlp/onlp_fan_datasource.cc:29
+E20210621 17:15:57.517915     1 onlp_switch_configurator.cc:355] Return Error: OnlpFanDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:355
+06-21 17:16:02.728252 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:16:07.729466 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:16:12.730695 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/devices/8-0033/fantray_present)
+
+06-21 17:16:12.730825 [onlp] fani info get fan-5 failed: E_INTERNAL
+E20210621 17:16:12.730921     1 onlp_wrapper.cc:164] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_fan_info_get(oid, &fan_info))' is false. Failed to get FAN info for OID 67108869.
+E20210621 17:16:12.730988     1 onlp_fan_datasource.cc:29] Return Error: onlp_interface->GetFanInfo(fan_oid) at stratum/hal/lib/phal/onlp/onlp_fan_datasource.cc:29
+E20210621 17:16:12.731046     1 onlp_switch_configurator.cc:355] Return Error: OnlpFanDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:355
+06-21 17:16:13.901237 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:14.401424 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:14.901603 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:15.401781 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:15.901963 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:16.402149 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:16.902328 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:17.402503 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:17.902681 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:18.402855 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:18.402931 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+)
+
+06-21 17:16:18.903081 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:19.403291 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:19.903490 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:20.403723 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:20.903904 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:21.404073 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:21.904261 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:22.404474 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:22.904703 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:23.404880 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:23.404982 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+)
+
+06-21 17:16:23.905131 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:24.405367 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:24.905559 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:25.405752 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:25.905957 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:26.406124 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:26.906343 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:27.406553 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:27.906744 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:28.406958 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:28.407071 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+)
+
+06-21 17:16:28.907254 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/syscpld/12-0031/psu1_present
+) timed out
+
+06-21 17:16:34.408686 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_output_pwr_sts)
+
+06-21 17:16:39.409723 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 17:16:44.410993 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu1_present)
+
+06-21 17:16:44.411134 [onlp] psui info get psu-1 failed: E_INTERNAL
+E20210621 17:16:44.411235     1 onlp_wrapper.cc:268] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_psu_info_get(oid, &psu_info))' is false. Failed to get PSU info for OID 83886081.
+E20210621 17:16:44.411305     1 onlp_psu_datasource.cc:27] Return Error: onlp_interface->GetPsuInfo(psu_oid) at stratum/hal/lib/phal/onlp/onlp_psu_datasource.cc:27
+E20210621 17:16:44.411342     1 onlp_switch_configurator.cc:437] Return Error: OnlpPsuDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:437
+06-21 17:16:49.423092 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 17:16:54.446057 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 17:16:59.447176 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/syscpld/12-0031/psu2_present)
+
+06-21 17:16:59.447321 [onlp] psui info get psu-2 failed: E_INTERNAL
+E20210621 17:16:59.447427     1 onlp_wrapper.cc:268] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_psu_info_get(oid, &psu_info))' is false. Failed to get PSU info for OID 83886082.
+E20210621 17:16:59.447497     1 onlp_psu_datasource.cc:27] Return Error: onlp_interface->GetPsuInfo(psu_oid) at stratum/hal/lib/phal/onlp/onlp_psu_datasource.cc:27
+E20210621 17:16:59.447535     1 onlp_switch_configurator.cc:437] Return Error: OnlpPsuDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:437
+06-21 17:17:04.796185 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 17:17:09.797238 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 17:17:14.798353 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/com_e_driver/4-0033/temp2_input)
+
+06-21 17:17:14.798489 [onlp] thermali info get thermal-1 failed: E_INTERNAL
+E20210621 17:17:14.798602     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331649.
+E20210621 17:17:14.798666     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:17:14.798709     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:17:19.811319 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-21 17:17:20.322199 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0048/temp1_input
+) timed out
+
+06-21 17:17:25.823419 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0048/temp1_input)
+
+06-21 17:17:25.823546 [onlp] thermali info get thermal-2 failed: E_INTERNAL
+E20210621 17:17:25.823652     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331650.
+E20210621 17:17:25.823715     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:17:25.823751     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:17:26.335160 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-0049/temp1_input
+) timed out
+
+06-21 17:17:31.836234 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-21 17:17:36.837380 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-0049/temp1_input)
+
+06-21 17:17:36.837513 [onlp] thermali info get thermal-3 failed: E_INTERNAL
+E20210621 17:17:36.837621     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331651.
+E20210621 17:17:36.837693     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:17:36.837733     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:17:37.360332 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:37.860497 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:38.360694 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:38.860867 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:39.361072 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:39.861265 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:40.361472 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:40.861670 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:41.361847 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:41.861994 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:41.862070 [x86_64_accton_wedge100bf_32x] Unable to send command to bmc(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+)
+
+06-21 17:17:42.362192 [x86_64_accton_wedge100bf_32x] ERROR: bmc_send_command(cat /sys/bus/i2c/drivers/lm75/3-004a/temp1_input
+) timed out
+
+06-21 17:17:47.863464 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-21 17:17:52.864653 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004a/temp1_input)
+
+06-21 17:17:52.864766 [onlp] thermali info get thermal-4 failed: E_INTERNAL
+E20210621 17:17:52.864867     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331652.
+E20210621 17:17:52.864925     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:17:52.864959     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:17:57.877112 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 17:18:02.977217 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 17:18:07.978260 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004b/temp1_input)
+
+06-21 17:18:07.978383 [onlp] thermali info get thermal-5 failed: E_INTERNAL
+E20210621 17:18:07.978497     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331653.
+E20210621 17:18:07.978572     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:18:07.978610     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:18:13.012058 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 17:18:18.013264 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 17:18:23.014619 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/3-004c/temp1_input)
+
+06-21 17:18:23.014761 [onlp] thermali info get thermal-6 failed: E_INTERNAL
+E20210621 17:18:23.014860     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331654.
+E20210621 17:18:23.014910     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:18:23.014950     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:18:28.192174 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 17:18:33.512425 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 17:18:38.513649 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0048/temp1_input)
+
+06-21 17:18:38.513785 [onlp] thermali info get thermal-7 failed: E_INTERNAL
+E20210621 17:18:38.513895     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331655.
+E20210621 17:18:38.513964     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:18:38.514003     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+06-21 17:18:43.526264 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0049/temp1_input)
+
+06-21 17:18:48.538420 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0049/temp1_input)
+
+06-21 17:18:53.539599 [x86_64_accton_wedge100bf_32x] Unable to read status from file (/sys/bus/i2c/drivers/lm75/8-0049/temp1_input)
+
+06-21 17:18:53.539755 [onlp] thermali info get thermal-8 failed: E_INTERNAL
+E20210621 17:18:53.539870     1 onlp_wrapper.cc:205] StratumErrorSpace::ERR_INVALID_PARAM: 'ONLP_SUCCESS(onlp_functions_.onlp_thermal_info_get(oid, &thermal_info))' is false. Failed to get THERMAL info for OID 50331656.
+E20210621 17:18:53.539927     1 onlp_thermal_datasource.cc:32] Return Error: onlp_interface->GetThermalInfo(thermal_oid) at stratum/hal/lib/phal/onlp/onlp_thermal_datasource.cc:32
+E20210621 17:18:53.539963     1 onlp_switch_configurator.cc:612] Return Error: OnlpThermalDataSource::Make(id, onlp_interface_, cache) at stratum/hal/lib/phal/onlp/onlp_switch_configurator.cc:612
+E0621 17:18:53.541758769       1 server_chttp2.cc:40]        {"created":"@1624295933.541696464","description":"Only 1 addresses added out of total 2 resolved","file":"external/com_github_grpc_grpc/src/core/ext/transport/chttp2/server/chttp2_server.cc","file_line":406,"referenced_errors":[{"created":"@1624295933.541689299","description":"Address family not supported by protocol","errno":97,"file":"external/com_github_grpc_grpc/src/core/lib/iomgr/socket_utils_common_posix.cc","file_line":403,"os_error":"Address family not supported by protocol","syscall":"socket","target_address":"[::1]:28003"}]}
+I20210621 17:18:53.541908     1 attribute_database.cc:213] PhalDB service is listening to localhost:28003...
+I20210621 17:18:53.542011     1 bf_chassis_manager.cc:1077] Port status notification callback registered successfully
+I20210621 17:18:53.547430     1 bf_chassis_manager.cc:87] Adding port 1 in node 1 (SDK Port 128).
+I20210621 17:18:53.554462     1 bf_chassis_manager.cc:116] Enabling port 1 in node 1 (SDK Port 128).
+I20210621 17:18:53.554685     1 bf_chassis_manager.cc:87] Adding port 2 in node 1 (SDK Port 136).
+I20210621 17:18:53.574462     1 bf_chassis_manager.cc:116] Enabling port 2 in node 1 (SDK Port 136).
+I20210621 17:18:53.574659     1 bf_chassis_manager.cc:87] Adding port 3 in node 1 (SDK Port 144).
+I20210621 17:18:53.600093     1 bf_chassis_manager.cc:116] Enabling port 3 in node 1 (SDK Port 144).
+I20210621 17:18:53.600281     1 bf_chassis_manager.cc:87] Adding port 4 in node 1 (SDK Port 152).
+I20210621 17:18:53.625787     1 bf_chassis_manager.cc:116] Enabling port 4 in node 1 (SDK Port 152).
+I20210621 17:18:53.626013     1 bf_chassis_manager.cc:87] Adding port 5 in node 1 (SDK Port 160).
+I20210621 17:18:53.652058     1 bf_chassis_manager.cc:116] Enabling port 5 in node 1 (SDK Port 160).
+I20210621 17:18:53.652236     1 bf_chassis_manager.cc:87] Adding port 6 in node 1 (SDK Port 168).
+I20210621 17:18:53.678404     1 bf_chassis_manager.cc:116] Enabling port 6 in node 1 (SDK Port 168).
+I20210621 17:18:53.678577     1 bf_chassis_manager.cc:87] Adding port 7 in node 1 (SDK Port 176).
+I20210621 17:18:53.704418     1 bf_chassis_manager.cc:116] Enabling port 7 in node 1 (SDK Port 176).
+I20210621 17:18:53.704617     1 bf_chassis_manager.cc:87] Adding port 8 in node 1 (SDK Port 184).
+I20210621 17:18:53.730602     1 bf_chassis_manager.cc:116] Enabling port 8 in node 1 (SDK Port 184).
+I20210621 17:18:53.730849     1 bf_chassis_manager.cc:87] Adding port 9 in node 1 (SDK Port 60).
+I20210621 17:18:53.757596     1 bf_chassis_manager.cc:116] Enabling port 9 in node 1 (SDK Port 60).
+I20210621 17:18:53.757812     1 bf_chassis_manager.cc:87] Adding port 10 in node 1 (SDK Port 52).
+I20210621 17:18:53.785663     1 bf_chassis_manager.cc:116] Enabling port 10 in node 1 (SDK Port 52).
+I20210621 17:18:53.785892     1 bf_chassis_manager.cc:87] Adding port 11 in node 1 (SDK Port 44).
+I20210621 17:18:53.814047     1 bf_chassis_manager.cc:116] Enabling port 11 in node 1 (SDK Port 44).
+I20210621 17:18:53.814297     1 bf_chassis_manager.cc:87] Adding port 12 in node 1 (SDK Port 36).
+I20210621 17:18:53.842648     1 bf_chassis_manager.cc:116] Enabling port 12 in node 1 (SDK Port 36).
+I20210621 17:18:53.842890     1 bf_chassis_manager.cc:87] Adding port 13 in node 1 (SDK Port 28).
+I20210621 17:18:53.871325     1 bf_chassis_manager.cc:116] Enabling port 13 in node 1 (SDK Port 28).
+I20210621 17:18:53.871564     1 bf_chassis_manager.cc:87] Adding port 14 in node 1 (SDK Port 20).
+I20210621 17:18:53.900627     1 bf_chassis_manager.cc:116] Enabling port 14 in node 1 (SDK Port 20).
+I20210621 17:18:53.900836     1 bf_chassis_manager.cc:87] Adding port 15 in node 1 (SDK Port 12).
+I20210621 17:18:53.929764     1 bf_chassis_manager.cc:116] Enabling port 15 in node 1 (SDK Port 12).
+I20210621 17:18:53.929996     1 bf_chassis_manager.cc:87] Adding port 16 in node 1 (SDK Port 4).
+I20210621 17:18:53.958611     1 bf_chassis_manager.cc:116] Enabling port 16 in node 1 (SDK Port 4).
+I20210621 17:18:53.958854     1 bf_chassis_manager.cc:87] Adding port 17 in node 1 (SDK Port 0).
+I20210621 17:18:53.988302     1 bf_chassis_manager.cc:116] Enabling port 17 in node 1 (SDK Port 0).
+I20210621 17:18:53.988530     1 bf_chassis_manager.cc:87] Adding port 18 in node 1 (SDK Port 8).
+I20210621 17:18:54.018456     1 bf_chassis_manager.cc:116] Enabling port 18 in node 1 (SDK Port 8).
+I20210621 17:18:54.023561     1 bf_chassis_manager.cc:87] Adding port 19 in node 1 (SDK Port 16).
+I20210621 17:18:54.051275     1 bf_chassis_manager.cc:116] Enabling port 19 in node 1 (SDK Port 16).
+I20210621 17:18:54.051533     1 bf_chassis_manager.cc:87] Adding port 20 in node 1 (SDK Port 24).
+I20210621 17:18:54.090433     1 bf_chassis_manager.cc:116] Enabling port 20 in node 1 (SDK Port 24).
+I20210621 17:18:54.090685     1 bf_chassis_manager.cc:87] Adding port 21 in node 1 (SDK Port 32).
+I20210621 17:18:54.115303     1 bf_chassis_manager.cc:116] Enabling port 21 in node 1 (SDK Port 32).
+I20210621 17:18:54.115557     1 bf_chassis_manager.cc:87] Adding port 22 in node 1 (SDK Port 40).
+I20210621 17:18:54.156250     1 bf_chassis_manager.cc:116] Enabling port 22 in node 1 (SDK Port 40).
+I20210621 17:18:54.156510     1 bf_chassis_manager.cc:87] Adding port 23 in node 1 (SDK Port 48).
+I20210621 17:18:54.181035     1 bf_chassis_manager.cc:116] Enabling port 23 in node 1 (SDK Port 48).
+I20210621 17:18:54.181322     1 bf_chassis_manager.cc:87] Adding port 24 in node 1 (SDK Port 56).
+I20210621 17:18:54.222223     1 bf_chassis_manager.cc:116] Enabling port 24 in node 1 (SDK Port 56).
+I20210621 17:18:54.222476     1 bf_chassis_manager.cc:87] Adding port 25 in node 1 (SDK Port 188).
+I20210621 17:18:54.247944     1 bf_chassis_manager.cc:116] Enabling port 25 in node 1 (SDK Port 188).
+I20210621 17:18:54.248185     1 bf_chassis_manager.cc:87] Adding port 26 in node 1 (SDK Port 180).
+I20210621 17:18:54.289137     1 bf_chassis_manager.cc:116] Enabling port 26 in node 1 (SDK Port 180).
+I20210621 17:18:54.289355     1 bf_chassis_manager.cc:87] Adding port 27 in node 1 (SDK Port 172).
+I20210621 17:18:54.314332     1 bf_chassis_manager.cc:116] Enabling port 27 in node 1 (SDK Port 172).
+I20210621 17:18:54.314595     1 bf_chassis_manager.cc:87] Adding port 28 in node 1 (SDK Port 164).
+I20210621 17:18:54.356909     1 bf_chassis_manager.cc:116] Enabling port 28 in node 1 (SDK Port 164).
+I20210621 17:18:54.357161     1 bf_chassis_manager.cc:87] Adding port 29 in node 1 (SDK Port 148).
+I20210621 17:18:54.381929     1 bf_chassis_manager.cc:116] Enabling port 29 in node 1 (SDK Port 148).
+I20210621 17:18:54.382210     1 bf_chassis_manager.cc:87] Adding port 30 in node 1 (SDK Port 156).
+I20210621 17:18:54.413285     1 bf_chassis_manager.cc:116] Enabling port 30 in node 1 (SDK Port 156).
+I20210621 17:18:54.413607     1 bf_chassis_manager.cc:87] Adding port 31 in node 1 (SDK Port 132).
+I20210621 17:18:54.444746     1 bf_chassis_manager.cc:116] Enabling port 31 in node 1 (SDK Port 132).
+I20210621 17:18:54.445070     1 bf_chassis_manager.cc:87] Adding port 32 in node 1 (SDK Port 140).
+I20210621 17:18:54.476898     1 bf_chassis_manager.cc:116] Enabling port 32 in node 1 (SDK Port 140).
+I20210621 17:18:54.477291     1 bf_switch.cc:65] Chassis config pushed successfully.
+I20210621 17:18:54.477375    51 bf_chassis_manager.cc:1008] Transceiver event for port (slot: 1, port: 1): HW_STATE_PRESENT.
+I20210621 17:18:54.492377     1 p4_service.cc:121] Pushing the saved forwarding pipeline configs read from /etc/stratum/pipeline_cfg.pb.txt...
+W20210621 17:18:54.492535     1 p4_service.cc:142] Empty forwarding pipeline configs file: /etc/stratum/pipeline_cfg.pb.txt.
+E0621 17:18:54.492883231       1 server_chttp2.cc:40]        {"created":"@1624295934.492852020","description":"Only 1 addresses added out of total 2 resolved","file":"external/com_github_grpc_grpc/src/core/ext/transport/chttp2/server/chttp2_server.cc","file_line":406,"referenced_errors":[{"created":"@1624295934.492848750","description":"Address family not supported by protocol","errno":97,"file":"external/com_github_grpc_grpc/src/core/lib/iomgr/socket_utils_common_posix.cc","file_line":403,"os_error":"Address family not supported by protocol","syscall":"socket","target_address":"[::1]:28000"}]}
+E20210621 17:18:54.493156     1 hal.cc:221] Stratum external facing services are listening to 0.0.0.0:28000, 0.0.0.0:9339, 0.0.0.0:9559, localhost:28000...
+E20210621 17:18:54.493662     1 hal.cc:363] StratumErrorSpace::ERR_INTERNAL: Failed to check in with procmon: failed to connect to all addresses
+E20210621 17:18:54.493737     1 hal.cc:231] Error when checking in with procmon: Failed to check in with procmon: failed to connect to all addresses.
+I20210621 17:18:55.045436    51 bf_chassis_manager.cc:1057] Transceiver (slot: 1, port: 1) is ready.
+I20210621 17:18:55.045483    51 bf_chassis_manager.cc:1008] Transceiver event for port (slot: 1, port: 2): HW_STATE_PRESENT.
+I20210621 17:18:55.165390    51 bf_chassis_manager.cc:1057] Transceiver (slot: 1, port: 2) is ready.
+I20210621 17:19:06.263154    52 p4_service.cc:771] Controller (connection_id: 1, election_id: 680, uri: ipv4:10.4.0.91:46872) is connected as MASTER for node (aka device) with ID 1.
+E20210621 17:19:06.336876    54 bf_pipeline_utils.cc:43] StratumErrorSpace::ERR_INVALID_PARAM: Unknown format for p4_device_config.
+bf_switchd: starting warm init for dev_id 0 mode 1 serdes_upgrade 0
+Skip diag lib deinit
+-2021-06-21 17:19:06.671284 BF_BFRT ERROR - bfRtDeviceAdd:303 No BF-RT json file found for program org.opencord.fabric.tofino.montara_sde_9_0_0 Not adding BF-RT Info object for it
+I20210621 17:19:07.152491    54 bf_chassis_manager.cc:799] Replaying ports for node 1.
+I20210621 17:19:08.097966    54 bf_switch.cc:138] P4-based forwarding pipeline config pushed successfully to node with ID 1.
+I20210621 17:19:08.206952    56 bf_chassis_manager.cc:761] Querying state of port 1 in node 1.
+I20210621 17:19:08.207031    56 bf_chassis_manager.cc:766] State of port 1 in node 1 (SDK port 128): DOWN
+I20210621 17:19:08.207581    56 bf_chassis_manager.cc:761] Querying state of port 1 in node 1.
+I20210621 17:19:08.207614    56 bf_chassis_manager.cc:766] State of port 1 in node 1 (SDK port 128): DOWN
+I20210621 17:19:08.207888    56 bf_chassis_manager.cc:761] Querying state of port 10 in node 1.
+I20210621 17:19:08.207933    56 bf_chassis_manager.cc:766] State of port 10 in node 1 (SDK port 52): DOWN
+I20210621 17:19:08.208539    56 bf_chassis_manager.cc:761] Querying state of port 10 in node 1.
+I20210621 17:19:08.208570    56 bf_chassis_manager.cc:766] State of port 10 in node 1 (SDK port 52): DOWN
+I20210621 17:19:08.208842    56 bf_chassis_manager.cc:761] Querying state of port 11 in node 1.
+I20210621 17:19:08.208886    56 bf_chassis_manager.cc:766] State of port 11 in node 1 (SDK port 44): DOWN
+I20210621 17:19:08.209470    56 bf_chassis_manager.cc:761] Querying state of port 11 in node 1.
+I20210621 17:19:08.209501    56 bf_chassis_manager.cc:766] State of port 11 in node 1 (SDK port 44): DOWN
+I20210621 17:19:08.209751    56 bf_chassis_manager.cc:761] Querying state of port 12 in node 1.
+I20210621 17:19:08.209779    56 bf_chassis_manager.cc:766] State of port 12 in node 1 (SDK port 36): DOWN
+I20210621 17:19:08.210418    56 bf_chassis_manager.cc:761] Querying state of port 12 in node 1.
+I20210621 17:19:08.210453    56 bf_chassis_manager.cc:766] State of port 12 in node 1 (SDK port 36): DOWN
+I20210621 17:19:08.210705    56 bf_chassis_manager.cc:761] Querying state of port 13 in node 1.
+I20210621 17:19:08.210741    56 bf_chassis_manager.cc:766] State of port 13 in node 1 (SDK port 28): DOWN
+I20210621 17:19:08.211323    56 bf_chassis_manager.cc:761] Querying state of port 13 in node 1.
+I20210621 17:19:08.211352    56 bf_chassis_manager.cc:766] State of port 13 in node 1 (SDK port 28): DOWN
+I20210621 17:19:08.211630    56 bf_chassis_manager.cc:761] Querying state of port 14 in node 1.
+I20210621 17:19:08.211660    56 bf_chassis_manager.cc:766] State of port 14 in node 1 (SDK port 20): DOWN
+I20210621 17:19:08.212203    56 bf_chassis_manager.cc:761] Querying state of port 14 in node 1.
+I20210621 17:19:08.212231    56 bf_chassis_manager.cc:766] State of port 14 in node 1 (SDK port 20): DOWN
+I20210621 17:19:08.212491    56 bf_chassis_manager.cc:761] Querying state of port 15 in node 1.
+I20210621 17:19:08.212541    56 bf_chassis_manager.cc:766] State of port 15 in node 1 (SDK port 12): DOWN
+I20210621 17:19:08.213089    56 bf_chassis_manager.cc:761] Querying state of port 15 in node 1.
+I20210621 17:19:08.213117    56 bf_chassis_manager.cc:766] State of port 15 in node 1 (SDK port 12): DOWN
+I20210621 17:19:08.213441    56 bf_chassis_manager.cc:761] Querying state of port 16 in node 1.
+I20210621 17:19:08.213472    56 bf_chassis_manager.cc:766] State of port 16 in node 1 (SDK port 4): DOWN
+I20210621 17:19:08.214108    56 bf_chassis_manager.cc:761] Querying state of port 16 in node 1.
+I20210621 17:19:08.214138    56 bf_chassis_manager.cc:766] State of port 16 in node 1 (SDK port 4): DOWN
+I20210621 17:19:08.214383    56 bf_chassis_manager.cc:761] Querying state of port 17 in node 1.
+I20210621 17:19:08.214411    56 bf_chassis_manager.cc:766] State of port 17 in node 1 (SDK port 0): DOWN
+I20210621 17:19:08.214951    56 bf_chassis_manager.cc:761] Querying state of port 17 in node 1.
+I20210621 17:19:08.214979    56 bf_chassis_manager.cc:766] State of port 17 in node 1 (SDK port 0): DOWN
+I20210621 17:19:08.215261    56 bf_chassis_manager.cc:761] Querying state of port 18 in node 1.
+I20210621 17:19:08.215288    56 bf_chassis_manager.cc:766] State of port 18 in node 1 (SDK port 8): DOWN
+I20210621 17:19:08.215847    56 bf_chassis_manager.cc:761] Querying state of port 18 in node 1.
+I20210621 17:19:08.215874    56 bf_chassis_manager.cc:766] State of port 18 in node 1 (SDK port 8): DOWN
+I20210621 17:19:08.216189    56 bf_chassis_manager.cc:761] Querying state of port 19 in node 1.
+I20210621 17:19:08.216219    56 bf_chassis_manager.cc:766] State of port 19 in node 1 (SDK port 16): DOWN
+I20210621 17:19:08.216832    56 bf_chassis_manager.cc:761] Querying state of port 19 in node 1.
+I20210621 17:19:08.216858    56 bf_chassis_manager.cc:766] State of port 19 in node 1 (SDK port 16): DOWN
+I20210621 17:19:08.217056    56 bf_chassis_manager.cc:761] Querying state of port 2 in node 1.
+I20210621 17:19:08.217092    56 bf_chassis_manager.cc:766] State of port 2 in node 1 (SDK port 136): DOWN
+I20210621 17:19:08.217589    56 bf_chassis_manager.cc:761] Querying state of port 2 in node 1.
+I20210621 17:19:08.217623    56 bf_chassis_manager.cc:766] State of port 2 in node 1 (SDK port 136): DOWN
+I20210621 17:19:08.217844    56 bf_chassis_manager.cc:761] Querying state of port 20 in node 1.
+I20210621 17:19:08.217870    56 bf_chassis_manager.cc:766] State of port 20 in node 1 (SDK port 24): DOWN
+I20210621 17:19:08.218452    56 bf_chassis_manager.cc:761] Querying state of port 20 in node 1.
+I20210621 17:19:08.218484    56 bf_chassis_manager.cc:766] State of port 20 in node 1 (SDK port 24): DOWN
+I20210621 17:19:08.218752    56 bf_chassis_manager.cc:761] Querying state of port 21 in node 1.
+I20210621 17:19:08.218781    56 bf_chassis_manager.cc:766] State of port 21 in node 1 (SDK port 32): DOWN
+I20210621 17:19:08.219413    56 bf_chassis_manager.cc:761] Querying state of port 21 in node 1.
+I20210621 17:19:08.219437    56 bf_chassis_manager.cc:766] State of port 21 in node 1 (SDK port 32): DOWN
+I20210621 17:19:08.219652    56 bf_chassis_manager.cc:761] Querying state of port 22 in node 1.
+I20210621 17:19:08.219674    56 bf_chassis_manager.cc:766] State of port 22 in node 1 (SDK port 40): DOWN
+I20210621 17:19:08.220219    56 bf_chassis_manager.cc:761] Querying state of port 22 in node 1.
+I20210621 17:19:08.220247    56 bf_chassis_manager.cc:766] State of port 22 in node 1 (SDK port 40): DOWN
+I20210621 17:19:08.220433    56 bf_chassis_manager.cc:761] Querying state of port 23 in node 1.
+I20210621 17:19:08.220461    56 bf_chassis_manager.cc:766] State of port 23 in node 1 (SDK port 48): DOWN
+I20210621 17:19:08.221001    56 bf_chassis_manager.cc:761] Querying state of port 23 in node 1.
+I20210621 17:19:08.221024    56 bf_chassis_manager.cc:766] State of port 23 in node 1 (SDK port 48): DOWN
+I20210621 17:19:08.221221    56 bf_chassis_manager.cc:761] Querying state of port 24 in node 1.
+I20210621 17:19:08.221248    56 bf_chassis_manager.cc:766] State of port 24 in node 1 (SDK port 56): DOWN
+I20210621 17:19:08.221784    56 bf_chassis_manager.cc:761] Querying state of port 24 in node 1.
+I20210621 17:19:08.221807    56 bf_chassis_manager.cc:766] State of port 24 in node 1 (SDK port 56): DOWN
+I20210621 17:19:08.221987    56 bf_chassis_manager.cc:761] Querying state of port 25 in node 1.
+I20210621 17:19:08.222007    56 bf_chassis_manager.cc:766] State of port 25 in node 1 (SDK port 188): DOWN
+I20210621 17:19:08.222540    56 bf_chassis_manager.cc:761] Querying state of port 25 in node 1.
+I20210621 17:19:08.222564    56 bf_chassis_manager.cc:766] State of port 25 in node 1 (SDK port 188): DOWN
+I20210621 17:19:08.222779    56 bf_chassis_manager.cc:761] Querying state of port 26 in node 1.
+I20210621 17:19:08.222801    56 bf_chassis_manager.cc:766] State of port 26 in node 1 (SDK port 180): DOWN
+I20210621 17:19:08.223335    56 bf_chassis_manager.cc:761] Querying state of port 26 in node 1.
+I20210621 17:19:08.223357    56 bf_chassis_manager.cc:766] State of port 26 in node 1 (SDK port 180): DOWN
+I20210621 17:19:08.223539    56 bf_chassis_manager.cc:761] Querying state of port 27 in node 1.
+I20210621 17:19:08.223562    56 bf_chassis_manager.cc:766] State of port 27 in node 1 (SDK port 172): DOWN
+I20210621 17:19:08.224136    56 bf_chassis_manager.cc:761] Querying state of port 27 in node 1.
+I20210621 17:19:08.224159    56 bf_chassis_manager.cc:766] State of port 27 in node 1 (SDK port 172): DOWN
+I20210621 17:19:08.224329    56 bf_chassis_manager.cc:761] Querying state of port 28 in node 1.
+I20210621 17:19:08.224350    56 bf_chassis_manager.cc:766] State of port 28 in node 1 (SDK port 164): DOWN
+I20210621 17:19:08.224939    56 bf_chassis_manager.cc:761] Querying state of port 28 in node 1.
+I20210621 17:19:08.224962    56 bf_chassis_manager.cc:766] State of port 28 in node 1 (SDK port 164): DOWN
+I20210621 17:19:08.225103    56 bf_chassis_manager.cc:761] Querying state of port 29 in node 1.
+I20210621 17:19:08.225122    56 bf_chassis_manager.cc:766] State of port 29 in node 1 (SDK port 148): DOWN
+I20210621 17:19:08.225594    56 bf_chassis_manager.cc:761] Querying state of port 29 in node 1.
+I20210621 17:19:08.225615    56 bf_chassis_manager.cc:766] State of port 29 in node 1 (SDK port 148): DOWN
+I20210621 17:19:08.225749    56 bf_chassis_manager.cc:761] Querying state of port 3 in node 1.
+I20210621 17:19:08.225769    56 bf_chassis_manager.cc:766] State of port 3 in node 1 (SDK port 144): DOWN
+I20210621 17:19:08.226027    56 bf_chassis_manager.cc:761] Querying state of port 3 in node 1.
+I20210621 17:19:08.226045    56 bf_chassis_manager.cc:766] State of port 3 in node 1 (SDK port 144): DOWN
+I20210621 17:19:08.226181    56 bf_chassis_manager.cc:761] Querying state of port 30 in node 1.
+I20210621 17:19:08.226198    56 bf_chassis_manager.cc:766] State of port 30 in node 1 (SDK port 156): DOWN
+I20210621 17:19:08.226640    56 bf_chassis_manager.cc:761] Querying state of port 30 in node 1.
+I20210621 17:19:08.226661    56 bf_chassis_manager.cc:766] State of port 30 in node 1 (SDK port 156): DOWN
+I20210621 17:19:08.226809    56 bf_chassis_manager.cc:761] Querying state of port 31 in node 1.
+I20210621 17:19:08.226830    56 bf_chassis_manager.cc:766] State of port 31 in node 1 (SDK port 132): DOWN
+I20210621 17:19:08.227288    56 bf_chassis_manager.cc:761] Querying state of port 31 in node 1.
+I20210621 17:19:08.227309    56 bf_chassis_manager.cc:766] State of port 31 in node 1 (SDK port 132): DOWN
+I20210621 17:19:08.227454    56 bf_chassis_manager.cc:761] Querying state of port 32 in node 1.
+I20210621 17:19:08.227473    56 bf_chassis_manager.cc:766] State of port 32 in node 1 (SDK port 140): DOWN
+I20210621 17:19:08.227957    56 bf_chassis_manager.cc:761] Querying state of port 32 in node 1.
+I20210621 17:19:08.227980    56 bf_chassis_manager.cc:766] State of port 32 in node 1 (SDK port 140): DOWN
+I20210621 17:19:08.228134    56 bf_chassis_manager.cc:761] Querying state of port 4 in node 1.
+I20210621 17:19:08.228154    56 bf_chassis_manager.cc:766] State of port 4 in node 1 (SDK port 152): DOWN
+I20210621 17:19:08.228471    56 bf_chassis_manager.cc:761] Querying state of port 4 in node 1.
+I20210621 17:19:08.228492    56 bf_chassis_manager.cc:766] State of port 4 in node 1 (SDK port 152): DOWN
+I20210621 17:19:08.228703    56 bf_chassis_manager.cc:761] Querying state of port 5 in node 1.
+I20210621 17:19:08.228726    56 bf_chassis_manager.cc:766] State of port 5 in node 1 (SDK port 160): DOWN
+I20210621 17:19:08.229055    56 bf_chassis_manager.cc:761] Querying state of port 5 in node 1.
+I20210621 17:19:08.229079    56 bf_chassis_manager.cc:766] State of port 5 in node 1 (SDK port 160): DOWN
+I20210621 17:19:08.229209    56 bf_chassis_manager.cc:761] Querying state of port 6 in node 1.
+I20210621 17:19:08.229233    56 bf_chassis_manager.cc:766] State of port 6 in node 1 (SDK port 168): DOWN
+I20210621 17:19:08.229573    56 bf_chassis_manager.cc:761] Querying state of port 6 in node 1.
+I20210621 17:19:08.229595    56 bf_chassis_manager.cc:766] State of port 6 in node 1 (SDK port 168): DOWN
+I20210621 17:19:08.229732    56 bf_chassis_manager.cc:761] Querying state of port 7 in node 1.
+I20210621 17:19:08.229758    56 bf_chassis_manager.cc:766] State of port 7 in node 1 (SDK port 176): DOWN
+I20210621 17:19:08.230104    56 bf_chassis_manager.cc:761] Querying state of port 7 in node 1.
+I20210621 17:19:08.230127    56 bf_chassis_manager.cc:766] State of port 7 in node 1 (SDK port 176): DOWN
+I20210621 17:19:08.230283    56 bf_chassis_manager.cc:761] Querying state of port 8 in node 1.
+I20210621 17:19:08.230302    56 bf_chassis_manager.cc:766] State of port 8 in node 1 (SDK port 184): DOWN
+I20210621 17:19:08.230635    56 bf_chassis_manager.cc:761] Querying state of port 8 in node 1.
+I20210621 17:19:08.230656    56 bf_chassis_manager.cc:766] State of port 8 in node 1 (SDK port 184): DOWN
+I20210621 17:19:08.230799    56 bf_chassis_manager.cc:761] Querying state of port 9 in node 1.
+I20210621 17:19:08.230818    56 bf_chassis_manager.cc:766] State of port 9 in node 1 (SDK port 60): DOWN
+I20210621 17:19:08.231194    56 bf_chassis_manager.cc:761] Querying state of port 9 in node 1.
+I20210621 17:19:08.231216    56 bf_chassis_manager.cc:766] State of port 9 in node 1 (SDK port 60): DOWN
+I20210621 17:19:08.281589    52 p4_service.cc:771] Controller (connection_id: 1, election_id: 680, uri: ipv4:10.4.0.91:46872) is connected as MASTER for node (aka device) with ID 1.
+I20210621 17:19:08.283675    54 config_monitoring_service.cc:421] Initial Subscribe request from ipv4:10.4.0.91:46874 over stream 0x7f30c4e5a860.
+I20210621 17:19:08.283768    54 bf_chassis_manager.cc:761] Querying state of port 17 in node 1.
+I20210621 17:19:08.283816    54 bf_chassis_manager.cc:766] State of port 17 in node 1 (SDK port 0): DOWN
+I20210621 17:19:08.284049    54 bf_chassis_manager.cc:761] Querying state of port 1 in node 1.
+I20210621 17:19:08.284094    54 bf_chassis_manager.cc:766] State of port 1 in node 1 (SDK port 128): DOWN
+I20210621 17:19:08.284265    54 bf_chassis_manager.cc:761] Querying state of port 31 in node 1.
+I20210621 17:19:08.284322    54 bf_chassis_manager.cc:766] State of port 31 in node 1 (SDK port 132): DOWN
+I20210621 17:19:08.284458    54 bf_chassis_manager.cc:761] Querying state of port 16 in node 1.
+I20210621 17:19:08.284503    54 bf_chassis_manager.cc:766] State of port 16 in node 1 (SDK port 4): DOWN
+I20210621 17:19:08.284660    54 bf_chassis_manager.cc:761] Querying state of port 2 in node 1.
+I20210621 17:19:08.284710    54 bf_chassis_manager.cc:766] State of port 2 in node 1 (SDK port 136): DOWN
+I20210621 17:19:08.284883    54 bf_chassis_manager.cc:761] Querying state of port 18 in node 1.
+I20210621 17:19:08.284922    54 bf_chassis_manager.cc:766] State of port 18 in node 1 (SDK port 8): DOWN
+I20210621 17:19:08.285076    54 bf_chassis_manager.cc:761] Querying state of port 15 in node 1.
+I20210621 17:19:08.285125    54 bf_chassis_manager.cc:766] State of port 15 in node 1 (SDK port 12): DOWN
+I20210621 17:19:08.285257    54 bf_chassis_manager.cc:761] Querying state of port 32 in node 1.
+I20210621 17:19:08.285307    54 bf_chassis_manager.cc:766] State of port 32 in node 1 (SDK port 140): DOWN
+I20210621 17:19:08.285462    54 bf_chassis_manager.cc:761] Querying state of port 3 in node 1.
+I20210621 17:19:08.285504    54 bf_chassis_manager.cc:766] State of port 3 in node 1 (SDK port 144): DOWN
+I20210621 17:19:08.285641    54 bf_chassis_manager.cc:761] Querying state of port 19 in node 1.
+I20210621 17:19:08.285687    54 bf_chassis_manager.cc:766] State of port 19 in node 1 (SDK port 16): DOWN
+I20210621 17:19:08.285847    54 bf_chassis_manager.cc:761] Querying state of port 14 in node 1.
+I20210621 17:19:08.285898    54 bf_chassis_manager.cc:766] State of port 14 in node 1 (SDK port 20): DOWN
+I20210621 17:19:08.286051    54 bf_chassis_manager.cc:761] Querying state of port 29 in node 1.
+I20210621 17:19:08.286093    54 bf_chassis_manager.cc:766] State of port 29 in node 1 (SDK port 148): DOWN
+I20210621 17:19:08.286224    54 bf_chassis_manager.cc:761] Querying state of port 4 in node 1.
+I20210621 17:19:08.286263    54 bf_chassis_manager.cc:766] State of port 4 in node 1 (SDK port 152): DOWN
+I20210621 17:19:08.286429    54 bf_chassis_manager.cc:761] Querying state of port 20 in node 1.
+I20210621 17:19:08.286471    54 bf_chassis_manager.cc:766] State of port 20 in node 1 (SDK port 24): DOWN
+I20210621 17:19:08.286638    54 bf_chassis_manager.cc:761] Querying state of port 13 in node 1.
+I20210621 17:19:08.286693    54 bf_chassis_manager.cc:766] State of port 13 in node 1 (SDK port 28): DOWN
+I20210621 17:19:08.286865    54 bf_chassis_manager.cc:761] Querying state of port 30 in node 1.
+I20210621 17:19:08.286911    54 bf_chassis_manager.cc:766] State of port 30 in node 1 (SDK port 156): DOWN
+I20210621 17:19:08.287111    54 bf_chassis_manager.cc:761] Querying state of port 5 in node 1.
+I20210621 17:19:08.287155    54 bf_chassis_manager.cc:766] State of port 5 in node 1 (SDK port 160): DOWN
+I20210621 17:19:08.287326    54 bf_chassis_manager.cc:761] Querying state of port 21 in node 1.
+I20210621 17:19:08.287371    54 bf_chassis_manager.cc:766] State of port 21 in node 1 (SDK port 32): DOWN
+I20210621 17:19:08.287511    54 bf_chassis_manager.cc:761] Querying state of port 12 in node 1.
+I20210621 17:19:08.287551    54 bf_chassis_manager.cc:766] State of port 12 in node 1 (SDK port 36): DOWN
+I20210621 17:19:08.287683    54 bf_chassis_manager.cc:761] Querying state of port 28 in node 1.
+I20210621 17:19:08.287720    54 bf_chassis_manager.cc:766] State of port 28 in node 1 (SDK port 164): DOWN
+I20210621 17:19:08.287868    54 bf_chassis_manager.cc:761] Querying state of port 6 in node 1.
+I20210621 17:19:08.287904    54 bf_chassis_manager.cc:766] State of port 6 in node 1 (SDK port 168): DOWN
+I20210621 17:19:08.288038    54 bf_chassis_manager.cc:761] Querying state of port 22 in node 1.
+I20210621 17:19:08.288079    54 bf_chassis_manager.cc:766] State of port 22 in node 1 (SDK port 40): DOWN
+I20210621 17:19:08.288224    54 bf_chassis_manager.cc:761] Querying state of port 11 in node 1.
+I20210621 17:19:08.288264    54 bf_chassis_manager.cc:766] State of port 11 in node 1 (SDK port 44): DOWN
+I20210621 17:19:08.288391    54 bf_chassis_manager.cc:761] Querying state of port 27 in node 1.
+I20210621 17:19:08.288426    54 bf_chassis_manager.cc:766] State of port 27 in node 1 (SDK port 172): DOWN
+I20210621 17:19:08.288553    54 bf_chassis_manager.cc:761] Querying state of port 7 in node 1.
+I20210621 17:19:08.288600    54 bf_chassis_manager.cc:766] State of port 7 in node 1 (SDK port 176): DOWN
+I20210621 17:19:08.288744    54 bf_chassis_manager.cc:761] Querying state of port 23 in node 1.
+I20210621 17:19:08.288780    54 bf_chassis_manager.cc:766] State of port 23 in node 1 (SDK port 48): DOWN
+I20210621 17:19:08.288908    54 bf_chassis_manager.cc:761] Querying state of port 10 in node 1.
+I20210621 17:19:08.288949    54 bf_chassis_manager.cc:766] State of port 10 in node 1 (SDK port 52): DOWN
+I20210621 17:19:08.289098    54 bf_chassis_manager.cc:761] Querying state of port 26 in node 1.
+I20210621 17:19:08.289134    54 bf_chassis_manager.cc:766] State of port 26 in node 1 (SDK port 180): DOWN
+I20210621 17:19:08.289276    54 bf_chassis_manager.cc:761] Querying state of port 8 in node 1.
+I20210621 17:19:08.289316    54 bf_chassis_manager.cc:766] State of port 8 in node 1 (SDK port 184): DOWN
+I20210621 17:19:08.289463    54 bf_chassis_manager.cc:761] Querying state of port 24 in node 1.
+I20210621 17:19:08.289500    54 bf_chassis_manager.cc:766] State of port 24 in node 1 (SDK port 56): DOWN
+I20210621 17:19:08.289666    54 bf_chassis_manager.cc:761] Querying state of port 9 in node 1.
+I20210621 17:19:08.289707    54 bf_chassis_manager.cc:766] State of port 9 in node 1 (SDK port 60): DOWN
+I20210621 17:19:08.289841    54 bf_chassis_manager.cc:761] Querying state of port 25 in node 1.
+I20210621 17:19:08.289882    54 bf_chassis_manager.cc:766] State of port 25 in node 1 (SDK port 188): DOWN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

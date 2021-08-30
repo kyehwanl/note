@@ -461,6 +461,24 @@ Useful Tips
 
 
 
+7. Apply or Pick file(s) from another commit
+
+    (1) git checkout <branch or sha of commit> -- filename
+
+    (example)
+        $ git checkout master -- src/Makefile.am
+
+        $ git status
+         On branch draft7
+         Changes to be committed:
+           (use "git reset HEAD <file>..." to unstage)
+           modified:   src/Makefile.am
+       
+        $ git diff -w -b --cached
+            ...
+
+
+
 
 
 

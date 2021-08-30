@@ -1,0 +1,10 @@
+
+
+root@onl2:~# uname -r
+4.14.49-OpenNetworkLinux
+
+root@onl2:~# uname -a
+Linux onl2 4.14.49-OpenNetworkLinux #1 SMP Mon Apr 12 20:58:26 UTC 2021 x86_64 GNU/Linux
+
+root@onl2:~# cat /etc/onl/platform
+x86-64-accton-wedge100bf-32x-r0

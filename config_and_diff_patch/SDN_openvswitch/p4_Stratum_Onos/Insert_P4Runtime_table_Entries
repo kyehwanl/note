@@ -1,6 +1,7 @@
 
 Insert P4Runtime table entries
 ==============================
+(https://github.com/opennetworkinglab/ngsdn-tutorial/blob/advanced/EXERCISE-1.md)
 It doesn't have a real execution command, so supplementing that command below
 
 
@@ -100,6 +101,14 @@ P4Runtime sh >>> te.action["P4INFO-ACTION-PARAM-NAME"] = ("VALUE")
     }
 
 
+(5) Insert and Apply the table actions
+
+  The shell internally takes care of populating the fields of the corresponding Protobuf message 
+  by using the content of the P4Info file.
+
+  To insert the entry (this will issue a P4Runtime Write RPC to the switch):
+
+    P4Runtime sh >>> te.insert()
 
 
 
@@ -129,7 +138,7 @@ P4Runtime sh >>> te.action["P4INFO-ACTION-PARAM-NAME"] = ("VALUE")
                                                                           
                                                                           
 (4) Show Info
-    P4Runtime sh >>> print (te)                                               
+    P4Runtime sh >>> print (te2)                                               
     table_id: 33605373 ("IngressPipeImpl.l2_exact_table")                     
     match {                                                                   
       field_id: 1 ("hdr.ethernet.dst_addr")                                   
@@ -149,9 +158,54 @@ P4Runtime sh >>> te.action["P4INFO-ACTION-PARAM-NAME"] = ("VALUE")
 
 
 
+(5) Insert and Apply the table actions
+
+    P4Runtime sh >>> te2.insert()
 
 
 
 
+
+
+4. To read table entries from the switch (this will issue a P4Runtime Read RPC):
+--------------------------------------------------------------------------------
+
+    P4Runtime sh >>> for te in table_entry["IngressPipeImpl.l2_exact_table"].read():
+                ...:     print(te)
+                ...:
+
+    table_id: 33605373 ("IngressPipeImpl.l2_exact_table")
+    match {
+      field_id: 1 ("hdr.ethernet.dst_addr")
+      exact {
+        value: "\\x00\\x00\\x00\\x00\\x00\\x1b"
+      }
+    }
+    action {
+      action {
+        action_id: 16812802 ("IngressPipeImpl.set_egress_port")
+        params {
+          param_id: 1 ("None")
+          value: "\\x00\\x04"
+        }
+      }
+    }
+
+    table_id: 33605373 ("IngressPipeImpl.l2_exact_table")
+    match {
+      field_id: 1 ("hdr.ethernet.dst_addr")
+      exact {
+        value: "\\x00\\x00\\x00\\x00\\x00\\x1a"
+      }
+    }
+    action {
+      action {
+        action_id: 16812802 ("IngressPipeImpl.set_egress_port")
+        params {
+          param_id: 1 ("None")
+          value: "\\x00\\x03"
+        }
+      }
+    }
 
 

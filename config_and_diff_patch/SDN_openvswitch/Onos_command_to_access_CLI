@@ -1,0 +1,4 @@
+
+1. commmand for accessing CLI of running ONOS
+
+    ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o LogLevel=ERROR -p 8101 onos@localhost

@@ -197,6 +197,172 @@ Cscope search with egrep
 
 
 
+Vim Options Compiled
+====================
+
+1. :version (same as running vim --version)
+
+2. :echo has('python')
+    then, 0 or 1 will show up as a result
+
+
+
+
+
+Folding
+=======
+(https://docs.google.com/document/d/1xvgEfpoLgMjtzHZw08_UU3MNxdEkSzhrUOXDzqLamOs/edit#)
+
+
+
+How to disable folding
+====================== 
+
+1. ViM automatically turns on folding for certain files. 
+   I do not like folding and keep it disabled all the time by adding this to my vimrc:
+
+    set nofoldenable
+
+2. To disable only for the current session type:
+
+    :set nofoldenable
+
+
+
+
+
+
+vim에서 folding과 관련하여 문제 있었던 설정
+===========================================
+
+1. Bundle 'vim-scripts/restore_view.vim' → 이전의 fold설정이라든지 cursor설정을 기억
+
+
+2. 아래 부분에서 red letter의 auto cmd부분의 fold설정을 기억하고 불러오는 부분
+  " Folder Setting {
+  "--------------------------------------------------
+  "   when vim starts, do ":mkview"
+  "   when vim leaves, do ":loadview"
+  "
+  "    ":mkview"   : save the folds.
+  "    ":loadview" : reload the previous folds status
+  "
+  if argc() > 0
+  "    au BufWinLeave * mkview
+  "    au BufWinEnter * silent loadview
+
+      "set foldmethod=indent
+      set foldmethod=marker
+      set foldlevelstart=99
+      set foldmarker={,}
+      "set foldmethod=manual
+  endif                                                                                                                 
+  ....
+  "set foldmethod=marker
+  "   
+  " } 
+
+
+3. PIV bundle설정 (참고로 Bundle 'spf13/PIV' 로 설치) autofolding과 관련
+
+ " PIV {                                                                                                              
+     let g:DisableAutoPHPFolding = 0
+     let g:PIVAutoClose = 0
+ " }
+
+
+
+
+Vim folding commands
+====================
+  zf#j creates a fold from the cursor down # lines.
+  zf/string creates a fold from the cursor to string .
+  zj moves the cursor to the next fold.
+  zk moves the cursor to the previous fold.
+  zo opens a fold at the cursor.
+  zO opens all folds at the cursor.
+  zm increases the foldlevel by one.
+  zM closes all open folds.
+  zc close the fold at the cursor
+  zr decreases the foldlevel by one.
+  zR decreases the foldlevel to zero -- all folds will be open.
+  zd deletes the fold at the cursor.
+  zE deletes all folds.
+  [z move to start of open fold.
+  ]z move to end of open fold.
+
+
+
+
+
+-- 프로그래밍시 폴더로 보기쉽게 ( spf-13의 설정과 같이)
+=======================================================
+1. set foldmarker={,}
+2. set foldmethod=marker
+3. set foldlevel=0
+4. set foldleverstart=99
+
+
+
+
+
+
+The foldmethod option
+=====================
+Vim's foldmethod option might be of interest to programmers. The default foldmethod is manual -- that is, creating folds manually. However, Vim can also create folds based on the way a file is indented, its syntax, or markers in the text.
+To set the foldmethod according to the way a file is indented, run :set foldmethod=indent. This will automatically create folds at every indent. Consider a Cascading Style Sheet (CSS) file like this one:
+ 
+body {
+        background-color: #CCCCCC;
+    font-family: arial, helvetica, sans-serif;
+}
+
+strong.header {
+        font-family: arial, helvetica, sans-serif;
+        color: #1D3C47;
+}
+
+
+Once you've set foldmethod=indent, it will look like this:
+ 
+body {
++---  2 lines: background-color: #CCCCCC;---------------------------------------
+}
+
+strong.header {
++---  2 lines: font-family: arial, helvetica, sans-serif;-----------------------
+}
+
+
+Vim also offers a marker method, where folds are set by visible text markers rather than invisible manual marks. To set this mode, run :set foldmethod=marker. Then, when you set a fold, you'll see a marker with three braces at the beginning and end of the fold, like this:
+ 
+/*{{{*/
+Folded text goes here...
+/*}}}*/
+
+
+The braces are set off by comment characters, depending on the type of file. So, if you're working with an HTML file, you'll see <!--{{{-->, and if you're editing a Python script, you'll see #{{{. You can also insert fold markers manually if you want, and Vim will recognize them as well. Vim will also delete the markers with the zd command, whether they were set manually or not.
+Fold created with the marker method are subject to undo and redo operations, unlike normal manual folds.
+It's possible to set the foldmarker to something other than {{{ if you need to, but the Vim docs recommend that you stick with the defaults. To change the foldmarker, use :set foldmarker=nnn,mmmwhere nnn is the character string to start the marker, and mmm is the string to end the marker.
+If you want to use a foldmethod other than "manual" all the time, add this line to your ~/.vimrc:
+set foldmethod=foldoption
+Vim has a few other foldmethods that may come in useful. See the foldmethod documentation in the Vim reference materials for more on the foldmethod option.
+
+
+
+Saving folds
+============
+
+After you've gone to all the trouble of creating several folds in a longer document, it'd be a shame to lose them when you close the file. If you'd like to save the folds before you leave the file, run :mkview. When you reload the file, run :loadview, and Vim will restore the folds to the state the file was in at the time you ran :mkview.
+The :mkview command supports multiple revisions of a file's state, so you can give a view a number and reload later on. For example, if you run :mkview 2, make a few changes, and then run :loadview 2, it will revert to the previous state of the file as far as folds are concerned. Note that it won't restore the file itself to the previous state; if you delete 10 lines of text after saving a view, Vim won't restore those lines when you load an older view using :loadview.
+But why do something manually when you can do it automatically? To see to it that Vim saves and restores folds when a file is closed and re-opened, add these two lines to your ~/.vimrc:
+ 
+au BufWinLeave * mkview
+au BufWinEnter * silent loadview
+
+
+Now, each time you close a file, its fold state will be saved and reloaded when you reopen the file in Vim.
+When you add folds to other features like viewports and marks and jumps, Vim becomes an insanely productive tool for text editing and programming.
 
 
 
