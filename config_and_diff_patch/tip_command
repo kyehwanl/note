@@ -384,6 +384,30 @@ EOF
 
 
 
+(27) NTP - configure client
+============================
+
+ 1. Direct command 
+    # ntpdate -u <ntpserver> (0.centos.pool.ntp.org) 
+
+ 2. System service 
+    (1) open /etc/ntp.conf file and add the NTP servers used in your environment.
+
+        server 0.centos.pool.ntp.org 
+        server ntp.research.gov
+
+    (2) Configure the NTP client service to start at run level 3 when the appliance boots. Enter:
+        [root@localhost] # /sbin/chkconfig --levels 3 ntpd on
+
+    (3) checking
+        [root@localhost] # /sbin/chkconfig --list ntpd
+        ntpd            0:off   1:off   2:off   3:on    4:off   5:off   6:off
+
+    (4) Start the service. Enter:
+        [root@localhost] # /sbin/service ntpd start
+        Starting ntpd:                                             [  OK  ]
+
+
 
 
 (ETC)
