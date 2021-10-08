@@ -1,0 +1,218 @@
+
+GoBgp Running Config Examples
+=============================
+
+----------------------------------------------------------------------
+1. Interoperability test scenario for gobgpd, gobgp, exabgp and quagga
+----------------------------------------------------------------------
+
+  <pre-requisite>
+    netns separation : /opt/project/TestBgpsecImple.git/netns_peer_gen
+
+        ip netns add ns1 
+        ip link add veth0 type veth peer name veth1
+        ip link set veth1 netns ns1
+        ip netns exec ns1 ifconfig lo up
+        ip netns exec ns1 ifconfig veth1 10.1.1.2/24 up
+        ifconfig veth0 10.1.1.1/24 up
+        sleep 1
+        #ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1>\"") 
+        iptables -I INPUT 1 -p tcp --dport 179 -j ACCEPT
+
+
+  1.1 node1 for gobgp 
+    (1) refer to "tmux.vm005_autogen.sh" in "config_and_diff_patch/tmux-conf_tips"
+
+    (2) configuration file
+
+        $ cat ./gobgpd.ns1.conf.bgpsec  
+        [global.config]
+          as = 60001
+          router-id = "10.1.1.1"
+          key-path = "/opt/project/srx_test1/keys/"
+
+        [global.apply-policy.config]
+          import-policy-list = "rpki-valid"
+          export-policy-list = ["rpki-invalid", "rpki-not-found"]
+
+        [[neighbors]]
+          [neighbors.config]
+            neighbor-address = "10.1.1.2"
+            peer-as = 60002
+            bgpsec-enable = true
+            SKI = "45CAD0AC44F77EFAA94602E9984305215BF47DCD"
+
+        [[neighbors]]
+          [neighbors.config]
+            neighbor-address = "10.0.50.11"
+            peer-as = 65011
+            bgpsec-enable = true
+            SKI = "45CAD0AC44F77EFAA94602E9984305215BF47DCD"
+
+        [[rpki-servers]]
+          [rpki-servers.config]
+            address = "10.1.1.1"
+            port = 323
+
+        [[policy-definitions]]
+          name="rpki-invalid"
+          [[policy-definitions.statements]]
+            [policy-definitions.statements.conditions.bgp-conditions]
+                rpki-validation-result = "invalid"
+            [policy-definitions.statements.actions]
+                route-disposition = "accept-route"
+
+        [[policy-definitions]]
+          name="rpki-valid"
+          [[policy-definitions.statements]]
+            [policy-definitions.statements.conditions.bgp-conditions]
+                rpki-validation-result = "valid"
+            [policy-definitions.statements.actions]
+                route-disposition = "accept-route"
+
+        [[policy-definitions]]
+          name="rpki-not-found"
+          [[policy-definitions.statements]]
+            [policy-definitions.statements.conditions.bgp-conditions]
+                rpki-validation-result = "not-found"
+            [policy-definitions.statements.actions]
+                route-disposition = "accept-route"
+
+
+
+      (3) running command (only if CFLAGS and LDFLAGS are properly used to indicate the location of the external libraries)
+          sudo ./gobgpd -f gobgpd.ns1.conf.bgpsec -p -l info ( --log-level=info)
+
+
+  1.2 node2 for exabgp
+
+    (1)  commands
+        cd /opt/project/exabgp_test/exabgp-4.1.2
+        export PYTHONPATH=/opt/project/exabgp_test/exabgp-4.1.2/lib && python /opt/project/exabgp_test/exabgp-4.1.2/lib/exabgp/application/bgp.py /opt/project/exabgp_test/exabgp-4.1.2/bgpd.node1.conf
+
+
+    (2) config file
+
+          $ cat ./bgpd.node1.conf
+          neighbor 10.1.1.2 {
+              router-id 10.1.1.1;
+              local-as 60001;
+              local-address 10.1.1.1;
+              peer-as 60002;
+
+              hold-time 180;
+
+              #====== <BGPSec Options> ===============
+              # enable bgpsec
+              bgpsec;
+
+              ski 492AAE72485D926CACDA2D259BE19DAE82DFBDE3;
+              bgpsec_libloc /opt/project/srx_test1/_inst/lib64/srx/libSRxCryptoAPI.so;
+
+              # to indicate direction in bgpsec capability : 0- receive, 1: send/receive both
+              bgpsec_send_receive 1;
+
+              # --------------------------------------------------------------------------------
+              # Multiple BGPSec Stacking
+              #     bgpsec_pre_asns: previous ASNs in order of ASN-1 ASN-2 ... ASN-n(origin)
+              #     bgpsec_pre_skis: previous SKIs in accordance with pre_asns variable above
+              # --------------------------------------------------------------------------------
+              bgpsec_pre_asns 60003 60004 10 20;
+              bgpsec_pre_skis EE503D669A374B729FE6F8F61B52A778F8A6CCE9 492AAE72485D926CACDA2D259BE19DAE82DFBDE3 AB4D910F55CAE71A215EF3CAFE3ACC45B5EEC154 47F23BF1AB2F8A9D26864EBBD8DF2711C74406EC;
+
+              #=========================================
+
+
+              static {
+                # Example - Announcing a /24 with one community
+                route 100.1.1.0/24 next-hop 192.0.2.1 community 65001:666;
+                route 200.1.1.0/24 next-hop 192.0.2.1 community 65002:667;
+                route 222.1.1.0/24 next-hop 192.0.2.1 community 65002:667;
+
+                #Example - Two communities
+                #route 10.10.10.2/32 next-hop 192.0.2.1 community [65001:666 65001:400];
+              }
+
+              #process add-routes {
+              #  run /usr/bin/python /users/kyehwanl/Download/exabgp-3.4.13/example.py;
+              #  #'announce route 100.10.0.0/24 next-hop self'
+              #  #'announce route 200.20.0.0/24 next-hop self'
+              #}
+          }
+
+
+
+  1.3 node3 for gobgp client
+
+    (1) command
+        cd /opt/project/gobgp_test/gobgp_v2_running_test/src/github.com/osrg/gobgp
+        $GOPATH/bin/gobgp global rib add bgpsec origin igp -a ipv4 25.18.22.0/24 nexthop 10.0.50.5
+
+
+  1.4 node4 for quagga bgpd in ns1 name space
+
+    (1) command for instantiate ns1
+        ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1> \"")
+
+    (2) command for running bgpd
+        gdb --args /opt/project/srx_test1/_inst/sbin/bgpd -f /opt/projct/bgpd.n2.conf.bgpsec
+
+    (3) config file
+
+          hostname node2 
+          password z
+
+          router bgp 60002
+          bgp router-id 10.1.1.2
+          srx bgpsec ski 0 1 C30433FA1975FF193181458FB902B501EA9789DC
+          srx bgpsec active 0
+
+          neighbor 10.1.1.1 remote-as 60001
+          neighbor 10.1.1.1 bgpsec both
+
+          !network 200.0.0.0/8
+
+          srx connect localhost 17900
+          srx evaluation bgpsec
+          srx evaluation bgpsec distributed
+
+          line vty
+          log stdout debugging
+          debug bgp updates
+          debug bgp bgpsec
+          debug bgp bgpsec detail
+          debug bgp bgpsec out
+          debug bgp bgpsec in
+
+  1.5 node5 for srx_server
+
+    (1) command for instantiate ns1
+        ip netns exec ns1 bash --rcfile <(echo "PS1=\"ns1> \"")
+    
+
+    (2) command for running bgpd
+
+        /opt/project/srx_test1/_inst/bin/srx_server
+
+
+
+-----------------------------------------------------------
+2. gRPC enabled SRx server and gobgp communication examples
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
