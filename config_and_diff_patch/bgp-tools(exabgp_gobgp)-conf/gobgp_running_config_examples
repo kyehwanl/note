@@ -200,9 +200,18 @@ GoBgp Running Config Examples
 2. gRPC enabled SRx server and gobgp communication examples
 -----------------------------------------------------------
 
+2.1 Calling Go Functions from Other Languages using C Shared Libraries 
+    (https://github.com/vladimirvivien/go-cshared-examples) 
+    (https://github.com/vladimirvivien/go-cshared-examples/blob/master/README.md)
 
 
+2.2 how to make interoperable with gRPC (cf. srx-grpc project)
 
+    (1) client.go is called from client.c using C shared library
+    (2) client.go is combined with gRPC client code to call gRPC enabled server.go through protocol buffer (srxapi.proto)
+    (3) server.go is called by gRPC communication with predefined method in gRPC IDL
+    (4) server.go has a callback function from server.go using C shared library
+    (5) server.c is called 
 
 
 
