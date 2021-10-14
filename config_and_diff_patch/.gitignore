@@ -96,7 +96,7 @@ vtysh/
 bgpd/bgpd
 make_cscope.sh
 autom4te.cache/
-*.conf
+#*.conf
 !**/srx/**/*.conf
 **/src/rpkirtr_client
 **/src/rpkirtr_svr
