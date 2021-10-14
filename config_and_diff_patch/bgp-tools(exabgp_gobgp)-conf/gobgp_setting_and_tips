@@ -481,6 +481,17 @@ Debugging
             Here: https://github.com/protocolbuffers/protobuf/releases/tag/v3.6.1
             https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
             https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_32.zip
+			
+			<example>
+			unzip protoc-3.6.1-linux-x86_64.zip
+			cp bin/protoc /usr/bin
+			cp -r include/* /usr/local/bin
+			
+
+			<FYI> another way to install protoc
+			apt install -y protobuf-compiler or yum install (but version2)
+			$ protoc --version  # Ensure compiler version is 3+
+
 
 
         3.2 install Go protocol buffer plugin and grpc-go

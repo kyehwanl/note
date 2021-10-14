@@ -1,0 +1,47 @@
+
+
+
+gRPC protocol buffer compilation issues
+=======================================
+
+(1) command
+ $ protoc -I=. --go_out=plugins=grpc:. ./srx_grpc.proto
+
+
+(2) error
+
+    protoc-gen-go: unable to determine Go import path for "srx_grpc.proto"
+
+    Please specify either:
+            • a "go_package" option in the .proto source file, or
+            • a "M" argument on the command line.
+
+    See https://developers.google.com/protocol-buffers/docs/reference/go-generated#package for more information.
+
+    --go_out: protoc-gen-go: Plugin failed with status code 1.
+
+
+(3) Solution
+
+
+    https://developers.google.com/protocol-buffers/docs/reference/go-generated#package
+
+    As the error says, you need to specify the import path of the Go package containing the .proto file. 
+    The simplest way to do this is with a go_package option:
+
+    option go_package = "example.com/package/name";
+
+    The Go protocol buffer compiler has been printing a warning about missing import paths since v1.4.0 
+    (released about a year ago), and stating that specifying the import path would eventually become a requirement. 
+    v1.5.0 upgrades this warning to an error.
+
+
+(4) My solution
+
+    - in srx_grpc.proto, added following line
+    
+      option go_package = "./";
+
+    Then, srx_grpc.pb.go file will be generated the current("./") directory
+
+
