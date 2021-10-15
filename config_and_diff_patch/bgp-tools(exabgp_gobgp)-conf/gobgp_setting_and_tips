@@ -489,8 +489,8 @@ Debugging
 			
 
 			<FYI> another way to install protoc
-			apt install -y protobuf-compiler or yum install (but version2)
 			$ protoc --version  # Ensure compiler version is 3+
+			$ apt install -y protobuf-compiler OR $ yum install (BUT it is version2 --> do not use)
 
 
 
