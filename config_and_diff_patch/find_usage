@@ -163,6 +163,43 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 
 
 
+9. xargs
+========
+(1)
+    find ./ -name '*.tar.gz' | xargs -I % echo %  --> vertical print out
+    find ./ -name '*.tar.gz' | xargs echo {}      --> print out concatenately
+
+(2)
+    $ cat foo.txt
+    one
+    two
+    three
+
+    $ cat foo.txt | xargs -I % sh -c 'echo %; mkdir %'
+    one 
+    two
+    three
+
+    $ ls 
+    one two three
+
+(3) 
+    $ find Pictures/tecmint/ -name "*.png" -type f -print0 | xargs -0 tar -cvzf images.tar.gz
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
