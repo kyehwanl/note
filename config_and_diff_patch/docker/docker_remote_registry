@@ -64,7 +64,7 @@
 
   (*) To Read certs and key
     $ openssl x509 -in domain.cert -text
-    $ openssl ras -in domain.key -text
+    $ openssl rsa -in domain.key -text
 
 
 
