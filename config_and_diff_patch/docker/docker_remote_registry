@@ -69,9 +69,9 @@
 
 
 
- (3) Try to upload to the local repository
+ (3) Try to upload to the local repository -- Possible Errors
 
-
+    A.
       [root@vmware-011 registry_certs]# docker push 10.0.50.11:5000/quagga
       The push refers to repository [10.0.50.11:5000/quagga]
       Get https://10.0.50.11:5000/v2/: x509: certificate signed by unknown authority
@@ -94,8 +94,50 @@
     --> Success !!
 
 
+    B. 
+      [root@vmware-011 go_temp_test2]# docker push 10.0.50.11:5000/srx_grpc
+      Using default tag: latest
+      The push refers to repository [10.0.50.11:5000/srx_grpc]
+      Get https://10.0.50.11:5000/v2/: x509: certificate has expired or is not yet valid
 
- (3) push / pull from Remote host to the Local Registry 
+
+      --> Error: Expired certs
+
+      (Solution)
+
+        (i) go to the mounted directory for key and certs, in this case, vmware-011:/opt/project/docker_test 
+            Also found by using 'docker inspect registry' and try to seek 
+
+              "HostConfig": {                                         
+                  "Binds": [                                          
+                      "/opt/project/docker_test/registry_certs:/certs"
+                ...
+              "Mounts": [                                                  
+                  {                                                        
+                      "Type": "bind",                                      
+                      "Source": "/opt/project/docker_test/registry_certs",
+                      "Destination": "/certs",                             
+
+
+        (ii) Generate key and cert as new
+
+            [root@vmware-011 docker_test]# openssl req -newkey rsa:4096 -nodes -sha256 \
+            -keyout registry_certs/domain.key -x509 -days 999 -out registry_certs/domain.cert
+
+
+
+        (iii) Restart 'registry' docker container
+        
+            # docker restart registry 
+
+
+        (iv) Do not forget for the client to copy the new certs into its docker certs directory 
+            (/etc/docker/certs.d/10.0.50.11:5000/) named with ca.cert or ca.crt
+            Otherwise, it will occurr #A error (certificate signed by unknown authority)
+
+
+
+ (4) push / pull from Remote host to the Local Registry 
     using vmware-005 to access vmware-011's docker registry
 
     <UPDATE> latest version v19.03.3, Note that CA certificates should use the extension .crt
