@@ -1,0 +1,12 @@
+
+Vifm Tips
+=========
+
+1. restore files being deleted
+
+  (1) :trashes
+    To view files in trash, run the :lstrash command
+
+  (2) select trash directory or just go to .vifm/Trash directory
+
+  (3) select file(s) and hit ':restore' command
