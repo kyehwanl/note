@@ -1,0 +1,59 @@
+
+EXEEXT=
+#DEFS = -DHAVE_IPV6 -DUSE_DEMO_CODE 
+DEFS = -DHAVE_IPV6 -DUSE_DEMO_CODE -D__TIME_MEASURE__
+OBJEXT = o
+
+PERF_OBJECTS = perf_test.$(OBJEXT)
+DEPENDENCIES = libpatricia.la
+
+#CFLAGS = -g -O0 -Wall -fno-omit-frame-pointer -std=gnu99 
+CFLAGS = -g -O0 -Wall -std=gnu99 
+
+TM_CFLAGS  = -I/opt/project/tm-library/tm_rdtsc
+TM_LDFLAGS = -L/opt/project/tm-library/tm_rdtsc -ltm_rdtsc -Wl,-rpath -Wl,/opt/project/tm-library/tm_rdtsc/.libs
+
+PROGRAMS = perf_test$(EXEEXT)
+
+libpatricia.la:
+	/usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+	@#/usr/bin/libtool --tag=CC   --mode=install cp libpatricia.la `pwd`
+	@#/usr/bin/libtool --tag=CC   --finish  `pwd`
+
+all: perf arr ut trie 
+
+
+install:
+	/usr/bin/libtool --tag=CC   --mode=install cp libpatricia.la `pwd`
+	/usr/bin/libtool --tag=CC   --finish  `pwd`
+
+demo: demo.o $(DEPENDENCIES)
+	@#/usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -I. -g -O0 -Wall  -c -o patricia.lo patricia.c
+	@#/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o libpatricia.la patricia.lo -rpath `pwd`
+	@# main program compile
+	@#gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -g -O0 -I. -o demo demo.c -L./.libs/ -lpatricia -Wl,-rpath -Wl,`pwd`/.libs
+	gcc -DHAVE_IPV6 -DUSE_DEMO_CODE -I. -g -O0 -Wall  -c -o demo.o demo.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o demo demo.o libpatricia.la -rpath `pwd`/.libs
+
+
+
+perf: $(DEPENDENCIES)
+	gcc $(DEFS) -I. $(TM_CFLAGS) $(CFLAGS)  -c -o perf_test.o perf_test.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o perf_test perf_test.o libpatricia.la -rpath `pwd`/.libs $(TM_LDFLAGS)
+		
+
+arr:
+	gcc $(DEFS) -I. $(TM_CFLAGS) $(CFLAGS)  -c -o array_test.o array_test.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  -g -O0 -Wall  -I. -o array_test array_test.o  $(TM_LDFLAGS)
+
+ut:
+	gcc $(DEFS) -I. $(TM_CFLAGS) $(CFLAGS)  -c -o uthash_test.o uthash_test.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  $(CFLAGS) -I. -o uthash_test uthash_test.o  $(TM_LDFLAGS)
+
+trie:
+	gcc $(DEFS) -I. $(TM_CFLAGS) $(CFLAGS)  -c -o trie_test.o trie_test.c
+	/usr/bin/libtool --tag=CC   --mode=link gcc  $(CFLAGS) -I. -o trie_test trie_test.o  $(TM_LDFLAGS)
+
+clean:
+	rm -rf *.o *.lo *.a *.la *.so* .libs *~
