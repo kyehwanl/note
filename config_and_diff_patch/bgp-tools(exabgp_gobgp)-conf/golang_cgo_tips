@@ -1,0 +1,25 @@
+
+CGO Tips
+========
+
+1. unresolved symbols
+
+    if  this fails with:
+    ./plugin.go:8: undefined reference to `main_program_other_function'
+
+    --> suggested to pass '--unresolved-symbols' to the linker as a work around. 
+
+    (1) command line:
+
+    CGO_LDFLAGS="-Wl,--unresolved-symbols=ignore-all" go build -buildmode=c-shared 
+
+    (2) via the code
+
+    // #cgo LDFLAGS: -Wl,--unresolved-symbols=ignore-all
+
+
+
+
+2. cleaning cache
+
+    go clean -cache
