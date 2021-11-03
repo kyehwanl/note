@@ -1,0 +1,83 @@
+
+
+Golang grpc: how to determine when the server has started listening?
+====================================================================
+(https://stackoverflow.com/questions/66798278/golang-grpc-how-to-determine-when-the-server-has-started-listening)
+
+
+The server can be Dialed as soon as net.Listen returns a nil error. Dial will block until the server calls Accept (which will happen somewhere in s.Serve in this case).
+
+Either move creation of the listener into the caller and pass it as an argument:
+
+    func (n *Node) Start(lis net.Listener) {
+        s := grpc.NewServer()
+        thing.RegisterGreeterServer(s, n)
+        if err := s.Serve(lis); err != nil {
+            log.Fatalf("failed to serve: %v", err)
+        }
+    }
+
+    func main() {
+        lis, err := net.Listen("tcp", port)
+        if err != nil {
+            log.Fatalf("failed to listen: %v", err)
+        }
+
+        n := Node{Table: map[string]string{}}
+        go n.Start(lis)
+        conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+    }
+Or signal that the listener is up after Listen returns:
+
+    func (n *Node) Start(up chan struct{}) {
+        lis, err := net.Listen("tcp", port)
+        if err != nil {
+            log.Fatalf("failed to listen: %v", err)
+        }
+
+        if up != nil {
+            close(up)
+        }
+
+        s := grpc.NewServer()
+        thing.RegisterGreeterServer(s, n)
+        if err := s.Serve(lis); err != nil {
+            log.Fatalf("failed to serve: %v", err)
+        }
+    }
+
+    func main() {
+        n := Node{Table: map[string]string{}}
+
+        up := make(chan struct{})
+        go n.Start(up)
+        <-up
+
+        conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+    }
+
+
+This is a great answer. I am wondering if the delay between listen() and accept() matters enough that it makes the channel signal less useful than it seems. – 
+
+
+
+
+
+simple solution, no third party, no gap between listen/accept, no random timeouts.
+
+    func main() {
+        n := Node{Table: map[string]string{}}
+        go n.Start()
+
+        conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+        if err != nil {
+            for i := 0; i < 10; i++ {
+                conn, err = grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+                <-time.After(time.Second)
+            }
+        }
+        if err != nil {
+            panic(err)
+        }
+    }
+
