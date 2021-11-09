@@ -1,0 +1,215 @@
+
+[Linux] vi 자주쓰는 command & Web site [201212]
+===============================================
+(https://docs.google.com/document/d/15F2dG8cYWUhbNQxyQ0W-Bf8eB7x6PasoWTV0z48YDpg)
+
+
+
+1. gd (go definition) - local variable
+   gD : Global variable
+ 
+2. marking
+
+ [A-Z]: 전역마킹, 파일간 마킹가능, [a-z]: 지역마킹, 현재파일내에서만 가능  
+   ma ( mark as a ),  'a -» go mark a
+   mb ( mark as b ),  'b -» go mark b
+  ' ' ( ' 두번) - gd후 원래 위치로 되돌아감
+:marks - mark list
+
+3. [[, ]], {{, }} 건너뛰기
+ 
+4. 자동완성 Ctrl + p, Ctrl + n  - 두 키로 고르기
+5. 에러목록  :clist(cl) :cc :cnext(cn) :cprevious or :cNext(cN)
+6. 디버그 창같은 작은 창 띄우기 :copen - make나 grep, 에러목록을 볼때 쓰임
+7. sleep
+:sleep«sec»
+Ctrl + S - ctrl + Q 로 명령이 올때까지 sleep
+ 
+8. sort - v로 visual block을 설정후 !sort
+
+9. map «F4» 로 command matching
+    ^b - 이전에 열었던 파일 열기. alternate file
+    [i - function prototype보기
+ 
+10.
+:abbr #b /****
+:abbr #e *****/ 등록해 놓고 편집모드에서 #b -» enter하면
+   화면에서 /****로 바뀜
+
+11. Makefile에서
+$« - 열거된 depend 중에 제일 왼쪽의 depend를 나타냄
+$@ - Target을 나타냄
+$^ - depend 전체를 나타냄
+
+12. scroll - :set scb (scroll bind) 두 창이 동시에 스크롤됨
+  (set noscb) 
+
+13. shft + k : 설명 (man page) 
+     [i - 함수원형을 아래에 표시
+ 
+14. folding
+visual block + zf (접기)
+(접혀있는곳에서) l or zo (풀기)
+(펴진곳 아무곳에서) zc (다시 접기)
+* map <F1> v]}zf  (or v%zf) - '{'를 기준으로  F1키로 { 에서 } 사이를 폴딩 
+* :set foldmethod=marker, /*{{{*/와 /*}}}*/를 fold함 (cf. =indent)
+  
+15. find
+  find ./ -type f | xargs grep "string" (string 찾기)
+  find ./ -name '*.[chCH]' | ctags -R -L - (tag설정하기) 
+  :set nocst --> cscope tag가 설정되어있을때, cscope tag를 해제
+ 
+16. Macro recording
+  q + {0-9a-zA-Z}  : Start recording
+  q : Stop recording
+  @ + {0-9a-zA-Z} : Play ([N]@+'key' : repetition by N times)
+  @@ : Repeat previous, 
+    
+17. undo : 'u'  ( 'U' : undo all changes on one line)
+     redo : 'ctrl + r'
+ 
+18. Select whole area (전체 선택)
+     v를 눌러서 visual mode 진입 후 gg 현재위치에서 처음위치까지 선택
+                                          G 누르면 현재위치에서 마지막까지 선택
+ 
+19. switch among opend windows : ctrl+6
+ 
+20. 창크기 조절: 
+Ctrl w [number] '+' (상), Ctrl w [number] '-' (하), ctrl w [number] « (좌), ctrl w [number] » (우) (number만큼 조절)
+ Ctrl + w_ : 수평분할된 현재창을 최대화
+ Ctrl + w|  : 수직분활된 현재창을 최대화
+ Ctrl + w= : 원래대로 균등분할
+ 
+21. 창분할 디렉토리뷰- :20vs ./ 한후 파일명에대고 shift+p(vim7.0) [vim6.0은 shift+o]
+ 
+22. vimdiff file1 file2 [file3 [file4]]
+ 
+23. 범위지정하여 yank or 지우기 or visual block
+   (1) ma - mark a로 시작 나타냄
+   (2) y'a / d'a - Yank (y) the text from the current cursor location to the mark "a" ('a)
+ / delete도 가능 / visual 도 가능   
+   (3) Ctrl + v : 세로 선택, V: 행전체 선택, gv: 마지막 지정블럭 reselect, 
+    (참고) 한번 지정하게 되면 범위 마크가 자동생성됨 
+    '< : start line, `<  start character, '>  end line, `>  end character
+   (4) \%V : matches only inside the visual selection (ex) :s/\%Vus/az/g, /\%Vgreen
+
+24. indentation command
+== or
+v로 visual block을 정하고 =으로 한번에 
+gg=G: 처음부터 끝까지 한번에 정렬
+ 
+25. tar 로 묶을때 exclude시킬 파일 지정하여 '제외하여 묶기' 
+
+find . -type f -print | egrep '/,|%$|~$|\.old$|SCCS|/core$|\.o$|\.orig$' > Exclude 
+tar cvfX somedir.tar Exclude 
+or
+find quagga-0.99.16 -type f -print | egrep '(\.[ch]|[Mm]akefile)$' > Include
+tar cvfz quagga-0.99.16_FE_source_20110218.tar.gz -T Include
+
+
+
+26. :ls (or :files, or :buffers) - 파일버퍼 확인
+ :b[N] -  N번버퍼로 이동    (cf.) Ctrl + 6 --> 이전 버퍼로 이동(토글)
+ :map ,1 :b!1<CR> --> 1번 버퍼로 (편집경고없이) 이동하는 키를 ',' + '1' 에 매핑
+
+
+27. s (찾기) 에서 범위를 지정할때 ( 0, +[N] 이 더 효율적)
+:-1, 3 s/old/new/g --> 현재 커서위치에서 위로 1행, 아래로 3행의 범위
+
+28. :reg - 명령라인 레지스터 확인
+ "1p - 1번 레지스터의 명령을 paste하기
+
+(cf) 17개의 레지스터 지원 --> "", "1, "2, ... , "9, "-, ".(최근타이핑) , ":, "%(현파일명), "#, "/(최근검색내용)
+
+29. 반복되는 문자열을 네임 레지스터에 저장해서 쓰기
+ex) 다음의 디버깅 메시지를 찍어볼경우 
+#ifdef DEBUG
+    printf(.......);
+#endif
+
+--> "a3yy - "a 는 a레지스터에 저장하라는 의미, 3yy는 현재커서위치에서 3행을 복사해저장
+     "ap - a레지스터에 저장된 것을 붙여넣기
+
+(cf) a-z까지 26개의 네임 레지스터 지원
+
+30. shell 명령
+:![명령] - 쉘명령수행
+:!bash - 새로운 쉘 열림
+:r ![명령] - 명령의 결과가 return됨
+:r [파일명] - 현재의 위치에 파일의 내용이 끼워넣어짐
+
+31. 함수의 원형알기
+함수에서 ' [i '를 누르면 하단에 표시됨
+
+32. 여러행 탭 끼워넣기 
+[N] >> , [N] <<  : 현재부터 N행까지 탭적용
+>>: 현재행에서만 적용
+v로 블록지정후 > , < 적용가능
+
+33. 탭사이즈 조정
+변수 - ts(tabstop) : '\t'문자의 탭크기 조절
+        sw(shiftwidth): >>, <<로 탭사이즈 조절, indent 에서 자동줄맞추기에 사용되는 크기
+        sts(softtabstop): tap키를 눌렀을때 표시되는 간격 지정
+
+:set ts=8 (recommendation)
+:set sw=4
+:set sts=4
+
+34. ^M문자 제거
+ - :set fileformat=dos
+ - :%s/^M//g  --> ^M의 표현은 "Ctrl + v +enter"
+
+35. 파일읽어오기(주로 헤더파일열때 좋음)
+커서위치에 있는 파일 표기에서 Ctrl + wf  or Ctrl+wv(vertical)
+(cf) .vimrc에 set path=/usr/abc: /work/abc 라고 지정되어있으면 지정한 경로를 기준으로 찾음
+
+36. ls -d */ --> list directory only
+
+37. screen - 가상터미널 생성
+Ctrl+ac    : 새로운 가상터미널 생성
+Ctrl+aa    : 바로 이전 가상터미널로 이동
+Ctrl+a[N] : N번째 가상터미널로 이동
+(갑자기 접속을 잃었을때 screen의 세션은 그대로 유지되므로 유용)
+복구 command --> screen -r or screen -r [세션명]
+- (cf.) https://docs.google.com/Doc?id=dfscwjc8_356gmcwr3f9
+
+
+
+
+
+
+
+
+« GDB »
+stack trace: (gdb) backtrace, (gdb) where [full] : ‘where full’ 하면 local var까지표시
+examine Var: (gdb) pritn &var - example, print j or print a[3]
+listing: (gdb) list
+ 
+breakpoint:  (gdb) break 21 (line 21)
+   (gdb) run
+     **** stop at line 21 ****
+   (gdb) cont
+ 
+그외 (gdb) info break
+  (gdb) disable break
+
+https://docs.google.com/document/d/1xvgEfpoLgMjtzHZw08_UU3MNxdEkSzhrUOXDzqLamOs/edit?hl=en_US
+
+Vim folding commands
+zf#j creates a fold from the cursor down # lines.
+zf/string creates a fold from the cursor to string .
+zj moves the cursor to the next fold.
+zk moves the cursor to the previous fold.
+zo opens a fold at the cursor.
+zO opens all folds at the cursor.
+zm increases the foldlevel by one.
+zM closes all open folds.
+zr decreases the foldlevel by one.
+zR decreases the foldlevel to zero -- all folds will be open.
+zd deletes the fold at the cursor.
+zE deletes all folds.
+[z move to start of open fold.
+]z move to end of open fold.
+
+
+
