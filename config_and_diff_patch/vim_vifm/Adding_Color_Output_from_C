@@ -1,0 +1,95 @@
+
+
+Adding Color to Your Output From C
+===================================
+(https://www.theurbanpenguin.com/4184-2/)
+
+1. ANSI Colors
+We have 8 ANSI colors that we can use in our output, this can be doubled to 16 if you take into consideration that these colors can be displayed as standard or in bold for highlighting. To be able to access the colors we need to use and escape sequence followed by the correct color code, the print the text and finally reset the colors.
+
+    printf(“\033[0;31m”); //Set the text to the color red
+    printf(“Hello\n”); //Display Hello in red
+    printf(“\033[0m”); //Resets the text to default color
+    Escape is: \033
+    Color code is: [0;31m
+
+It is important to reset the color to ensuring that the selected color is terminated and text returns to normal. Using the following table you can view some of the code available.
+
+
+2. Simple Hello World in Color
+
+Working with a simple hello world program we can begin to understand how to make use of the color. Firstly we will set the color to be red and bold before moving onto using functions to set the color.
+
+#include <stdio.h> int main () { printf(“\033[1;31m”); printf(“Hello world\n”); printf(“\033[0m”) return 0; }
+
+For BOLD just replace the initial 0 before the ; with a 1. BOLD green would be\033[1;32m
+
+    Black   \033[0;30m
+    Red     \033[0;31m
+    Green   \033[0;32m
+    Yellow  \033[0;33m
+    Blue    \033[0;34m
+    Purple  \033[0;35m
+    Cyan    \033[0;36m
+    White   \033[0;37m
+
+
+
+3. Tips
+
+    \033 --> \e
+    printf "%b" "\e[1;34mThis is a blue text.\e[0m"
+
+
+    [0 - reset, [1 - bright, [2 - dim
+
+4. code
+
+  //General Formatting
+  #define GEN_FORMAT_RESET                "0"
+  #define GEN_FORMAT_BRIGHT               "1"
+  #define GEN_FORMAT_DIM                  "2"
+  #define GEN_FORMAT_UNDERSCORE           "3"
+  #define GEN_FORMAT_BLINK                "4"
+  #define GEN_FORMAT_REVERSE              "5"
+  #define GEN_FORMAT_HIDDEN               "6"
+
+  //Foreground Colors
+  #define FOREGROUND_COL_BLACK            "30"
+  #define FOREGROUND_COL_RED              "31"
+  #define FOREGROUND_COL_GREEN            "32"
+  #define FOREGROUND_COL_YELLOW           "33"
+  #define FOREGROUND_COL_BLUE             "34"
+  #define FOREGROUND_COL_MAGENTA          "35"
+  #define FOREGROUND_COL_CYAN             "36"
+  #define FOREGROUND_COL_WHITE            "37"
+
+  //Background Colors
+  #define BACKGROUND_COL_BLACK            "40"
+  #define BACKGROUND_COL_RED              "41"
+  #define BACKGROUND_COL_GREEN            "42"
+  #define BACKGROUND_COL_YELLOW           "43"
+  #define BACKGROUND_COL_BLUE             "44"
+  #define BACKGROUND_COL_MAGENTA          "45"
+  #define BACKGROUND_COL_CYAN             "46"
+  #define BACKGROUND_COL_WHITE            "47"
+
+  #define SHELL_COLOR_ESCAPE_SEQ(X) "\x1b["X"m"
+  #define SHELL_FORMAT_RESET  ANSI_COLOR_ESCAPE_SEQ(GEN_FORMAT_RESET)
+
+  int main(int argc, char* argv[])
+  {
+      //The long way
+      fputs(SHELL_COLOR_ESCAPE_SEQ(GEN_FORMAT_DIM";"FOREGROUND_COL_YELLOW), stdout);
+      fputs("Text in gold\n", stdout);
+      fputs(SHELL_FORMAT_RESET, stdout);
+      fputs("Text in default color\n", stdout);
+
+      //The short way
+      fputs(SHELL_COLOR_ESCAPE_SEQ(GEN_FORMAT_DIM";"FOREGROUND_COL_YELLOW)"Text in gold\n
+        "SHELL_FORMAT_RESET"Text in default color\n", stdout);
+
+      return 0;
+  }
+
+
