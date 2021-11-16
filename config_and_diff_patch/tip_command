@@ -418,6 +418,19 @@ EOF
 
 
 
+(29) gnome shell minimized or unresponsive
+===========================================
+(https://askubuntu.com/questions/455301/how-can-i-restart-gnome-shell-after-it-freezes-or-becomes-unresponsive)
+How can I restart GNOME Shell, after it freezes or becomes unresponsive?
+The easier way is just pressing Alt + F2, type r then Enter. This will work so long the shell is usable.
+
+You can also send SIGQUIT to the gnome-shell process which will terminate only the shell:
+
+killall -3 gnome-shell
+Other methods use more destructive means, which close all the applications, this shouldn't.
+
+
+
 
 (ETC)
 =================================

@@ -1,0 +1,13 @@
+
+1. Job for docker.service failed because the control process exited with error code
+
+(https://stackoverflow.com/questions/39402842/job-for-docker-service-failed-because-the-control-process-exited-with-error-code/44978083)
+
+    Just Remove Docker Lib and restart it again with:
+
+    sudo rm -rf  /var/lib/docker
+
+    then
+
+    sudo systemctl enable docker
+    sudo systemctl start docker

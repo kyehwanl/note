@@ -1,0 +1,20 @@
+
+
+
+
+1. python pip upgrade
+
+
+    (1) First, upgrade pip
+
+    pip3 install --upgrade pip
+
+
+    (2) Then, update the setup tools:
+
+    python3 -m pip install --upgrade setuptools
+
+
+    (3) At last, install grpcio using :
+
+    pip3 install --no-cache-dir  --force-reinstall -Iv grpcio==<version_number> example version, 1.41.1

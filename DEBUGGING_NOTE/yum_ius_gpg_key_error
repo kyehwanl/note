@@ -1,0 +1,19 @@
+
+1. Yum update - IUS GPG Key error on Centos 7 
+
+  warning: /var/cache/yum/x86_64/7/ius/packages/ius-release-2-1.el7.ius.noarch.rpm: Header V4 RSA/SHA256 Signature, key ID 4b274df2: NOKEY
+  Retrieving key from file:///etc/pki/rpm-gpg/IUS-COMMUNITY-GPG-KEY
+
+
+  The GPG keys listed for the "IUS Community Packages for Enterprise Linux 7 - x86_64" repository are already installed but they are not correct for this package.
+  Check that the correct key URLs are configured for this repository.
+
+
+   Failing package is: ius-release-2-1.el7.ius.noarch
+   GPG Keys are configured as: file:///etc/pki/rpm-gpg/IUS-COMMUNITY-GPG-KEY
+
+
+
+2. Solution
+
+    Get rid of 'sudo yum remove ius-release-el7.rpm'

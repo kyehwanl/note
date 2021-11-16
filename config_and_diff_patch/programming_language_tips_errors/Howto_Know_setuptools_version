@@ -1,0 +1,8 @@
+% python
+Python 2.7.9 (default, Apr  2 2015, 15:33:21) 
+[GCC 4.9.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pkg_resources
+>>> r = pkg_resources.require(["setuptools"])[0]
+>>> print("setuptools version: %s" % r.version)
+setuptools version: 18.3.2

@@ -1,0 +1,43 @@
+
+
+1. On Centos7, 
+
+
+  file /usr/lib64/python3.6/xml/sax/__pycache__/xmlreader.cpython-36.opt-2.pyc from install of python36-libs-3.6.6-5.el7.x86_64 conflicts with file from package python36u-libs-3.6.7-1.ius.centos7.x86_64
+    file /usr/lib64/python3.6/xml/sax/__pycache__/xmlreader.cpython-36.pyc from install of python36-libs-3.6.6-5.el7.x86_64 conflicts with file from package python36u-libs-3.6.7-1.ius.centos7.x86_64
+    file /usr/lib64/python3.6/xml/sax/expatreader.py from install of python36-libs-3.6.6-5.el7.x86_64 conflicts with file from package python36u-libs-3.6.7-1.ius.centos7.x86_64
+    file /usr/lib64/python3.6/zipfile.py from install of python36-libs-3.6.6-5.el7.x86_64 conflicts with file from package python36u-libs-3.6.7-1.ius.centos7.x86_64
+    file /usr/bin/python3.6m from install of python36-3.6.6-5.el7.x86_64 conflicts with file from package python36u-3.6.7-1.ius.centos7.x86_64
+    file /usr/bin/python3.6 from install of python36-3.6.6-5.el7.x86_64 conflicts with file from package python36u-3.6.7-1.ius.centos7.x86_64
+
+
+
+2. Solution
+(https://community.centminmod.com/threads/python-conflict-on-update.17144/)
+
+here's the solution I came up with.
+
+For CentOS 7, don't use IUS Community YUM Repo's python34u and python36u packages installed from addons/python34_install.sh and addons/python36_install.sh but instead use CentOS 7's EPEL yum repo versions of python34 and python36.
+
+So for CentOS 7 users, you can manually fix this if you had installed IUS Community python34u and/or python36u packages using commands below
+
+Code (Text):
+# remove ius community python34u
+yum -y remove python34u python34u-devel python34u-pip python34u-setuptools python34u-tools python34u-libs python34u-tkinter
+# remove ius community python36u
+yum -y remove python36u python36u-devel python36u-pip python36u-setuptools python36u-tools python36u-libs python36u-tkinter
+# install epel python34
+yum -y install python34 python34-devel python34-pip python34-setuptools python34-tools python34-libs python34-tkinter
+# install epel python36
+yum -y install python36 python36-devel python36-pip python36-setuptools python36-tools python36-libs python36-tkinter
+# reinstall removed dependencies from above removed ius community packages
+yum -y install cmake3 cmake3-data
+
+or you can use this quick bash script I wrote at fix python34/python34u and python36/python36u conflicts on centos 7
+Code (Text):
+
+curl -4s https://gist.github.com/centminmod/e050cf02794fb5bcdf3090c28efab202/raw/python-conflict-fix.sh | bash
+
+then for fresh 123.09beta01 installs, I could possible install EPEL yum repo's python34 by default ??? not sure on that one
+
+also seems centos 6 EPEL only has python34 and not python36 so IUS Community python36u would be needed on centos 6 but not centos 7 !
