@@ -1,0 +1,919 @@
+
+Compilation Orders for grpc enabled srx development
+===================================================
+
+1. Install go, grpc plugins for go and protocol buffer
+
+  (1) golang 
+      yum -y install golang
+
+  (2) plugins
+      go get -u github.com/golang/protobuf/protoc-gen-go
+      go get -u google.golang.org/grpc
+
+  (3) protocol buffer
+      wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+      unzip protoc-3.6.1-linux-x86_64.zip
+      cp protoc /usr/bin/
+      cp -rf include/* /usr/include/
+
+  (4) set for GOPATH environment variable and put it in .bash_profile
+      export GOPATH=/root/go
+      PATH=$PATH:$GOPATH/bin
+      export PATH
+
+
+
+2. Download 'srx-grpc' from github
+
+  (1) srx_grpc 
+      git clone https://github.com/kyehwanl/srx_grpc.git
+
+      then, move this folder into GOPATH
+      $ mv srx_grpc /root/go (example)
+
+
+  (2) for crypto-api, download NIST SRx as well under the srx_grpc
+      git clone --depth=1 https://github.com/usnistgov/NIST-BGP-SRx.git
+
+
+
+  (3) for compilation of api and srx server, need dependent libraries
+
+      yum -y install epel-release
+      yum -y install tmux vim git gcc automake autoconf libtool vifm psmisc readline-devel patch
+      yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* less gcc uthash-devel
+
+
+
+3. generate service libraries in srx server and client directories
+
+  (1) place header files
+      - When compilation of api, the installation directory is to be made with '_inst' below
+      ./configure --prefix=$PWD/../_inst CFLAGS="-g -O0"
+
+      - put 'srxcryptoapi.h, srx_api.h' into _inst/include/srx
+      srx_api.h is obtained srx_grpc/srx/src/client/
+
+      - make .libs directory for storing service libraries
+        mkdir -p ${GOPATH}/src/srx_grpc/srx/src/.libs
+
+
+  (2) srx server (at grpc/srx/src/) --> libgrpc_service.so
+      gcc -DHAVE_CONFIG_H -fPIC -shared -o .libs/libgrpc_service.so server/grpc_service.c \
+          -I${GOPATH}/src/srx_grpc/srx/src \
+          -I${GOPATH}/src/srx_grpc/srx/src/../extras/local/include \
+          -I${GOPATH}/src/srx_grpc/srx/../_inst/include 
+
+
+      (*) Possible Errors : 
+
+      A. /root/go/src/srx_grpc/srx/../_inst/include/srx/srxcryptoapi.h:107:20: fatal error: config.h: No such file or directory
+        --> do temporarily configure in srx server with #6.(1)
+
+
+      B. bash: ./configure: No such file or directory  
+        --> "autoreconf -i" needed
+
+
+      C. <dir>/srx_grpc/srx/src/server/prefix_cache.h:59:22: fatal error: patricia.h: No such file or directory
+        --> need to run 'make-lp.sh' in <dir>/srx_grpc/srx/extras', then it will make 'local' directory under 
+            srx_grpc/srx/extras/local/include as well as patricia.h will be fetched. 
+            (might ignore warning './make-lp.sh: line 34: ../../../../libtool: No such file or directory' )
+
+
+
+  (3) srx client (at grpc/srx/src/) --> libgrpc_client_service.so
+      gcc -DHAVE_CONFIG_H -fPIC -shared -o .libs/libgrpc_client_service.so client/grpc_client_service.c \
+          -I${GOPATH}/src/srx_grpc/srx/src \
+          -I${GOPATH}/src/srx_grpc/srx/src/../extras/local/include \
+          -I${GOPATH}/src/srx_grpc/srx/../_inst/include 
+
+
+4. generate grpc go client library
+  (0) first, it may need log.o in srx server, because srx_grpc_client.go has cgo option for LDFLAGS which needs log.o
+      - it can be obtained 
+          -- by compilation of srx server, even though it might fail to compilation with errors
+          -- partially gcc compile for log.c
+
+
+      OR, just ignore log.o object in srx_grpc_client.go's CGO values
+
+
+
+  (1) client: modify Makefile and srx_grpc_client.go in client directory according to GOPATH 
+
+      <Makefile>
+          go build -gcflags '-N -l' srx_grpc_client.go
+          go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_client.so  srx_grpc_client.go
+          gcc -g -O0 -o CImple_srx_grpc_client CImple_srx_grpc_client.c ./libsrx_grpc_client.so \
+                  -I/root/go/src/srx_grpc/srx/../_inst/include/srx \
+                  -I/root/go/src/srx_grpc/srx/../_inst/include/ \
+                  -I/root/go/src/srx_grpc/srx/src/ \
+                  -I/root/go/src/srx_grpc/srx/src/../extras/local/include \
+                  -Wl,--unresolved-symbols=ignore-all -lpthread
+
+      <srx_grpc_client.go> 
+      #cgo CFLAGS: -I/root/go/src/srx_grpc/srx/../_inst/include/ \ 
+                   -I/root/go/src/srx_grpc/srx/src/ \ 
+                   -I/root/go/src/srx_grpc/srx/src/../extras/local/include \ 
+                   -I/opt/project/srx_test1/srx/../_inst//include
+      #cgo LDFLAGS: /root/go/src/srx_grpc/srx/src/.libs/log.o \
+                  -L/root/go/src/srx_grpc/srx/src/.libs -lgrpc_client_service \
+                  -Wl,-rpath -Wl,/root/go/src/srx_grpc/srx/src/.libs -Wl,--unresolved-symbols=ignore-all
+
+
+  (2) compile with Makefile and genenrate libsrx_grpc_client.so which will be linked with srx server proxy later
+
+
+
+5. generate grpc go server library
+  (1) modify Makefile and srx_grpc_client.go in client directory according to GOPATH 
+
+      <Makefile>
+          go build -gcflags '-N -l' srx_grpc_server.go
+          go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_server.so  srx_grpc_server.go
+          gcc -g -O0 -o CImple_srx_grpc_server CImple_srx_grpc_server.c ./libsrx_grpc_server.so \
+          -I/root/go/src/srx_grpc/srx/../_inst/include/srx \
+          -I/root/go/src/srx_grpc/srx/../_inst/include/ \
+          -I/root/go/src/srx_grpc/srx/src/ \
+          -I/root/go/src/srx_grpc/srx/src/../extras/local/include \
+          -Wl,--unresolved-symbols=ignore-all
+
+
+
+      <srx_grpc_server.go> 
+          #cgo CFLAGS: -I/root/go/src/srx_grpc/srx/../_inst/include/ \
+                      -I/root/go/src/srx_grpc/srx/src/ \
+                      -I/root/go/src/srx_grpc/srx/src/../extras/local/include
+          #cgo LDFLAGS: -L/root/go/src/srx_grpc/srx/src/.libs -lgrpc_service \
+                      -Wl,-rpath -Wl,/root/go/src/srx_grpc/srx/src/.libs -Wl,--unresolved-symbols=ignore-all
+
+
+
+
+
+6. Using Go Module (#4,5 didn't use module)
+
+    - in case of separately placing srx_grpc source code out of GOPATH
+
+    (1) in the srx_grpc root directory, <dir>/srx_grpc
+
+
+        idac.server02-antd [2003]{.../test1/srx_grpc}-> go mod init srx_grpc
+        go: creating new go.mod: module srx_grpc
+
+    (2) go build in client
+
+        test1/srx_grpc}-> cd client/
+        srx_grpc/client}-> go build -gcflags '-N -l' srx_grpc_client.go
+        go: finding github.com/golang/protobuf v1.5.2
+        go: finding golang.org/x/net latest
+        go: downloading github.com/golang/protobuf v1.5.2
+        go: extracting github.com/golang/protobuf v1.5.2
+        go: downloading google.golang.org/protobuf v1.26.0
+        go: extracting google.golang.org/protobuf v1.26.0
+        go: finding google.golang.org/protobuf v1.26.0
+
+        srx_grpc/client}-> go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_client.so  srx_grpc_client.go
+
+
+    (3) go build in server
+
+        srx_grpc/server}-> go build -gcflags '-N -l' srx_grpc_server.go 
+        srx_grpc/server}-> go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_server.so  srx_grpc_server.go
+
+
+
+
+    (4) build error troubleshoot
+
+      [root@29b32c75f5a0 client]# go build -gcflags '-N -l' srx_grpc_client.go
+      go: finding module for package google.golang.org/grpc
+      go: finding module for package golang.org/x/net/context
+      go: downloading golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+      go: downloading google.golang.org/grpc v1.42.0
+      go: found golang.org/x/net/context in golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+      go: found google.golang.org/grpc in google.golang.org/grpc v1.42.0 
+      go: google.golang.org/grpc@v1.42.0 requires
+              google.golang.org/genproto@v0.0.0-20200526211855-cb27e3aa2013 requires
+              google.golang.org/protobuf@v1.23.1-0.20200526195155-81db48ad09cc: invalid version: git fetch --unshallow -f origin in /root/go/pkg/mod/cache/vcs/a6c5d6b8734f41936247415390043c979295646fadef73c39eedc1735cd0fef4: exit status 128:
+              fatal: git fetch-pack: expected shallow list
+
+
+    (reason)
+    --> This error related to the old version of git, which is being used v1.8, mismatched with grpc v.1.42
+
+        [root@29b32c75f5a0 client]# go version
+        go version go1.15.14 linux/amd64
+        [root@29b32c75f5a0 client]# git version
+        git version 1.8.3.1
+ 
+    (solution)
+        (https://github.com/golang/go/issues/38373)
+        yum -y erase github
+        yum -y install https://repo.ius.io/ius-release-el7.rpm
+        yum -y install git222
+
+    (Cautioin)
+        golang and golang-bin will be removed when erased the original git v1.8, 
+        so, need to reinstall golang 
+
+
+
+
+7. compile for srx server and QuaggaSrx
+
+  (1) srx server compile and make
+      a. autoreconf -i
+      b. configure --disable-option-checking --prefix=$PWD/../_inst sca_dir=$PWD/../_inst/ \
+         --cache-file=/dev/null --srcdir=. --enable-grpc grpc_dir=$PWD/../ 
+                                      (OR, --enable-grpc grpc_dir=/root/go/src/srx_grpc)
+      c. make all install
+
+
+
+  (2) QuaggaSRx
+
+      a. autoreconf -i
+      b. configure --prefix=$PWD/../_inst --disable-snmp --disable-ospfapi --disable-ospfd \
+                           --disable-ospf6d --disable-babeld --disable-doc --disable-tests \
+                           --enable-user=root --enable-group=root --enable-configfile-mask=0644 \
+                           --enable-logfile-mask=0644 \
+                           --enable-srxcryptoapi srx_dir=$PWD/../_inst sca_dir=$PWD/../_inst \
+                           --enable-grpc grpc_dir=$PWD/../
+                      (OR, --enable-grpc grpc_dir=${GOPATH}/src/srx_grpc)
+      c. make all install
+
+
+
+
+
+
+8. Summary of compile build steps
+
+    (1) download soruce files from https://github.com/kyehwanl/srx_grpc.git into /opt/project/gobgp_test/test1/
+        git clone https://github.com/kyehwanl/srx_grpc.git
+
+    (2) srx crypto api preparation
+        in /opt/project/srx_test1/_inst/ 
+
+    (3) srx_grpc/srx/extras/make-lp.sh
+        
+    (4) mkdir -p /opt/project/gobgp_test/test1/srx_grpc/srx/src/.libs/
+
+    (5) gcc -DHAVE_CONFIG_H -fPIC -shared -o .libs/libgrpc_client_service.so client/grpc_client_service.c \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src \ 
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/../extras/local/include \
+        -I/opt/project/srx_test1/_inst/include
+
+    (6) gcc -DHAVE_CONFIG_H -fPIC -shared -o .libs/libgrpc_service.so server/grpc_service.c \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/../extras/local/include \
+        -I/opt/project/srx_test1/_inst/include 
+
+
+    (7) client go file CGO env variable modification
+       #cgo CFLAGS: -I/opt/project/gobgp_test/test1/srx_grpc/srx/../_inst/include/ \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/ \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/../extras/local/include \
+        -I/opt/project/srx_test1/srx/../_inst//include
+       #cgo LDFLAGS: -L/opt/project/gobgp_test/test1/srx_grpc/srx/src/.libs -lgrpc_client_service \
+         -Wl,-rpath -Wl,/opt/project/gobgp_test/test1/srx_grpc/srx/src/.libs -Wl,--unresolved-symbols=ignore-all
+
+
+    (8) server go file CGO env variable modification
+       #cgo CFLAGS: -I/opt/project/gobgp_test/test1/srx_grpc/srx/../_inst/include/ \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/ \
+        -I/opt/project/gobgp_test/test1/srx_grpc/srx/src/../extras/local/include \
+        -I/opt/project/srx_test1/srx/../_inst//include
+       #cgo LDFLAGS: -L/opt/project/gobgp_test/test1/srx_grpc/srx/src/.libs -lgrpc_service \
+        -Wl,-rpath -Wl,/opt/project/gobgp_test/test1/srx_grpc/srx/src/.libs -Wl,--unresolved-symbols=ignore-all
+
+
+    (9) module build 
+        test1/srx_grpc}-> go mod init srx_grpc
+        OR 
+        go mod init ANY_NAME (ANY_NAME should be used as a package name in srx_grpc_{server|client}.go)
+
+        srx_grpc/client}-> go build -gcflags '-N -l' srx_grpc_client.go 
+        srx_grpc/client}-> go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_client.so  srx_grpc_client.go
+
+        srx_grpc/server}-> go build -gcflags '-N -l' srx_grpc_server.go 
+        srx_grpc/server}-> go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_server.so  srx_grpc_server.go
+
+
+
+    (10) compile for srx server and QuaggaSrx
+
+        <SRx Server>
+        autoreconf -i
+        configure --disable-option-checking --prefix=$PWD/../_inst sca_dir=/opt/project/srx_test1/_inst/ \
+                    --cache-file=/dev/null --srcdir=. --enable-grpc grpc_dir=$PWD/../
+        make all install
+
+
+        <QuaggaSRx>
+        autoreconf -i
+        configure --prefix=$PWD/../_inst --disable-snmp --disable-ospfapi --disable-ospfd \
+                           --disable-ospf6d --disable-babeld --disable-doc --disable-tests \
+                           --enable-user=root --enable-group=root --enable-configfile-mask=0644 \
+                           --enable-logfile-mask=0644 \
+                           --enable-srxcryptoapi \ 
+                           srx_dir=$PWD/../_inst  sca_dir=/opt/project/srx_test1/_inst  \
+                           --enable-grpc grpc_dir=$PWD/../
+        make all install
+
+
+
+9. docker containerizing command history
+
+    (1) yum install
+    yum install -y git automake
+    git clone --depth=1 https://github.com/kyehwanl/srx_grpc_v6.git
+    
+    (2) srx-crypto-api build and install
+    cd /root/srx-crypto-api/
+    yum -y install epel-release 
+    yum -y install vim git gcc automake autoconf libtool vifm psmisc readline-devel patch
+    yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* less gcc uthash-devel
+
+    autoreconf -i
+    ./configure --prefix=/ CFLAGS="-g -O0"
+    make all install
+
+
+    (3) pre-requisites for go-build client and server
+    
+        A. libpatricia generation, need: libpatritia.so
+
+            cd srx-server/extras/
+            in make-lp.sh, replace '../../../../libtool' with libtool
+                #LIBTOOL="../../../../libtool --tag=CC"
+                LIBTOOL="libtool --tag=CC"
+
+            ./make-lp.sh
+
+        B.  in srx-server - need: configh, srx_api.h, srxcryptoapi.h (might be obtained when installing srx-crypto-api)
+            -- config.h
+            mkdir -p srx-server/src/.libs
+            autoreconf -i
+            ./configure --disable-option-checking --prefix=/ sca_dir=/ --cache-file=/dev/null \
+                --srcdir=. --enable-grpc grpc_dir=$PWD/../
+
+            -- srx_api.h
+            cd srx-server/src/client/
+            cp srx_api.h /include/srx
+
+    
+        C.  libgrpc_service library at srx-server/src/server
+
+            /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H  -c -o grpc_service.lo server/grpc_service.c \
+                -I/root/srx_grpc_v6/srx-server/src  -I/root/srx_grpc_v6/srx-server/src/../extras/local/include -I/include
+            /usr/bin/libtool --tag=CC   --mode=link   gcc -DHAVE_CONFIG_H  -o libgrpc_service.la grpc_service.lo 
+                -rpath `pwd`/.libs         -L/root/srx_grpc_v6/srx-server/src/.libs/
+            /usr/bin/libtool --tag=CC   --mode=install cp libgrpc_service.la /lib64
+            libtool --finish /root/srx_grpc_v6/srx-server/src/.libs
+
+
+        D. libgrpc_client_service library at srx-server/src/client
+
+            /usr/bin/libtool --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H  -c -o grpc_client_service.lo client/grpc_client_service.c \
+                -I/root/srx_grpc_v6/srx-server/src  -I/root/srx_grpc_v6/srx-server/src/../extras/local/include -I/include
+            /usr/bin/libtool --tag=CC   --mode=link   gcc -DHAVE_CONFIG_H  -o libgrpc_client_service.la grpc_client_service.lo \
+                -rpath `pwd`/.libs
+            /usr/bin/libtool --tag=CC   --mode=install cp libgrpc_client_service.la /lib64
+            libtool --finish /root/srx_grpc_v6/srx-server/src/.libs
+
+
+
+
+        E. go language, grpc plugins, protocol buffer
+
+            -- go language and grpc plugins
+            yum install -y golang
+            go get -u github.com/golang/protobuf/protoc-gen-go
+            go get -u google.golang.org/grpc
+
+            -- protocol buffer 
+            mkdir temp
+            cd temp
+            wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+            yum install -y unzip
+            unzip protoc-3.6.1-linux-x86_64.zip
+            cp bin/protoc /bin/
+            cp -rf include/*  /usr/include 
+
+            -- bashrc, add env variables
+            export GOPATH=/root/go
+            PATH=$PATH:$GOPATH/bin
+            export PATH
+
+        F. replace cgo variable with the proper pathes at srx_grpc_client.go 
+
+                #cgo CFLAGS: -g -Wall -I/include/ -I/root/srx_grpc_v6/srx-server/src/ -I/root/srx_grpc_v6/srx-server/src/../extras/local/include
+                #cgo LDFLAGS: -L/root/srx_grpc_v6/srx-server/src/.libs -lgrpc_client_service -Wl,-rpath -Wl,/root/srx_grpc_v6/srx-server/src//.libs -Wl,--unresolved-symbols=ignore-all
+
+        G. replace cgo variable with the proper pathes at srx_grpc_server.go 
+
+                #cgo CFLAGS: -DUSE_GRPC -g -Wall -I/include/ -I/root/srx_grpc_v6/srx-server/src -I/root/srx_grpc_v6/srx-server/src/client       -I/root/srx_grpc_v6/srx-server/src/../extras/local/include
+                #cgo LDFLAGS: -L/root/srx_grpc_v6/srx-server/src/.libs -lgrpc_service -Wl,-rpath -Wl,/root/srx_grpc_v6/srx-server/src//.libs -Wl,--unresolved-symbols=ignore-all
+
+
+
+    (4) clietn go build
+    go mod init srx_grpc
+    go build -gcflags '-N -l' srx_grpc_client.go
+
+        *** Error ***
+        google.golang.org/protobuf@v1.23.1-0.20200526195155-81db48ad09cc: invalid version: 
+        git fetch --unshallow -f origin in /root/go/pkg/mod/cache/vcs/a6c5d6b8734f41936247415390043c979295646fadef73c39eedc1735cd0fef4: 
+        exit status 128:
+            fatal: git fetch-pack: expected shallow list
+
+
+        (Solution) refer to 6-(4)
+
+    yum -y erase git
+    yum -y install https://repo.ius.io/ius-release-el7.rpm
+    yum -y install git222
+
+    yum install -y golang
+    go get -u github.com/golang/protobuf/protoc-gen-go
+    go get -u google.golang.org/grpc
+
+    go mod init srx_grpc_v6
+    go build -gcflags '-N -l' srx_grpc_client.go
+    go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_client.so  srx_grpc_client.go
+
+
+
+    (5) server go build
+    go build -gcflags '-N -l' srx_grpc_server.go
+    go build -gcflags '-N -l' -buildmode=c-shared -o libsrx_grpc_server.so  srx_grpc_server.go
+
+
+
+    (6) srx-server build
+    cd ../srx-server/
+    make all install
+
+
+    (7) quagga-srx build
+      
+    autoreconf -i
+    ./configure --prefix=/ --disable-snmp --disable-ospfapi --disable-ospfd --disable-ospf6d \
+                --disable-babeld --disable-doc --disable-tests --enable-user=root --enable-group=root \
+                --enable-configfile-mask=0644 --enable-logfile-mask=0644 \
+                --enable-srxcryptoapi srx_dir=/  sca_dir=/ --enable-grpc grpc_dir=$PWD/../
+
+    make all install
+
+
+
+
+
+    (8) test
+        -- srx_server
+        ./srx_server
+
+        -- client
+        LD_PRELOAD=/root/srx_grpc_v6/srx-server/src/.libs/libSRxProxy.so ./srx_grpc_client
+
+
+
+
+
+
+
+
+
+10. Running logs
+
+  (1) client - srxsvr_client
+
+      proxy: 0x1e2b260,  proxy ID [defaul]: 0a000001, grpcEnabled[1]
+      + pthread grpc service started...
+      [ImpleGoStreamThread:682] arguments proxy: 0x1e2b260, proxyID: 0a000001
+      + GoodBye Stream Thread created 
+      Run Proxy Good Bye Stream 
+      [GoodByeStreamThread:622] arguments proxy: 0x1e2b260, proxyID: 0a000001
+      Run Proxy Stream 
+      [StreamThread:645] arguments proxy: 0x1e2b260, proxyID: 0a000001
+      + General Purpose Stream Thread created 
+      + General Purpose Stream Thread created 
+      SRX API Test Harness Version 0.3
+
+      >> connect_grpc localhost 17900 4 65011
+      PeerAS (enter for stop) ?
+      Connection to localhost is successfully established!
+
+      >> verify_grpc 1 3 65011 100.2.0.0/24 3 3 quit
+      >> => Received validation result for update [uid=0xE2D4FC8F;lid:0x00000001]:  ROA=NOT DEFINED;  BGPSEC=NOT DEFINED
+      >> => Received validation result for update [uid=0xE2D4FC8F;lid:0x00000000]:  BGPSEC=INVALID
+
+      >> quit
+      Release proxy 0.0.0.4 [0x00000004] (4)
+
+
+      send Goodbye! called
+
+      + [sendGoodbye_grpc] :605 
+      Received a communication code [129] subcode:0.
+      Goodbye!
+
+
+  (2) run srx_server first
+
+      [SRxCryptoAPI - INFO] The internal key initialized storage holds (11 private and 6 public keys)!
+      WARNING [10/15/21 02:54.05] The loaded srx-crypto-api plug-in does not support remote control of LOGING configuration - Use API configuration to do so!
+         INFO [10/15/21 02:54.05] - SRx Caches and RPKI Queue created
+         INFO [10/15/21 02:54.05] Register proxyID[0x00000002] as clientID[0x00000001]
+         INFO [10/15/21 02:54.05] Register proxyID[0x0A000001] as clientID[0x0000000A]
+         INFO [10/15/21 02:54.05] Register proxyID[0x0A010102] as clientID[0x00000019]
+         INFO [10/15/21 02:54.05] - All Handlers created
+         INFO [10/15/21 02:54.05] - Command Queue created!
+         INFO [10/15/21 02:54.05] Received an end of data, process RPKI Queue:
+
+         INFO [10/15/21 02:54.05] Server console on port [17901] created.
+         INFO [10/15/21 02:54.05] ([0x00000035] Main): + pthread grpc service started...
+
+         INFO [10/15/21 02:54.05] ([0x00000035] Main): grpc service thread STOPPED and going to joinable status
+         INFO [10/15/21 02:54.05] ([0x00000035] Main): + pthread grpc service thread stopped and going to joinable status
+
+         INFO [10/15/21 02:54.05] ([0x00000035] Main): [server] created GRPC Service thread
+
+         INFO [10/15/21 02:54.05] SRX server running, control via telnet on port 17901
+         INFO [10/15/21 02:54.05] ([0xA2FFD700] Main): ([0x00000001]) > gRPC Server Thread started
+         INFO [10/15/21 02:54.05] ([0x00000035] Main): ++ pthread grpc service thread started...
+
+         INFO [10/15/21 02:54.26] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 0
+
+  ----------------------------------------------------------
+  ==> client command :  connect_grpc localhost 17900 4 65011
+  ----------------------------------------------------------
+      00 00 02 00 00 00 00 14 00 00 00 04 00 00 00 32
+      00 00 00 00
+         INFO [10/15/21 02:54.26] Register proxyID[0x00000004] as clientID[0x00000002]
+         INFO [10/15/21 02:54.26] ([0x00000004] GRPC_ServiceHandler): [SRx server] proxyID: 2 --> mapping[clientID:-1946154784] cthread: (nil)
+
+         INFO [10/15/21 02:54.26] Handshake: Connection to proxy[0x00000004] accepted. Proxy registered as internal client[0x02]
+
+
+
+  -----------------------------------------------------------------
+  ==> client command :  verify_grpc 1 3 65011 100.2.0.0/24 3 3 quit
+  -----------------------------------------------------------------
+         INFO [10/15/21 02:54.43] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 0
+
+
+      03 83 03 03 00 00 00 a9 03 03 00 18 00 00 00 01
+      64 02 00 00 00 00 fd f3 00 00 00 71 00 01 00 6d
+      00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00
+      00 00 00 00 00 00 fd ed 00 00 fd f3 90 21 00 69
+      00 08 01 00 00 00 fd f3 00 61 01 c3 04 33 fa 19
+      75 ff 19 31 81 45 8f b9 02 b5 01 ea 97 89 dc 00
+      48 30 46 02 21 00 bd 92 9e 69 35 6e 7b 6c fe 1c
+      bc 3c bd 1c 4a 63 8d 64 5f a0 b7 20 7e f3 2c cc
+      4b 3f d6 1b 5f 46 02 21 00 b6 0a 7c 82 7f 50 e6
+      5a 5b d7 8c d1 81 3d bc ca a8 2d 27 47 60 25 e0
+      8c da 49 f9 1e 22 d8 c0 8e
+         INFO [10/15/21 02:54.43] ([0xAA102700] GRPC_ServiceHandler): Enter processValidationRequest
+         INFO [10/15/21 02:54.43] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.roaResult : 00
+
+         INFO [10/15/21 02:54.43] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.bgpsecResult : 00
+
+         INFO [10/15/21 02:54.43] ([0xAA102700] GRPC_ServiceHandler): Exit processValidationRequest
+      [SRxCryptoAPI - DEBUG] NO KEY -> VERIFY FAILED (SKI: C30433FA)
+         INFO [10/15/21 02:54.50] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 0
+
+
+  ---------------------------
+  ==> client command :  quit
+  ---------------------------
+      02 03 84 00 00 00 00 08
+         INFO [10/15/21 02:54.50] Client connection [ID:4] closed!
+
+
+
+
+
+
+
+  (3) Running QuaggaSRx and SRx_server and Received from Exabgp-srx
+
+    A. QuaggaSRx 
+
+      idac.server02-antd [2002]{.../srx_grpc/test}-> sudo ../qsrx/bgpd/bgpd -f ./bgpd.grpc.conf
+      [SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+      [SRxCryptoAPI - INFO] Use crypto configuration located in /opt/project/srx_test1/api/../_inst/etc//srxcryptoapi.conf
+      [SRxCryptoAPI - INFO] Use configuration file "/opt/project/srx_test1/api/../_inst/etc//srxcryptoapi.conf"
+      [SRxCryptoAPI - INFO] - debug type: 7
+       sca_SetKeyPath called and param: /opt/project/srx_test1/keys/
+      _keyPath: /opt/project/srx_test1/keys/
+       +++ sca_SetKeyPath _keyPath: /opt/project/srx_test1/keys/
+      [SRxCryptoAPI - INFO] - key_volt="/opt/project/srx_test1/keys/"
+      [SRxCryptoAPI - INFO] - key_ext_private="der"
+      [SRxCryptoAPI - INFO] - key_ext_public="cert"
+
+      ...........................<snip>................................
+
+      [SRxCryptoAPI - INFO] Linking "cleanPrivateKeys" to default method!
+      [SRxCryptoAPI - INFO] Initiate library initialization using 'PUB:/opt/project/srx_test1/keys/ski-list.txt;PRIV:/opt/project/srx_test1/keys/priv-ski-list.txt'
+      [SRxCryptoAPI - DEBUG] +++ init called
+      [SRxCryptoAPI - DEBUG] value: PUB:/opt/project/srx_test1/keys/ski-list.txt;PRIV:/opt/project/srx_test1/keys/priv-ski-list.txt
+      [SRxCryptoAPI - DEBUG] +++ logLevel: 7
+      +--------------------------------------------------------------+
+      | API: libBGPSec_OpenSSL.so                                    |
+      | WARNING: This API provides a reference implementation for    |
+      | BGPSec crypto processing. The key storage provided with this |
+      | API does not provide a 'secure' key storage which protects   |
+      | against malicious side attacks. Also it is not meant to be   |
+      | a FIBS certified key storage.                                |
+      | This API uses open source OpenSSL functions and checks, keys |
+      | for their correctness and once done, uses it repeatedly!     |
+      +--------------------------------------------------------------+
+      [SRxCryptoAPI - DEBUG] +++ string: /opt/project/srx_test1/keys/ski-list.txt isPrivate: 0
+      [SRxCryptoAPI - INFO] +++ key asn: 61ea0000 ski: 492a
+      +++ sca_FindDirInSKI called
+      +++ key path: /opt/project/srx_test1/keys/
+      +++ path:/opt/project/srx_test1/keys/
+      ++++ keyFileName:/opt/project/srx_test1/keys//49/2AAE/72485D926CACDA2D259BE19DAE82DFBDE3
+      +++ sca_FindDirInSKI called
+      +++ key path: /opt/project/srx_test1/keys/
+      +++ path:/opt/project/srx_test1/keys/
+      ++++ keyFileName:/opt/project/srx_test1/keys//30/94E8/2EBCB641976021CDE9857448B9C04DDE64
+
+      ...........................<snip>................................
+
+      [SRxCryptoAPI - INFO] The internal key initialized storage holds (11 private and 10 public keys)!
+      2021/10/20 15:59:49 InitSRxGrpc Called
+      2021/10/20 15:59:49 gRPC Client Initiated and Connected Server Address: localhost:50000
+      proxy: 0xa21c90,  proxy ID [defaul]: 00000000, grpcEnabled[1]
+      + pthread grpc service started...
+      [ImpleGoStreamThread:682] arguments proxy: 0xa21c90, proxyID: 00000000
+      + GoodBye Stream Thread created
+      Run Proxy Good Bye Stream
+      [GoodByeStreamThread:622] arguments proxy: 0xa21c90, proxyID: 00000000
+      + General Purpose Stream Thread created
+      Run Proxy Stream
+      [StreamThread:645] arguments proxy: 0xa21c90, proxyID: 00000000
+      + General Purpose Stream Thread created
+      +++ sca_FindDirInSKI called
+      +++ key path: /opt/project/srx_test1/keys/
+      +++ path:/opt/project/srx_test1/keys/
+      ++++ keyFileName:/opt/project/srx_test1/keys//49/2AAE/72485D926CACDA2D259BE19DAE82DFBDE3
+      Router key: #0, algorithm-id: 1, ski: '492AAE72485D926CACDA2D259BE19DAE82DFBDE3' successfully installed!
+      2021/10/20 15:59:49 BGP: BGPd (+SRx) 0.4.2.7 starting: vty@2605, bgp@<all>:179
+      2021/10/20 15:59:49 BGP: Request to connect to SRx server
+
+      client : main.Client{conn:(*grpc.ClientConn)(0xc000133180), cli:(*srx_grpc.sRxApiClient)(0xc0000d6248)}
+      client.cli : &srx_grpc.sRxApiClient{cc:(*grpc.ClientConn)(0xc000133180)}
+      &{0xc000133180}
+      input data: []byte{0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x14, 0xa, 0x0, 0x14, 0xa1, 0x0, 0x0, 0xea, 0x61, 0x0, 0x0, 0x0, 0x0}
+      + HelloRequest  : srx_grpc.ProxyHelloRequest{Type:0x0, Version:0x2, Zero:0x0, Length:0x14, ProxyIdentifier:0xa0014a1, Asn:0xea61, NoPeerAS:0x0, PeerAS:0x0, XXX_NoUnkeyedLiteral:struct {}{}, XXX_unrecognized:[]uint8(nil), XXX_sizecache:13}
+      + response              : &srx_grpc.ProxyHelloResponse{Type:0x1, Version:0x2, Zero:0x0, Length:0xc, ProxyIdentifier:0xa0014a1, XXX_NoUnkeyedLiteral:struct {}{}, XXX_unrecognized:[]uint8(nil), XXX_sizecache:0}
+      + cb: &[12]main._Ctype_uchar{0x1, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0xc, 0xa, 0x0, 0x14, 0xa1}
+      2021/10/20 15:59:49 BGP: Enabled Distributed Evaluation on SRx server <GRPC>
+      2021/10/20 15:59:49 BGP: Connection to SRx-server succeeded
+      2021/10/20 15:59:59 BGP: Vty connection from ::1
+      2021/10/20 16:00:00 BGP: [BGPSEC]  bgp_open_capability: BGPSEC SEND Capability set for IPv4
+      2021/10/20 16:00:00 BGP: [BGPSEC]  bgp_open_capability: BGPSEC RECV Capability set for IPv4
+      2021/10/20 16:00:00 BGP: unknown afi/safi (1/132)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (1/133)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (1/134)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (2/133)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (2/134)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (25/65)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (25/70)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (16388/71)
+      2021/10/20 16:00:00 BGP: unknown afi/safi (16388/72)
+      2021/10/20 16:00:00 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+      2021/10/20 16:00:00 BGP: [BGPSEC] 10.0.20.162 capability code: 7 length:3 version_dir:00 afi:01
+      2021/10/20 16:00:00 BGP: [BGPSEC] peer Capability RECV set
+      2021/10/20 16:00:00 BGP: [BGPSEC] ------- BGPSEC capability parsing -------
+      2021/10/20 16:00:00 BGP: [BGPSEC] 10.0.20.162 capability code: 7 length:3 version_dir:08 afi:01
+      2021/10/20 16:00:00 BGP: [BGPSEC] peer Capability SEND set
+      2021/10/20 16:00:00 BGP: [BGPSEC] startp:0xa4ac89 length:104 total:108
+      2021/10/20 16:00:00 BGP: [IN] 0xa23ca0 -  startp: 0xa4acf5-- getp:0 endp:104 -- endp(startp+length):0xa4ad5d length:104
+      2021/10/20 16:00:00 BGP: [IN] peer as:60002 peer->local_as:60001 Secure_Path Len:8
+      2021/10/20 16:00:00 BGP: [IN]  Secure_Path segment --> 1 AS:60002
+      2021/10/20 16:00:00 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+      2021/10/20 16:00:00 BGP: [IN]    signature --> 1, Length: 71
+      2021/10/20 16:00:00 BGP: [IN]  bgpsec_parse: return value(final bpa): 0xa23d10
+      2021/10/20 16:00:00 BGP: 10.0.20.162 rcvd UPDATE w/ attr: nexthop 192.0.2.1, origin i, community 65001:666, path 60002
+      2021/10/20 16:00:00 BGP: 10.0.20.162 rcvd 100.1.1.0/24
+      2021/10/20 16:00:00 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0xa26940 aspath:0xa23ef0 (attr interned) bpgsec:0xa23d10
+      2021/10/20 16:00:00 BGP: [BGPSEC] [as_segment:0xa23e80] as_segment_length:1 aspath_refcnt: 2
+
+      30 45 02 21 00 bb e0 7a 94 dd cd 06 13 87 4c 9b
+      88 e9 55 e6 04 59 2d f3 45 e5 51 b1 f1 b2 84 c4
+      cc 02 74 3f d1 02 20 34 68 d3 22 fd a0 78 5c 00
+      35 94 38 8d 2e c7 5f aa 80 c6 55 f9 51 cf fc 83
+      64 e8 1a f0 b2 f5 18  - from[print_signature]
+      2021/10/20 16:00:00 [WorkerID: 0] Client Context Done
+      2021/10/20 16:00:00 context canceled
+      2021/10/20 16:00:00 BGP: [BGPSEC] startp:0xa4ac89 length:104 total:108
+      2021/10/20 16:00:00 BGP: [IN] 0xa26c60 -  startp: 0xa4acf5-- getp:0 endp:104 -- endp(startp+length):0xa4ad5d length:104
+      2021/10/20 16:00:00 BGP: [IN] peer as:60002 peer->local_as:60001 Secure_Path Len:8
+      2021/10/20 16:00:00 BGP: [IN]  Secure_Path segment --> 1 AS:60002
+      2021/10/20 16:00:00 BGP: [IN] Secure_Block --> 1, AlgoID: 1, Length: 96
+      2021/10/20 16:00:00 BGP: [IN]    signature --> 1, Length: 71
+      2021/10/20 16:00:00 BGP: [IN]  bgpsec_parse: return value(final bpa): 0xa26cd0
+      2021/10/20 16:00:00 BGP: 10.0.20.162 rcvd UPDATE w/ attr: nexthop 192.0.2.1, origin i, community 65002:667, path 60002
+      2021/10/20 16:00:00 BGP: 10.0.20.162 rcvd 200.1.1.0/24
+      2021/10/20 16:00:00 BGP: [BGPSEC] ----[bgp_update_main]: ATTRIBUTE: attr:0xa26ad0 aspath:0xa23ef0 (attr interned) bpgsec:0xa26cd0
+      2021/10/20 16:00:00 BGP: [BGPSEC] [as_segment:0xa23e80] as_segment_length:1 aspath_refcnt: 3
+
+      30 45 02 20 65 a9 eb 64 21 8d ba 97 fe 89 66 b3
+      99 64 da f5 69 04 de f8 bd b2 3d e1 d7 ce 27 d8
+      c7 70 ce 10 02 21 00 9c fe ae ce 0c 53 ed 42 1e
+      0a 3c 44 ad c3 bd a8 88 fb cb dc 8d 63 80 54 e4
+      b3 86 83 a0 ef 74 ce  - from[print_signature]
+      2021/10/20 16:00:00 [WorkerID: 0] Client Context Done
+      2021/10/20 16:00:00 context canceled
+      2021/10/20 16:00:10 [client] EOF close
+      2021/10/20 16:00:10 [client] EOF close
+      ^[kkkkk^C2021/10/20 16:01:39 BGP: Terminating on signal
+
+
+      send Goodbye! called
+
+      + [sendGoodbye_grpc] :605
+      + [grpc client] Goobye function: input parameter: main._Ctype_struct___0{_type:0x2, _:[2]uint8{0x3, 0x84}, zero:0x0, length:0x8000000}
+      + [grpc client] Goobye function: size: 8
+      + [grpc client] Goodbye out bytes: main.Go_ProxyGoodBye{_type:0x2, _keepWindow:0x384, _zero:0x0, _length:0x8}
+      2021/10/20 16:01:39 + [grpc client] GoodByeRequest      : srx_grpc.ProxyGoodByeRequest{Type:0x2, KeepWindow:0x384, Zero:0x0, Length:0x8, GrpcClientID:0xa0014a1, XXX_NoUnkeyedLiteral:struct {}{}, XXX_unrecognized:[]uint8(nil), XXX_sizecache:12}
+      2021/10/20 16:01:39 + [grpc client] response            : &srx_grpc.ProxyGoodByeResponse{Status:true, XXX_NoUnkeyedLiteral:struct {}{}, XXX_unrecognized:[]uint8(nil), XXX_sizecache:0}
+      2021/10/20 16:01:39 BGP:  Disconnect or lost connection , respawn thread add timer
+
+
+
+    B. SRx_server
+
+      idac.server02-antd [2003]{.../srx/src}-> ./srx_server
+      Start SRx Server Version 0.5.1.0 (16:49:53)
+         INFO [10/20/21 03:59.46] - Configuration processed
+      [SRxCryptoAPI - INFO] Preset local wrapper for all methods!
+      [SRxCryptoAPI - INFO] Use crypto configuration located in /opt/project/srx_test1/api/../_inst/etc//srxcryptoapi.conf
+      [SRxCryptoAPI - INFO] Use configuration file "/opt/project/srx_test1/api/../_inst/etc//srxcryptoapi.conf"
+      [SRxCryptoAPI - INFO] - debug type: 7
+       sca_SetKeyPath called and param: /opt/project/srx_test1/keys/
+      _keyPath: /opt/project/srx_test1/keys/
+       +++ sca_SetKeyPath _keyPath: /opt/project/srx_test1/keys/
+      [SRxCryptoAPI - DEBUG] +++ init called
+      [SRxCryptoAPI - DEBUG] value: PUB:/opt/project/srx_test1/keys/ski-list.txt;PRIV:/opt/project/srx_test1/keys/priv-ski-list.txt
+      [SRxCryptoAPI - DEBUG] +++ logLevel: 7
+      +--------------------------------------------------------------+
+      | API: libBGPSec_OpenSSL.so                                    |
+      | WARNING: This API provides a reference implementation for    |
+      | BGPSec crypto processing. The key storage provided with this |
+      | API does not provide a 'secure' key storage which protects   |
+      | against malicious side attacks. Also it is not meant to be   |
+      | a FIBS certified key storage.                                |
+      | This API uses open source OpenSSL functions and checks, keys |
+      | for their correctness and once done, uses it repeatedly!     |
+      +--------------------------------------------------------------+
+      [SRxCryptoAPI - DEBUG] +++ string: /opt/project/srx_test1/keys/ski-list.txt isPrivate: 0
+      [SRxCryptoAPI - INFO] +++ key asn: 61ea0000 ski: 492a
+
+      .....................................<snip>......................................
+
+      [SRxCryptoAPI - INFO] The internal key initialized storage holds (11 private and 10 public keys)!
+      WARNING [10/20/21 03:59.46] The loaded srx-crypto-api plug-in does not support remote control of LOGING configuration - Use API configuration to do so!
+         INFO [10/20/21 03:59.46] - SRx Caches and RPKI Queue created
+         INFO [10/20/21 03:59.46] Failed to open TCP connection to the server at localhost:323
+         INFO [10/20/21 03:59.46] Register proxyID[0x00000002] as clientID[0x00000001]
+         INFO [10/20/21 03:59.46] Register proxyID[0x0A000001] as clientID[0x0000000A]   INFO
+      [10/20/21 03:59.46] Connection to RPKI/Router protocol server lost - reconnecting after 30sec
+         INFO [10/20/21 03:59.46] Register proxyID[0x0A010102] as clientID[0x00000019]
+         INFO [10/20/21 03:59.46] - All Handlers created
+         INFO [10/20/21 03:59.46] - Command Queue created!
+         INFO [10/20/21 03:59.46] Server console on port [17901] created.
+         INFO [10/20/21 03:59.46] ([0x00003634] Main): + pthread grpc service started...
+
+         INFO [10/20/21 03:59.46] ([0x00003634] Main): grpc service thread STOPPED and going to joinable status
+         INFO [10/20/21 03:59.46] ([0x00003634] Main): + pthread grpc service thread stopped and going to joinable status
+
+         INFO    INFO [10/20/21 03:59.46] ([0x00003634] Main): [server] created GRPC Service thread
+
+      [10/20/21 03:59.46] ([0xB3FFF700] Main): ([0x00000000]) > gRPC Server Thread started
+         INFO [10/20/21 03:59.46] ([0x00003634] Main): ++ pthread grpc service thread started...
+
+         INFO [10/20/21 03:59.46] SRX server running, control via telnet on port 17901
+         INFO [10/20/21 03:59.49] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 0
+
+
+      00 00 02 00 00 00 00 14 0a 00 14 a1 00 00 ea 61
+      00 00 00 00
+         INFO [10/20/21 03:59.49] Register proxyID[0x0A0014A1] as clientID[0x00000002]
+         INFO [10/20/21 03:59.49] ([0x0A0014A1] GRPC_ServiceHandler): [SRx server] proxyID: 2 --> mapping[clientID:-1275065520] cthread: (nil)
+
+         INFO [10/20/21 03:59.49] Handshake: Connection to proxy[0x0A0014A1] accepted. Proxy registered as internal client[0x02]
+         INFO [10/20/21 04:00.00] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 1
+
+
+      03 83 01 01 00 00 00 a8 03 03 00 18 00 00 00 01
+      64 01 01 00 00 00 ea 62 00 00 00 70 00 01 00 6c
+      00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00
+      00 00 00 00 00 00 ea 61 00 00 ea 62 90 21 00 68
+      00 08 01 00 00 00 ea 62 00 60 01 45 ca d0 ac 44
+      f7 7e fa a9 46 02 e9 98 43 05 21 5b f4 7d cd 00
+      47 30 45 02 21 00 bb e0 7a 94 dd cd 06 13 87 4c
+      9b 88 e9 55 e6 04 59 2d f3 45 e5 51 b1 f1 b2 84
+      c4 cc 02 74 3f d1 02 20 34 68 d3 22 fd a0 78 5c
+      00 35 94 38 8d 2e c7 5f aa 80 c6 55 f9 51 cf fc
+      83 64 e8 1a f0 b2 f5 18
+         INFO [10/20/21 04:00.00] ([0xBBFFF700] GRPC_ServiceHandler): Enter processValidationRequest
+         INFO [10/20/21 04:00.00] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.roaResult : 01
+
+         INFO [10/20/21 04:00.00] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.bgpsecResult : 01
+
+         INFO [10/20/21 04:00.00] ([0xBBFFF700] GRPC_ServiceHandler): Exit processValidationRequest
+      [SRxCryptoAPI - DEBUG]
+      Hash(validate):
+      00 00 ea 61 01 00 00 00 ea 62 01 00 01 01 18 64
+      01 01
+      [SRxCryptoAPI - DEBUG]
+      Digest(validate):
+      32 a5 4b 63 0d 6b 03 93 2f 0f ef 58 2a d7 7f bb
+      0e f6 74 04 2f cb b0 22 92 63 ea a4 74 55 55 e0
+      [SRxCryptoAPI - DEBUG] stack[1] VERIFY SUCCESS  1
+         INFO [10/20/21 04:00.00] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 1
+
+
+      03 83 01 01 00 00 00 a8 03 03 00 18 00 00 00 02
+      c8 01 01 00 00 00 ea 62 00 00 00 70 00 01 00 6c
+      00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00
+      00 00 00 00 00 00 ea 61 00 00 ea 62 90 21 00 68
+      00 08 01 00 00 00 ea 62 00 60 01 45 ca d0 ac 44
+      f7 7e fa a9 46 02 e9 98 43 05 21 5b f4 7d cd 00
+      47 30 45 02 20 65 a9 eb 64 21 8d ba 97 fe 89 66
+      b3 99 64 da f5 69 04 de f8 bd b2 3d e1 d7 ce 27
+      d8 c7 70 ce 10 02 21 00 9c fe ae ce 0c 53 ed 42
+      1e 0a 3c 44 ad c3 bd a8 88 fb cb dc 8d 63 80 54
+      e4 b3 86 83 a0 ef 74 ce
+         INFO [10/20/21 04:00.00] ([0xB2FFD700] GRPC_ServiceHandler): Enter processValidationRequest
+         INFO [10/20/21 04:00.00] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.roaResult : 01
+
+         INFO [10/20/21 04:00.00] ([0x00000003] GRPC_ServiceHandler): + from updata cache srxRes.bgpsecResult : 01
+
+         INFO [10/20/21 04:00.00] ([0xB2FFD700] GRPC_ServiceHandler): Exit processValidationRequest
+      [SRxCryptoAPI - DEBUG]
+      Hash(validate):
+      00 00 ea 61 01 00 00 00 ea 62 01 00 01 01 18 c8
+      01 01
+      [SRxCryptoAPI - DEBUG]
+      Digest(validate):
+      dc b0 58 6a b4 24 86 12 f6 73 77 76 1f 3a df 33
+      0f bf 20 08 ce 81 16 a5 e5 c9 d8 4d d3 05 47 e5
+      [SRxCryptoAPI - DEBUG] stack[1] VERIFY SUCCESS  2
+         INFO [10/20/21 04:01.39] ([0x00000006] GRPC_ServiceHandler): srx server log Level: 0
+
+
+      02 03 84 00 00 00 00 08
+         INFO [10/20/21 04:01.39] Client connection [ID:167777441] closed!
+      ^C   INFO [10/20/21 04:01.42] Signal (2) received - stopping
+         INFO [10/20/21 04:01.42] SRx server shutdown...
+         INFO [10/20/21 04:01.42] Server Connection Handler Receiver Queue received shutdown!
+         INFO [10/20/21 04:01.42] SRX server stopped
+         INFO [10/20/21 04:01.42] Enter release Server Connection Handler Receiver Queue...
+         INFO [10/20/21 04:01.42] .. Exit release Server Connection Handler Receiver Queue!
+        ERROR [10/20/21 04:01.42] releasePrefixCache (server/prefix_cache.c:285) Check if the treeNode has to be released independent or if it gets released with the Destroy_Patricia!
+        ERROR [10/20/21 04:01.42] releaseUpdateCache (server/update_cache.c:330) Release Update Cache also should empty the cache first!
+        ERROR [10/20/21 04:01.42] Unknown Cleaning Type [2]
+        ERROR [10/20/21 04:01.42] ski_releaseCache: Could not clean SKI CACHE during release.
+      Goodbye!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

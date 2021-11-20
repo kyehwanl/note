@@ -38,7 +38,7 @@ gRPC protocol buffer compilation issues
 
 (4) My solution
 
-    - in srx_grpc.proto, added following line
+    - in srx_grpc.proto, added following line, (old protoc version doesn't need)
     
       option go_package = "./";
 

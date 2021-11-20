@@ -1,0 +1,53 @@
+
+
+
+
+
+ build error troubleshoot
+=========================
+
+    (Issue)
+      [root@29b32c75f5a0 client]# go build -gcflags '-N -l' srx_grpc_client.go
+      go: finding module for package google.golang.org/grpc
+      go: finding module for package golang.org/x/net/context
+      go: downloading golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+      go: downloading google.golang.org/grpc v1.42.0
+      go: found golang.org/x/net/context in golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+      go: found google.golang.org/grpc in google.golang.org/grpc v1.42.0
+      go: google.golang.org/grpc@v1.42.0 requires
+              google.golang.org/genproto@v0.0.0-20200526211855-cb27e3aa2013 requires
+              google.golang.org/protobuf@v1.23.1-0.20200526195155-81db48ad09cc: invalid version: git fetch --unshallow -f origin in /root/go/pkg/mod/cache/vcs/a6c5d6b8734f41936247415390043c979295646fadef73c39eedc1735cd0fef4: exit status 128:
+              fatal: git fetch-pack: expected shallow list
+
+
+    (reason)
+    --> This error related to the old version of git, which is being used v1.8, mismatched with grpc v.1.42
+
+        [root@29b32c75f5a0 client]# go version
+        go version go1.15.14 linux/amd64
+        [root@29b32c75f5a0 client]# git version
+        git version 1.8.3.1
+
+    (solution)
+        (https://github.com/golang/go/issues/38373)
+        yum -y erase github
+        yum -y install https://repo.ius.io/ius-release-el7.rpm
+        yum -y install git222
+
+    (Cautioin)
+        golang and golang-bin will be removed when erased the original git v1.8,
+        so, need to reinstall golang
+
+
+
+
+(source: https://github.com/golang/go/issues/38373)
+
+We have had similar issues running Bitbucket on RHEL7 in production needing a later version of the Git client. We have always found the IUS version to be very stable for production. Go to https://repo.ius.io/ to learn more.
+
+Here are the basic steps to get the newer version of Git on Centos7/RHEL7:
+
+yum -y erase git
+yum -y install https://repo.ius.io/ius-release-el7.rpm
+yum -y install git222
+After updating to Git 2.2.2 the go get commands were successful.
