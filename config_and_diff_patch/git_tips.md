@@ -478,6 +478,43 @@ Useful Tips
             ...
 
 
+Git Submodule
+=============
+
+1. Add repository for submodule
+     git submodule add https://github.com/usnistgov/NIST-BGP-SRx.git
+
+
+2. After Clone MainProject, to download submodule
+
+    (1) $ git clone https://github.com/chaconinc/MainProject
+    (2) $ git submodule init
+    (3) $ git submodule update
+
+
+3. little shorter way
+    (1)+(2)+(3):
+    $ git clone --recurse-submodules https://github.com/chaconinc/MainProject
+
+
+
+    If you already cloned the project and forgot --recurse-submodules, 
+    you can combine the git submodule init and git submodule update steps by running 
+    
+       $ git submodule update --init. 
+
+    To also initialize, fetch and checkout any nested submodules, you can use the foolproof 
+
+       $ git submodule update --init --recursive
+
+
+
+
+
+
+
+
+
 
 
 
