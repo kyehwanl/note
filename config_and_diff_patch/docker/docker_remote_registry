@@ -328,3 +328,61 @@
       --> TODO: solve the Question
     
 
+
+ (5) Delete image <-- unsolved
+
+    (https://stackoverflow.com/questions/25436742/how-to-delete-images-from-a-private-docker-registry)
+    (https://azizunsal.github.io/blog/post/delete-images-from-private-docker-registry/)
+
+
+      vmware.011-antd [2002]{.../src/srx_grpc_v6}-> curl -k https://10.0.50.11:5000/v2/_catalog
+      {"repositories":["exabgpsec_src","gobgpsec_src","nist-bgp-srx","srx","srx-swarm","srx_grpc","srxcryptoapi_src","srxsuite_gl","srxsuite_src"]}
+      vmware.011-antd [2003]{.../src/srx_grpc_v6}->
+      vmware.011-antd [2003]{.../src/srx_grpc_v6}->
+      vmware.011-antd [2003]{.../src/srx_grpc_v6}-> curl -k https://10.0.50.11:5000/v2/
+      {}vmware.011-antd [2004]{.../src/srx_grpc_v6}-> curl -k https://10.0.50.11:5000/v2/srx_grpc/tags/list
+      {"name":"srx_grpc","tags":["latest","6"]}
+      vmware.011-antd [2005]{.../src/srx_grpc_v6}-> curl -k https://10.0.50.11:5000/v2/srx_grpc/manifests/6 -H 'Accept: application/vnd.docker.distribution.manifest.v2+json'
+      {
+         "schemaVersion": 2,
+         "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+         "config": {
+            "mediaType": "application/vnd.docker.container.image.v1+json",
+            "size": 2763,
+            "digest": "sha256:776ee80efdcefa911e4923be797a6adf6e321df74853074f1d68326249bef48b"
+         },
+         "layers": [
+            {
+               "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+               "size": 76097157,
+               "digest": "sha256:2d473b07cdd5f0912cd6f1a703352c82b512407db6b05b43f2553732b55df3bc"
+            },
+            {
+               "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+               "size": 922043712,
+               "digest": "sha256:455fa044beb1a1e26b1efbfcae5dedb3d80a656e908df6cc0fd3a38833b10179"
+            }
+         ]
+      }vmware.011-antd [2006]{.../src/srx_grpc_v6}-> curl -X DELETE http://10.0.50.11:5000/v2/srx_grpc/manifests/sha256:776ee80efdcefa911e4923be97a6adf6e321df74853074f1d68326249bef48b -v
+      * About to connect() to 10.0.50.11 port 5000 (#0)
+      *   Trying 10.0.50.11...
+      * Connected to 10.0.50.11 (10.0.50.11) port 5000 (#0)
+      > DELETE /v2/srx_grpc/manifests/sha256:776ee80efdcefa911e4923be797a6adf6e321df74853074f1d68326249bef48b HTTP/1.1
+      > User-Agent: curl/7.29.0
+      > Host: 10.0.50.11:5000
+      > Accept: */*
+      >
+
+      * Connection #0 to host 10.0.50.11 left intact
+      vmware.011-antd [2007]{.../src/srx_grpc_v6}->
+      vmware.011-antd [2007]{.../src/srx_grpc_v6}->
+      vmware.011-antd [2007]{.../src/srx_grpc_v6}-> curl -k https://10.0.50.11:5000/v2/_catalog
+      {"repositories":["exabgpsec_src","gobgpsec_src","nist-bgp-srx","srx","srx-swarm","srx_grpc","srxcryptoapi_src","srxsuite_gl","srxsuite_src"]}
+
+
+    --> Need to garbage collector run
+
+
+
+
+      
