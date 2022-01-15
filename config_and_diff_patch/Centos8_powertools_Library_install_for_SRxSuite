@@ -1,0 +1,49 @@
+
+
+Centos 8 NIST-BGP-SRx necessary libraries install 
+==================================================
+
+1. PowerTools is necessary 
+(https://computingforgeeks.com/enable-powertools-repository-on-centos-rhel-linux/)
+
+  The PowerTools repository is not enabled by default on CentOS 8 / Rocky Linux 8 / RHEL 8 Linux. 
+  This repository contains a number of packages required as dependencies when installing other applications, 
+  and mostly building applications from source code.
+
+    (1)  First install DNF plugins package 
+
+        dnf -y install dnf-plugins-core
+        dnf upgrade
+
+    (2) Install EPEL repository – 
+        PowerTools repository & EPEL repository are best friends. So enable EPEL repository as well.
+
+        dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+
+    (3) Enable PowerTools Repository on CentOS 8 / Rocky Linux 8 / RHEL 8
+
+        dnf config-manager --set-enabled powertools
+
+
+2. with Yum
+
+    (1) yum -y install dnf-plugins-core
+    (2) yum -y install epel-release
+    (3) yum -y upgrade (but, yum update is safer, because upgrade removes obsolete packages)
+    (4) yum config-manager --set-enabled powertools
+
+    (5) install necessary libraries for installing SRx Suite
+        yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* telnet less gcc
+        yum -y install uthash-devel net-snmp readline-devel patch git net-snmp-devel automake rpm-build autoconf libtool 
+
+
+3. github, install script
+
+(1) yum -y install git dnf-plugins-core gcc patch openssl epel-release autoconf net-tools bind-utils sudo which sed telnet
+(2) yum config-manager --set-enabled powertools
+(3) yum -y install make tar patch file screen libconfig-devel openssl-devel uthash-devel readline-devel net-snmp-devel”
+
+
+
+

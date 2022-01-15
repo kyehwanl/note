@@ -59,6 +59,11 @@ find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
 * patch command
     $ patch -i <patchFileName> -p <num of leading slashes> [--dry-run]
 
+        For example, suppose the file name in the patch file is /gnu/src/emacs/etc/NEWS. 
+        Using -p0 gives the entire file name unmodified, -p1 gives gnu/src/emacs/etc/NEWS (no leading slash), 
+        -p4 gives etc/NEWS, and not specifying -p at all gives NEWS. 
+
+
     - instead of '-i' option, "< filename" can be used
     - "-R" reverse patch
 

@@ -1,0 +1,23 @@
+
+
+in Makefile, all-am orders
+===========================
+
+Centos 7, ubuntu 16, all-am build orders are below
+
+    all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(DATA) $(HEADERS) 
+
+But, Centos 8, 
+
+    all-am: Makefile $(PROGRAMS) $(LIBRARIES) $(DATA) $(HEADERS) 
+
+    --> LIBRARIES and PROGRAMS are reversed
+
+
+
+<issues>
+    LIBRARIES has one library which has _DEPENDENCIES, it needs to run before PROGRAM build
+    So, it will have some errors when PROGRAMS runs first.
+
+
+

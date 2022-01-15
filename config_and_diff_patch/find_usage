@@ -193,6 +193,18 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 
 
 
+10. Exclude files
+==================
+(https://stackoverflow.com/questions/22558245/exclude-list-of-files-from-find)
+
+(1) find /dir -name "*.gz" ! -name first_skip ! -name second_skip .... etc
+
+    ex) find ./ \( -name '*.[ch]' -o -name '*.am' -o -name '*.ac' -o -name '*.conf' \) ! -name 'config.h' ! -name 'srxproxy64.conf'
+
+
+(2) I don't think find has an option like this, you could build a command using printf and your exclude list:
+
+    find /dir -name "*.gz" $(printf "! -name %s " $(cat skip_files))
 
 
 
@@ -200,7 +212,11 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 
 
 
+ETC. Latest use case
+=====================
 
+(1) in vifm 
+    find ./ \( -name '*.[ch]' -o -name '*.am' -o -name '*.ac' -o -name '*.conf' \) ! -name 'config.h' ! -name 'srxproxy64.conf' -exec diff -wibuNp %D/{} {} \; > temp1-gitlab.patch
 
 
 

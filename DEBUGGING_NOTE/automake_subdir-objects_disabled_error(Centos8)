@@ -74,3 +74,49 @@ in Centos 8, it occurs
   b) adding AUTOMAKE_OPTIONS = subdir-objects to Makefile.am
   AUTOMAKE_OPTIONS = subdir-objects
 
+
+
+
+
+
+<case 2>
+=========
+
+[root@7972671e113d srx-server]# autoreconf
+automake: warnings are treated as errors
+Makefile.am:115: warning: source file '$(CLIENT_DIR)/client_connection_handler.c' is in a subdirectory,
+Makefile.am:115: but option 'subdir-objects' is disabled
+automake: warning: possible forward-incompatibility.
+automake: At least a source file is in a subdirectory, but the 'subdir-objects'
+automake: automake option hasn't been enabled.  For now, the corresponding output
+automake: object file(s) will be placed in the top-level directory.  However,
+automake: this behaviour will change in future Automake versions: they will
+automake: unconditionally cause object files to be placed in the same subdirectory
+automake: of the corresponding sources.
+automake: You are advised to start using 'subdir-objects' option throughout your
+automake: project, to avoid future incompatibilities.
+Makefile.am:115: warning: source file '$(CLIENT_DIR)/srx_api.c' is in a subdirectory,
+Makefile.am:115: but option 'subdir-objects' is disabled
+Makefile.am:95: warning: source file '$(CLIENT_DIR)/grpc_client_service.c' is in a subdirectory,
+Makefile.am:95: but option 'subdir-objects' is disabled
+Makefile.am:90: warning: source file '$(SERVER_DIR)/grpc_service.c' is in a subdirectory,
+Makefile.am:90: but option 'subdir-objects' is disabled
+Makefile.am:60: warning: source file '$(SHARED_DIR)/srx_packets.c' is in a subdirectory,
+Makefile.am:60: but option 'subdir-objects' is disabled
+Makefile.am:60: warning: source file '$(SHARED_DIR)/srx_identifier.c' is in a subdirectory,
+
+
+
+<solution>
+(http://blog.benjaminlipton.com/2016/06/14/automake.html)
+
+in srx-server, configure.ac
+
+-AM_INIT_AUTOMAKE([foreign])
++AM_INIT_AUTOMAKE([foreign subdir-objects])
+
+
+in srx-server/src, configure.ac
+
+-AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability])
++AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability foreign subdir-objects])
