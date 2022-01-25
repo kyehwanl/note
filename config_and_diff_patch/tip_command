@@ -437,6 +437,20 @@ Other methods use more destructive means, which close all the applications, this
 
 
 
+(30) LS_COLORS env variable
+============================
+When directory coloring doesn't appear in clear, bright, 
+Use the blow command into .bashrc or command line 
+
+    export LS_COLORS=$LS_COLORS:"di=38;5;27:" 
+
+
+
+
+
+
+
+
 (ETC)
 =================================
 A. show file types except source files in project directory
