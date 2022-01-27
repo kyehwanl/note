@@ -23,6 +23,13 @@ tmux select-pane -t 1
 tmux send-keys "cd /opt/project/Github_usnistgov/NIST-BGP-SRx" C-m
 tmux send-keys "sudo quagga-srx/bgpd/bgpd -f /opt/project/docker_test/bgpsecImples/bgpd.docker.conf.bgpsec.test3" C-m
 
+tmux split-window -v    # -h: horizontal split [ | ], -v: vertical split [ - ]
+tmux select-pane -t 2
+tmux send-keys "sudo -s" C-m
+tmux send-keys "docker run --rm -it --name exabgpsec02    -p 1792:179  -v /opt/project/docker_test/bgpsecImples/:/etc/bgpsecImples/   -v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys     10.0.50.11:5000/exabgpsec_src  bash" C-m
+sleep 1
+tmux send-keys "env exabgp.daemon.user=root exabgp /etc/bgpsecImples/exabgp.docker.conf.bgpsec" C-m
+
 
 
 # setup a new window

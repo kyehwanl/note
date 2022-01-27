@@ -864,6 +864,7 @@ gvim file1.c file2.c lib/lib.h lib/lib2.h : load files for "session"
 :q
 gvim -S                           : Reload all files (loads Session.vim) [C]
 gvim -S MySession.vim             : Reload all files from named session [C]
+:source MySession.vim             : load the session data
 ----------------------------------------
 #tags (jumping to subroutines/functions)
 taglist.vim                       : popular plugin
