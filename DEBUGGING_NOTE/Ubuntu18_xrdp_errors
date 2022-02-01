@@ -1,0 +1,89 @@
+
+
+Ubuntu 18 Xrdp errors
+======================
+
+
+1. channel 3: open failed: connect failed: Connection refused
+
+    1.1 cause: xrdp not exist
+    1.2 solution: install xrdp
+
+
+
+
+2. error message:
+
+ "because of a security error the client not connect to the remote computer.
+  Verify that you are logged on to the network..."
+
+
+  2.1 cause : look into logs
+
+
+      vmware.062 [2030]{~}-> sudo tail -f /var/log/xrdp.log
+      20220131-10:39:20] [INFO ] Using default X.509 certificate: /etc/xrdp/cert.pem
+      20220131-10:39:20] [INFO ] Using default X.509 key file: /etc/xrdp/key.pem
+      20220131-10:39:20] [ERROR] Cannot read private key file /etc/xrdp/key.pem: Permission denied
+      20220131-10:39:20] [DEBUG] TLSv1.2 enabled
+      20220131-10:39:20] [DEBUG] TLSv1.1 enabled
+      20220131-10:39:20] [DEBUG] TLSv1 enabled
+      20220131-10:39:20] [DEBUG] Security layer: requested 0, selected 0
+      20220131-10:39:20] [INFO ] connected client computer name: PG901938
+      20220131-10:39:20] [INFO ] Non-TLS connection established from ::ffff:129.6.140.223 port 40212: encrypted with standard RDP securit
+      20220131-10:39:20] [DEBUG] Closed socket 12 (AF_INET6 ::ffff:10.0.50.62 port 3389)
+      20220131-10:42:18] [DEBUG] Closed socket 11 (AF_INET6 :: port 3389)
+      20220131-10:42:18] [DEBUG] Testing if xrdp can listen on 0.0.0.0 port 3389.
+      20220131-10:42:18] [DEBUG] Closed socket 7 (AF_INET6 :: port 3389)
+    ...
+
+
+    There is an error "etc/xrdp/key.pem: Permission denied"
+
+
+    2.2 solution
+    (https://c-nergy.be/blog/?p=13708)
+
+    Option 1 – Change Permissions (Not the best option)
+    I mention this option because I have seen a lot of people using it.  
+    This was basically the easiest way to fix their issue at that moment.  
+    Based on our analysis, the Others group has no access to the folders and file needed by xRDP.  
+    So, by changing this and providing read only access to the resources should fix our issue.  
+    As shown in the following two screenshots, from nautilus (started as admin), 
+    we have changed the permissions on the folder and file located at /etc/ssl/private
+
+
+    After that, try your xRDP connection and check again the /vart/log/xrdp.log file 
+    and you should see that the warning/error is gone. 
+
+
+
+    Option 2 – add user xrdp into ssl-cert group (BETTER solution) --> solved my problem !!
+
+    This would be the recommended approach. 
+    Updating the group membership for the ssl-cert group with the appropriate user account should fix the issue.   
+    The information is not new as Martin Thiago (see this post) shared it already.  
+    To fix this minor issue without changing file system permission, 
+    you would simply need to add the user account called xrdp into the group called ssl-cert.  
+    you can achieve this by executing the following command 
+
+    sudo adduser xrdp ssl-cert  
+
+    With no more actions, 
+    if you try to perform an xRDP login again, you will notice that the error is still generated 
+    and logged in the /var/log/xrdp.log.  To ensure that the change fixes the issue, 
+    you also need to restart the xrdp services or simply reboot the machine ensuring that the group memberhsip 
+    is updated and the correct information is read by the system.  
+
+
+    And then, restart xrdp and ssh 
+
+    sudo service xrdp restart
+
+
+
+
+3. xrdp session: Login failed for display 0
+
+    3.1 cause: wrong id/ password
+
