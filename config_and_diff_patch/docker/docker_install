@@ -76,7 +76,7 @@ HOW TO INSTALL DOCKER ON CENTOS 7
 
 
 
-DOCKER INSTALLATION ON UBUNTU 16
+DOCKER INSTALLATION ON UBUNTU 16, 18
 ====================================
 * refer to the following link
 https://docs.docker.com/install/linux/docker-ce/ubuntu/
