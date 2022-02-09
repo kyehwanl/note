@@ -1,0 +1,76 @@
+
+VIM quick setup with color scheme - soloarized
+===============================================
+(https://vimawesome.com/plugin/solarized-8)
+
+1.  Vim supports packages (echo has('packages') prints 1)
+
+	In vim command line, 
+		:echo has('packages')  --> prints 1
+
+
+2. download into 'pack'
+
+	git clone https://github.com/lifepillar/vim-solarized8.git \
+    ~/.vim/pack/themes/opt/solarized8
+
+
+3. vimrc
+
+	set background=dark  (or light)
+	colorscheme solarized8
+
+
+4. comtom vimrc 
+
+	" Use Vim settings, rather then Vi settings (much better!).
+	" This must be first, because it changes other options as a side effect.
+	set nocompatible
+
+	" allow backspacing over everything in insert mode
+	set backspace=indent,eol,start
+
+	set background=dark
+	colorscheme solarized8
+	syntax on
+	set hlsearch
+	set autoindent
+
+
+	set nobackup
+	set nowritebackup
+	set history=50      " keep 50 lines of command line history
+	set ruler           " show the cursor position all the time
+	set showcmd         " display incomplete commands
+    set incsearch       " do incremental searching"
+
+
+	set shiftwidth=4
+	set tabstop=8
+	set softtabstop=4
+	"set textwidth=79
+	set smartindent
+	set cindent
+
+
+	" -------- move among windows ---------------
+	nmap <C-H> <C-W>h
+	nmap <C-J> <C-W>j
+	nmap <C-K> <C-W>k
+	nmap <C-L> <C-W>l
+
+    " -------- Search for Visually Selected Text" ------
+    vnorem // y/<c-r>"<cr>"
+
+    set splitright   " Puts new vsplit windows to the right of the current"
+    set splitbelow   " Puts new split windows to the bottom of the current"
+
+    " Easier horizontal scrolling
+    map zl zL
+    map zh zH
+
+
+
+5. TERM better to use screen-256color ranther than xterm-256color
+
+    export TERM=screen-256color
