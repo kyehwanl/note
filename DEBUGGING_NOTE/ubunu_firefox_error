@@ -1,0 +1,35 @@
+
+
+
+https://kawahara.ca/fix-firefox-already-running-not-responding/#:~:text=Firefox%20is%20already%20running%2C%20but%20is%20not%20responding.,a%20hidden%20mysterious%20file%20called%20.&text=Start%20Firefox%20again%20and%20it%20should%20work!
+
+
+1. Error Message
+  Firefox is already running, but is not responding. 
+  To open a new window, you must first close the existing Firefox process, or restart your system.
+
+
+2. Solution
+
+    The solution is to delete a hidden mysterious file called .parentlock. 
+    This file is typically located under your home directory in the following location.
+
+  
+        cd ~/.mozilla/firefox/
+
+    You should see a folder with some random name (yours will differ), followed by .default, for example: 06agjsjz.default
+
+    Go into that folder:
+
+        cd 06agjsjz.default
+
+    There should be a file called .parentlock (it’s hidden so type ls -a to see it). Delete it:
+
+        rm .parentlock
+
+    Start Firefox again and it should work!
+
+
+3. My solution,
+
+    delete all .parentlock in all folders from .mozilla/firefox/
