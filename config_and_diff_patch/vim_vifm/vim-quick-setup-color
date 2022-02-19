@@ -21,7 +21,7 @@ VIM quick setup with color scheme - soloarized
 	colorscheme solarized8
 
 
-4. comtom vimrc 
+4. customizing vimrc 
 
 	" Use Vim settings, rather then Vi settings (much better!).
 	" This must be first, because it changes other options as a side effect.
@@ -73,4 +73,5 @@ VIM quick setup with color scheme - soloarized
 
 5. TERM better to use screen-256color ranther than xterm-256color
 
+    - copy the following line into .bashrc or .bash_profile
     export TERM=screen-256color
