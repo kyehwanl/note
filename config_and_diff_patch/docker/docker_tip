@@ -469,7 +469,7 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
 
 
 
-26. docker user permission error
+26. docker user permission error (Manage Docker as a non-root user)
     -- issues --
     If there is docker permission error like following kind of
         Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: 
@@ -484,6 +484,13 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
     -- What I did --
     sudo usermod -aG docker kyehwanl && newgrp docker
 
+        * newgrp    : to activate the changes to groups
+        * usermod   : Add your user to the docker group
+            -G, --groups GROUPS           new list of supplementary GROUPS
+            -a, --append                  append the user to the supplemental GROUPS
+                                          mentioned by the -G option without removing
+                                          him/her from other groups
+ 
 
 
 
