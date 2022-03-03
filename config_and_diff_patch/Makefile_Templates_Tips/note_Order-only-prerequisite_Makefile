@@ -1,0 +1,68 @@
+
+[Makefile] Order Only Prerequisite in Makefile
+==============================================
+
+https://stackoverflow.com/questions/24821611/order-only-prerequisites-not-working-correctly-in-gnu-make
+
+
+The name "order-only" is somewhat confusing. The prerequisites behind the | are called "order-only prerequisites" not because they change the order of recipe execution inside the list of prerequisites for a single target, but because their only purpose is to have certain targets created before others, like a bootstrap. As accurately explained by user bobbogo below ( -- thanks for correcting): if make decides to rebuild a prerequisite of a target, it will run the recipe for that prerequisite. Now, for an ordinary prerequisite this update implies that the target is now out-of-date, and make will have to run the target's recipe. For an order-only prerequisite on the other hand, make does not mark the target as needing an update.
+For example see the section Types of Prerequisites for a use case where a directory should be created before the objects in that directory are created.
+ 
+-- Take this example makefile
+
+a: b 
+	touch a 
+b: c 
+	touch b 
+c: 
+	touch c 
+x: | y 
+	touch x 
+y: | z 
+	touch y 
+z: 
+	touch z
+ 
+ 
+As you can see, b and c are normal prerequisites of a and b, whereas y and z are order-only prerequisites of x and y. Starting from a clean slate, they look the same:
+ 
+:~$ make a 
+touch c 
+touch b 
+touch a 
+
+:~$ make x 
+touch z 
+touch y 
+touch x 
+
+:~$ make a 
+make: `a' is up to date. 
+:~$ make x 
+make: `x' is up to date.
+ 
+ 
+However, if we now manually "update" the prerequisites at the end of the chain (c and z), we see the difference:
+
+:~$ touch c 
+:~$ make a 
+touch b 
+touch a 
+
+:~$ touch z 
+:~$ make x 
+make: `x' is up to date.
+ 
+ 
+This shows how order-only prerequisites that exist do not invalidate any targets, independent of their time-stamp. Deleting the order-only target does result in rebuilding though (but only rebuilding of that missing file):
+
+:~$ rm c 
+:~$ make a 
+touch c 
+touch b 
+touch a 
+
+:~$ rm z 
+:~$ make x 
+touch z
+
