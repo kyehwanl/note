@@ -7,8 +7,13 @@ Ubuntu 18 Xrdp errors
 1. channel 3: open failed: connect failed: Connection refused
 
     1.1 cause: xrdp not exist
-    1.2 solution: install xrdp
+    --> solution: install xrdp
 
+
+    1.2 Other reason: firewall
+    --> disable or add a rule for remote connection
+    
+    
 
 
 
