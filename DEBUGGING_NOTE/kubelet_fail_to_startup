@@ -1,0 +1,36 @@
+
+1. kubelet start with systemctl
+================================
+(1) Error message
+
+    [root@vmware-058 project]# systemctl status kubelet
+    ● kubelet.service - kubelet: The Kubernetes Node Agent
+       Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)
+      Drop-In: /usr/lib/systemd/system/kubelet.service.d
+               └─10-kubeadm.conf
+       Active: activating (auto-restart) (Result: exit-code) since Fri 2022-03-04 15:13:42 EST; 6s ago
+         Docs: https://kubernetes.io/docs/
+      Process: 1175398 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS (code=exited, status=1/FAILURE)
+     Main PID: 1175398 (code=exited, status=1/FAILURE)
+
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: kubelet.service: main process exited, code=exited, status=1/FAILURE
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: Unit kubelet.service entered failed state.
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: kubelet.service failed.
+
+
+
+(2) cause - failed to load kubelet config file (/var/lib/kubelet/config.yaml)
+
+    [root@vmware-058 project]# tail /var/log/messages
+    Mar  4 15:16:47 vmware-058 systemd: kubelet.service holdoff time over, scheduling restart.
+    Mar  4 15:16:47 vmware-058 systemd: Stopped kubelet: The Kubernetes Node Agent.
+    Mar  4 15:16:47 vmware-058 systemd: Started kubelet: The Kubernetes Node Agent.
+    Mar  4 15:16:47 vmware-058 kubelet: E0304 15:16:47.632440 1175958 server.go:205] "Failed to load kubelet config file" err="failed to load Kubelet config file /var/lib/kubelet/config.yaml, error failed to read kubelet config file \"/var/lib/kubelet/config.yaml\", error: open /var/lib/kubelet/config.yaml: no such file or directory" path="/var/lib/kubelet/config.yaml"
+    Mar  4 15:16:47 vmware-058 systemd: kubelet.service: main process exited, code=exited, status=1/FAILURE
+    Mar  4 15:16:47 vmware-058 systemd: Unit kubelet.service entered failed state.                                                                                                                                                                                             Mar  4 15:16:47 vmware-058 systemd: kubelet.service failed.
+
+
+
+(3) Solution
+
+    It will be generated when staring "kubeadm init"

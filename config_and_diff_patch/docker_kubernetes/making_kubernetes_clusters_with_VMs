@@ -1,0 +1,675 @@
+
+Making Kubernetes Clusters in VMwares
+=====================================
+
+
+1. Installing Docker and Kubernetes
+-----------------------------------
+
+1.1 DISABLE SELINUX
+    
+    (1) disable temporarily until reboot 
+        # setenforce 0
+    (2) /etc/selinux/config, change SELINUX=enforcing to disabled or permissive
+
+
+1.2 DISABLE THE FIREWALL
+
+    (1) systemctl disable firewalld && systemctl stop firewalld
+
+
+1.3 ADDING THE KUBERNETES YUM REPO
+
+    (1) adding following context to kubernetes.repo in /etc/yum.repos.d/ 
+
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+          enabled=1
+          gpgcheck=1
+          repo_gpgcheck=1
+          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+
+
+1.4 INSTALLING DOCKER, KUBELET, KUBEADM, KUBECTL, AND KUBERNETES-CNI
+
+    (1) yum install -y docker kubelet kubeadm kubectl kubernetes-cni
+
+
+    (2) manually enable the docker and the kubelet services:
+
+       # systemctl enable docker && systemctl start docker
+       # systemctl enable kubelet && systemctl start kubelet
+
+
+1.5 ENABLING THE NET.BRIDGE.BRIDGE-NF-CALL-IPTABLES KERNEL OPTION
+
+
+    I’ve noticed that something disables the bridge-nf-call-iptables kernel parameter,
+    which is required for Kubernetes services to operate properly. To rectify the problem,
+    you need to run the following two commands:
+
+       # sysctl -w net.bridge.bridge-nf-call-iptables=1
+       # echo "net.bridge.bridge-nf-call-iptables=1" > /etc/sysctl.d/k8s.conf
+
+
+
+1.6 DISABLING SWAP
+  The Kubelet won’t run if swap is enabled, so you’ll disable it with the following command:
+
+        # swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab
+
+
+
+2. Configuring the master with kubeadm
+--------------------------------------
+Setting up the Kubernetes Control Plane on your master node
+
+2.1 RUNNING KUBEADM INIT TO INITIALIZE THE MASTER
+
+    (1) Thanks to the awesome kubeadm tool, all you need to do to initialize the master is run
+        a single command, as shown in the following listing. 
+
+        [root@vmware-058 project]# kubeadm init
+        [init] Using Kubernetes version: v1.23.4
+
+        ...
+        ...<snip>...  (full logs are at the bottom)
+        ...         
+
+        Your Kubernetes control-plane has initialized successfully!
+
+        *A
+        To start using your cluster, you need to run the following as a regular user:
+
+          mkdir -p $HOME/.kube
+          sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+        Alternatively, if you are the root user, you can run:
+
+          export KUBECONFIG=/etc/kubernetes/admin.conf
+
+        *B
+        You should now deploy a pod network to the cluster.
+        Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+          https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+        *C
+        Then you can join any number of worker nodes by running the following on each as root:
+
+        kubeadm join 10.0.50.58:6443 --token 86boqj.r09o8rtdzenm4z1j \
+                --discovery-token-ca-cert-hash sha256:c62a3cb223b4c67c92688eb83f0690042fa94b27486528231c4a2b6b23870b12
+
+
+
+2.2 RUNNING KUBECTL ON THE MASTER   --> refer to *A
+
+     (1) using the cluster from root
+      You installed kubectl along with docker, kubeadm, and other packages in one of the
+      initial steps. But you can’t use kubectl to talk to your cluster without first configuring
+      it through a kubeconfig file.
+      Luckily, the necessary configuration is stored in the /etc/kubernetes/admin.conf
+      file. All you need to do is make kubectl use it by setting the KUBECONFIG environment
+      variable
+
+        # export KUBECONFIG=/etc/kubernetes/admin.conf
+
+
+      (2)  Using the cluster from your local machine
+        copy the /etc/kubernetes/admin.conf file from the master to the local home directory
+
+            sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+
+      (3)  In case from the other host,
+
+            $ sudo root@10.0.50.58:/etc/kubernetes/admin.conf ~/.kube/config2
+            $ export KUBECONFIG=~/.kube/config2
+
+
+
+2.3  SETTING UP THE CONTAINER NETWORK  --> refer to *B
+
+        You’ll install the Weave Net container networking plugin, but several alternatives are
+        also available. They’re listed among the available Kubernetes add-ons at http://kubernetes.
+        io/docs/admin/addons/.
+        Deploying the Weave Net plugin (like most other add-ons) is as simple as this:
+
+          $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+
+
+2.4 CONFIGURING WORKER NODES WITH KUBEADM --> refer to *C
+
+        When using kubeadm, configuring worker nodes is even easier than configuring the
+        master. In fact, when you ran the kubeadm init command to set up your master, it
+        already told you how to configure your worker nodes (repeated in the next listing).
+
+
+
+    (1) On host, vmware-059,
+
+        [root@vmware-059 project]# kubeadm join 10.0.50.58:6443 --token 86boqj.r09o8rtdzenm4z1j \
+        >         --discovery-token-ca-cert-hash sha256:c62a3cb223b4c67c92688eb83f0690042fa94b27486528231c4a2b6b23870b12
+
+        [preflight] Running pre-flight checks
+        [preflight] Reading configuration from the cluster...
+        [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+        [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+        [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+        [kubelet-start] Starting the kubelet
+        [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+        This node has joined the cluster:
+        * Certificate signing request was sent to apiserver and a response was received.
+        * The Kubelet was informed of the new secure connection details.
+
+        Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+
+    (2) on master node,
+
+        [root@vmware-058 project]# kubectl get node
+        NAME                       STATUS   ROLES                  AGE   VERSION
+        vmware-058.antd.nist.gov   Ready    control-plane,master   91m   v1.23.4
+        vmware-059.antd.nist.gov   Ready    <none>                 25m   v1.23.4
+
+
+
+
+ *** Note: TroubleShoot ***
+ --------------------------
+  [1] If 2.3 was not set or not installed, then it will have the following NotReady status.
+
+        [root@vmware-058 project]# kubectl get node
+        NAME                       STATUS     ROLES                  AGE   VERSION
+        vmware-058.antd.nist.gov   NotReady   control-plane,master   66m   v1.23.4
+        vmware-059.antd.nist.gov   NotReady   <none>                 23s   v1.23.4 
+
+
+    Looking at description of node, with the following command,
+
+        [root@vmware-058 project]# kubectl describe node vmware-059
+
+
+    And 'Condition' says,
+
+     KubeletNotReady  container runtime network not ready: NetworkReady=false 
+        reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+
+
+    According to this, the Kubelet isn’t fully ready, because the container network (CNI)
+    plugin isn’t ready, which is expected, because you haven’t deployed the CNI plugin
+    yet.
+    So, it needs container networking plugin referred to *B
+
+
+
+  [2]  kubelet start with systemctl
+    -- Error message
+
+    [root@vmware-058 project]# systemctl status kubelet
+    ● kubelet.service - kubelet: The Kubernetes Node Agent
+       Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)
+      Drop-In: /usr/lib/systemd/system/kubelet.service.d
+               └─10-kubeadm.conf
+       Active: activating (auto-restart) (Result: exit-code) since Fri 2022-03-04 15:13:42 EST; 6s ago
+         Docs: https://kubernetes.io/docs/
+      Process: 1175398 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS (code=exited, status=1/FAILURE)
+     Main PID: 1175398 (code=exited, status=1/FAILURE)
+
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: kubelet.service: main process exited, code=exited, status=1/FAILURE
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: Unit kubelet.service entered failed state.
+    Mar 04 15:13:42 vmware-058.antd.nist.gov systemd[1]: kubelet.service failed.
+
+
+
+    -- cause:  failed to load kubelet config file (/var/lib/kubelet/config.yaml)
+
+    [root@vmware-058 project]# tail /var/log/messages
+    Mar  4 15:16:47 vmware-058 systemd: kubelet.service holdoff time over, scheduling restart.
+    Mar  4 15:16:47 vmware-058 systemd: Stopped kubelet: The Kubernetes Node Agent.
+    Mar  4 15:16:47 vmware-058 systemd: Started kubelet: The Kubernetes Node Agent.
+    Mar  4 15:16:47 vmware-058 kubelet: E0304 15:16:47.632440 1175958 server.go:205] "Failed to load kubelet config file" err="failed to load Kubelet config file /var/lib/kubelet/config.yaml, error failed to read kubelet config file \"/var/lib/kubelet/config.yaml\", error: open /var/lib/kubelet/config.yaml: no such file or directory" path="/var/lib/kubelet/config.yaml"
+    Mar  4 15:16:47 vmware-058 systemd: kubelet.service: main process exited, code=exited, status=1/FAILURE
+    Mar  4 15:16:47 vmware-058 systemd: Unit kubelet.service entered failed state.                                                                                                                                                                                             Mar  4 15:16:47 vmware-058 systemd: kubelet.service failed.
+
+
+
+    -- Solution :
+           It will be generated when staring "kubeadm init"
+
+
+
+
+(### Install Logs ###)
+-----------------------
+
+    [root@vmware-058 project]# yum install kubelet
+    Loaded plugins: fastestmirror, langpacks, product-id, search-disabled-repos, subscription-manager
+
+    This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+    Loading mirror speeds from cached hostfile
+     * base: mirror.umd.edu
+     * epel: darkstar.cam.nist.gov
+     * extras: mirror.vcu.edu
+     * updates: mirror.cs.pitt.edu
+    kubernetes/signature                                                                                          |  844 B  00:00:00
+    kubernetes/signature                                                                                          | 1.4 kB  00:00:00 !!!
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package kubelet.x86_64 0:1.23.4-0 will be installed
+    --> Processing Dependency: kubernetes-cni >= 0.8.7 for package: kubelet-1.23.4-0.x86_64
+    --> Processing Dependency: socat for package: kubelet-1.23.4-0.x86_64
+    --> Processing Dependency: conntrack for package: kubelet-1.23.4-0.x86_64
+    --> Running transaction check
+    ---> Package conntrack-tools.x86_64 0:1.4.4-7.el7 will be installed
+    --> Processing Dependency: libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.1)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    --> Processing Dependency: libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.0)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    --> Processing Dependency: libnetfilter_cthelper.so.0(LIBNETFILTER_CTHELPER_1.0)(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    --> Processing Dependency: libnetfilter_queue.so.1()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    --> Processing Dependency: libnetfilter_cttimeout.so.1()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    --> Processing Dependency: libnetfilter_cthelper.so.0()(64bit) for package: conntrack-tools-1.4.4-7.el7.x86_64
+    ---> Package kubernetes-cni.x86_64 0:0.8.7-0 will be installed
+    ---> Package socat.x86_64 0:1.7.3.2-2.el7 will be installed
+    --> Running transaction check
+    ---> Package libnetfilter_cthelper.x86_64 0:1.0.0-11.el7 will be installed
+    ---> Package libnetfilter_cttimeout.x86_64 0:1.0.0-7.el7 will be installed
+    ---> Package libnetfilter_queue.x86_64 0:1.0.2-2.el7_2 will be installed
+    --> Finished Dependency Resolution
+
+    Dependencies Resolved
+
+    =====================================================================================================================================
+     Package                                 Arch                    Version                           Repository                   Size
+    =====================================================================================================================================
+    Installing:
+     kubelet                                 x86_64                  1.23.4-0                          kubernetes                   21 M
+    Installing for dependencies:
+     conntrack-tools                         x86_64                  1.4.4-7.el7                       base                        187 k
+     kubernetes-cni                          x86_64                  0.8.7-0                           kubernetes                   19 M
+     libnetfilter_cthelper                   x86_64                  1.0.0-11.el7                      base                         18 k
+     libnetfilter_cttimeout                  x86_64                  1.0.0-7.el7                       base                         18 k
+     libnetfilter_queue                      x86_64                  1.0.2-2.el7_2                     base                         23 k
+     socat                                   x86_64                  1.7.3.2-2.el7                     base                        290 k
+
+    Transaction Summary
+    =====================================================================================================================================
+    Install  1 Package (+6 Dependent packages)
+
+    Total size: 40 M
+    Installed size: 176 M
+    Is this ok [y/d/N]: y
+    Downloading packages:
+    warning: /var/cache/yum/x86_64/7/kubernetes/packages/db7cb5cb0b3f6875f54d10f02e625573988e3e91fd4fc5eef0b1876bb18604ad-kubernetes-cni-0.8.7-0.x86_64.rpm: Header V4 RSA/SHA512 Signature, key ID 3e1ba8d5: NOKEY
+    Retrieving key from https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    Importing GPG key 0x307EA071:
+     Userid     : "Rapture Automatic Signing Key (cloud-rapture-signing-key-2021-03-01-08_01_09.pub)"
+     Fingerprint: 7f92 e05b 3109 3bef 5a3c 2d38 feea 9169 307e a071
+     From       : https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    Is this ok [y/N]: y
+    Importing GPG key 0x836F4BEB:
+     Userid     : "gLinux Rapture Automatic Signing Key (//depot/google3/production/borg/cloud-rapture/keys/cloud-rapture-pubkeys/cloud-rapture-signing-key-2020-12-03-16_08_05.pub) <glinux-team@google.com>"
+     Fingerprint: 59fe 0256 8272 69dc 8157 8f92 8b57 c5c2 836f 4beb
+     From       : https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    Is this ok [y/N]: y
+    Retrieving key from https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    Importing GPG key 0x3E1BA8D5:
+     Userid     : "Google Cloud Packages RPM Signing Key <gc-team@google.com>"
+     Fingerprint: 3749 e1ba 95a8 6ce0 5454 6ed2 f09c 394c 3e1b a8d5
+     From       : https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    Is this ok [y/N]: y
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+    Warning: RPMDB altered outside of yum.
+      Installing : libnetfilter_cthelper-1.0.0-11.el7.x86_64                                                                         1/7
+      Installing : socat-1.7.3.2-2.el7.x86_64                                                                                        2/7
+      Installing : libnetfilter_cttimeout-1.0.0-7.el7.x86_64                                                                         3/7
+      Installing : libnetfilter_queue-1.0.2-2.el7_2.x86_64                                                                           4/7
+      Installing : conntrack-tools-1.4.4-7.el7.x86_64                                                                                5/7
+      Installing : kubernetes-cni-0.8.7-0.x86_64                                                                                     6/7
+      Installing : kubelet-1.23.4-0.x86_64                                                                                           7/7
+      Verifying  : conntrack-tools-1.4.4-7.el7.x86_64                                                                                1/7
+      Verifying  : kubernetes-cni-0.8.7-0.x86_64                                                                                     2/7
+      Verifying  : libnetfilter_queue-1.0.2-2.el7_2.x86_64                                                                           3/7
+      Verifying  : libnetfilter_cttimeout-1.0.0-7.el7.x86_64                                                                         4/7
+      Verifying  : socat-1.7.3.2-2.el7.x86_64                                                                                        5/7
+      Verifying  : libnetfilter_cthelper-1.0.0-11.el7.x86_64                                                                         6/7
+      Verifying  : kubelet-1.23.4-0.x86_64                                                                                           7/7
+
+    Installed:
+      kubelet.x86_64 0:1.23.4-0
+
+    Dependency Installed:
+      conntrack-tools.x86_64 0:1.4.4-7.el7        kubernetes-cni.x86_64 0:0.8.7-0           libnetfilter_cthelper.x86_64 0:1.0.0-11.el7
+      libnetfilter_cttimeout.x86_64 0:1.0.0-7.el7 libnetfilter_queue.x86_64 0:1.0.2-2.el7_2 socat.x86_64 0:1.7.3.2-2.el7
+
+    Complete!
+    [root@vmware-058 project]# yum install docker
+    Loaded plugins: fastestmirror, langpacks, product-id, search-disabled-repos, subscription-manager
+
+    This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+    Loading mirror speeds from cached hostfile
+     * base: mirror.umd.edu
+     * epel: darkstar.cam.nist.gov
+     * extras: mirror.vcu.edu
+     * updates: mirror.cs.pitt.edu
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package docker.x86_64 2:1.13.1-209.git7d71120.el7.centos will be installed
+    --> Processing Dependency: docker-common = 2:1.13.1-209.git7d71120.el7.centos for package: 2:docker-1.13.1-209.git7d71120.el7.centos.x86_64
+    --> Processing Dependency: docker-client = 2:1.13.1-209.git7d71120.el7.centos for package: 2:docker-1.13.1-209.git7d71120.el7.centos.x86_64
+    --> Running transaction check
+    ---> Package docker-client.x86_64 2:1.13.1-209.git7d71120.el7.centos will be installed
+    ---> Package docker-common.x86_64 2:1.13.1-209.git7d71120.el7.centos will be installed
+    --> Processing Conflict: 3:docker-ce-20.10.10-3.el7.x86_64 conflicts docker
+    --> Restarting Dependency Resolution with new changes.
+    --> Running transaction check
+    ---> Package docker-ce.x86_64 3:20.10.10-3.el7 will be updated
+    ---> Package docker-ce.x86_64 3:20.10.12-3.el7 will be an update
+    --> Processing Conflict: 1:docker-ce-cli-20.10.10-3.el7.x86_64 conflicts docker
+    --> Restarting Dependency Resolution with new changes.
+    --> Running transaction check
+    ---> Package docker-ce-cli.x86_64 1:20.10.10-3.el7 will be updated
+    ---> Package docker-ce-cli.x86_64 1:20.10.12-3.el7 will be an update
+    --> Processing Conflict: 1:docker-ce-cli-20.10.12-3.el7.x86_64 conflicts docker
+    --> Processing Conflict: 1:docker-ce-cli-20.10.12-3.el7.x86_64 conflicts docker-io
+    --> Processing Conflict: 3:docker-ce-20.10.12-3.el7.x86_64 conflicts docker
+    --> Processing Conflict: 3:docker-ce-20.10.12-3.el7.x86_64 conflicts docker-io
+    --> Finished Dependency Resolution
+    Error: docker-ce conflicts with 2:docker-1.13.1-209.git7d71120.el7.centos.x86_64
+    Error: docker-ce-cli conflicts with 2:docker-1.13.1-209.git7d71120.el7.centos.x86_64
+     You could try using --skip-broken to work around the problem
+     You could try running: rpm -Va --nofiles --nodigest
+    [root@vmware-058 project]# yum install kubeadm
+    Loaded plugins: fastestmirror, langpacks, product-id, search-disabled-repos, subscription-manager
+
+    This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+    Loading mirror speeds from cached hostfile
+     * base: mirror.umd.edu
+     * epel: darkstar.cam.nist.gov
+     * extras: mirror.vcu.edu
+     * updates: mirror.cs.pitt.edu
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package kubeadm.x86_64 0:1.23.4-0 will be installed
+    --> Processing Dependency: kubectl >= 1.19.0 for package: kubeadm-1.23.4-0.x86_64
+    --> Processing Dependency: cri-tools >= 1.19.0 for package: kubeadm-1.23.4-0.x86_64
+    --> Running transaction check
+    ---> Package cri-tools.x86_64 0:1.19.0-0 will be installed
+    ---> Package kubectl.x86_64 0:1.23.4-0 will be installed
+    --> Finished Dependency Resolution
+
+    Dependencies Resolved
+
+    =====================================================================================================================================
+     Package                         Arch                         Version                         Repository                        Size
+    =====================================================================================================================================
+    Installing:
+     kubeadm                         x86_64                       1.23.4-0                        kubernetes                       9.0 M
+    Installing for dependencies:
+     cri-tools                       x86_64                       1.19.0-0                        kubernetes                       5.7 M
+     kubectl                         x86_64                       1.23.4-0                        kubernetes                       9.5 M
+
+    Transaction Summary
+    =====================================================================================================================================
+    Install  1 Package (+2 Dependent packages)
+
+    Total download size: 24 M
+    Installed size: 111 M
+    Is this ok [y/d/N]: y
+    Downloading packages:
+    (1/3): 67ffa375b03cea72703fe446ff00963919e8fce913fbc4bb86f06d1475a6bdf9-cri-tools-1.19.0-0.x86_64.rpm         | 5.7 MB  00:00:00
+    (2/3): ae22dad233f0617861909955e30f527067e6f5535c1d1a9cda7b3a288fe62cd2-kubectl-1.23.4-0.x86_64.rpm           | 9.5 MB  00:00:00
+    (3/3): c8a17896ac2f24c43770d837f9f751acf161d6c33694b5dad42f5f638c6dd626-kubeadm-1.23.4-0.x86_64.rpm           | 9.0 MB  00:00:00
+    -------------------------------------------------------------------------------------------------------------------------------------
+    Total                                                                                                 31 MB/s |  24 MB  00:00:00
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+      Installing : kubectl-1.23.4-0.x86_64                                                                                           1/3
+      Installing : cri-tools-1.19.0-0.x86_64                                                                                         2/3
+      Installing : kubeadm-1.23.4-0.x86_64                                                                                           3/3
+      Verifying  : cri-tools-1.19.0-0.x86_64                                                                                         1/3
+      Verifying  : kubeadm-1.23.4-0.x86_64                                                                                           2/3
+      Verifying  : kubectl-1.23.4-0.x86_64                                                                                           3/3
+
+    Installed:
+      kubeadm.x86_64 0:1.23.4-0
+
+    Dependency Installed:
+      cri-tools.x86_64 0:1.19.0-0                                        kubectl.x86_64 0:1.23.4-0
+
+    Complete!
+    [root@vmware-058 project]# yum install kubectl
+    Loaded plugins: fastestmirror, langpacks, product-id, search-disabled-repos, subscription-manager
+
+    This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+    Loading mirror speeds from cached hostfile
+     * base: mirror.umd.edu
+     * epel: darkstar.cam.nist.gov
+     * extras: mirror.vcu.edu
+     * updates: mirror.cs.pitt.edu
+    Package kubectl-1.23.4-0.x86_64 already installed and latest version
+    Nothing to do
+    [root@vmware-058 project]# yum install kubernetes-cni
+    Loaded plugins: fastestmirror, langpacks, product-id, search-disabled-repos, subscription-manager
+
+    This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+    Loading mirror speeds from cached hostfile
+     * base: mirror.umd.edu
+     * epel: darkstar.cam.nist.gov
+     * extras: mirror.vcu.edu
+     * updates: mirror.cs.pitt.edu
+    Package kubernetes-cni-0.8.7-0.x86_64 already installed and latest version
+    Nothing to do
+
+
+
+
+
+
+
+
+
+    [root@vmware-058 project]# kubeadm init
+    [init] Using Kubernetes version: v1.23.4
+    [preflight] Running pre-flight checks
+    [preflight] Pulling images required for setting up a Kubernetes cluster
+    [preflight] This might take a minute or two, depending on the speed of your internet connection
+    [preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+    [certs] Using certificateDir folder "/etc/kubernetes/pki"
+    [certs] Generating "ca" certificate and key
+    [certs] Generating "apiserver" certificate and key
+    [certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local vmware-058.antd.nist.gov] and IPs [10.96.0.1 10.0.50.58]
+    [certs] Generating "apiserver-kubelet-client" certificate and key
+    [certs] Generating "front-proxy-ca" certificate and key
+    [certs] Generating "front-proxy-client" certificate and key
+    [certs] Generating "etcd/ca" certificate and key
+    [certs] Generating "etcd/server" certificate and key
+    [certs] etcd/server serving cert is signed for DNS names [localhost vmware-058.antd.nist.gov] and IPs [10.0.50.58 127.0.0.1 ::1]
+    [certs] Generating "etcd/peer" certificate and key
+    [certs] etcd/peer serving cert is signed for DNS names [localhost vmware-058.antd.nist.gov] and IPs [10.0.50.58 127.0.0.1 ::1]
+    [certs] Generating "etcd/healthcheck-client" certificate and key
+    [certs] Generating "apiserver-etcd-client" certificate and key
+    [certs] Generating "sa" key and public key
+    [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+    [kubeconfig] Writing "admin.conf" kubeconfig file
+    [kubeconfig] Writing "kubelet.conf" kubeconfig file
+    [kubeconfig] Writing "controller-manager.conf" kubeconfig file
+    [kubeconfig] Writing "scheduler.conf" kubeconfig file
+    [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+    [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+    [kubelet-start] Starting the kubelet
+    [control-plane] Using manifest folder "/etc/kubernetes/manifests"
+    [control-plane] Creating static Pod manifest for "kube-apiserver"
+    [control-plane] Creating static Pod manifest for "kube-controller-manager"
+    [control-plane] Creating static Pod manifest for "kube-scheduler"
+    [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+    [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+    [apiclient] All control plane components are healthy after 11.503284 seconds
+    [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+    [kubelet] Creating a ConfigMap "kubelet-config-1.23" in namespace kube-system with the configuration for the kubelets in the cluster
+    NOTE: The "kubelet-config-1.23" naming of the kubelet ConfigMap is deprecated. Once the UnversionedKubeletConfigMap feature gate graduates to Beta the default name will become just "kubelet-config". Kubeadm upgrade will handle this transition transparently.
+    [upload-certs] Skipping phase. Please see --upload-certs
+    [mark-control-plane] Marking the node vmware-058.antd.nist.gov as control-plane by adding the labels: [node-role.kubernetes.io/master(deprecated) node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+    [mark-control-plane] Marking the node vmware-058.antd.nist.gov as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+    [bootstrap-token] Using token: 86boqj.r09o8rtdzenm4z1j
+    [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+    [bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
+    [bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+    [bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+    [bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+    [bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+    [kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+    [addons] Applied essential addon: CoreDNS
+    [addons] Applied essential addon: kube-proxy
+
+    Your Kubernetes control-plane has initialized successfully!
+
+    To start using your cluster, you need to run the following as a regular user:
+
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    Alternatively, if you are the root user, you can run:
+
+      export KUBECONFIG=/etc/kubernetes/admin.conf
+
+    You should now deploy a pod network to the cluster.
+    Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+      https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+    Then you can join any number of worker nodes by running the following on each as root:
+
+    kubeadm join 10.0.50.58:6443 --token 86boqj.r09o8rtdzenm4z1j \
+            --discovery-token-ca-cert-hash sha256:c62a3cb223b4c67c92688eb83f0690042fa94b27486528231c4a2b6b23870b12
+
+
+
+
+
+
+
+
+    [root@vmware-058 project]# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    serviceaccount/weave-net created
+    clusterrole.rbac.authorization.k8s.io/weave-net created
+    clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+    role.rbac.authorization.k8s.io/weave-net created
+    rolebinding.rbac.authorization.k8s.io/weave-net created
+    daemonset.apps/weave-net created
+
+
+
+
+
+
+
+
+
+
+
+    [root@vmware-058 project]# kubectl describe node vmware-059
+    Name:               vmware-059.antd.nist.gov
+    Roles:              <none>
+    Labels:             beta.kubernetes.io/arch=amd64
+                        beta.kubernetes.io/os=linux
+                        kubernetes.io/arch=amd64
+                        kubernetes.io/hostname=vmware-059.antd.nist.gov
+                        kubernetes.io/os=linux
+    Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+                        node.alpha.kubernetes.io/ttl: 0
+                        volumes.kubernetes.io/controller-managed-attach-detach: true
+    CreationTimestamp:  Fri, 04 Mar 2022 16:30:25 -0500
+    Taints:             node.kubernetes.io/not-ready:NoSchedule
+    Unschedulable:      false
+    Lease:
+      HolderIdentity:  vmware-059.antd.nist.gov
+      AcquireTime:     <unset>
+      RenewTime:       Fri, 04 Mar 2022 16:48:59 -0500
+    Conditions:
+      Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+      ----             ------  -----------------                 ------------------                ------                       -------
+      MemoryPressure   False   Fri, 04 Mar 2022 16:46:14 -0500   Fri, 04 Mar 2022 16:30:25 -0500   KubeletHasSufficientMemory   kubelet has sufficient memory available
+      DiskPressure     False   Fri, 04 Mar 2022 16:46:14 -0500   Fri, 04 Mar 2022 16:30:25 -0500   KubeletHasNoDiskPressure     kubelet has no disk pressure
+      PIDPressure      False   Fri, 04 Mar 2022 16:46:14 -0500   Fri, 04 Mar 2022 16:30:25 -0500   KubeletHasSufficientPID      kubelet has sufficient PID available
+      Ready            False   Fri, 04 Mar 2022 16:46:14 -0500   Fri, 04 Mar 2022 16:30:25 -0500   KubeletNotReady              container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
+    Addresses:
+      InternalIP:  10.0.50.59
+      Hostname:    vmware-059.antd.nist.gov
+    Capacity:
+      cpu:                2
+      ephemeral-storage:  94069888Ki
+      hugepages-1Gi:      0
+      hugepages-2Mi:      0
+      memory:             8009276Ki
+      pods:               110
+    Allocatable:
+      cpu:                2
+      ephemeral-storage:  86694808638
+      hugepages-1Gi:      0
+      hugepages-2Mi:      0
+      memory:             7906876Ki
+      pods:               110
+    System Info:
+      Machine ID:                 c14abdfaaf2443378bcac94230fecbf8
+      System UUID:                42086C6C-FCF0-8326-563C-4EF016F8277A
+      Boot ID:                    fe80081f-4337-4246-8a17-0668f9c1f80e
+      Kernel Version:             3.10.0-1160.6.1.el7.x86_64
+      OS Image:                   CentOS Linux 7 (Core)
+      Operating System:           linux
+      Architecture:               amd64
+      Container Runtime Version:  docker://1.13.1
+      Kubelet Version:            v1.23.4
+      Kube-Proxy Version:         v1.23.4
+    Non-terminated Pods:          (1 in total)
+      Namespace                   Name                CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+      ---------                   ----                ------------  ----------  ---------------  -------------  ---
+      kube-system                 kube-proxy-gh2d2    0 (0%)        0 (0%)      0 (0%)           0 (0%)         18m
+    Allocated resources:
+      (Total limits may be over 100 percent, i.e., overcommitted.)
+      Resource           Requests  Limits
+      --------           --------  ------
+      cpu                0 (0%)    0 (0%)
+      memory             0 (0%)    0 (0%)
+      ephemeral-storage  0 (0%)    0 (0%)
+      hugepages-1Gi      0 (0%)    0 (0%)
+      hugepages-2Mi      0 (0%)    0 (0%)
+    Events:
+      Type    Reason                   Age   From        Message
+      ----    ------                   ----  ----        -------
+      Normal  Starting                 18m   kube-proxy
+      Normal  Starting                 18m   kubelet     Starting kubelet.
+      Normal  NodeHasSufficientMemory  18m   kubelet     Node vmware-059.antd.nist.gov status is now: NodeHasSufficientMemory
+      Normal  NodeHasNoDiskPressure    18m   kubelet     Node vmware-059.antd.nist.gov status is now: NodeHasNoDiskPressure
+      Normal  NodeHasSufficientPID     18m   kubelet     Node vmware-059.antd.nist.gov status is now: NodeHasSufficientPID
+      Normal  NodeAllocatableEnforced  18m   kubelet     Updated Node Allocatable limit across pods
+
+
+
+    [root@vmware-058 project]# kubectl get po -A
+    NAMESPACE     NAME                                               READY   STATUS    RESTARTS        AGE
+    kube-system   coredns-64897985d-54qjb                            1/1     Running   0               4h44m
+    kube-system   coredns-64897985d-tf5lv                            1/1     Running   0               4h44m
+    kube-system   etcd-vmware-058.antd.nist.gov                      1/1     Running   0               4h44m
+    kube-system   kube-apiserver-vmware-058.antd.nist.gov            1/1     Running   0               4h44m
+    kube-system   kube-controller-manager-vmware-058.antd.nist.gov   1/1     Running   0               4h44m
+    kube-system   kube-proxy-bzbpn                                   1/1     Running   0               4h44m
+    kube-system   kube-proxy-gh2d2                                   1/1     Running   0               3h39m
+    kube-system   kube-scheduler-vmware-058.antd.nist.gov            1/1     Running   0               4h44m
+    kube-system   weave-net-9ngct                                    2/2     Running   1 (3h15m ago)   3h15m
+    kube-system   weave-net-dvklt                                    2/2     Running   1 (3h15m ago)   3h15m
+
