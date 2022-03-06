@@ -1,0 +1,19 @@
+[user]
+	name = Kyehwan Lee
+	email = kyehwanl@nist.gov
+[merge]
+	tool = vimdiff
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+	ui = true
+[alias]
+	show-graph = log --graph --abbrev-commit --pretty=oneline
+        lgodb = log --graph --oneline --decorate --branches
+        ll= log --graph --oneline --decorate --branches
+	st = status
+	ci = commit
+	co = checkout
+	br = branch

@@ -1,0 +1,67 @@
+
+assume-paste-time 1
+base-index 0
+bell-action any
+bell-on-alert off
+default-command ""
+default-path ""
+default-shell "/bin/bash"
+default-terminal "screen-256color"
+destroy-unattached off
+detach-on-destroy on
+display-panes-active-colour red
+display-panes-colour blue
+display-panes-time 5000
+display-time 2000
+history-limit 20000
+lock-after-time 0
+lock-command "lock -np"
+lock-server on
+message-attr none
+message-bg yellow
+message-command-attr none
+message-command-bg black
+message-command-fg yellow
+message-fg black
+message-limit 20
+mouse-resize-pane on
+mouse-select-pane on
+mouse-select-window off
+mouse-utf8 on
+pane-active-border-bg default
+pane-active-border-fg green
+pane-border-bg default
+pane-border-fg default
+prefix C-b
+prefix2 none
+renumber-windows off
+repeat-time 500
+set-remain-on-exit off
+set-titles off
+set-titles-string "#S:#I:#W - "#T""
+status on
+status-attr none
+status-bg colour53
+status-fg white
+status-interval 15
+status-justify left
+status-keys emacs
+status-left "[#S]"
+status-left-attr none
+status-left-bg default
+status-left-fg default
+status-left-length 10
+status-position bottom
+status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load) #22T %H:%M %d-%b-%y"
+status-right-attr none
+status-right-bg default
+status-right-fg default
+status-right-length 140
+status-utf8 on
+terminal-overrides "*88col*:colors=88,*256col*:colors=256,xterm*:XT:Ms=\E]52;%p1%s;%p2%s\007:Cc=\E]12;%p1%s\007:Cr=\E]112\007:Cs=\E[%p1"
+update-environment "DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY"
+visual-activity on
+visual-bell off
+visual-content off
+visual-silence off
+word-separators " -_@"

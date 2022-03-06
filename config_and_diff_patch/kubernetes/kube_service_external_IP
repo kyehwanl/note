@@ -1,0 +1,8 @@
+
+
+
+1. when the service didn't get external ip 
+(https://stackoverflow.com/questions/44519980/assign-external-ip-to-a-kubernetes-service)
+
+    try this command:
+        kubectl patch svc <service-name> -p '{"spec":{"externalIPs":["192.168.0.193"]}}'

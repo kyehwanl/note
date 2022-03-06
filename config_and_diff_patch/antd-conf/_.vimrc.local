@@ -1,0 +1,536 @@
+" An example for a vimrc file.
+"
+" Maintainer:   Bram Moolenaar <Bram@vim.org>
+" Last change:  2006 Aug 12
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"         for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"       for OpenVMS:  sys$login:.vimrc
+
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+if has("vms")
+  set nobackup      " do not keep a backup file, use versions instead
+else
+  set backup        " keep a backup file
+endif
+set history=50      " keep 50 lines of command line history
+set ruler       " show the cursor position all the time
+set showcmd     " display incomplete commands
+set incsearch       " do incremental searching
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" In an xterm the mouse should work quite well, thus enable it.
+"set mouse=a
+
+" This is an alternative that also works in block mode, but the deleted
+" text is lost and it only works for putting the current register.
+"vnoremap p "_dp
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  augroup END
+
+else
+
+  set autoindent        " always set autoindenting on
+
+endif " has("autocmd")
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+        \ | wincmd p | diffthis
+
+
+"------------------------ LKH additional setting --------------------
+set tags=./tags,../tags,../../tags,/usr/tags
+"set tags+=/root/linux/tags
+"set tags+=/root/linux/include/linux/tags " kernel
+set tags+=/usr/include/tags     " include 
+"set tags+=/usr/src/redhat/SOURCES/iproute-2.6.20-070313_LKH/tags
+"set tags+=/usr/local/src/openldap-2.4.11/tags
+set tags+=./tags;/,~/.vimtags
+
+set shiftwidth=4
+set tabstop=8
+set softtabstop=4
+"set textwidth=79
+set smartindent
+set cindent
+"set nowrap
+colorscheme torte
+
+"set background=dark
+hi clear
+
+
+inoremap <ESC> <ESC>:set imdisable<CR>
+nnoremap i :set noimd<CR>i
+nnoremap I :set noimd<CR>I
+nnoremap a :set noimd<CR>a
+nnoremap A :set noimd<CR>A
+nnoremap o :set noimd<CR>o
+nnoremap O :set noimd<CR>O
+
+" --- tag directly withough selection among multiple selections
+" nnoremap <c-]> g<c-]>
+" vnoremap <c-]> g<c-]>
+
+" --- tag and pop do more easily
+nnoremap <leader>h <C-T>
+nnoremap <leader>l <C-]>
+
+" --- Open the definition in a vertical split (ex. ctrl-W ctrl-]:  horizontal split)
+map <leader>] :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+map <F1> v%zf
+"map <F1> v]}zf
+"map <F4> :e %:p:s,.h$,.X123X,:s,.cc$,.h,:s,.X123X$,.cc,<CR> ".h <--> .cc exchange
+map <F3> :e %:p:s,.h$,.X123X,:s,.c$,.h,:s,.X123X$,.c,<CR>
+
+map <F4> :cn<CR>
+map <F7> :make<CR>
+map <F5> :!./%<<CR>
+map <F2> :Tlist<cr><C-W><C-W>
+map <PageUp> <C-U><C-U>
+map <PageDown> <C-D><C-D>
+"map <F6> :find ./ -name '*.[ch]' > cscope.files<CR> <-- i don't know how to
+
+"move onto the Nth file buffer. (cf) :ls or :files
+map ,1 :b!1<CR>
+map ,2 :b!2<CR>
+map ,3 :b!3<CR>
+map ,4 :b!4<CR>
+map ,5 :b!5<CR>
+map ,6 :b!6<CR>
+map ,7 :b!7<CR>
+map ,8 :b!8<CR>
+map ,9 :b!9<CR>
+
+" maximize screen and same size
+map ,- <C-W>_<CR>
+map ,= <C-W>=<CR>
+"map ,\ <C-W>|<CR>
+
+" ------- goto first point, last point in a line -----
+"nnoremap <C-H> ^
+"nnoremap <C-L> $
+" confer this--> Shift-H Shift-L:
+
+"man page user function
+func! Man()
+    let sm = expand("<cword>")
+    exe "!man -S 2:3:4:5:6:7:8:9:tcl:n:l:p:o ".sm
+endfunc
+nmap ,ma :call Man()<cr><cr>
+
+
+" -------- move among windows ---------------
+nmap <C-H> <C-W>h 
+nmap <C-J> <C-W>j 
+nmap <C-K> <C-W>k 
+nmap <C-L> <C-W>l 
+
+
+
+
+"----------- cscope option ---------------------
+"set csprg=/usr/bin/cscope
+"set csto=0
+"set cst
+"set nocst
+
+"---------no cscope message displayed
+"set nocsverb 
+
+if filereadable("./cscope.out")
+"   cs add cscope.out
+else
+"   cs add /usr/src/linux/cscope.out
+"   cs add /usr/local/lkh_prog/cscope.out 
+    " --> it works !!
+"   cs add ../cscope.out 
+endif
+"set csverb
+
+" -----------------------------------------------------------------------------
+"  LKH_COMMENTS : 
+"
+"  when you make cscope.files, use the ABSOLUTE path 
+"       find /usr/local/lkh_prog/NIST_ID_LOC/ -name '*.[ch]' > cscope.files
+"       cscope -b ( implements without starting cscope GUI
+"
+"  and also, you can use CSCOPE_DB env variable in .bash_profile or .bashrc
+"       CSCOPE_DB=/usr/local/lkh_prog/cscope.out
+"       export CSCOPE_DB
+" -----------------------------------------------------------------------------
+
+if has("cscope")
+
+	""""""""""""" Standard cscope/vim boilerplate
+
+    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+    set cscopetag
+
+    " check cscope for definition of a symbol before checking ctags: set to 1
+    " if you want the reverse search order.
+    "set csto=0
+
+    " add any cscope database in current directory
+    if filereadable("cscope.out")
+        " LKH_comment cs add cscope.out  
+    " else add the database pointed to by environment variable 
+    elseif $CSCOPE_DB != ""
+       " cs add $CSCOPE_DB
+    endif
+
+    " show msg when any other cscope db added
+    set cscopeverbose
+
+
+    """"""""""""" My cscope/vim key mappings
+    "
+    " The following maps all invoke one of the following cscope search types:
+    "
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+    "
+    
+    " To do the first type of search, hit 'CTRL-\', followed by one of the
+    " cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
+    " search will be displayed in the current window.  You can use CTRL-T to
+    " go back to where you were before the search.  
+    "
+
+    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR> 
+    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR> 
+    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR> 
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR> 
+    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR> 
+    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR> 
+    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR> 
+
+
+    " Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
+    " makes the vim window split horizontally, with search result displayed in
+    " the new window.
+    "
+    " (Note: earlier versions of vim may not have the :scs command, but it
+    " can be simulated roughly via:
+    "    nmap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>  
+
+    nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>    
+    nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>    
+    nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>    
+    nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>    
+    nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>    
+    nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>    
+    nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>  
+    nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>    
+
+
+	" Hitting CTRL-space *twice* before the search type does a vertical 
+    " split instead of a horizontal one (vim 6 and up only)
+    "
+    " (Note: you may wish to put a 'set splitright' in your .vimrc
+    " if you prefer the new window on the right instead of the left
+
+    nmap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
+    """"""""""""" key map timeouts
+    "
+    " By default Vim will only wait 1 second for each keystroke in a mapping.
+    " You may find that too short with the above typemaps.  If so, you should
+    " either turn off mapping timeouts via 'notimeout'.
+    "
+    "set notimeout 
+    "
+    " Or, you can keep timeouts, by uncommenting the timeoutlen line below,
+    " with your own personal favorite value (in milliseconds):
+    "
+    "set timeoutlen=4000
+    "
+    " Either way, since mapping timeout settings by default also set the
+    " timeouts for multicharacter 'keys codes' (like <F1>), you should also
+    " set ttimeout and ttimeoutlen: otherwise, you will experience strange
+    " delays as vim waits for a keystroke after you hit ESC (it will be
+    " waiting to see if the ESC is actually part of a key code like <F1>).
+    "
+    "set ttimeout 
+    "
+    " personally, I find a tenth of a second to work well for key code
+    " timeouts. If you experience problems and have a slow terminal or network
+    " connection, set it higher.  If you don't set ttimeoutlen, the value for
+    " timeoutlent (default: 1000 = 1 second, which is sluggish) is used.
+    "
+    "set ttimeoutlen=100
+endif
+"============================================================================
+
+
+
+
+
+"----------------< Source Explorer >--------------
+
+" // The switch of the Source Explorer 
+"nmap <F8> :SrcExplToggle<CR> 
+
+" // Set the height of Source Explorer window 
+let g:SrcExpl_winHeight = 8 
+
+" // Set 100 ms for refreshing the Source Explorer 
+let g:SrcExpl_refreshTime = 100 
+
+" // Set "Enter" key to jump into the exact definition context 
+let g:SrcExpl_jumpKey = "<ENTER>" 
+
+" // Set "Space" key for back from the definition context 
+let g:SrcExpl_gobackKey = "<SPACE>" 
+
+" // In order to Avoid conflicts, the Source Explorer should know what plugins 
+" // are using buffers. And you need add their bufname into the list below 
+" // according to the command ":buffers!" 
+let g:SrcExpl_pluginList = [ 
+        \ "__Tag_List__", 
+        \ "_NERD_tree_", 
+        \ "Source_Explorer" 
+    \ ] 
+
+" // Enable/Disable the local definition searching, and note that this is not 
+" // guaranteed to work, the Source Explorer doesn't check the syntax for now. 
+" // It only searches for a match with the keyword according to command 'gd' 
+let g:SrcExpl_searchLocalDef = 1 
+
+" // Do not let the Source Explorer update the tags file when opening 
+let g:SrcExpl_isUpdateTags = 0 
+
+" // Use 'Exuberant Ctags' with '--sort=foldcase -R .' or '-L cscope.files' to 
+" //  create/update a tags file 
+let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R ." 
+
+" // Set "<F12>" key for updating the tags file artificially 
+let g:SrcExpl_updateTagsKey = "<F12>" 
+
+
+"----------------< Trinity.vim>--------------
+
+" Open and close all the three plugins on the same time 
+nmap <F8>   :TrinityToggleAll<CR> 
+
+" Open and close the srcexpl.vim separately 
+"nmap <F9>   :TrinityToggleSourceExplorer<CR> :set hlsearch<CR>
+nmap <F9>   :TrinityToggleSourceExplorer<CR>
+
+" Open and close the taglist.vim separately 
+nmap <F10>  :TrinityToggleTagList<CR> 
+"nmap <F10>  :TagList<CR> 
+"nmap <F10>  :Tlist<CR> 
+
+" Open and close the NERD_tree.vim separately 
+nmap <F11>  :TrinityToggleNERDTree<CR> 
+
+
+
+"--------------------------------------------------
+" pathogen
+"
+
+"call pathogen#runtime_append_all_bundles()
+"call pathogen#helptags()
+
+
+
+"--------------------------------------------------
+"   when vim starts, do ":mkview"
+"   when vim leaves, do ":loadview"
+"
+"    ":mkview"   : save the folds 
+"    ":loadview" : reload the previous folds status
+"
+if argc() > 0
+    au BufWinLeave * mkview
+    au BufWinEnter * silent loadview
+
+    "set foldmethod=indent
+    set foldmethod=marker
+    "set foldmethod=manual
+endif
+    
+"set foldmethod=marker
+
+
+"------------< for abbreviation >-------------
+abbr #b /*****
+abbr #c *****/
+
+
+
+
+"------------< Change font size quickly >-------------
+let s:pattern = '^\(.* \)\([1-9][0-9]*\)$'
+let s:minfontsize = 6
+let s:maxfontsize = 16
+function! AdjustFontSize(amount)
+  if has("gui_gtk2") && has("gui_running")
+    let fontname = substitute(&guifont, s:pattern, '\1', '')
+    let cursize = substitute(&guifont, s:pattern, '\2', '')
+    let newsize = cursize + a:amount
+    if (newsize >= s:minfontsize) && (newsize <= s:maxfontsize)
+      let newfont = fontname . newsize
+      let &guifont = newfont
+    endif
+  else
+    echoerr "You need to run the GTK2 version of Vim to use this function."
+  endif
+endfunction
+
+function! LargerFont()
+  call AdjustFontSize(1)
+endfunction
+command! LargerFont call LargerFont()
+
+function! SmallerFont()
+  call AdjustFontSize(-1)
+endfunction
+command! SmallerFont call SmallerFont()
+
+"--------------------------------------------------
+
+
+
+" MISC {
+
+    " Pathogen {
+        "--------------------------------------------------
+        " pathogen
+        "
+
+        "call pathogen#runtime_append_all_bundles()
+        "call pathogen#helptags()
+    " }
+
+    " Folding {
+
+        "--------------------------------------------------
+        "   when vim starts, do ":mkview"
+        "   when vim leaves, do ":loadview"
+        "
+        "    ":mkview"   : save the folds 
+        "    ":loadview" : reload the previous folds status
+        "
+        "if argc() > 0
+        "    au BufWinLeave * mkview
+        "    au BufWinEnter * silent loadview
+
+        "    "set foldmethod=indent
+        "    set foldmethod=marker
+        "    "set foldmethod=manual
+        "endif
+            
+        ""set foldmethod=marker
+
+    " }
+
+    " Abbreviation  {
+
+        abbr #b /*****
+        abbr #c *****/
+
+    " }
+
+
+" }
+
+
+set foldlevelstart=99
+set sw=2
+
+
+UnBundle 'myusuf3/numbers.vim'
+UnBundle 'nathanaelkane/vim-indent-guides'
+UnBundle 'scrooloose/syntastic'
+
+
+" vimdiff option - ignore white space
+if &diff
+    " diff mode
+    set diffopt+=iwhite
+endif
+
+"hi Normal ctermfg=246 ctermbg=234
+hi Normal ctermfg=248 ctermbg=234
+
+""set t_ti=7[r[?47h t_te=[?47l8
+""set restorescreen!
+""set norestorescreen
+
+
+
+""call plug#begin()
+""call vundle#rc()
+""Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+""call plug#end()
+""call vundle#end()

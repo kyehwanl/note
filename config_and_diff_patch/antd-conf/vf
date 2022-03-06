@@ -1,0 +1,22 @@
+arch | grep 64 >/dev/null 2>&1
+if [[ $? -eq 0 ]]; then
+  OS_ARCH=64bit
+else
+  OS_ARCH=32bit
+fi
+if [ -f ~/.vifm/lastdir ]; then
+  rm -f ~/.vifm/lastdir
+fi
+
+if test "x$OS_ARCH" = x64bit; then
+  /users/kyehwanl/Download/vifm-0.8.2/install/usr/local/bin/vifm "$@"
+else
+  /usr/local/bin/vifm "$@"
+fi
+
+if [ -f ~/.vifm/lastdir ]; then
+  tempdir=`cat ~/.vifm/lastdir`
+  rm -f ~/.vifm/lastdir
+  cd $tempdir
+fi
+

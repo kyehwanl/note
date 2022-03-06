@@ -1,0 +1,17 @@
+These lines are the history hit by tmux command
+===============================================
+
+
+
+:set-option -g status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load --colors --interval 2)#[default]"
+:tmux set-option -g status-right "#[fg=white,bg=default,bright]#(tmux-mem-cpu-load --colors --interval 2)#[default]"
+:show-window-options -g
+:set -g window-status-current-format "#[fg=black]#[bg=white] #I #W #F"
+:set -g window-status-current-format "#[fg=cyan]#[bg=magenta]<#[fg=black]#[bg=white] #I #W #F"
+:set -g window-status-format "#[fg=white]#[bg=colour53]#I #W #F #[fg=#44475a] "
+:set -g status-left "[#S]"
+:set -ga status-left '#[bg=#44475a]#[fg=#ff79c6] #{?window_zoomed_flag, ↕ ,   }'
+:set -g status-left '#[bg=#f8f8f2]#[fg=#282a36]#{?client_prefix,#[bg=#ff79c6],} ☺ '
+:set -g status-left "[#S]"
+:set -ga status-left '#[bg=green]#[fg=yellow] #{?window_zoomed_flag, ↕ ,   }'
+
