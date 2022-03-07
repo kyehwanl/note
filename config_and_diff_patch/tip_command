@@ -447,6 +447,39 @@ Use the blow command into .bashrc or command line
 
 
 
+(31) Bash Exit Code of Last Command
+===================================
+1. echo $?
+    Result value 0 or non-zero value
+
+    (1) As the previous command ran successfully, the exit code is 0
+    (2) It’s a non-zero value, indicating that the previous command didn’t execute properly
+
+
+
+
+(32) bash command checking 
+==========================
+1. be able to use to check whether the command already installed and ready to run or not
+
+    $ command -v foo >/dev/null 2>&1 || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
+    $ type foo >/dev/null 2>&1 || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
+    $ hash foo 2>/dev/null || { echo >&2 "I require foo but it's not installed.  Aborting."; exit 1; }
+
+
+2. bash script form
+
+    if ! command -v <the_command> &> /dev/null
+ OR if ! [ -x "$(command -v <the_command>)" ]; 
+    then
+        echo "<the_command> could not be found"
+        exit
+    fi
+
+    (-x tests that the file is executable, which is what the question was)
+
+
+
 
 
 
