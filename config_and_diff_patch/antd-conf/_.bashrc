@@ -56,7 +56,7 @@ suffix="-> "
 
 function set_prompt() {
   #PS1="$prefix [\!]{`dirs|sed -e 's| .*||' -e 's|.*[^/]\(/[^/]*/[^/]*\)|...\1|'`}$suffix" 
-  #PS1="\e[01;32m\h\e[m\e[01;38m [\!]{`dirs|sed -e 's| .*||' -e 's|.*[^/]\(/[^/]*/[^/]*\)|...\1|'`}\e[m\$ "
+  #PS1="\[\e[01;32m\h\e[m\]\[\e[01;38m [\!]{`dirs|sed -e 's| .*||' -e 's|.*[^/]\(/[^/]*/[^/]*\)|...\1|'`}\e[m\]\$ "
   PS1="\[\033[01;32m\]\h\[\033[00m\]\[\033[01;38m\] [\!]{`dirs|sed -e 's| .*||' -e 's|.*[^/]\(/[^/]*/[^/]*\)|...\1|'`}\[\033[00m\]\$ "
 }
 
@@ -112,7 +112,6 @@ export PATH="$PATH:/users/kyehwanl/.local/bin"
 if [ -f ~/.kubectl_bash_completion ]; then
   if command -v kubectl &> /dev/null
   then
-    echo "kubectl found"
     source ~/.kubectl_bash_completion
   fi
 fi

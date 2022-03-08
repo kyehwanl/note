@@ -1,0 +1,32 @@
+
+Kubernetes Running Errors
+=========================
+
+1. no matches for kind "Deployment" in version "apps/v1beta1"
+
+    in this case, run following first,
+
+    $ kubectl api-resources | grep deployment
+    deployments                       deploy       apps                           true  
+
+
+    that means, that only apiVersion with apps is correct for Deployments (extensions is not supporting Deployment). 
+    The same situation with StatefulSet.
+
+    You need to change Deployment and StatefulSet apiVersion to apiVersion: apps/v1.
+
+
+
+
+2. kubectl bash completion doesn't work in ubuntu docker container
+
+    (1) 
+    bash completion happens to generate the following error messages
+    it doesn't work within the docker container "bash: _get_comp_words_by_ref: command not found."
+
+
+    (2) Solution
+    Install using yum install -y bash-completion and then 
+    source using source /etc/profile.d/bash_completion.sh 
+    followed by the actual command source <(kubectl completion bash)
+
