@@ -30,3 +30,55 @@ Kubernetes Running Errors
     source using source /etc/profile.d/bash_completion.sh 
     followed by the actual command source <(kubectl completion bash)
 
+
+
+
+3. docker change cgroup driver to systemd
+(source:https://stackoverflow.com/questions/43794169/docker-change-cgroup-driver-to-systemd)
+
+
+    (1)
+    errors:
+    failed to run Kubelet: misconfiguration: kubelet cgroup driver: systemd is different from docker cgroup driver: cgroupfs
+
+
+    (2)
+    A solution that does not involve editing systemd units or drop-ins would be to create (or edit) the /etc/docker/daemon.json configuration file and to include the following:
+
+    {
+      "exec-opts": ["native.cgroupdriver=systemd"]
+    }
+
+    After saving it, restart your docker service.
+
+    sudo systemctl restart docker
+    This solution obviously is only feasible if you would want to apply this system-wide.
+
+
+    -- OR --
+
+   
+    OS: Centos 7.4 As kubernetes 1.23.1 recommend to use cgroup systemd, and docker 20.10.20 use cgroup cgroupfs. 
+    So, you have to change docker service file.
+
+    step1: Stop docker service
+
+    systemctl stop docker
+
+
+
+    step2: change on files /etc/systemd/system/multi-user.target.wants/docker.service and /usr/lib/systemd/system/docker.service
+
+    From :
+
+    ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+    TO:
+
+    ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --exec-opt native.cgroupdriver=systemd
+
+
+
+    step3: start docker service and kubelet
+
+    systemctl start docker
+    kubeadm init phase kubelet-start 

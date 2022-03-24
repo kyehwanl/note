@@ -36,6 +36,9 @@ Making Kubernetes Clusters in VMwares
 
     (1) yum install -y docker kubelet kubeadm kubectl kubernetes-cni
 
+        (c.f) trouble-shoot
+            If there is kubelet conflict with versions, install kubeadm first.
+            kubeadm has dependencies of kubelet, so the matching version will be installed
 
     (2) manually enable the docker and the kubelet services:
 
