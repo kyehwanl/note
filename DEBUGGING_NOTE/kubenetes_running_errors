@@ -82,3 +82,55 @@ Kubernetes Running Errors
 
     systemctl start docker
     kubeadm init phase kubelet-start 
+
+
+4. kubelet - not start when 'systemctl start kubelet'
+
+    (1) some errors regarding cni, "Unable to update cni config: No networks found in /etc/cni/net.d" 
+        or "failed to load Kubelet config file /var/lib/kubelet/config.yaml"
+
+        *CNI: container network interface
+
+    (2) Solution:
+        After 'kubeadm init [--pod-network-cidr 192.168.0.0/16]' 
+        and "kubectl apply < cni >"
+        will resolve this issues
+
+
+
+5. If the restart of kubelet does not help, you can try to re-install the kubelet, it is a separate package:
+
+    dnf(yum) reinstall kubelet                          on Fedora, Centos
+    apt-get purge kubelet && apt-get install kubelet    on Debian/Ubuntu
+
+
+
+6. firewalld is active, please ensure ports [6443 10250] are open or your cluster
+
+
+    - install firewalld
+    apt or dnf install firewalld
+
+    - firewall-cmd --add-masquerade --permanent
+    - firewall-cmd --reload 
+
+
+    - on Master:
+        -- firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
+        -- firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=<worker-IP-address>/32 accept' 
+        -- firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+        -- firewall-cmd --reload
+
+    - on Worker:
+        -- firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
+        -- firewall-cmd --reload
+        
+
+
+
+
+
+
+
+
+

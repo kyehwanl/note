@@ -1,0 +1,1283 @@
+
+Making Kubernetes Clusters on Centos 7,8
+========================================
+(source: https://upcloud.com/community/tutorials/install-kubernetes-cluster-centos-8/)
+
+--> This works and resolve all issues with difficult version mismatching 
+
+
+PREREQUISITES FOR BOTH MASTER AND WORKER NODES
+----------------------------------------------
+
+1. Deploy two CentOS 8 cloud servers. One for the master and the other for the worker node. Check this tutorial to learn more about deploying cloud servers.
+
+Kubernetes has minimum requirements for the server and both master and worker nodes need to have at least 2 GB RAM and 2 CPUs, the $20/mo plan covers these requirements and with double the memory. Note that the minimum requirements are not just guidelines as Kubernetes will refuse to install on a server with less than the minimum resources.
+
+2. Log into both Master and Worker nodes over SSH using the root account and password you received by email after deployment.
+
+Make note of the public IP and private IP addresses of your servers at the UpCloud control panel. You can also use the ip addr command to find these out later.
+
+3. Make sure the servers are up to date before installing anything new.
+
+dnf -y upgrade
+4. Disable SELinux enforcement.
+
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+5. Enable transparent masquerading and facilitate Virtual Extensible LAN (VxLAN) traffic for communication between Kubernetes pods across the cluster.
+
+modprobe br_netfilter
+You will also need to enable IP masquerade at the firewall.
+
+firewall-cmd --add-masquerade --permanent
+firewall-cmd --reload
+6. Set bridged packets to traverse iptables rules.
+
+cat < /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+Then load the new rules.
+
+sysctl --system
+7. Disable all memory swaps to increase performance.
+
+swapoff -a
+With these steps done on both Master and worker nodes, you can proceed to install Docker.
+
+
+
+
+
+INSTALLING DOCKER ON MASTER AND WORKER NODES
+--------------------------------------------
+
+Next, we’ll need to install Docker.
+
+1. Add the repository for the docker installation package.
+
+dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+2. Install container.io which is not yet provided by the package manager before installing docker.
+
+dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+3. Then install Docker from the repositories.
+
+dnf install docker-ce --nobest -y
+4. Start the docker service.
+
+systemctl start docker
+5. Make it also start automatically on server restart.
+
+systemctl enable docker
+6. Change docker to use systemd cgroup driver.
+
+echo '{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}' > /etc/docker/daemon.json
+And restart docker to apply the change.
+
+systemctl restart docker
+Once installed, you should check that everything is working correctly.
+
+7. See the docker version.
+
+docker version
+8. List what is inside the docker images. Likely still empty for now.
+
+docker images
+REPOSITORY   TAG   IMAGE ID   CREATED   SIZE
+Now that Docker is ready to go, continue below to install Kubernetes itself.
+
+
+
+
+INSTALLING KUBERNETES ON MASTER AND WORKER NODES
+------------------------------------------------
+
+With all the necessary parts installed, we can get Kubernetes installed as well.
+
+1. Add the Kubernetes repository to your package manager by creating the following file.
+
+cat < /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+2. Then update the repo info.
+
+dnf upgrade -y
+3. Install all the necessary components for Kubernetes.
+
+dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+Start the Kubernetes services and enable them to run at startup.
+
+systemctl enable kubelet
+systemctl start kubelet
+Once running on both nodes, begin configuring Kubernetes on the Master by following the instructions in the next section.
+
+
+
+
+CONFIGURING KUBERNETES ON THE MASTER NODE ONLY
+----------------------------------------------
+
+Once Kubernetes has been installed, it needs to be configured to form a cluster.
+
+1. Configure kubeadm.
+
+kubeadm config images pull
+2. Open the necessary ports used by Kubernetes.
+
+firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
+3. Allow docker access from another node, replace the worker-IP-address with yours.
+
+firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=worker-IP-address/32 accept'
+4. Allow access to the host’s localhost from the docker container.
+
+firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+5. Make the changes permanent.
+
+firewall-cmd --reload
+6. Install CNI (container network interface) plugin for Kubernetes.
+
+For this setup, we’ll be using Calico: https://docs.projectcalico.org/getting-started/kubernetes/quickstart#overview
+
+Issue the following command:
+
+kubeadm init --pod-network-cidr 192.168.0.0/16
+You should see something like the example below. Make note of the discovery token, it’s needed to join worker nodes to the cluster.
+
+Note that the join token below is just an example.
+
+kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
+--discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+Make the following directory and configuration files.
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+7. Enable pod to run on Master. This is only for demonstration purposes and is not recommended for production use.
+
+kubectl taint nodes --all node-role.kubernetes.io/master-
+8. Check that Master node has been enabled and is running.
+
+kubectl get nodes
+NAME  STATUS     ROLES  AGE  VERSION
+master  NotReady  master   91s     v1.18.0
+On successful execution, you should see a node with ready status. If not, wait a moment and repeat the command.
+
+When the Master node is up and running, continue with the next section to join the Worker node to the cluster.
+
+
+
+
+
+
+CONFIGURING KUBERNETES ON THE WORKER NODE ONLY
+----------------------------------------------
+
+Each Kubernetes installation needs to have one or more worker nodes that run the containerized applications. We’ll only configure one worker in this example but repeat these steps to join more nodes to your cluster.
+
+1. Open ports used by Kubernetes.
+
+firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
+2. Make the changes permanent.
+
+firewall-cmd --reload
+3. Join the cluster with the previously noted token.
+
+Note that the join token below is just an example.
+
+kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
+--discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+4. See if the Worker node successfully joined.
+
+Go back to the Master node and issue the following command.
+
+kubectl get nodes
+NAME    STATUS   ROLES    AGE   VERSION
+master  Ready    master   10m   v1.18.0
+worker  Ready       28s   v1.18.0
+On success, you should see two nodes with ready status. If not, wait a moment and repeat the command.
+
+Finished!
+Congratulations, you should now have a working Kubernetes installation running on two nodes.
+
+In case anything goes wrong, you can always repeat the process.
+
+Run this on Master and Workers: kubeadm reset && rm -rf /etc/cni/net.d
+
+Have fun clustering.
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------
+    LOGS
+----------------------------------------------------------------------------------------
+
+---------------
+<Master  Node>
+---------------
+
+
+[root@vmware-061 ~]# firewall-cmd --add-masquerade --permanent
+success
+[root@vmware-061 ~]# firewall-cmd --reload
+success
+[root@vmware-061 ~]# cat /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables=1
+
+[root@vmware-061 ~]# echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.d/k8s.conf
+[root@vmware-061 ~]# cat /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables=1
+net.bridge.bridge-nf-call-ip6tables = 1
+
+[root@vmware-061 ~]# sysctl --system
+* Applying /usr/lib/sysctl.d/10-default-yama-scope.conf ...
+kernel.yama.ptrace_scope = 0
+* Applying /usr/lib/sysctl.d/50-coredump.conf ...
+kernel.core_pattern = |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e
+kernel.core_pipe_limit = 16
+* Applying /usr/lib/sysctl.d/50-default.conf ...
+kernel.sysrq = 16
+kernel.core_uses_pid = 1
+kernel.kptr_restrict = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.all.promote_secondaries = 1
+net.core.default_qdisc = fq_codel
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+* Applying /usr/lib/sysctl.d/50-libkcapi-optmem_max.conf ...
+net.core.optmem_max = 81920
+* Applying /usr/lib/sysctl.d/50-pid-max.conf ...
+kernel.pid_max = 4194304
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+* Applying /etc/sysctl.conf ...
+
+[root@vmware-061 ~]# swapoff -a
+
+[root@vmware-061 ~]# dnf repolist
+repo id                                        repo name
+appstream                                      CentOS Stream 8 - AppStream
+baseos                                         CentOS Stream 8 - BaseOS
+docker-ce-stable                               Docker CE Stable - x86_64
+epel                                           Extra Packages for Enterprise Linux 8 - x86_64
+epel-modular                                   Extra Packages for Enterprise Linux Modular 8 - x86_64
+extras                                         CentOS Stream 8 - Extras
+kubernetes                                     Kubernetes
+powertools                                     CentOS Stream 8 - PowerTools
+
+[root@vmware-061 ~]# dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+Last metadata expiration check: 0:00:46 ago on Thu 24 Mar 2022 10:43:13 AM EDT.
+containerd.io-1.2.6-3.3.el7.x86_64.rpm                                                               24 MB/s |  26 MB     00:01
+Dependencies resolved.
+====================================================================================================================================
+ Package                              Architecture   Version                                             Repository            Size
+====================================================================================================================================
+Installing:
+ containerd.io                        x86_64         1.2.6-3.3.el7                                       @commandline          26 M
+Installing dependencies:
+ checkpolicy                          x86_64         2.9-1.el8                                           baseos               348 k
+ container-selinux                    noarch         2:2.180.0-1.module_el8.7.0+1106+45480ee0            appstream             59 k
+ policycoreutils-python-utils         noarch         2.9-17.el8                                          baseos               252 k
+ python3-audit                        x86_64         3.0-0.17.20191104git1c2f876.el8                     baseos                86 k
+ python3-libsemanage                  x86_64         2.9-6.el8                                           baseos               127 k
+ python3-policycoreutils              noarch         2.9-17.el8                                          baseos               2.2 M
+ python3-setools                      x86_64         4.3.0-3.el8                                         baseos               624 k
+
+Transaction Summary
+====================================================================================================================================
+Install  8 Packages
+
+Total size: 30 M
+Total download size: 3.7 M
+Installed size: 107 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/7): container-selinux-2.180.0-1.module_el8.7.0+1106+45480ee0.noarch.rpm                          544 kB/s |  59 kB     00:00
+(2/7): policycoreutils-python-utils-2.9-17.el8.noarch.rpm                                           2.2 MB/s | 252 kB     00:00
+(3/7): checkpolicy-2.9-1.el8.x86_64.rpm                                                             2.6 MB/s | 348 kB     00:00
+(4/7): python3-libsemanage-2.9-6.el8.x86_64.rpm                                                     5.2 MB/s | 127 kB     00:00
+(5/7): python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64.rpm                                     1.0 MB/s |  86 kB     00:00
+(6/7): python3-setools-4.3.0-3.el8.x86_64.rpm                                                       7.2 MB/s | 624 kB     00:00
+(7/7): python3-policycoreutils-2.9-17.el8.noarch.rpm                                                 10 MB/s | 2.2 MB     00:00
+------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                               1.7 MB/s | 3.7 MB     00:02
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                            1/1
+  Installing       : python3-setools-4.3.0-3.el8.x86_64                                                                         1/8
+  Installing       : python3-libsemanage-2.9-6.el8.x86_64                                                                       2/8
+  Installing       : python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64                                                       3/8
+  Installing       : checkpolicy-2.9-1.el8.x86_64                                                                               4/8
+  Installing       : python3-policycoreutils-2.9-17.el8.noarch                                                                  5/8
+  Installing       : policycoreutils-python-utils-2.9-17.el8.noarch                                                             6/8
+  Running scriptlet: container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch                                          7/8
+  Installing       : container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch                                          7/8
+  Running scriptlet: container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch                                          7/8
+  Installing       : containerd.io-1.2.6-3.3.el7.x86_64                                                                         8/8
+  Running scriptlet: containerd.io-1.2.6-3.3.el7.x86_64                                                                         8/8
+  Running scriptlet: container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch                                          8/8
+  Running scriptlet: containerd.io-1.2.6-3.3.el7.x86_64                                                                         8/8
+  Verifying        : container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch                                          1/8
+  Verifying        : checkpolicy-2.9-1.el8.x86_64                                                                               2/8
+  Verifying        : policycoreutils-python-utils-2.9-17.el8.noarch                                                             3/8
+  Verifying        : python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64                                                       4/8
+  Verifying        : python3-libsemanage-2.9-6.el8.x86_64                                                                       5/8
+  Verifying        : python3-policycoreutils-2.9-17.el8.noarch                                                                  6/8
+  Verifying        : python3-setools-4.3.0-3.el8.x86_64                                                                         7/8
+  Verifying        : containerd.io-1.2.6-3.3.el7.x86_64                                                                         8/8
+
+Installed:
+  checkpolicy-2.9-1.el8.x86_64                               container-selinux-2:2.180.0-1.module_el8.7.0+1106+45480ee0.noarch
+  containerd.io-1.2.6-3.3.el7.x86_64                         policycoreutils-python-utils-2.9-17.el8.noarch
+  python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64       python3-libsemanage-2.9-6.el8.x86_64
+  python3-policycoreutils-2.9-17.el8.noarch                  python3-setools-4.3.0-3.el8.x86_64
+
+Complete!
+
+[root@vmware-061 ~]# dnf install docker-ce --nobest -y
+Last metadata expiration check: 0:02:11 ago on Thu 24 Mar 2022 10:43:13 AM EDT.
+Dependencies resolved.
+====================================================================================================================================
+ Package                            Architecture    Version                                         Repository                 Size
+====================================================================================================================================
+Installing:
+ docker-ce                          x86_64          3:20.10.14-3.el8                                docker-ce-stable           22 M
+Upgrading:
+ containerd.io                      x86_64          1.5.11-3.1.el8                                  docker-ce-stable           29 M
+Installing dependencies:
+ docker-ce-cli                      x86_64          1:20.10.14-3.el8                                docker-ce-stable           30 M
+ docker-ce-rootless-extras          x86_64          20.10.14-3.el8                                  docker-ce-stable          4.6 M
+ docker-scan-plugin                 x86_64          0.17.0-3.el8                                    docker-ce-stable          3.8 M
+ fuse-overlayfs                     x86_64          1.8.2-1.module_el8.7.0+1106+45480ee0            appstream                  73 k
+ fuse3                              x86_64          3.2.1-12.el8                                    baseos                     50 k
+ fuse3-libs                         x86_64          3.3.0-15.el8                                    baseos                     95 k
+ libcgroup                          x86_64          0.41-19.el8                                     baseos                     70 k
+ libslirp                           x86_64          4.4.0-1.module_el8.6.0+926+8bef8ae7             appstream                  70 k
+ slirp4netns                        x86_64          1.1.8-2.module_el8.7.0+1106+45480ee0            appstream                  51 k
+
+Transaction Summary
+====================================================================================================================================
+Install  10 Packages
+Upgrade   1 Package
+
+Total download size: 90 M
+Downloading Packages:
+(1/11): slirp4netns-1.1.8-2.module_el8.7.0+1106+45480ee0.x86_64.rpm                                 484 kB/s |  51 kB     00:00
+(2/11): fuse-overlayfs-1.8.2-1.module_el8.7.0+1106+45480ee0.x86_64.rpm                              663 kB/s |  73 kB     00:00
+(3/11): libslirp-4.4.0-1.module_el8.6.0+926+8bef8ae7.x86_64.rpm                                     625 kB/s |  70 kB     00:00
+(4/11): libcgroup-0.41-19.el8.x86_64.rpm                                                            969 kB/s |  70 kB     00:00
+(5/11): fuse3-3.2.1-12.el8.x86_64.rpm                                                               419 kB/s |  50 kB     00:00
+(6/11): fuse3-libs-3.3.0-15.el8.x86_64.rpm                                                          711 kB/s |  95 kB     00:00
+(7/11): docker-ce-rootless-extras-20.10.14-3.el8.x86_64.rpm                                         6.8 MB/s | 4.6 MB     00:00
+(8/11): docker-scan-plugin-0.17.0-3.el8.x86_64.rpm                                                   13 MB/s | 3.8 MB     00:00
+(9/11): docker-ce-20.10.14-3.el8.x86_64.rpm                                                          15 MB/s |  22 MB     00:01
+(10/11): docker-ce-cli-20.10.14-3.el8.x86_64.rpm                                                     17 MB/s |  30 MB     00:01
+(11/11): containerd.io-1.5.11-3.1.el8.x86_64.rpm                                                     23 MB/s |  29 MB     00:01
+------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                19 MB/s |  90 MB     00:04
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                            1/1
+  Running scriptlet: docker-scan-plugin-0.17.0-3.el8.x86_64                                                                     1/1
+  Installing       : docker-scan-plugin-0.17.0-3.el8.x86_64                                                                    1/12
+  Running scriptlet: docker-scan-plugin-0.17.0-3.el8.x86_64                                                                    1/12
+  Installing       : docker-ce-cli-1:20.10.14-3.el8.x86_64                                                                     2/12
+  Running scriptlet: docker-ce-cli-1:20.10.14-3.el8.x86_64                                                                     2/12
+  Upgrading        : containerd.io-1.5.11-3.1.el8.x86_64                                                                       3/12
+  Running scriptlet: containerd.io-1.5.11-3.1.el8.x86_64                                                                       3/12
+  Running scriptlet: libcgroup-0.41-19.el8.x86_64                                                                              4/12
+  Installing       : libcgroup-0.41-19.el8.x86_64                                                                              4/12
+  Running scriptlet: libcgroup-0.41-19.el8.x86_64                                                                              4/12
+  Installing       : fuse3-libs-3.3.0-15.el8.x86_64                                                                            5/12
+  Running scriptlet: fuse3-libs-3.3.0-15.el8.x86_64                                                                            5/12
+  Installing       : fuse3-3.2.1-12.el8.x86_64                                                                                 6/12
+  Installing       : fuse-overlayfs-1.8.2-1.module_el8.7.0+1106+45480ee0.x86_64                                                7/12
+  Running scriptlet: fuse-overlayfs-1.8.2-1.module_el8.7.0+1106+45480ee0.x86_64                                                7/12
+  Installing       : libslirp-4.4.0-1.module_el8.6.0+926+8bef8ae7.x86_64                                                       8/12
+  Installing       : slirp4netns-1.1.8-2.module_el8.7.0+1106+45480ee0.x86_64                                                   9/12
+  Installing       : docker-ce-3:20.10.14-3.el8.x86_64                                                                        10/12
+  Running scriptlet: docker-ce-3:20.10.14-3.el8.x86_64                                                                        10/12
+  Installing       : docker-ce-rootless-extras-20.10.14-3.el8.x86_64                                                          11/12
+  Running scriptlet: docker-ce-rootless-extras-20.10.14-3.el8.x86_64                                                          11/12
+  Running scriptlet: containerd.io-1.2.6-3.3.el7.x86_64                                                                       12/12
+  Cleanup          : containerd.io-1.2.6-3.3.el7.x86_64                                                                       12/12
+  Running scriptlet: containerd.io-1.2.6-3.3.el7.x86_64                                                                       12/12
+  Verifying        : fuse-overlayfs-1.8.2-1.module_el8.7.0+1106+45480ee0.x86_64                                                1/12
+  Verifying        : libslirp-4.4.0-1.module_el8.6.0+926+8bef8ae7.x86_64                                                       2/12
+  Verifying        : slirp4netns-1.1.8-2.module_el8.7.0+1106+45480ee0.x86_64                                                   3/12
+  Verifying        : fuse3-3.2.1-12.el8.x86_64                                                                                 4/12
+  Verifying        : fuse3-libs-3.3.0-15.el8.x86_64                                                                            5/12
+  Verifying        : libcgroup-0.41-19.el8.x86_64                                                                              6/12
+  Verifying        : docker-ce-3:20.10.14-3.el8.x86_64                                                                         7/12
+  Verifying        : docker-ce-cli-1:20.10.14-3.el8.x86_64                                                                     8/12
+  Verifying        : docker-ce-rootless-extras-20.10.14-3.el8.x86_64                                                           9/12
+  Verifying        : docker-scan-plugin-0.17.0-3.el8.x86_64                                                                   10/12
+  Verifying        : containerd.io-1.5.11-3.1.el8.x86_64                                                                      11/12
+  Verifying        : containerd.io-1.2.6-3.3.el7.x86_64                                                                       12/12
+
+Upgraded:
+  containerd.io-1.5.11-3.1.el8.x86_64
+Installed:
+  docker-ce-3:20.10.14-3.el8.x86_64                                  docker-ce-cli-1:20.10.14-3.el8.x86_64
+  docker-ce-rootless-extras-20.10.14-3.el8.x86_64                    docker-scan-plugin-0.17.0-3.el8.x86_64
+  fuse-overlayfs-1.8.2-1.module_el8.7.0+1106+45480ee0.x86_64         fuse3-3.2.1-12.el8.x86_64
+  fuse3-libs-3.3.0-15.el8.x86_64                                     libcgroup-0.41-19.el8.x86_64
+  libslirp-4.4.0-1.module_el8.6.0+926+8bef8ae7.x86_64                slirp4netns-1.1.8-2.module_el8.7.0+1106+45480ee0.x86_64
+
+Complete!
+[root@vmware-061 ~]# systemctl start docker
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xe" for details.
+
+[root@vmware-061 ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Thu 2022-03-24 10:46:03 EDT; 12s ago
+     Docs: https://docs.docker.com
+  Process: 252775 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock (code=exited, status=1/FAILURE)
+ Main PID: 252775 (code=exited, status=1/FAILURE)
+
+Mar 24 10:46:01 vmware-061.antd.nist.gov systemd[1]: docker.service: Main process exited, code=exited, status=1/FAILURE
+Mar 24 10:46:01 vmware-061.antd.nist.gov systemd[1]: docker.service: Failed with result 'exit-code'.
+Mar 24 10:46:01 vmware-061.antd.nist.gov systemd[1]: Failed to start Docker Application Container Engine.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Service RestartSec=2s expired, scheduling restart.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Scheduled restart job, restart counter is at 3.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: Stopped Docker Application Container Engine.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Start request repeated too quickly.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Failed with result 'exit-code'.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: Failed to start Docker Application Container Engine.
+[root@vmware-061 ~]# systemctl restart docker
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xe" for details.
+[root@vmware-061 ~]# service docker status
+Redirecting to /bin/systemctl status docker.service
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Thu 2022-03-24 10:46:03 EDT; 44s ago
+     Docs: https://docs.docker.com
+  Process: 252775 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock (code=exited, status=1/FAILURE)
+ Main PID: 252775 (code=exited, status=1/FAILURE)
+
+Mar 24 10:46:01 vmware-061.antd.nist.gov systemd[1]: Failed to start Docker Application Container Engine.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Service RestartSec=2s expired, scheduling restart.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Scheduled restart job, restart counter is at 3.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: Stopped Docker Application Container Engine.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Start request repeated too quickly.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: docker.service: Failed with result 'exit-code'.
+Mar 24 10:46:03 vmware-061.antd.nist.gov systemd[1]: Failed to start Docker Application Container Engine.
+Mar 24 10:46:39 vmware-061.antd.nist.gov systemd[1]: docker.service: Start request repeated too quickly.
+Mar 24 10:46:39 vmware-061.antd.nist.gov systemd[1]: docker.service: Failed with result 'exit-code'.
+Mar 24 10:46:39 vmware-061.antd.nist.gov systemd[1]: Failed to start Docker Application Container Engine.
+[root@vmware-061 ~]# service docker start
+Redirecting to /bin/systemctl start docker.service
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xe" for details.
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# systemctl start docker
+[root@vmware-061 ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: active (running) since Thu 2022-03-24 10:47:31 EDT; 5s ago
+     Docs: https://docs.docker.com
+ Main PID: 252823 (dockerd)
+    Tasks: 8
+   Memory: 81.1M
+   CGroup: /system.slice/docker.service
+           └─252823 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Mar 24 10:47:30 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:30.326312295-04:00" level=info msg="Firewalld: doc>
+Mar 24 10:47:30 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:30.599882925-04:00" level=info msg="Firewalld: int>
+Mar 24 10:47:30 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:30.748574030-04:00" level=info msg="Firewalld: int>
+Mar 24 10:47:30 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:30.937433355-04:00" level=info msg="Default bridge>
+Mar 24 10:47:31 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:31.028974978-04:00" level=info msg="Firewalld: int>
+Mar 24 10:47:31 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:31.133307200-04:00" level=info msg="Loading contai>
+Mar 24 10:47:31 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:31.153947093-04:00" level=info msg="Docker daemon">
+Mar 24 10:47:31 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:31.154003304-04:00" level=info msg="Daemon has com>
+Mar 24 10:47:31 vmware-061.antd.nist.gov systemd[1]: Started Docker Application Container Engine.
+Mar 24 10:47:31 vmware-061.antd.nist.gov dockerd[252823]: time="2022-03-24T10:47:31.174135758-04:00" level=info msg="API listen on >
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# systemctl enable docker
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# cat /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
+[root@vmware-061 ~]# docker version
+Client: Docker Engine - Community
+ Version:           20.10.14
+ API version:       1.41
+ Go version:        go1.16.15
+ Git commit:        a224086
+ Built:             Thu Mar 24 01:47:44 2022
+ OS/Arch:           linux/amd64
+ Context:           default
+ Experimental:      true
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          20.10.14
+  API version:      1.41 (minimum version 1.12)
+  Go version:       go1.16.15
+  Git commit:       87a90dc
+  Built:            Thu Mar 24 01:46:10 2022
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.5.11
+  GitCommit:        3df54a852345ae127d1fa3092b95168e4a88e2f8
+ runc:
+  Version:          1.0.3
+  GitCommit:        v1.0.3-0-gf46b6ba
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+[root@vmware-061 ~]# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+centos       7         eeb6ee3f44bd   6 months ago   204MB
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+[root@vmware-061 ~]# vim /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+[root@vmware-061 ~]# dnf upgrade -y
+Kubernetes                                                                                          1.6 kB/s | 844  B     00:00
+Dependencies resolved.
+====================================================================================================================================
+ Package                                    Architecture    Version                                        Repository          Size
+====================================================================================================================================
+Installing:
+ kernel                                     x86_64          4.18.0-373.el8                                 baseos             8.0 M
+Upgrading:
+ NetworkManager                             x86_64          1:1.37.2-1.el8                                 baseos             2.3 M
+ NetworkManager-libnm                       x86_64          1:1.37.2-1.el8                                 baseos             1.8 M
+ NetworkManager-team                        x86_64          1:1.37.2-1.el8                                 baseos             153 k
+ NetworkManager-tui                         x86_64          1:1.37.2-1.el8                                 baseos             345 k
+ audit                                      x86_64          3.0.7-2.el8                                    baseos             263 k
+ audit-libs                                 x86_64          3.0.7-2.el8                                    baseos             123 k
+ centos-gpg-keys                            noarch          1:8-4.el8                                      baseos              12 k
+ centos-stream-repos                        noarch          8-4.el8                                        baseos              20 k
+ cryptsetup-libs                            x86_64          2.3.7-2.el8                                    baseos             488 k
+ cyrus-sasl-lib                             x86_64          2.1.27-6.el8_5                                 baseos             123 k
+ nstalling dependencies:
+ NetworkManager-initscripts-updown          noarch          1:1.37.2-1.el8                                 baseos             137 k
+ kernel-core                                x86_64          4.18.0-373.el8                                 baseos              39 M
+ kernel-modules                             x86_64          4.18.0-373.el8                                 baseos              32 M
+ llvm-libs                                  x86_64          13.0.0-3.module_el8.6.0+1029+6594c364          appstream           24 M
+Installing weak dependencies:
+ epel-next-release                          noarch          8-15.el8                                       epel                10 k
+ sqlite                                     x86_64          3.26.0-15.el8                                  baseos             668 k
+...
+
+Transaction Summary
+====================================================================================================================================
+Install    7 Packages
+Upgrade  148 Packages
+
+Total download size: 453 M
+Downloading Packages:
+(1/155): NetworkManager-initscripts-updown-1.37.2-1.el8.noarch.rpm                                  1.3 MB/s | 137 kB     00:00
+(2/155): llvm-libs-13.0.0-3.module_el8.6.0+1029+6594c364.x86_64.rpm                                  26 MB/s |  24 MB     00:00
+(3/155): kernel-4.18.0-373.el8.x86_64.rpm                                                           4.4 MB/s | 8.0 MB     00:01
+(4/155): sqlite-3.26.0-15.el8.x86_64.rpm                                                            5.9 MB/s | 668 kB     00:00
+(5/155): epel-next-release-8-15.el8.noarch.rpm                                                      1.1 MB/s |  10 kB     00:00
+(6/155): glibc-gconv-extra-2.28-189.el8.x86_64.rpm                                                  8.9 MB/s | 1.5 MB     00:00
+...
+Complete!
+
+[root@vmware-061 ~]# dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+Extra Packages for Enterprise Linux 8 - Next - x86_64                                               581 kB/s | 206 kB     00:00
+Last metadata expiration check: 0:00:01 ago on Thu 24 Mar 2022 11:01:52 AM EDT.
+Dependencies resolved.
+====================================================================================================================================
+ Package                                 Architecture            Version                          Repository                   Size
+====================================================================================================================================
+Installing:
+ kubeadm                                 x86_64                  1.23.5-0                         kubernetes                  9.0 M
+ kubectl                                 x86_64                  1.23.5-0                         kubernetes                  9.5 M
+ kubelet                                 x86_64                  1.23.5-0                         kubernetes                   21 M
+Installing dependencies:
+ conntrack-tools                         x86_64                  1.4.4-10.el8                     baseos                      204 k
+ cri-tools                               x86_64                  1.23.0-0                         kubernetes                  7.1 M
+ kubernetes-cni                          x86_64                  0.8.7-0                          kubernetes                   19 M
+ libnetfilter_cthelper                   x86_64                  1.0.0-15.el8                     baseos                       24 k
+ libnetfilter_cttimeout                  x86_64                  1.0.0-11.el8                     baseos                       24 k
+ libnetfilter_queue                      x86_64                  1.0.4-3.el8                      baseos                       31 k
+ socat                                   x86_64                  1.7.4.1-1.el8                    appstream                   323 k
+
+Transaction Summary
+====================================================================================================================================
+Install  10 Packages
+
+Total download size: 65 M
+Installed size: 298 M
+Downloading Packages:
+(1/10): libnetfilter_cthelper-1.0.0-15.el8.x86_64.rpm                                               368 kB/s |  24 kB     00:00
+(2/10): conntrack-tools-1.4.4-10.el8.x86_64.rpm                                                     2.2 MB/s | 204 kB     00:00
+(3/10): libnetfilter_cttimeout-1.0.0-11.el8.x86_64.rpm                                              870 kB/s |  24 kB     00:00
+(4/10): libnetfilter_queue-1.0.4-3.el8.x86_64.rpm                                                   1.3 MB/s |  31 kB     00:00
+(5/10): socat-1.7.4.1-1.el8.x86_64.rpm                                                              1.3 MB/s | 323 kB     00:00
+(6/10): 96b208380314a19ded917eaf125ed748f5e2b28a3cc8707a10a76a9f5b61c0df-kubectl-1.23.5-0.x86_64.rp  12 MB/s | 9.5 MB     00:00
+(7/10): 4d300a7655f56307d35f127d99dc192b6aa4997f322234e754f16aaa60fd8906-cri-tools-1.23.0-0.x86_64. 7.0 MB/s | 7.1 MB     00:01
+(8/10): ab0e12925be5251baf5dd3b31493663d46e4a7b458c7a5b6b717f4ae87a81bd4-kubeadm-1.23.5-0.x86_64.rp 8.1 MB/s | 9.0 MB     00:01
+(9/10): d39aa6eb38a6a8326b7e88c622107327dfd02ac8aaae32eceb856643a2ad9981-kubelet-1.23.5-0.x86_64.rp  26 MB/s |  21 MB     00:00
+(10/10): db7cb5cb0b3f6875f54d10f02e625573988e3e91fd4fc5eef0b1876bb18604ad-kubernetes-cni-0.8.7-0.x8  19 MB/s |  19 MB     00:00
+------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                26 MB/s |  65 MB     00:02
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                            1/1
+  Installing       : kubectl-1.23.5-0.x86_64                                                                                   1/10
+  Installing       : cri-tools-1.23.0-0.x86_64                                                                                 2/10
+  Installing       : libnetfilter_queue-1.0.4-3.el8.x86_64                                                                     3/10
+  Running scriptlet: libnetfilter_queue-1.0.4-3.el8.x86_64                                                                     3/10
+  Installing       : libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                4/10
+  Running scriptlet: libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                4/10
+  Installing       : libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                 5/10
+  Running scriptlet: libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                 5/10
+  Installing       : conntrack-tools-1.4.4-10.el8.x86_64                                                                       6/10
+  Running scriptlet: conntrack-tools-1.4.4-10.el8.x86_64                                                                       6/10
+  Installing       : socat-1.7.4.1-1.el8.x86_64                                                                                7/10
+  Installing       : kubernetes-cni-0.8.7-0.x86_64                                                                             8/10
+  Installing       : kubelet-1.23.5-0.x86_64                                                                                   9/10
+  Installing       : kubeadm-1.23.5-0.x86_64                                                                                  10/10
+  Running scriptlet: kubeadm-1.23.5-0.x86_64                                                                                  10/10
+  Verifying        : socat-1.7.4.1-1.el8.x86_64                                                                                1/10
+  Verifying        : conntrack-tools-1.4.4-10.el8.x86_64                                                                       2/10
+  Verifying        : libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                 3/10
+  Verifying        : libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                4/10
+  Verifying        : libnetfilter_queue-1.0.4-3.el8.x86_64                                                                     5/10
+  Verifying        : cri-tools-1.23.0-0.x86_64                                                                                 6/10
+  Verifying        : kubeadm-1.23.5-0.x86_64                                                                                   7/10
+  Verifying        : kubectl-1.23.5-0.x86_64                                                                                   8/10
+  Verifying        : kubelet-1.23.5-0.x86_64                                                                                   9/10
+  Verifying        : kubernetes-cni-0.8.7-0.x86_64                                                                            10/10
+
+Installed:
+  conntrack-tools-1.4.4-10.el8.x86_64         cri-tools-1.23.0-0.x86_64                    kubeadm-1.23.5-0.x86_64
+  kubectl-1.23.5-0.x86_64                     kubelet-1.23.5-0.x86_64                      kubernetes-cni-0.8.7-0.x86_64
+  libnetfilter_cthelper-1.0.0-15.el8.x86_64   libnetfilter_cttimeout-1.0.0-11.el8.x86_64   libnetfilter_queue-1.0.4-3.el8.x86_64
+  socat-1.7.4.1-1.el8.x86_64
+
+Complete!
+[root@vmware-061 ~]# systemctl enable kubelet
+[root@vmware-061 ~]# systemctl start kubelet
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# systemctl status kubelet
+● kubelet.service - kubelet: The Kubernetes Node Agent
+   Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)
+  Drop-In: /usr/lib/systemd/system/kubelet.service.d
+           └─10-kubeadm.conf
+   Active: activating (auto-restart) (Result: exit-code) since Thu 2022-03-24 11:02:39 EDT; 487ms ago
+     Docs: https://kubernetes.io/docs/
+  Process: 300498 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARG>
+ Main PID: 300498 (code=exited, status=1/FAILURE)
+
+Mar 24 11:02:39 vmware-061.antd.nist.gov systemd[1]: kubelet.service: Main process exited, code=exited, status=1/FAILURE
+Mar 24 11:02:39 vmware-061.antd.nist.gov systemd[1]: kubelet.service: Failed with result 'exit-code'.
+[root@vmware-061 ~]# echo $KUBECONFIG
+/root/admin.conf
+[root@vmware-061 ~]# cat /etc/k
+kdump/       kdump.conf   kernel/      keyutils/    krb5.conf    krb5.conf.d/ kubernetes/
+[root@vmware-061 ~]# cat /etc/k
+kdump/       kdump.conf   kernel/      keyutils/    krb5.conf    krb5.conf.d/ kubernetes/
+[root@vmware-061 ~]# cat /etc/kubernetes/
+manifests/ pki/
+[root@vmware-061 ~]# cat /etc/kubernetes/
+manifests/ pki/
+[root@vmware-061 ~]# cat /etc/kubernetes/
+manifests/ pki/
+[root@vmware-061 ~]# ll /etc/kubernetes/manifests/
+total 0
+[root@vmware-061 ~]# ll /etc/kubernetes/pki/
+total 0
+[root@vmware-061 ~]# cat /etc/kubernetes/
+cat: /etc/kubernetes/: Is a directory
+[root@vmware-061 ~]# ll /etc/kubernetes/
+total 8
+drwxr-xr-x. 2 root root 4096 Mar 16 19:35 manifests
+drwxr-xr-x. 2 root root 4096 Mar 23 16:42 pki
+[root@vmware-061 ~]# rpm -qil kubectl
+Name        : kubectl
+Version     : 1.23.5
+Release     : 0
+Architecture: x86_64
+Install Date: Thu 24 Mar 2022 11:01:59 AM EDT
+Group       : Unspecified
+Size        : 46596344
+License     : ASL 2.0
+Signature   : RSA/SHA512, Wed 16 Mar 2022 07:42:43 PM EDT, Key ID f09c394c3e1ba8d5
+Source RPM  : kubelet-1.23.5-0.src.rpm
+Build Date  : Wed 16 Mar 2022 07:35:46 PM EDT
+Build Host  : 5d4f1b1860b6
+Relocations : (not relocatable)
+URL         : https://kubernetes.io
+Summary     : Command-line utility for interacting with a Kubernetes cluster.
+Description :
+Command-line utility for interacting with a Kubernetes cluster.
+/usr/bin/kubectl
+[root@vmware-061 ~]# kubectl version
+Client Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.5", GitCommit:"c285e781331a3785a7f436042c65c5641ce8a9e9", GitTreeState:"clean", BuildDate:"2022-03-16T15:58:47Z", GoVersion:"go1.17.8", Compiler:"gc", Platform:"linux/amd64"}
+The connection to the server 10.0.50.61:6443 was refused - did you specify the right host or port?
+
+[root@vmware-061 ~]# ll /var/lib/ku^C
+[root@vmware-061 ~]# kubeadm init
+[init] Using Kubernetes version: v1.23.5
+[preflight] Running pre-flight checks
+        [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+        [WARNING FileExisting-tc]: tc not found in system path
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local vmware-061.antd.nist.gov] and IPs [10.96.0.1 10.0.50.61]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [localhost vmware-061.antd.nist.gov] and IPs [10.0.50.61 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [localhost vmware-061.antd.nist.gov] and IPs [10.0.50.61 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 8.002502 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.23" in namespace kube-system with the configuration for the kubelets in the cluster
+NOTE: The "kubelet-config-1.23" naming of the kubelet ConfigMap is deprecated. Once the UnversionedKubeletConfigMap feature gate graduates to Beta the default name will become just "kubelet-config". Kubeadm upgrade will handle this transition transparently.
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node vmware-061.antd.nist.gov as control-plane by adding the labels: [node-role.kubernetes.io/master(deprecated) node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node vmware-061.antd.nist.gov as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: 5nob94.i23165vuyi1irop4
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.0.50.61:6443 --token 5nob94.i23165vuyi1irop4 \
+        --discovery-token-ca-cert-hash sha256:4637209e50ed7e2a32ecf673459f01481ff1f9548cf6f82626f9826faf68795f
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# systemctl status kubelet
+● kubelet.service - kubelet: The Kubernetes Node Agent
+   Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)
+  Drop-In: /usr/lib/systemd/system/kubelet.service.d
+           └─10-kubeadm.conf
+   Active: active (running) since Thu 2022-03-24 11:12:09 EDT; 22s ago
+     Docs: https://kubernetes.io/docs/
+ Main PID: 302033 (kubelet)
+    Tasks: 14 (limit: 49464)
+   Memory: 37.6M
+   CGroup: /system.slice/kubelet.service
+           └─302033 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --network-plugin=cni --pod-infra-container-image=k8s.gcr.io/pause:3.6
+
+Mar 24 11:12:16 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:16.759049  302033 reconciler.go:221] "operationExecutor.VerifyControllerAttachedVolume started for volume \"lib-modules\" (UniqueName: \"kubernetes.io/host-path/15852eae-d0b9-475b-bf40-501f9ecf094>
+Mar 24 11:12:16 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:16.759081  302033 reconciler.go:221] "operationExecutor.VerifyControllerAttachedVolume started for volume \"kube-proxy\" (UniqueName: \"kubernetes.io/configmap/15852eae-d0b9-475b-bf40-501f9ecf094a>
+Mar 24 11:12:16 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:16.759107  302033 reconciler.go:221] "operationExecutor.VerifyControllerAttachedVolume started for volume \"kube-api-access-274tc\" (UniqueName: \"kubernetes.io/projected/15852eae-d0b9-475b-bf40-5>
+Mar 24 11:12:17 vmware-061.antd.nist.gov kubelet[302033]: E0324 11:12:17.203816  302033 kuberuntime_manager.go:1065] "PodSandboxStatus of sandbox for pod" err="rpc error: code = Unknown desc = Error: No such container: 819f500da74f5031198f8ddc67aa4ff9f877c2e3239dcf4>
+Mar 24 11:12:19 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:19.943837  302033 cni.go:240] "Unable to update cni config" err="no networks found in /etc/cni/net.d"
+Mar 24 11:12:20 vmware-061.antd.nist.gov kubelet[302033]: E0324 11:12:20.267195  302033 kubelet.go:2347] "Container runtime network not ready" networkReady="NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config unini>
+Mar 24 11:12:24 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:24.944827  302033 cni.go:240] "Unable to update cni config" err="no networks found in /etc/cni/net.d"
+Mar 24 11:12:25 vmware-061.antd.nist.gov kubelet[302033]: E0324 11:12:25.275784  302033 kubelet.go:2347] "Container runtime network not ready" networkReady="NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config unini>
+Mar 24 11:12:29 vmware-061.antd.nist.gov kubelet[302033]: I0324 11:12:29.945570  302033 cni.go:240] "Unable to update cni config" err="no networks found in /etc/cni/net.d"
+Mar 24 11:12:30 vmware-061.antd.nist.gov kubelet[302033]: E0324 11:12:30.284252  302033 kubelet.go:2347] "Container runtime network not ready" networkReady="NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config unini>
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# ll /var/lib/kubelet/
+total 40
+-rw-r--r--. 1 root root  970 Mar 24 11:12 config.yaml
+-rw-------. 1 root root   62 Mar 24 11:12 cpu_manager_state
+drwxr-xr-x. 2 root root 4096 Mar 24 11:12 device-plugins
+-rw-r--r--. 1 root root   93 Mar 24 11:12 kubeadm-flags.env
+-rw-------. 1 root root   61 Mar 24 11:12 memory_manager_state
+drwxr-xr-x. 2 root root 4096 Mar 24 11:12 pki
+drwxr-x---. 2 root root 4096 Mar 24 11:12 plugins
+drwxr-x---. 2 root root 4096 Mar 24 11:12 plugins_registry
+drwxr-x---. 2 root root 4096 Mar 24 11:12 pod-resources
+drwxr-x---. 7 root root 4096 Mar 24 11:12 pods
+[root@vmware-061 ~]# kubeadm config images pull
+[config/images] Pulled k8s.gcr.io/kube-apiserver:v1.23.5
+[config/images] Pulled k8s.gcr.io/kube-controller-manager:v1.23.5
+[config/images] Pulled k8s.gcr.io/kube-scheduler:v1.23.5
+[config/images] Pulled k8s.gcr.io/kube-proxy:v1.23.5
+[config/images] Pulled k8s.gcr.io/pause:3.6
+[config/images] Pulled k8s.gcr.io/etcd:3.5.1-0
+[config/images] Pulled k8s.gcr.io/coredns/coredns:v1.8.6
+[root@vmware-061 ~]# firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
+success
+[root@vmware-061 ~]# firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=10.0.50.60/32 accept'
+success
+[root@vmware-061 ~]# firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+success
+[root@vmware-061 ~]# firewall-cmd --reload
+success
+[root@vmware-061 ~]# iptables --list
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain FORWARD (policy DROP)
+target     prot opt source               destination
+DOCKER-ISOLATION-STAGE-1  all  --  anywhere             anywhere
+DOCKER-USER  all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere             ctstate RELATED,ESTABLISHED
+DOCKER     all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere             ctstate RELATED,ESTABLISHED
+DOCKER     all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere
+ACCEPT     all  --  anywhere             anywhere
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain DOCKER (2 references)
+target     prot opt source               destination
+
+Chain DOCKER-ISOLATION-STAGE-1 (1 references)
+target     prot opt source               destination
+RETURN     all  --  anywhere             anywhere
+
+Chain DOCKER-ISOLATION-STAGE-2 (0 references)
+target     prot opt source               destination
+RETURN     all  --  anywhere             anywhere
+
+Chain DOCKER-USER (1 references)
+target     prot opt source               destination
+RETURN     all  --  anywhere             anywhere
+[root@vmware-061 ~]# firewall-cmd --state
+running
+[root@vmware-061 ~]# firewall-cmd --list-services
+cockpit dhcpv6-client ssh
+[root@vmware-061 ~]# firewall-cmd --list-rich-rules
+rule family="ipv4" source address="10.0.50.60/32" accept
+rule family="ipv4" source address="172.17.0.0/16" accept
+[root@vmware-061 ~]# firewall-cmd --list-sources
+
+[root@vmware-061 ~]# firewall-cmd --list-all-zones
+...
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens192
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports: 6443/tcp 2379/tcp 2380/tcp 10250/tcp 10251/tcp 10252/tcp
+  protocols:
+  forward: no
+  masquerade: yes
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+        rule family="ipv4" source address="10.0.50.60/32" accept
+        rule family="ipv4" source address="172.17.0.0/16" accept
+
+trusted
+  target: ACCEPT
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services:
+  ports:
+  protocols:
+  forward: no
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+work
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports:
+  protocols:
+  forward: no
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+[root@vmware-061 ~]# kubeadm init --pod-network-cidr 192.168.0.0/16
+[init] Using Kubernetes version: v1.23.5
+[preflight] Running pre-flight checks
+        [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+        [WARNING FileExisting-tc]: tc not found in system path
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR Port-6443]: Port 6443 is in use
+        [ERROR Port-10259]: Port 10259 is in use
+        [ERROR Port-10257]: Port 10257 is in use
+        [ERROR FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists
+        [ERROR FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists
+        [ERROR FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists
+        [ERROR FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists
+        [ERROR Port-10250]: Port 10250 is in use
+        [ERROR Port-2379]: Port 2379 is in use
+        [ERROR Port-2380]: Port 2380 is in use
+        [ERROR DirAvailable--var-lib-etcd]: /var/lib/etcd is not empty
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+
+[root@vmware-061 ~]# kubeadm reset
+[reset] Reading configuration from the cluster...
+[reset] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+[reset] WARNING: Changes made to this host by 'kubeadm init' or 'kubeadm join' will be reverted.
+[reset] Are you sure you want to proceed? [y/N]: y
+[preflight] Running pre-flight checks
+[reset] Stopping the kubelet service
+[reset] Unmounting mounted directories in "/var/lib/kubelet"
+[reset] Deleting contents of config directories: [/etc/kubernetes/manifests /etc/kubernetes/pki]
+[reset] Deleting files: [/etc/kubernetes/admin.conf /etc/kubernetes/kubelet.conf /etc/kubernetes/bootstrap-kubelet.conf /etc/kubernetes/controller-manager.conf /etc/kubernetes/scheduler.conf]
+[reset] Deleting contents of stateful directories: [/var/lib/etcd /var/lib/kubelet /var/lib/dockershim /var/run/kubernetes /var/lib/cni]
+
+The reset process does not clean CNI configuration. To do so, you must remove /etc/cni/net.d
+
+The reset process does not reset or clean up iptables rules or IPVS tables.
+If you wish to reset iptables, you must do so manually by using the "iptables" command.
+
+If your cluster was setup to utilize IPVS, run ipvsadm --clear (or similar)
+to reset your system's IPVS tables.
+
+The reset process does not clean your kubeconfig files and you must remove them manually.
+Please, check the contents of the $HOME/.kube/config file.
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# kubeadm init --pod-network-cidr 192.168.0.0/16
+[init] Using Kubernetes version: v1.23.5
+[preflight] Running pre-flight checks
+        [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+        [WARNING FileExisting-tc]: tc not found in system path
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local vmware-061.antd.nist.gov] and IPs [10.96.0.1 10.0.50.61]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [localhost vmware-061.antd.nist.gov] and IPs [10.0.50.61 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [localhost vmware-061.antd.nist.gov] and IPs [10.0.50.61 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 6.503387 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.23" in namespace kube-system with the configuration for the kubelets in the cluster
+NOTE: The "kubelet-config-1.23" naming of the kubelet ConfigMap is deprecated. Once the UnversionedKubeletConfigMap feature gate graduates to Beta the default name will become just "kubelet-config". Kubeadm upgrade will handle this transition transparently.
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node vmware-061.antd.nist.gov as control-plane by adding the labels: [node-role.kubernetes.io/master(deprecated) node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node vmware-061.antd.nist.gov as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: pydx0l.2frx5sq7vbszqs7z
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.0.50.61:6443 --token pydx0l.2frx5sq7vbszqs7z \
+        --discovery-token-ca-cert-hash sha256:54a7e6d13f48da190a9429749ba1bee0c38c135491aad779d2adfdc4f0ae7c97
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# pwd
+/root
+[root@vmware-061 ~]# mkdir -p $HOME/.kube
+[root@vmware-061 ~]# cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+[root@vmware-061 ~]# cat .kube/config
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJeU1ETXlOREUxTWpJMU5Wb1hEVE15TURNeU1URTFNakkxTlZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBUGR4CnFlYzMwSEMrcjZROW1aRGpFNGpUU0ZYSXBDSW9RZG96VlRodW4zVCtJTGFDYjJ5TFBWZGR5S21UZ3JDMXVhbG8KcnVJSzBJVDJJUWlER0tTaHFvZUJKZDFxZE1Sd21HOGxQYmxXVmx2TG1iK095UVhkRFpYM21jKzRZNXE0RjB5awpPbmRBLzM2VUhjeXRJWnFsZzJWU2lPeDRXQW9GWFlhSXBrWHNhRDBVeW9VU2FRRm5SWGhTeEFsZHhEOS85QU5CCmMzRVhKSU9CemFYNmZrWG9LME9YaHM5eERQUENiUTUvMzFUU1I1OTUwaUtWdXNGOXRzekRZY1JhdW5Pa2xnaUsKd00rUStNT0Y0U2ZqUy8yRGczbHFZMm9nVkVPS3pOYldxRlVxa2RreFczNVliNjBRK0hROFlpc0hpcGNNYUZyeAoyMm11Smg1UmJxSkJjUGxQaEhjQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZBOTdJeERWTXh0WWNQbFdZUDhkWGNldU1PM3JNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBS0Y2NENvZW9nbjZrMGVQUXpRYwplOUlQbkpNNmVBK01XaWIyKzBFbkpUU3oyUU81SzQrdGE1YW1oSndTcmhUNXJvdUlMQnpDbmxFeWpSaGk4aHlwCkIvdU9ENnh1WTZBZGpNYUl6UXFYZWZ5cm1oWGpoUmFKK3gyUWtMaXIyYlBhcStjSGh3bmdobkx4aG5mWnVDZ3cKSUg1NnJqSHBWc3JZTExHYjg5OGFDQUFmZ0dkWXdFeFcrSDBBbXI5K2dFdC8xb2VWdmUvM1lBY1djV0lySWJ0MwpqK1h4R2hnT0ZKcmZXdU1SOTViNnB6MWc3V1MzNEJFcU4zQU5veUJKaWsrcHhKa1BkSFJTUGVPOENZcjF5dWhoCjlXY20zRGRyLzRHczRBa0luajgrU3FHdjRvaDBGTVRrbjJxVXdsdkU2NmJNdG9meXpKUXUzNTNES1dmNEl6clkKS1djPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://10.0.50.61:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJVENDQWdtZ0F3SUJBZ0lJRHNYZHBnRVN0Wk13RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TWpBek1qUXhOVEl5TlRWYUZ3MHlNekF6TWpReE5USXlOVGRhTURReApGekFWQmdOVkJBb1REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXJhaXR6MlkzVUNpdEx6T0QKeUROUWhlZFZGK0NDekY3Q0dGZTIrY2xSaXhKU1JKVG9pdTBWL3A4SUI3TmFyc0dKR2NSTTJReHUzL0RpYkZ2bQoxcS9XdmtXb0NRVE4yaXJmaGtlTkJZalpkdHp5UUFjVHZnR1dvSGwwdlg3UGowZE42OFpyMmxnVGRpWk1vUkRnCnkwdUVXR0xjQ0lnb1dkcG5lMkd6NTRjbkhkUTN6WFdhaXFZQ1lTZzVKang3dE1NMllMLzFkL1ZaLy9aendNRksKTW1FYTAza0lsdHJvdHNCRWhMME5vamVZVkR4bFA3YUF2b3Uwd2FSL3Y3bXZDUktnb2JUdENUTzZsejkxYnRZMQo0Y3Nzb1N0clR0Z3dJZVcwVGp2Vkp6VC9rWkJZUzJjWCtnUlliWGo4bkxFQXdKdTNjaTZkaVhJbWloRGFUOHZpCmlWZGtmd0lEQVFBQm8xWXdWREFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQXdJd0RBWURWUjBUQVFIL0JBSXdBREFmQmdOVkhTTUVHREFXZ0JRUGV5TVExVE1iV0hENVZtRC9IVjNIcmpEdAo2ekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYWd0R1BuazBNZ1p0YWlaZWY5MXVmK3VFMFdVN0F5NjFHRE9NClM4VDVFS0taZzVyNWtrVUFiNTVySTVvTmVJSkdFTko1ZGpSMmdFc1dlYWJra3RwN3B3OXp3UmJMbVdieEJEeGMKWWhNMTRRK1VLV0VzYzJ6Qk1zR05BVUMzVmU3QmJPUGhWMGpzejZuS0NXNURkVUllaHcxdHZwRCtmbXViVmREVgpiQVptRzZiS3JWbnlkb291VndYTmJOL2NUcFU1dStidlorRlhWOHphSGFSZXVUMDF5RGN0bVBtc2lYN3RmUG5aCjd3d0Y0Wkh3emp6YTd0VGpCRVQzZXB3MTFQNzB2UVB0Mk9vM2ZLT1AxRU5lZWxtbmdDSWdsYjJhVjRCZWM4NlMKelpvT0k4VWhiVTRFdFdBK2hZVjBNWHM4bXM4TytsWW1JUld2dGgvZmxmQXVTR1I3eGc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBcmFpdHoyWTNVQ2l0THpPRHlETlFoZWRWRitDQ3pGN0NHRmUyK2NsUml4SlNSSlRvCml1MFYvcDhJQjdOYXJzR0pHY1JNMlF4dTMvRGliRnZtMXEvV3ZrV29DUVROMmlyZmhrZU5CWWpaZHR6eVFBY1QKdmdHV29IbDB2WDdQajBkTjY4WnIybGdUZGlaTW9SRGd5MHVFV0dMY0NJZ29XZHBuZTJHejU0Y25IZFEzelhXYQppcVlDWVNnNUpqeDd0TU0yWUwvMWQvVlovL1p6d01GS01tRWEwM2tJbHRyb3RzQkVoTDBOb2plWVZEeGxQN2FBCnZvdTB3YVIvdjdtdkNSS2dvYlR0Q1RPNmx6OTFidFkxNGNzc29TdHJUdGd3SWVXMFRqdlZKelQva1pCWVMyY1gKK2dSWWJYajhuTEVBd0p1M2NpNmRpWEltaWhEYVQ4dmlpVmRrZndJREFRQUJBb0lCQUJHNnpmd0Z3Skh6aFRMegpmSG5kRzFTQWVNU1dUR1JYTEZQVjZMMTUyMVJxaTNHckRrN1l3ODBhS1hTMzBBTlZpUXpUYU5Fa0h0SElReVd6CkFFOWM1bnpJbWM1SjZrWmk2QzFLY3RCazEyYjJTZGxWbjZOZmdDUmtJaElTdDFnMmZITWM3L2Y3MUFqVkFpL1QKakUvVkp1N3JNUEhDRFBTWGdzY3JBM1lZNjFwMUhDZE9YSnpwMGRTWnBud3VkMW4xV2RqVmFLT1NUMFI5K3F4awpqZ3BkWUo2Vm9RZkYzWStVOUYwTE90ZnhmdXZhbnRZeXhrWUlrL2Roa3NGdXBoZUJ3WUhzNTQ5MUtMY014T3ZxCmRacHl2Vjg0TGV6ZHUrNUQxdnVDTGFRZnJ4TDdzbGRYWWNjMmpvUDZKUlFZYUlkV0J4YmZtRlRXaWorWWV3cEYKRW15TVEza0NnWUVBelFDNzJjVnVjSEdGRlpNZm1ISnplNDc4NUY1Q3F6Um9XSUF2dWZ3U2hOSmxSb0paQzVjOApnd2x4M3dxbjhvNXBGRHR4UmV2V096NEJMODZORE03OVBXVXplSVVmeWU1Rm0wcG5ZVzR3eXVxbHYrY3dybW5UCnRIM1gxcTNtK2djWkFjWkVraTRPalVSWnNQck0rSEVBeXM4NFdpYmFmRml1aTJBWHZQemt6WlVDZ1lFQTJOdmIKWXc5czgvczJOVjlGblZkVDZGZVdQdS9ob21nSHptbEUxYkl0a1dCTU5QWG5LaFgzMXZ2bSs0SUI3N2QxQkR3dgpCVTNmNThnMzFXNm5INC9Vc0ZmWWwvZ3JwNmE5Qk8zdmhKRkhxM0UyS0xTdmVQN21KTGpRNm1BbndQUHJveFBiClJ2MGNvMk5Bc2RFTUVUSjN2eS9qREhjSFJGYXl2dHQvZVZDb25NTUNnWUVBeko0ODRnTEVWd3VYOEk3bTdIemcKYzZXbkdqSlRqUnRFUTRHL0lYNU81YkF6VWd0czRiclV0VjVLQUh4Y1lpaHZEYmkvT1RGS3Bkc2Z5QjM4ZjVwaQovbEx5NndyRlRnSzhDMkphaWM4NGVIRjVlM0JCRVBXa1QvV0Q2RTJ2ekVRbFc3WVFYM0FGS2svY3psK25FeHVICjFPYThzbzh4YVFnRFFDNXJ3MEVSQjNrQ2dZQWhyYk5hcFJDa3E0VDFzUUFjdVcwOGppMjFSSWZrTXdmVFZLSHUKRmlmaGhmVVAzSWkwRG9sWkIvSU5hVmxub3pRM0hpbW5SenJZd2sxNWhoL0tWUW9SQVBPUVZtaGhOeEh2N0F2ZwpxTGRhdHRCVWJnczZYVXZjdEI4dDV4VUZjRnhPRFUxbXJ2UjlvM0p1cXlxV21TSGp2VW9qcTNDamVsdDBMSjZWCmRxTlpCUUtCZ1FDK01UT1BjcjNOVm0xd1BpRVhrdE5yUGNiUS9TY3JscFByMzhuNWJvOFFsenN3UGZUQW9PSVMKMER3UzFCakhybXZRV2pobXFEb2dqdEZvZmFQSFFwK3ZRdnZJZGtsTVF1dVpzTkM3T051ZjB2VTJkR0QvMkZ2bwpOMTIzZEtIblNWRElEMVAzN21SUy9CS3dzNjlZY1JOZGV3YW82cE1MNTVsdDVidzNkSkNSRnc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# chown $(id -u):$(id -g) $HOME/.kube/config
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# export KUBECONFIG=$HOME/.kube/config
+[root@vmware-061 ~]# echo $KUBECONFIG
+/root/.kube/config
+[root@vmware-061 ~]# kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+configmap/calico-config created
+customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/caliconodestatuses.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/ipreservations.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/kubecontrollersconfigurations.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created
+customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created
+clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created
+clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created
+clusterrole.rbac.authorization.k8s.io/calico-node created
+clusterrolebinding.rbac.authorization.k8s.io/calico-node created
+daemonset.apps/calico-node created
+serviceaccount/calico-node created
+deployment.apps/calico-kube-controllers created
+serviceaccount/calico-kube-controllers created
+Warning: policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
+poddisruptionbudget.policy/calico-kube-controllers created
+[root@vmware-061 ~]# kubectl get pods
+No resources found in default namespace.
+[root@vmware-061 ~]# kubectl get pods -A
+NAMESPACE     NAME                                               READY   STATUS              RESTARTS   AGE
+kube-system   calico-kube-controllers-56fcbf9d6b-qvpt7           0/1     ContainerCreating   0          22s
+kube-system   calico-node-59pxh                                  1/1     Running             0          22s
+kube-system   coredns-64897985d-47r9c                            1/1     Running             0          2m42s
+kube-system   coredns-64897985d-kzlk6                            1/1     Running             0          2m42s
+kube-system   etcd-vmware-061.antd.nist.gov                      1/1     Running             6          2m56s
+kube-system   kube-apiserver-vmware-061.antd.nist.gov            1/1     Running             5          2m56s
+kube-system   kube-controller-manager-vmware-061.antd.nist.gov   1/1     Running             0          2m56s
+kube-system   kube-proxy-jt7fb                                   1/1     Running             0          2m43s
+kube-system   kube-scheduler-vmware-061.antd.nist.gov            1/1     Running             4          2m57s
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# kubectl taint nodes --all node-role.kubernetes.io/master-
+node/vmware-061.antd.nist.gov untainted
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# kubectl get nodes
+NAME                       STATUS   ROLES                  AGE     VERSION
+vmware-061.antd.nist.gov   Ready    control-plane,master   4m45s   v1.23.5
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]#
+[root@vmware-061 ~]# kubectl get nodes
+NAME                       STATUS   ROLES                  AGE   VERSION
+vmware-061.antd.nist.gov   Ready    control-plane,master   10m   v1.23.5
+[root@vmware-061 ~]# docker ps
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS     NAMES
+b649cb9becb8   a4ca41631cc7           "/coredns -conf /etc…"   8 seconds ago    Up 7 seconds              k8s_coredns_coredns-64897985d-47r9c_kube-system_d53746a8-fd76-4f75-94a5-daf0ed74d94b_2
+032a33ab4af8   k8s.gcr.io/pause:3.6   "/pause"                 8 seconds ago    Up 7 seconds              k8s_POD_coredns-64897985d-47r9c_kube-system_d53746a8-fd76-4f75-94a5-daf0ed74d94b_2
+2e067ae81181   7a71aca7b60f           "start_runit"            9 seconds ago    Up 8 seconds              k8s_calico-node_calico-node-59pxh_kube-system_1484af2b-4df9-4752-87ac-788ddc52dbed_3
+2a919fa2bdf7   a4ca41631cc7           "/coredns -conf /etc…"   10 seconds ago   Up 9 seconds              k8s_coredns_coredns-64897985d-kzlk6_kube-system_1b56009e-143c-4ef9-b0f2-9f4d86078438_2
+2b0e814120b6   k8s.gcr.io/pause:3.6   "/pause"                 10 seconds ago   Up 9 seconds              k8s_POD_coredns-64897985d-kzlk6_kube-system_1b56009e-143c-4ef9-b0f2-9f4d86078438_2
+22f918466c2b   c0c6672a66a5           "/usr/bin/kube-contr…"   12 seconds ago   Up 11 seconds             k8s_calico-kube-controllers_calico-kube-controllers-56fcbf9d6b-qvpt7_kube-system_05987270-7323-4ed1-ac92-5c39ce78038d_2
+62000a6c779f   k8s.gcr.io/pause:3.6   "/pause"                 13 seconds ago   Up 12 seconds             k8s_POD_calico-kube-controllers-56fcbf9d6b-qvpt7_kube-system_05987270-7323-4ed1-ac92-5c39ce78038d_2
+b99dbbeb6dae   3fc1d62d6587           "kube-apiserver --ad…"   17 seconds ago   Up 16 seconds             k8s_kube-apiserver_kube-apiserver-vmware-061.antd.nist.gov_kube-system_d57ffa75513a808f93e7317aea5ec421_8
+1322e24867a4   b0c9e5e4dbb1           "kube-controller-man…"   29 seconds ago   Up 28 seconds             k8s_kube-controller-manager_kube-controller-manager-vmware-061.antd.nist.gov_kube-system_3ec325d9898f0ea4402e73812f0ccf68_3
+191dd73a14fd   25f8c7f3da61           "etcd --advertise-cl…"   29 seconds ago   Up 28 seconds             k8s_etcd_etcd-vmware-061.antd.nist.gov_kube-system_9b00fe70d3cacdd131962b80bad17b87_9
+4956979ec032   3c53fa8541f9           "/usr/local/bin/kube…"   29 seconds ago   Up 28 seconds             k8s_kube-proxy_kube-proxy-jt7fb_kube-system_fc1093e2-6d52-41bd-9f2d-1f508d964208_3
+638b8fd66e11   884d49d6d8c9           "kube-scheduler --au…"   29 seconds ago   Up 28 seconds             k8s_kube-scheduler_kube-scheduler-vmware-061.antd.nist.gov_kube-system_50ce34334587ebe8258089c578ddc98a_7
+c68c1ccc6ad9   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_calico-node-59pxh_kube-system_1484af2b-4df9-4752-87ac-788ddc52dbed_7
+fb102ca237c4   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_kube-apiserver-vmware-061.antd.nist.gov_kube-system_d57ffa75513a808f93e7317aea5ec421_4
+921d19c10252   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_kube-controller-manager-vmware-061.antd.nist.gov_kube-system_3ec325d9898f0ea4402e73812f0ccf68_5
+efa664646e91   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_kube-scheduler-vmware-061.antd.nist.gov_kube-system_50ce34334587ebe8258089c578ddc98a_5
+df92ad56c999   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_kube-proxy-jt7fb_kube-system_fc1093e2-6d52-41bd-9f2d-1f508d964208_4
+bd0e652c6d75   k8s.gcr.io/pause:3.6   "/pause"                 30 seconds ago   Up 29 seconds             k8s_POD_etcd-vmware-061.antd.nist.gov_kube-system_9b00fe70d3cacdd131962b80bad17b87_4
+[root@vmware-061 ~]#
+
+
+
+
+--------------------------
+After worker node joined
+--------------------------
+
+[root@vmware-061 ~]# kubectl get nodes                                    
+NAME                       STATUS   ROLES                  AGE    VERSION 
+vmware-060.antd.nist.gov   Ready    <none>                 42s    v1.23.5 
+vmware-061.antd.nist.gov   Ready    control-plane,master   134m   v1.23.5 
+
+
+
+
+
+
+
