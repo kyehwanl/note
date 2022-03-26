@@ -1,0 +1,216 @@
+
+Building Internal Registry for Kubernetes to use docker images
+==============================================================
+(source: https://upcloud.com/community/tutorials/deploy-dockerized-apps-kubernetes-centos-8/)
+
+
+
+
+1. Create the following configuration file on the master node. 
+Replace the <master_private_IP> with the private IP address of your master node.
+
+cat > /etc/docker/daemon.json <<EOF
+{
+   "log-driver": "json-file",
+   "log-opts": {
+      "max-size": "100m"
+   },
+   "storage-driver": "overlay2",
+   "storage-opts": [
+      "overlay2.override_kernel_check=true"
+   ],
+   "insecure-registries": [ "<master_private_IP>:5000" ]
+}
+EOF
+
+
+
+2. Add the exception for the registry also on all worker nodes. 
+Again, replace the <master_private_IP> with the private IP address of your master node.
+
+cat > /etc/docker/daemon.json <<EOF
+{
+   "insecure-registries": [ "<master_private_IP>:5000" ]
+}
+EOF
+Then restart Docker on all nodes.
+
+systemctl restart docker
+
+
+Continue with the rest of the steps on the master node only.
+We are going to be using a private registry container for storing and distributing our dockerized app in our cluster.
+
+
+
+
+3. Get the latest version of the docker registry.
+
+docker pull registry:2
+
+
+
+4. Run docker registry on port 5000 using the master node’s private IP address. 
+Replace the <master_private_IP> with the correct address.
+
+docker run -dit --restart=always -p <master_private_IP>:5000:5000 --name registry -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
+
+
+
+
+5. Next, create a deployment artefact for our “goserver” app.
+
+Please be aware that indentation matters. This artefact is using two spaces for indentation.
+
+vi deployment.yaml
+
+
+Enter the following content and again replace the <master_private_IP> with the correct address.
+Enter the following 'goserver' name with your own docker container name, and external port as well (here 8090)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+spec:
+  selector:
+    matchLabels:
+      app: goserver
+  replicas: 2
+  revisionHistoryLimit: 0
+  progressDeadlineSeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 2
+  template:
+    metadata:
+      labels:
+        app: goserver
+    spec:
+      containers:
+      - name: goserver
+        image: <master_private_IP>:5000/goserver:v1
+        ports:
+        - hostPort: 8090
+          containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: goserver
+  name: goserver
+spec:
+  selector:
+    app: goserver
+  ports:
+  - protocol: TCP
+    port: 8090
+    targetPort: 8080
+  type: ClusterIP
+
+
+
+
+6. Tag the docker app to add the private registry address and port. As before, replace the <master_private_IP> with the private IP address of your master node.
+
+docker tag goserver:latest <master_private_IP>:5000/goserver:v1
+
+
+
+
+
+7. Then check to make sure the tagged app was created.
+
+docker images
+
+It should show up on the list.
+
+
+
+
+
+8. Push the tagged app to the private registry so it can be pulled by Kubernetes deployment. Again, replace the <master_private_IP> with the private IP address of your master node.
+
+docker push <master_private_IP>:5000/goserver:v1
+
+
+
+
+9. Check that the tagged app was successfully pushed to the registry by querying the registry. Replace the <master_private_IP> with the private IP address of your master node.
+
+curl -s -X GET http://<master_private_IP>:5000/v2/goserver/tags/list
+{"name":"goserver","tags":["v1"]}
+
+Now that we have set up our private repository and pushed the docker image to it, it can be used to deploy the app onto our Kubernetes cluster.
+
+
+
+
+
+
+10. Deploy our goserver using the command below.
+
+kubectl apply -f deployment.yaml
+
+
+
+
+11. Check that deployment rollout succeeded.
+
+kubectl rollout status deployment/goserver
+
+
+
+
+
+
+12. You can also check that the pods are up and running.
+
+kubectl get pods
+
+
+
+
+
+13. You should now be able to access the webserver on both master and worker nodes.
+
+curl http://localhost:8090/Joe
+Or open browser to http://<public-IP-address>:8090/Joe
+
+Replace the <public-IP-address> with either the public IP address of your master or worker node.
+
+You should see the familiar greeting.
+
+Hello, Joe!
+
+
+
+
+
+
+
+14. When you wish to delete the test app, revert the deployment with the following command.
+
+kubectl delete -f deployment.yaml
+
+
+
+
+
+Done!
+
+
+
+
+
+
+
+
+
+
+
+
