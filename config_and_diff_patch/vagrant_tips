@@ -1,0 +1,285 @@
+
+Vagrant Usage
+==============
+(http://www.codebind.com/linux-tutorials/install-vagrant-ubuntu-18-04-lts-linux/)
+
+----------------------------------------------------------
+Setup Ubuntu 18.04 to be used with Vagrant and Virtualbox
+----------------------------------------------------------
+Step 1 – Install VirtualBox.
+
+sudo apt-get install virtualbox
+
+
+Step 2 – Install Vagrant.
+
+sudo apt-get install vagrant
+
+
+Step 3 – Verify Vagrant version
+once vagrant is installed on Ubuntu operating system, we can verify it by following command:
+
+$ vagrant -v
+
+
+
+
+
+Step 4 Install Ubuntu Box
+
+We can find Vagrant Boxes on the Vagrant Cloud. ubuntu/trusty64 is one of the most popular box (machine), 
+which has nearly 30 million installs. So we will install this box.
+
+Run the following command in your terminal.
+
+$ vagrant box add ubuntu/trusty64
+Output:
+
+==> box: Loading metadata for box 'ubuntu/trusty64'
+    box: URL: https://vagrantcloud.com/ubuntu/trusty64
+==> box: Adding box 'ubuntu/trusty64' (v20170619.0.0) for provider: virtualbox
+    box: Downloading: https://app.vagrantup.com/ubuntu/boxes/trusty64/versions/20170619.0.0/providers/virtualbox.box
+==> box: Successfully added box 'ubuntu/trusty64' (v20170619.0.0) for 'virtualbox'!
+Now initialize the vagrant box using the following command.
+
+$ vagrant init ubuntu/trusty64
+Output
+
+`Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+Finally run the following command to start your box.
+
+$ vagrant up
+
+Output:
+
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'ubuntu/trusty64'...
+
+...
+
+==> default: Machine booted and ready!
+Now connect to you newly created machine via ssh using following command
+
+vagrant ssh
+if the above command works fine then you will see the following output:
+
+Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-133-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+ System information disabled due to load higher than 1.0
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+0 packages can be updated.
+0 updates are security updates.
+
+New release '18.04.3 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+Last login: Wed Oct 18 21:08:02 2017 from 10.0.2.2
+vagrant@vagrant-ubuntu-trusty-64:~$
+If the vagrant ssh command does not work then use the following command to know your ssh config
+
+λ vagrant ssh-config
+Host default
+  HostName 127.0.0.1
+  User vagrant
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /c/Users/ProgrammingKnowledge/Videos/vagrant/ubuntu/.vagrant/machines/default/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+And use the following ssh command to connect via ssh
+
+λ ssh vagrant@127.0.0.1 -p 2222 -i /c/Users/ProgrammingKnowledge/Videos/vagrant/ubuntu/.vagrant/machines/default/virtualbox/private_key
+
+
+
+---------------------------
+ In Windows 10
+---------------------------
+
+https://www.youtube.com/watch?v=mPBWWu7sZU4
+
+
+
+
+
+
+
+---------------------------------------------
+Where does Vagrant download its .box files
+---------------------------------------------
+
+ - Mac OS X and Linux: ~/.vagrant.d/boxes
+ - Windows: C:/Users/USERNAME/.vagrant.d/boxes
+
+    unsuccessful boxes are located at:
+    ~/.vagrant.d/tmp
+
+
+-------------------
+To change the Path, 
+-------------------
+you can set a new Path to an Enviroment-Variable named: VAGRANT_HOME
+
+export VAGRANT_HOME=my/new/path/goes/here/
+
+
+
+
+
+
+
+-----------------
+remove
+-----------------
+
+# vagrant box remove bento/ubuntu-18.04 --provider vmware_desktop                        
+
+Removing box 'bento/ubuntu-18.04' (v202112.20.0) with provider 'vmware_desktop'...                   
+Vagrant-libvirt plugin removed box only from you LOCAL ~/.vagrant/boxes directory                    
+From libvirt storage pool you have to delete image manually(virsh, virt-manager or by any other tool)
+
+
+
+
+
+
+
+--------------------------------
+Saving an existing Vagrant box:
+--------------------------------
+1. If your Vagrant box is still running, make sure to shut it down first:
+      
+vagrant halt
+      
+    
+2. Execute create Vagrant box package:
+
+vagrant package --output centos7drupal.box
+      
+    
+3. The Vagrant box package will be saved as centos7drupal.box file.
+
+---------------------------------
+Removing an existing Vagrant box:
+---------------------------------
+1. If your Vagrant box is still running, make sure it is shutdown:
+
+vagrant halt
+      
+
+2. Execute destroy Vagrant box:
+
+vagrant destroy
+    
+
+Note: If you received this error message:
+
+Vagrant is attempting to interface with the UI in a way that requires
+a TTY. Most actions in Vagrant that require a TTY have configuration
+switches to disable this requirement. Please do that or run Vagrant
+with TTY.
+      
+... execute this command instead:
+
+vagrant destroy -f
+      
+
+3. Backup the existing Vagrant config file and delete it:
+
+cp Vagrantfile Vagrantfile.bak
+rm Vagrantfile
+      
+
+4. Delete the actual Vagrant box image:
+
+rm ~/.vagrant.d/boxes/centos7drupal
+      
+
+    
+-----------------------------
+Restoring saved Vagrant box:
+-----------------------------
+1. Execute add Vagrant box:
+
+vagrant box add centos7drupal centos7drupal.box
+
+    
+2. Initialize your Vagrant box:
+
+vagrant init centos7drupal
+      
+
+    
+3. That command will create generic Vagrant config file. 
+If you prefer to use the previous Vagrant config file, execute the following commands:
+
+rm Vagrantfile
+mv Vagrantfile.bak Vagrantfile
+      
+
+4. Boot your Vagrant box:
+
+vagrant up
+    
+Only the initial boot-up will take longer time than the succeeding boots.
+
+
+
+
+
+
+--------------------
+ Save with Sanpshot
+--------------------
+
+root@pwct1:~# vagrant snapshot save aiab-4g                              
+==> default: Snapshotting the machine as 'aiab-4g'...                    
+==> default: Snapshot saved! You can restore the snapshot at any time by 
+==> default: using `vagrant snapshot restore`. You can delete it using   
+==> default: `vagrant snapshot delete`.                                  
+
+root@pwct1:~# vagrant snapshot list 
+aiab-4g
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
