@@ -256,11 +256,134 @@ aiab-4g
 
 
 
+ 1. vagrant ssh and private key info
+=====================================
+
+(1) first, go to the folder, vagrant is running, (the place where running  'vagrant up'
+    Need to find '.vagarnt
+
+    --> here /opt/vagrant
+
+
+    idac-server02 [1999]{/opt/vagrant}$ ll -al                                                                                     3/4
+    total 12K
+    -rw-r-----   1 kyehwanl admin 3.3K May  1 13:03 Vagrantfile
+    drwxr-xr-x. 11 root     root  4.0K May  1 13:08 ../
+    drwxr-xr-x   2 kyehwanl root    28 May  1 13:08 bin/
+    drwxr-xr-x  10 kyehwanl root  4.0K May  1 13:08 embedded/
+    drwxr-xr-x   5 kyehwanl root    84 May  1 13:10 ./
+    drwxr-x---   4 kyehwanl admin   48 May  1 13:10 .vagrant/
+
+    idac-server02 [2000]{/opt/vagrant}$ vagrant ssh-config
+    Host default
+      HostName 127.0.0.1
+      User vagrant
+      Port 2222
+      UserKnownHostsFile /dev/null
+      StrictHostKeyChecking no
+      PasswordAuthentication no
+      IdentityFile /opt/vagrant/.vagrant/machines/default/virtualbox/private_key
+      IdentitiesOnly yes
+      LogLevel FATAL
+
+(2) use ip address: 127.0.0.1, port: 2222, key: IdentifyFile
+
+    idac-server02 [2001]{/opt/vagrant}$ ssh vagrant@127.0.0.1 -p 2222 \
+                    -i /opt/vagrant/.vagrant/machines/default/virtualbox/private_key
+    Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 4.15.0-163-generic x86_64)
+
+     * Documentation:  https://help.ubuntu.com
+     * Management:     https://landscape.canonical.com
+     * Support:        https://ubuntu.com/advantage
+
+      System information as of Sun May  1 17:32:18 UTC 2022
+
+      System load:  3.72               Processes:              272
+      Usage of /:   12.8% of 61.80GB   Users logged in:        1
+      Memory usage: 12%                IP address for eth0:    10.0.2.15
+      Swap usage:   0%                 IP address for docker0: 172.17.0.1
+
+
+    This system is built by the Bento project by Chef Software
+    More information can be found at https://github.com/chef/bento
+    Last login: Sun May  1 17:13:31 2022 from 10.0.2.2
+    vagrant@vagrant:~$
 
 
 
 
+2. Vagrantfile with username and password
+==========================================
+    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+      # All Vagrant configuration is done here. The most common configuration
+      # options are documented and commented below. For a complete reference,
+      # please see the online documentation at vagrantup.com.
 
+      # Every Vagrant virtual environment requires a box to build off of.
+      config.vm.box = "centos64"
+      config.ssh.username="uaccount"
+      config.ssh.password="passw0rd"
+
+
+
+3. vagrant package
+===================
+
+(1) Exporting 
+     vagrant package --base=CentOS --output=centos64.box
+
+(2) Importing 
+    vagrant box add centos64.box --name=centos64
+
+- List all Vagrant Box
+    vagrant box list
+
+- Add the new packaged Vagrant box 
+    vagrant box add <list_name>  <name-of-vagrant.box>
+
+    (example) 
+    vagrant box add psnc vagrant-packaged-box-psnc-01.box
+    vagrant box list
+      geerlingguy/ubuntu1604 (virtualbox, 1.1.5)
+      geerlingguy/ubuntu1604 (virtualbox, 1.1.6)
+      psnc                   (virtualbox, 0)
+
+    mkdir psnc
+    cd psnc
+    vagrant init
+    vagrant up
+
+
+
+(3) How to add a downloaded .box file to Vagrant
+
+- Importing in the same directory
+    vagrant box add my-box name-of-the-box.box
+
+- Importing any directory
+    vagrant box add my-box file:///d:/path/to/file.box
+
+
+
+
+ 
+(4) Add
+  root@pwct1:~/riab# vagrant box add aiab-4g ./aiab-4g.box                
+  ==> box: Box file was not detected as metadata. Adding it directly...   
+  ==> box: Adding box 'aiab-4g' (v0) for provider:                        
+      box: Unpacking necessary files from: file:///root/riab/aiab-4g.box  
+  ==> box: Successfully added box 'aiab-4g' (v0) for 'virtualbox'!
+
+  root@pwct1:~/riab# vagrant box list         
+  aiab-4g            (virtualbox, 0)          
+  bento/ubuntu-18.04 (virtualbox, 202112.19.0)
+
+
+
+  - vagrant init
+  - edit Vagrantfile
+        substitue vm.box name with 'config.vm.box="aiab-4g"'
+  - vagrant up
 
 
 

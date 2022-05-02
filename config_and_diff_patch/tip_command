@@ -481,6 +481,15 @@ Use the blow command into .bashrc or command line
 
 
 
+(33) Repeat a Linux Command Every X seconds
+===========================================
+(https://www.tecmint.com/run-repeat-linux-command-every-x-seconds/)
+1. watch -n 10 <command>
+    (example) watch -n 5 free -m
+2. for i in {1..10}; do echo -n "This is a test in loop $i "; date ; sleep 5; done
+3. while true; do echo -n "This is a test of while loop";date ; sleep 5; done
+
+
 
 
 
