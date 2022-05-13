@@ -7,3 +7,22 @@
 2. assign external ip address to service
     kubectl patch svc <service-name> -p '{"spec":{"externalIPs":["192.168.0.193"]}}'
 
+
+3. ConfigMap - get, edit
+    kubectl get configmap upf -n omec -o yaml 
+    kubectl edit configmap -n omec upf
+
+
+4. Helm (manual install)
+    helm install -n omec bess-upf ./sdfabric-helm-charts/bess-upf -f ./upf-overrides.yaml
+
+    - ./sdfabric-helm-charts/bess-upf: template directory location
+    - upf-overrides.yaml : local override file
+
+
+5. Statefulset
+    kubectl get statefulset -n omec upf -o yaml
+
+
+6. pod
+    kubectl get po -n omec upf-0 -o yaml
