@@ -1,0 +1,11 @@
+
+Ansible Installation
+=====================
+
+  yum install epel-release
+  yum install gcc git python-pip python-devel libffi-devel openssl-devel
+  pip install setuptools --upgrade
+
+  git clone https://github.com/ansible/ansible.git --recursive
+  cd ansible
+  make install
