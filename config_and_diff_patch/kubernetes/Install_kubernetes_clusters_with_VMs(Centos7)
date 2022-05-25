@@ -128,7 +128,7 @@ Setting up the Kubernetes Control Plane on your master node
 
       (3)  In case from the other host,
 
-            $ sudo root@10.0.50.58:/etc/kubernetes/admin.conf ~/.kube/config2
+            $ sudo scp root@10.0.50.58:/etc/kubernetes/admin.conf ~/.kube/config2
             $ export KUBECONFIG=~/.kube/config2
 
 

@@ -128,6 +128,150 @@ Kubernetes Running Errors
 
 
 
+-------------------------------------------
+7. aaint error on calico-kube-controllers
+-------------------------------------------
+(Reference: https://waspro.tistory.com/563)
+
+< Issue >
+When installed kubernetes cluster by kubeadm and kubeinit
+
+    vagrant@vagrant:~$ kubectl get po -A
+    NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+    kube-system   calico-kube-controllers-6774bd9767-2ndxt   0/1     Pending   0          2m37s
+    kube-system   calico-node-xtwjt                          1/1     Running   0          15m
+    ...
+    kube-system   kube-scheduler-vagrant                     1/1     Running   1          31m
+
+
+--> calico-kube-controllers is pending status
+
+
+
+
+(1) describing pod and 
+
+    vagrant@vagrant:~$ kubectl describe pod calico-kube-controllers-6774bd9767-kll2p -n kube-system
+    Name:                 calico-kube-controllers-6774bd9767-kll2p
+    Namespace:            kube-system
+    Priority:             2000000000
+    Priority Class Name:  system-cluster-critical
+    Node:                 <none>
+    Labels:               k8s-app=calico-kube-controllers
+                          pod-template-hash=6774bd9767
+    Annotations:          <none>
+    Status:               Pending
+    IP:
+    IPs:                  <none>
+    Controlled By:        ReplicaSet/calico-kube-controllers-6774bd9767
+    Containers:
+      calico-kube-controllers:
+        Image:      docker.io/calico/kube-controllers:v3.23.1
+        Port:       <none>
+        Host Port:  <none>
+        Liveness:   exec [/usr/bin/check-status -l] delay=10s timeout=60s period=10s #success=1 #failure=6
+        Readiness:  exec [/usr/bin/check-status -r] delay=0s timeout=60s period=10s #success=1 #failure=3
+        Environment:
+          ENABLED_CONTROLLERS:  node
+          DATASTORE_TYPE:       kubernetes
+        Mounts:
+          /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2298w (ro)
+    Conditions:
+      Type           Status
+      PodScheduled   False
+    Volumes:
+      kube-api-access-2298w:
+        Type:                    Projected (a volume that contains injected data from multiple sources)
+        TokenExpirationSeconds:  3607
+        ConfigMapName:           kube-root-ca.crt
+        ConfigMapOptional:       <nil>
+        DownwardAPI:             true
+    QoS Class:                   BestEffort
+    Node-Selectors:              kubernetes.io/os=linux
+    Tolerations:                 CriticalAddonsOnly op=Exists
+                                 node-role.kubernetes.io/master:NoSchedule
+                                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+    Events:
+      Type     Reason            Age                  From               Message
+      ----     ------            ----                 ----               -------
+      Warning  FailedScheduling  19s (x2 over 5m41s)  default-scheduler  0/1 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+
+
+--> status: pending
+    Toleration is node-role.kubernetes.io/master:NoSchedule
+
+--> to see events, but event are normally generted after pods are deployed
+    So, let's see event directly
+
+(2) investigation  for event  
+
+    vagrant@vagrant:~$ kubectl get event -n kube-system
+     TYPE      REASON               OBJECT                                          MESSAGE
+     Warning   FailedScheduling     pod/calico-kube-controllers-56cdb7c587-qdx4p    0/1 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+     Warning   FailedScheduling     pod/calico-kube-controllers-56cdb7c587-qdx4p    skip schedule deleting pod: kube-system/calico-kube-controllers-56cdb7c587-qdx4p
+     Normal    SuccessfulCreate     replicaset/calico-kube-controllers-56cdb7c587   Created pod: calico-kube-controllers-56cdb7c587-qdx4p
+     Normal    SuccessfulDelete     replicaset/calico-kube-controllers-56cdb7c587   Deleted pod: calico-kube-controllers-56cdb7c587-qdx4p
+     Warning   FailedScheduling     pod/calico-kube-controllers-6774bd9767-2ndxt    0/1 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+     Warning   FailedScheduling     pod/calico-kube-controllers-6774bd9767-kll2p    0/1 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+     Warning   FailedScheduling     pod/calico-kube-controllers-6774bd9767-kll2p    skip schedule deleting pod: kube-system/calico-kube-controllers-6774bd9767-kll2p
+     Normal    SuccessfulCreate     replicaset/calico-kube-controllers-6774bd9767   Created pod: calico-kube-controllers-6774bd9767-kll2p
+     Normal    SuccessfulCreate     replicaset/calico-kube-controllers-6774bd9767   Created pod: calico-kube-controllers-6774bd9767-2ndxt
+     Normal    ScalingReplicaSet    deployment/calico-kube-controllers              Scaled up replica set calico-kube-controllers-56cdb7c587 to 1
+     Normal    ScalingReplicaSet    deployment/calico-kube-controllers              Scaled down replica set calico-kube-controllers-56cdb7c587 to 0
+
+--> untolerated taint
+
+
+
+(3)
+so, let's look at vagrant node as a master node
+
+
+    vagrant@vagrant:~$ kubectl describe node vagrant
+    Name:               vagrant
+    ...
+                        volumes.kubernetes.io/controller-managed-attach-detach: true
+    CreationTimestamp:  Tue, 24 May 2022 19:26:20 +0000
+    Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+    Unschedulable:      false
+
+
+-->
+Here, Tains, has the setting "NoSchedule" if the condition is "control-plane"
+Because the vagrant node is a master node and kube system originally blocks calico controller from 
+being initialized and running in the master node, so it has tained the node and set the NoSchedule
+(https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+
+
+
+< Solution >
+
+At first, I did "kubectl taint nodes vagrant node-role.kubernetes.io/master-"
+But not working...
+
+After that, in here, (Reference: https://waspro.tistory.com/563),
+Found good solution.
+
+Getting rid of taint, add '-' at the end of command argument
+
+    vagrant@vagrant:~$ kubectl taint nodes vagrant node-role.kubernetes.io/control-plane:NoSchedule-
+    node/vagrant untainted
+
+    vagrant@vagrant:~$ kubectl get po -A
+    NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+    kube-system   calico-kube-controllers-6774bd9767-2ndxt   1/1     Running   0          21m
+    kube-system   calico-node-xtwjt                          1/1     Running   0          35m
+    kube-system   coredns-6d4b75cb6d-fn7rx                   1/1     Running   0          50m
+    kube-system   coredns-6d4b75cb6d-xl979                   1/1     Running   0          50m
+    kube-system   etcd-vagrant                               1/1     Running   1          50m
+    kube-system   kube-apiserver-vagrant                     1/1     Running   1          50m
+    kube-system   kube-controller-manager-vagrant            1/1     Running   0          50m
+    kube-system   kube-proxy-bj5fm                           1/1     Running   0          50m
+    kube-system   kube-scheduler-vagrant                     1/1     Running   1          50m
+
+
+
 
 
 

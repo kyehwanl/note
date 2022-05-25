@@ -6,6 +6,7 @@ Install Kubernetes Clusters on Ubuntu18
 https://www.hostafrica.co.za/blog/new-technologies/install-kubernetes-cluster-ubuntu-18/
 https://upcloud.com/community/tutorials/install-kubernetes-cluster-centos-8/)
 
+-- At least to run kubeadm, 1700MB memory required
 
 
 -----------------
@@ -16,35 +17,37 @@ https://upcloud.com/community/tutorials/install-kubernetes-cluster-centos-8/)
 Step 1: Update the list of packages
 We start by updating the local databases. Open the command prompt and run
 
-sudo apt-get update
+  sudo apt-get update
 
 
 Step 2: Download and install dependencies
 This command installs dependencies to ensure that apt command transfers files securely over https.
 
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
+  sudo apt install apt-transport-https ca-certificates curl software-properties-common
 
 
 Step 3: Add GPG key
 This is a security feature to ensure the authenticity of the installation files.
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
 
 Step 4: Install Docker repositories
 Add the Docker repository to apt sources using the command
 
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" (Ubuntu 18.04)
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" (Ubuntu 20.04)
 
 
 
 Step 5: Update the Repositories
 Use the command below to update the repositories just added in the previous command
 
-sudo apt-get update
+  sudo apt-get update
+
 You may want to confirm that you are running the installation from the Docker official repository using the command;
 
-apt-cache policy docker-ce
+  apt-cache policy docker-ce
 
 
 
@@ -52,12 +55,13 @@ apt-cache policy docker-ce
 Step 6: Install Docker
 Use the command below to install the latest version of Docker.
 
-sudo apt-get install docker-ce
+  sudo apt-get install docker-ce
+
 The command installs the latest Docker, after which it starts the daemon and configures it to load automatically when the machine boots. Type Y and press Enter when prompted.
 
 After it completes the process, use the command below to verify that the Docker installation is successful, active and running.
 
-sudo systemctl status docker
+  sudo systemctl status docker
 
 
 
@@ -79,64 +83,70 @@ Step 3. Set hostnames
     ==> optional, 난 그냥했음
 Set the appropriate hostnames for your master and worker nodes:
 
-sudo hostnamectl set-hostname "master-node"
-exec bash
-sudo hostnamectl set-hostname "w-node1"
-exec bash
-Now open the /etc/hosts file and edit the hostnames for your worker nodes:
+  sudo hostnamectl set-hostname "master-node"
+  exec bash
+  sudo hostnamectl set-hostname "w-node1"
+  exec bash
+  Now open the /etc/hosts file and edit the hostnames for your worker nodes:
 
-sudo cat <<EOF>> /etc/hosts
-10.168.10.207 master-node
-10.168.10.208 node1 w-node1
-10.168.10.209 node2 w-node2
-EOF
+  sudo cat <<EOF>> /etc/hosts
+  10.168.10.207 master-node
+  10.168.10.208 node1 w-node1
+  10.168.10.209 node2 w-node2
+  EOF
 
 
 
 Step 4. Configure Firewall
 For seamless communication across multiple nodes, we need to define rules in firewall. Use the following commands on your master node to do so:
 
-sudo ufw allow 6443/tcp
-sudo ufw allow 2379/tcp
-sudo ufw allow 2380/tcp
-sudo ufw allow 10250/tcp
-sudo ufw allow 10251/tcp
-sudo ufw allow 10252/tcp
-sudo ufw allow 10255/tcp
-sudo ufw reload
+  sudo ufw allow 6443/tcp
+  sudo ufw allow 2379/tcp
+  sudo ufw allow 2380/tcp
+  sudo ufw allow 10250/tcp
+  sudo ufw allow 10251/tcp
+  sudo ufw allow 10252/tcp
+  sudo ufw allow 10255/tcp
+  sudo ufw reload
+
 We also need to execute these commands on each of the worker nodes:
 
-sudo ufw allow 10251/tcp
-sudo ufw allow 10255/tcp
-sudo ufw reload
+  sudo ufw allow 10251/tcp
+  sudo ufw allow 10255/tcp
+  sudo ufw reload
 
-==> firewall 설정은 Centos 8버전을 따라했음
-    firewall-cmd --add-masquerade --permanent
-    firewall-cmd --reload
+  ==> firewall 설정은 Centos 8버전을 따라했음(ufw 안썼음)
+      (firewall-cmd can be installed by "apt install firewalld")
+      firewall-cmd --permanent --add-port=6443/tcp
+      firewall-cmd --permanent --add-port=10250/tcp
+      firewall-cmd --add-masquerade --permanent
+      firewall-cmd --reload
 
 
 Step 5. Install prerequisites
 For Kubernetes APIs to work properly and securely, we need to install https and curl on all VMs. Use the following command to do so:
 
-sudo apt-get install apt-transport-https curl -y
+  sudo apt-get install apt-transport-https curl -y
+
+
 Step 6. Add and Configure the Kubernetes repository
 We will use curl to add the Kubernetes repository on all the nodes. See commands below to first add the key, and then the repository:
 
-sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-sudo apt-add-repository "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+  sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+  sudo apt-add-repository "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 
 
 Step 7. Install Kubernetes on Ubuntu 18
 At this stage, we are ready to install the Kubernetes package. Use the following command:
 (Note: The kubeadm package will also install all other necessary packages)
 
-sudo apt-get install kubeadm -y
+  sudo apt-get install kubeadm -y
 
 
 Step 8. Disable swap
 For kubeadm to function properly, we need to turn the swap off. Use the following command on all machines:
 
-sudo swapoff -a
+  sudo swapoff -a
 
 
 
@@ -149,22 +159,60 @@ sudo swapoff -a
 Step 1. Initialise kubeadm
 To initialize our cluster, we need to initialize kubeadm. Run the following command on the Master node:
 
-sudo kubeadm init
+  sudo kubeadm init
+
 This can take some time as Kubernetes allocates resources and starts necessary services.
 
 
-Note: If you forgot to copy the command, or have misplaced it, don’t worry. You can retrieve it again by entering the following command:
+ <Note>: If you forgot to copy the command, or have misplaced it, don’t worry. 
+        You can retrieve it again by entering the following command:
 
-sudo kubeadm token create --print-join-command
+  sudo kubeadm token create --print-join-command
+
+
+  <Error Troubleshoot>
+    If you have the following error,
+
+    vagrant@vagrant:~$ sudo kubeadm init                                                                                                
+    [init] Using Kubernetes version: v1.24.0                                                                                            
+    [preflight] Running pre-flight checks                                                                                               
+            [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correct
+    ly                                                                                                                                  
+    error execution phase preflight: [preflight] Some fatal errors occurred:                                                            
+            [ERROR CRI]: container runtime is not running: output: time="2022-05-24T18:58:43Z" level=fatal msg="getting status of runtim
+    e: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"                                          
+    , error: exit status 1                                                                                                              
+    [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`                     
+    To see the stack trace of this error execute with --v=5 or higher                                                                   
+
+
+    (source: https://github.com/containerd/containerd/issues/4581)
+    ** < Issue > **
+    Following Kubernetes official installation instruction for containerd and kubeadm init will fail with 
+    unknown service runtime.v1alpha2.RuntimeService
+
+    < possible cause ? maybe >
+    W0524 16:59:01.427276 22679 initconfiguration.go:120] Usage of CRI endpoints without URL scheme is deprecated 
+    and can cause kubelet errors in the future. Automatically prepending scheme "unix" to the "criSocket" 
+    with value "/var/run/dockershim.sock". Please update your configuration!
+
+
+    ** < Solution > **
+    rm /etc/containerd/config.toml
+    systemctl restart containerd
+    kubeadm init
+
+    
+
 
 
 
 Step 2. Create required directories and start managing Kubernetes cluster
 In order to start managing your cluster, you need to create a directory and assume ownership. Run the following commands as a regular user:
 
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
 
@@ -173,14 +221,14 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 Step 3. Set up Flannel as the Pod network for the Cluster
 Pods within a cluster are connected via the pod network. At this point, it’s not working. This can be verified by entering the following two commands:
 
-sudo kubectl get nodes
-sudo kubectl get pods --all-namespaces
+  sudo kubectl get nodes
+  sudo kubectl get pods --all-namespaces
 
 As you can see, the status of master-node is NotReady. The CoreDNS service is also not running. To fix this, run the following command:
 
-sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-==> 이것 쓰지않고 calico를 썻음
+  ==> 이것 쓰지않고 calico를 썻음
 
     kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
@@ -189,17 +237,17 @@ sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Do
 Step 4. Add nodes to your cluster
 As a final step, you need to add worker nodes to your cluster. We will use the kubeadm join auto-generated token in Step 1. here. Run your own version of the following command on all of the worker node VMs:
 
-kubeadm join 102.130.114.240:6443 --token hpv60w.uw784fik3nqgf7fg --discovery-token-ca-cert-hash sha256:1ce91085c95535acaf1c536d5a84b54549680762fbbaf07467c6b8893a78db1a
+  kubeadm join 102.130.114.240:6443 --token hpv60w.uw784fik3nqgf7fg --discovery-token-ca-cert-hash sha256:1ce91085c95535acaf1c536d5a84b54549680762fbbaf07467c6b8893a78db1a
 
 
 unning the following command on the master-node should show your newly added node.
 
-sudo kubectl get nodes
+  sudo kubectl get nodes
 
 
 To set the role for your worker node, use the following command:
 
-sudo kubectl label node w-node1 node-role.kubernetes.io/worker=worker
+  sudo kubectl label node w-node1 node-role.kubernetes.io/worker=worker
 
 
 

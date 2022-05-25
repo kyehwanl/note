@@ -9,40 +9,56 @@ Making Kubernetes Clusters on Centos 7,8
 PREREQUISITES FOR BOTH MASTER AND WORKER NODES
 ----------------------------------------------
 
-1. Deploy two CentOS 8 cloud servers. One for the master and the other for the worker node. Check this tutorial to learn more about deploying cloud servers.
+1. Deploy two CentOS 8 cloud servers. One for the master and the other for the worker node. 
+  Check this tutorial to learn more about deploying cloud servers.
 
-Kubernetes has minimum requirements for the server and both master and worker nodes need to have at least 2 GB RAM and 2 CPUs, the $20/mo plan covers these requirements and with double the memory. Note that the minimum requirements are not just guidelines as Kubernetes will refuse to install on a server with less than the minimum resources.
+Kubernetes has minimum requirements for the server and both master and worker nodes need to have at least 2 GB RAM and 2 CPUs, 
+the $20/mo plan covers these requirements and with double the memory. Note that the minimum requirements are not just guidelines as Kubernetes will refuse to install on a server with less than the minimum resources.
+
 
 2. Log into both Master and Worker nodes over SSH using the root account and password you received by email after deployment.
 
-Make note of the public IP and private IP addresses of your servers at the UpCloud control panel. You can also use the ip addr command to find these out later.
+Make note of the public IP and private IP addresses of your servers at the UpCloud control panel. 
+You can also use the ip addr command to find these out later.
+
 
 3. Make sure the servers are up to date before installing anything new.
 
-dnf -y upgrade
+  dnf -y upgrade
+
+
 4. Disable SELinux enforcement.
 
-setenforce 0
-sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  setenforce 0
+  sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+
 5. Enable transparent masquerading and facilitate Virtual Extensible LAN (VxLAN) traffic for communication between Kubernetes pods across the cluster.
 
-modprobe br_netfilter
+  modprobe br_netfilter
+
 You will also need to enable IP masquerade at the firewall.
 
-firewall-cmd --add-masquerade --permanent
-firewall-cmd --reload
+  firewall-cmd --add-masquerade --permanent
+  firewall-cmd --reload
+
+
 6. Set bridged packets to traverse iptables rules.
 
-cat < /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
+  cat < /etc/sysctl.d/k8s.conf
+  net.bridge.bridge-nf-call-ip6tables = 1
+  net.bridge.bridge-nf-call-iptables = 1
+  EOF
+
 Then load the new rules.
 
-sysctl --system
+  sysctl --system
+
+
 7. Disable all memory swaps to increase performance.
 
-swapoff -a
+  swapoff -a
+
 With these steps done on both Master and worker nodes, you can proceed to install Docker.
 
 
@@ -56,36 +72,52 @@ Next, we’ll need to install Docker.
 
 1. Add the repository for the docker installation package.
 
-dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+
 2. Install container.io which is not yet provided by the package manager before installing docker.
 
-dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+  dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+
+
 3. Then install Docker from the repositories.
 
-dnf install docker-ce --nobest -y
+  dnf install docker-ce --nobest -y
+
+
 4. Start the docker service.
 
-systemctl start docker
+  systemctl start docker
+
+
 5. Make it also start automatically on server restart.
 
-systemctl enable docker
+  systemctl enable docker
+
+
 6. Change docker to use systemd cgroup driver.
 
-echo '{
-  "exec-opts": ["native.cgroupdriver=systemd"]
-}' > /etc/docker/daemon.json
+  echo '{
+    "exec-opts": ["native.cgroupdriver=systemd"]
+  }' > /etc/docker/daemon.json
+
 And restart docker to apply the change.
 
-systemctl restart docker
+  systemctl restart docker
+
 Once installed, you should check that everything is working correctly.
+
 
 7. See the docker version.
 
-docker version
+  docker version
+
+
 8. List what is inside the docker images. Likely still empty for now.
 
-docker images
-REPOSITORY   TAG   IMAGE ID   CREATED   SIZE
+  docker images
+  REPOSITORY   TAG   IMAGE ID   CREATED   SIZE
+
 Now that Docker is ready to go, continue below to install Kubernetes itself.
 
 
@@ -98,26 +130,32 @@ With all the necessary parts installed, we can get Kubernetes installed as well.
 
 1. Add the Kubernetes repository to your package manager by creating the following file.
 
-cat < /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kubelet kubeadm kubectl
-EOF
+  cat < /etc/yum.repos.d/kubernetes.repo
+  [kubernetes]
+  name=Kubernetes
+  baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+  enabled=1
+  gpgcheck=1
+  repo_gpgcheck=1
+  gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  exclude=kubelet kubeadm kubectl
+  EOF
+
+
 2. Then update the repo info.
 
-dnf upgrade -y
+  dnf upgrade -y
+
+
 3. Install all the necessary components for Kubernetes.
 
-dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+  dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
 Start the Kubernetes services and enable them to run at startup.
 
-systemctl enable kubelet
-systemctl start kubelet
+  systemctl enable kubelet
+  systemctl start kubelet
+
 Once running on both nodes, begin configuring Kubernetes on the Master by following the instructions in the next section.
 
 
@@ -130,46 +168,63 @@ Once Kubernetes has been installed, it needs to be configured to form a cluster.
 
 1. Configure kubeadm.
 
-kubeadm config images pull
+  kubeadm config images pull
+
+
 2. Open the necessary ports used by Kubernetes.
 
-firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
+  firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
+
+
 3. Allow docker access from another node, replace the worker-IP-address with yours.
 
-firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=worker-IP-address/32 accept'
+  firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=worker-IP-address/32 accept'
+
+
 4. Allow access to the host’s localhost from the docker container.
 
-firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+  firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+
+
 5. Make the changes permanent.
 
-firewall-cmd --reload
+  firewall-cmd --reload
+
+
 6. Install CNI (container network interface) plugin for Kubernetes.
 
 For this setup, we’ll be using Calico: https://docs.projectcalico.org/getting-started/kubernetes/quickstart#overview
 
 Issue the following command:
 
-kubeadm init --pod-network-cidr 192.168.0.0/16
+  kubeadm init --pod-network-cidr 192.168.0.0/16
+
 You should see something like the example below. Make note of the discovery token, it’s needed to join worker nodes to the cluster.
 
 Note that the join token below is just an example.
 
-kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
---discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+  kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
+  --discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+
 Make the following directory and configuration files.
 
-mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  mkdir -p $HOME/.kube
+  cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  chown $(id -u):$(id -g) $HOME/.kube/config
+  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+
 7. Enable pod to run on Master. This is only for demonstration purposes and is not recommended for production use.
 
-kubectl taint nodes --all node-role.kubernetes.io/master-
+  kubectl taint nodes --all node-role.kubernetes.io/master-
+
+
 8. Check that Master node has been enabled and is running.
 
-kubectl get nodes
-NAME  STATUS     ROLES  AGE  VERSION
-master  NotReady  master   91s     v1.18.0
+  kubectl get nodes
+  NAME  STATUS     ROLES  AGE  VERSION
+  master  NotReady  master   91s     v1.18.0
+
 On successful execution, you should see a node with ready status. If not, wait a moment and repeat the command.
 
 When the Master node is up and running, continue with the next section to join the Worker node to the cluster.
@@ -186,33 +241,38 @@ Each Kubernetes installation needs to have one or more worker nodes that run the
 
 1. Open ports used by Kubernetes.
 
-firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
+  firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
+
+
 2. Make the changes permanent.
 
-firewall-cmd --reload
+  firewall-cmd --reload
+
+
 3. Join the cluster with the previously noted token.
 
 Note that the join token below is just an example.
 
-kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
---discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+  kubeadm join 94.237.41.193:6443 --token 4xrp9o.v345aic7zc1bj8ba 
+  --discovery-token-ca-cert-hash sha256:b2e459930f030787654489ba7ccbc701c29b3b60e0aa4998706fe0052de8794c
+
+
 4. See if the Worker node successfully joined.
 
 Go back to the Master node and issue the following command.
 
-kubectl get nodes
-NAME    STATUS   ROLES    AGE   VERSION
-master  Ready    master   10m   v1.18.0
-worker  Ready       28s   v1.18.0
+  kubectl get nodes
+  NAME    STATUS   ROLES    AGE   VERSION
+  master  Ready    master   10m   v1.18.0
+  worker  Ready       28s   v1.18.0
+
 On success, you should see two nodes with ready status. If not, wait a moment and repeat the command.
 
 Finished!
 Congratulations, you should now have a working Kubernetes installation running on two nodes.
 
 In case anything goes wrong, you can always repeat the process.
-
 Run this on Master and Workers: kubeadm reset && rm -rf /etc/cni/net.d
-
 Have fun clustering.
 
 

@@ -493,7 +493,15 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
  
 
 
+    * Another Example
 
+        vagrant@vagrant:~$ sudo usermod -aG docker ${USER}                                                                                  │
+
+        (To apply the new group membership, log out of the server and back in, or type the following:)
+        vagrant@vagrant:~$ su - ${USER}                                                                                                     │
+        Password:                                                                                                                           │
+        vagrant@vagrant:~$ docker ps                                                                                                        │
+        CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES                                                              │
 
 
 
