@@ -115,7 +115,7 @@ Docker Tips
         To push a imges to remote repository. You need to sign up to Docker index in advance. Exmple uploaded image.
 
     - docker login
-        docker push tcnksm/hello
+        docker push tcnksm/hello --> this means pusing the image into dockerhub where you logged in
 
     - To delete a image
         docker rmi tcnkms/hello
@@ -128,6 +128,17 @@ Docker Tips
         To show command history of a image.
             docker history tcnksm/hello
 
+    - docker save
+        (https://jsta.github.io/r-docker-tutorial/04-Dockerhub.html)
+
+        To save a Docker image after you have pulled, committed or built it you use the docker save command. For example, 
+        lets save a local copy of the verse_gapminder docker image we made:
+
+            docker save verse_gapminder > verse_gapminder.tar
+        
+        If we want to load that Docker container from the archived tar file in the future, we can use the docker load command:
+
+            docker load --input verse_gapminder.tar
  
 
 10. set IP address to a docker container
