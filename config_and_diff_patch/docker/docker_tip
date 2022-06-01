@@ -86,6 +86,9 @@ Docker Tips
           1.Stop Container:
             docker stop yourcontainer;
 
+            -- docker stop and docker rm with a single command (same time)
+               docker stop CONTAINER_ID && docker rm $_  ($_ gives you the last echo)
+
           2.Get container id:
             docker inspect yourcontainer;
 

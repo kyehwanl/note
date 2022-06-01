@@ -159,7 +159,8 @@ For kubeadm to function properly, we need to turn the swap off. Use the followin
 Step 1. Initialise kubeadm
 To initialize our cluster, we need to initialize kubeadm. Run the following command on the Master node:
 
-  sudo kubeadm init
+  sudo kubeadm init  (or)
+  sudo kubeadm init --pod-network-cidr 192.168.0.0/16
 
 This can take some time as Kubernetes allocates resources and starts necessary services.
 
@@ -330,6 +331,7 @@ To set the role for your worker node, use the following command:
     export KUBECONFIG=/etc/kubernetes/admin.conf
     kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
     kubectl taint nodes --all node-role.kubernetes.io/master-
+    (kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-)
     kubectl get nodes
     service firewalld status
     firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=155.98.39.149/32 accept'

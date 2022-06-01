@@ -129,7 +129,7 @@ Kubernetes Running Errors
 
 
 -------------------------------------------
-7. aaint error on calico-kube-controllers
+7. taint error on calico-kube-controllers
 -------------------------------------------
 (Reference: https://waspro.tistory.com/563)
 
@@ -248,7 +248,7 @@ being initialized and running in the master node, so it has tained the node and 
 < Solution >
 
 At first, I did "kubectl taint nodes vagrant node-role.kubernetes.io/master-"
-But not working...
+But not working...  ( --> it also needs to diable "-control-plane:NoSchedule")
 
 After that, in here, (Reference: https://waspro.tistory.com/563),
 Found good solution.
@@ -271,10 +271,73 @@ Getting rid of taint, add '-' at the end of command argument
     kube-system   kube-scheduler-vagrant                     1/1     Running   1          50m
 
 
+    ** Addtional disable taint command
+    kubectl taint nodes vagrant node-role.kubernetes.io/master:NoSchedule-
 
 
 
+-------------------------------------------
+8. kubeadm init - Runtime container error 
+-------------------------------------------
 
+  vagrant@vagrant:~$ sudo kubeadm init
+  [init] Using Kubernetes version: v1.24.0
+  [preflight] Running pre-flight checks
+          [WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correct
+  ly
+  error execution phase preflight: [preflight] Some fatal errors occurred:
+          [ERROR CRI]: container runtime is not running: output: time="2022-05-24T18:58:43Z" level=fatal msg="getting status of runtim
+  e: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+  , error: exit status 1
+  [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+  To see the stack trace of this error execute with --v=5 or higher
+
+
+  (source: https://github.com/containerd/containerd/issues/4581)
+  ** < Issue > **
+  Following Kubernetes official installation instruction for containerd and kubeadm init will fail with
+  unknown service runtime.v1alpha2.RuntimeService
+
+  < possible cause ? maybe >
+  W0524 16:59:01.427276 22679 initconfiguration.go:120] Usage of CRI endpoints without URL scheme is deprecated
+  and can cause kubelet errors in the future. Automatically prepending scheme "unix" to the "criSocket"
+  with value "/var/run/dockershim.sock". Please update your configuration!
+
+
+  ** < Solution > **
+  rm /etc/containerd/config.toml
+  systemctl restart containerd
+  kubeadm init
+
+
+
+-------------------------------------------
+ 9. docker ps shows no containers
+-------------------------------------------
+ 
+  < Possible Reason >
+  When kubectl combinds docker together, and installed containerd
+  endpoint indicates cri-o ..cri something
+
+
+  < Issues >
+  if you have following errors
+
+  vagrant@vagrant:~$ crictl exec -it 3b69b6959a156 /bin/bash                                                                             
+  WARN[0000] runtime connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock unix:///var/run/cri-dockerd.sock]. As the default settings are now deprecated, you should set the endpoint instead.
+  ERRO[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /var/run/dockershim.sock: connect: no such file or directory"
+  ERRO[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: permission denied"
+  ERRO[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /run/crio/crio.sock: connect: no such file or directory"
+  ERRO[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /var/run/cri-dockerd.sock: connect: no such file or directory"
+  FATA[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /var/run/cri-dockerd.sock: connect: no such file or directory"
+
+
+  < Solution >
+    (https://kubernetes.io/docs/tasks/debug/debug-cluster/crictl/)
+
+  vagrant@vagrant:~$ sudo crictl config --set runtime-endpoint=unix:///var/run/containerd/containerd.sock
+  vagrant@vagrant:~$ sudo crictl exec -it 3b69b6959a156 /bin/bash
+  [root@private-reg ~]#
 
 
 
