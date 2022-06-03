@@ -1,0 +1,96 @@
+
+ Helm Note from converation ONF developer
+=========================================
+
+  vagrant@vagrant:~/aether-in-a-box$ git clone "https://gerrit.opencord.org/sdfabric-helm-charts"
+  Cloning into 'sdfabric-helm-charts'...                             
+  remote: Counting objects: 32, done                                 
+  remote: Total 491 (delta 0), reused 491 (delta 0)                  
+  Receiving objects: 100% (491/491), 108.40 KiB | 730.00 KiB/s, done.
+  Resolving deltas: 100% (188/188), done.                            
+
+
+  vagrant@vagrant:~/aether-in-a-box/sdfabric-helm-charts/bess-upf$ vim templates/bin/_bessd-poststart.sh.tpl
+   #!/bin/bash
+   # Copyright 2020-present Open Networking Foundation
+   #              
+   # SPDX-License-Identifier: Apache-2.0
+                                     
+   set -ex
+   tail -f /dev/null
+   #until bessctl run /opt/bess/bessctl/conf/up4; do 
+   #    sleep 2;
+   #done;
+
+
+
+  vagrant@vagrant:~/aether-in-a-box$ vim upf-overrides.yaml
+  images:                                                  
+    repository: "registry.opennetworking.org/docker.io/"   
+  resources:                                               
+    enabled: false                                         
+  config:                                                  
+    upf:                                                   
+      sriov:                                               
+        enabled: false                                     
+      hugepage:                                            
+        enabled: false                                     
+      cniPlugin: macvlan                                   
+      ipam: static                                         
+      cfgFiles:                                            
+        upf.json:                                          
+          mode: af_packet                                  
+          hwcksum: true                                    
+      access:      
+        iface: data
+      core:        
+        iface: data
+
+
+
+
+  vagrant@vagrant:~/aether-in-a-box$ helm install -n omec bess-upf ./sdfabric-helm-charts/bess-upf/templates/bin/_bessd-poststart.sh.tpl -f ./upf-overrides.yaml
+  Error: file '/home/vagrant/aether-in-a-box/sdfabric-helm-charts/bess-upf/templates/bin/_bessd-poststart.sh.tpl' does not appear to be a gzipped archive; got 'application/octet-stream'
+
+  vagrant@vagrant:~/aether-in-a-box$ helm install -n omec bess-upf ./sdfabric-helm-charts/bess-upf -f ./upf-overrides.yaml 
+  NAME: bess-upf
+  LAST DEPLOYED: Tue May 10 00:32:48 2022
+  NAMESPACE: omec
+  STATUS: deployed
+  REVISION: 1
+  TEST SUITE: None
+
+
+
+
+  vagrant@vagrant:~/aether-in-a-box$ make reset-5g-test && helm delete -n omec $(helm -n omec ls -qa) || true  
+  release "bess-upf" uninstalled                                                                           
+                                                                                                           
+  Wait for all pods to terminate...                                                                        
+  kubectl wait -n omec --for=delete --all=true -l app!=ue pod --timeout=180s || true                       
+  pod/upf-0 condition met                                                                                  
+  cd /home/vagrant/aether-in-a-box//build/milestones; rm -f 5g-core 
+
+
+
+
+  vagrant@vagrant:~/aether-in-a-box$ kubectl get statefulset -n omec upf -o yaml
+  vagrant@vagrant:~/aether-in-a-box$ kubectl edit configmap -n omec upf
+
+
+
+  idac-server02 [2009]{.../vagrant/bento-aiab}$ pwd   
+  /opt/vagrant/bento-aiab                             
+  idac-server02 [2009]{.../vagrant/bento-aiab}$ lscpu 
+
+
+
+
+
+
+
+
+
+
+
+
