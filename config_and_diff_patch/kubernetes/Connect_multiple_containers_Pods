@@ -1,0 +1,174 @@
+
+------------------------------------------------------------
+1. using service, multiple containers in a statefulset Pod
+------------------------------------------------------------
+
+(1) Pods
+ - bgp-srx-statefulset-0 has 3 containers - srx-server, quaggasrx, rpkirtr-server
+ - quaggasrx-statefulset-0, rpkirtr-statefulset-0, srx-server-statefulset-0, each pod has its own service	in (2)
+
+  vagrant@vagrant:~$ kubectl get po -o wide
+  NAME                       READY   STATUS    RESTARTS   AGE    IP               NODE      NOMINATED NODE   READINESS GATES
+  bgp-srx-statefulset-0      3/3     Running   0          21m    192.168.52.151   vagrant   <none>           <none>
+  quaggasrx-statefulset-0    1/1     Running   0          121m   192.168.52.150   vagrant   <none>           <none>
+  rpkirtr-statefulset-0      1/1     Running   0          122m   192.168.52.149   vagrant   <none>           <none>
+  srx-server-statefulset-0   1/1     Running   0          125m   192.168.52.148   vagrant   <none>           <none>
+
+
+(2) Services
+ - bgp-srx-service serves the statefulset pod, bgp-srx-statefulset-0
+ - quaggasrx-service serves quaggasrx-statefulset-0
+ - rpkirtr-service serves rpkirtr-statefulset-0
+ - srx-server-service serves srx-server-statefulset-0
+
+  vagrant@vagrant:~$ kubectl get svc -o wide
+  NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                                           AGE    SELECTOR
+  bgp-srx-service      ClusterIP   None           <none>        57901/TCP,57900/TCP,5179/TCP,52605/TCP,5323/TCP   22m    app=bgp-srx
+  kubernetes           ClusterIP   10.96.0.1      <none>        443/TCP                                           9d     <none>
+  nfs-service          ClusterIP   10.108.6.139   <none>        2049/TCP,111/UDP                                  3d3h   role=nfs
+  quaggasrx-service    ClusterIP   None           <none>        5179/TCP,52605/TCP                                122m   app=bgp-srx
+  rpkirtr-service      ClusterIP   None           <none>        5323/TCP                                          123m   app=rpkirtr
+  srx-server-service   ClusterIP   None           <none>        57901/TCP,57900/TCP                               126m   app=bgp-srx
+
+
+
+(3) with DNS SRV features, connect each other with bgp-srx-service
+
+  [root@bgp-srx-statefulset-0 ~]# dig SRV bgp-srx-service.default.svc.cluster.local
+ 	...
+
+  ;; OPT PSEUDOSECTION:
+  ; EDNS: version: 0, flags:; udp: 4096
+  ;; QUESTION SECTION:
+  ;bgp-srx-service.default.svc.cluster.local. IN SRV
+
+  ;; ANSWER SECTION:
+  bgp-srx-service.default.svc.cluster.local. 30 IN SRV 0 20 17900 bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local.
+  bgp-srx-service.default.svc.cluster.local. 30 IN SRV 0 20 179 bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local.
+  bgp-srx-service.default.svc.cluster.local. 30 IN SRV 0 20 17901 bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local.
+  bgp-srx-service.default.svc.cluster.local. 30 IN SRV 0 20 323 bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local.
+  bgp-srx-service.default.svc.cluster.local. 30 IN SRV 0 20 2605 bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local.
+
+  ;; ADDITIONAL SECTION:
+  bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local. 30 IN A 192.168.52.151
+
+  ;; Query time: 0 msec
+  ;; SERVER: 10.96.0.10#53(10.96.0.10)
+  ;; WHEN: Fri Jun 03 18:41:44 UTC 2022
+  ;; MSG SIZE  rcvd: 769
+
+
+
+  [root@bgp-srx-statefulset-0 ~]# dig bgp-srx-service.default.svc.cluster.local
+	...
+
+  ;; OPT PSEUDOSECTION:
+  ; EDNS: version: 0, flags:; udp: 4096
+  ;; QUESTION SECTION:
+  ;bgp-srx-service.default.svc.cluster.local. IN A
+
+  ;; ANSWER SECTION:
+  bgp-srx-service.default.svc.cluster.local. 30 IN A 192.168.52.151
+
+  ;; Query time: 0 msec
+  ;; SERVER: 10.96.0.10#53(10.96.0.10)
+  ;; WHEN: Fri Jun 03 18:41:56 UTC 2022
+  ;
+
+
+
+(4) ping test
+
+  vagrant@vagrant:~$ kubectl exec -it bgp-srx-statefulset-0 -c srx-server -- /bin/bash
+  [root@bgp-srx-statefulset-0 ~]# ping bgp-srx-service.default.svc.cluster.local
+  PING bgp-srx-service.default.svc.cluster.local (192.168.52.151) 56(84) bytes of data.
+  64 bytes from bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local (192.168.52.151): icmp_seq=1 ttl=64 time=0.010 ms
+  64 bytes from bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local (192.168.52.151): icmp_seq=2 ttl=64 time=0.028 ms
+  ^C
+
+
+------------------------------------------------------------
+2. using service, multiple statefulset Pods
+------------------------------------------------------------
+
+(1) Pods -- same as 1.(1) 
+(2) Services  -- same as 1.(2) 
+
+
+
+
+(3) with DNS SRV features, connect each other with each service
+
+
+-- Connect into 'rpkirtr-statefulset-0'
+
+  vagrant@vagrant:~$ kubectl exec -it rpkirtr-statefulset-0 -- /bin/bash
+
+
+-- with dig, checking dns setting
+
+	[root@rpkirtr-statefulset-0 ~]# dig quaggasrx-service.default.svc.cluster.local
+
+	;; OPT PSEUDOSECTION:
+	; EDNS: version: 0, flags:; udp: 4096
+	;; QUESTION SECTION:
+	;quaggasrx-service.default.svc.cluster.local. IN        A
+
+	;; ANSWER SECTION:
+	quaggasrx-service.default.svc.cluster.local. 30 IN A 192.168.52.151
+
+	;; Query time: 0 msec
+	;; SERVER: 10.96.0.10#53(10.96.0.10)
+	;; WHEN: Fri Jun 03 18:37:44 UTC 2022
+	;; MSG SIZE  rcvd: 131
+
+
+
+-- with dig SRV, checking dns setting
+
+	[root@rpkirtr-statefulset-0 ~]# dig SRV quaggasrx-service.default.svc.cluster.local
+
+	;; OPT PSEUDOSECTION:
+	; EDNS: version: 0, flags:; udp: 4096
+	;; QUESTION SECTION:
+	;quaggasrx-service.default.svc.cluster.local. IN        SRV
+
+	;; ANSWER SECTION:
+	quaggasrx-service.default.svc.cluster.local. 30 IN SRV 0 50 179 192-168-52-151.quaggasrx-service.default.svc.cluster.local.
+	quaggasrx-service.default.svc.cluster.local. 30 IN SRV 0 50 2605 192-168-52-151.quaggasrx-service.default.svc.cluster.local.
+
+	;; ADDITIONAL SECTION:
+	192-168-52-151.quaggasrx-service.default.svc.cluster.local. 30 IN A 192.168.52.151
+
+	;; Query time: 0 msec
+	;; SERVER: 10.96.0.10#53(10.96.0.10)
+	;; WHEN: Fri Jun 03 18:37:53 UTC 2022
+	;; MSG SIZE  rcvd: 388
+
+
+
+
+
+(4) ping test
+
+	[root@rpkirtr-statefulset-0 ~]# ping quaggasrx-service.default.svc.cluster.local
+	PING quaggasrx-service.default.svc.cluster.local (192.168.52.151) 56(84) bytes of data.
+	64 bytes from bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local (192.168.52.151): icmp_seq=1 ttl=63 time=0.044 ms
+	64 bytes from bgp-srx-statefulset-0.bgp-srx-service.default.svc.cluster.local (192.168.52.151): icmp_seq=2 ttl=63 time=0.043 ms
+	^C
+	--- quaggasrx-service.default.svc.cluster.local ping statistics ---
+	2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+	rtt min/avg/max/mdev = 0.043/0.043/0.044/0.006 ms
+
+
+
+
+
+
+
+
+
+
+
+
+
