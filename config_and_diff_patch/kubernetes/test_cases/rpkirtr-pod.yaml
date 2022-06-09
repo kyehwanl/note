@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rpkirtr-pod
+spec:
+  containers:
+  - name: rpkirtr-server
+    image: kyehwanl/nist-bgp-srx:6
+    command:
+    - /bin/bash
+    - -xc 
+    args:
+      - rpkirtr_svr; tail -f /dev/null;
+    volumeMounts:
+    - name: bgpsec-key 
+      mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+
+
+  imagePullSecrets:
+  - name: regcred
+
+  volumes:
+  - name: bgpsec-key
+    hostPath: 
+      path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys 
+
+

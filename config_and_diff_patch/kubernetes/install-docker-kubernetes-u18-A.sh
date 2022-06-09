@@ -32,6 +32,7 @@ sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-ke
 sudo apt-add-repository "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 sudo apt-get install kubeadm -y
 sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 
 sudo rm /etc/containerd/config.toml
