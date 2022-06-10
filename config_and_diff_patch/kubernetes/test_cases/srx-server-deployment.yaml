@@ -16,6 +16,19 @@ spec:
   selector:
     app: bgp-srx
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: srx-pv-claim
+  labels:
+    app: srx-server 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
 apiVersion: apps/v1
 kind: StatefulSet 
 metadata:
@@ -47,6 +60,8 @@ spec:
         volumeMounts:
         - name: bgpsec-key 
           mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+        - name: nfs-test
+          mountPath: /mnt/test
 
       imagePullSecrets:
       - name: regcred
@@ -55,6 +70,8 @@ spec:
       - name: bgpsec-key
         hostPath: 
           path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys 
-
+      - name: nfs-test
+        persistentVolumeClaim:
+          claimName: srx-pv-claim
 
 

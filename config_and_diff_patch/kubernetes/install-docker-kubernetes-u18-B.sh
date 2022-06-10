@@ -2,7 +2,6 @@
 # source: https://cla9.tistory.com/92?category=814452
 # Comment: 
 #  -- easier than file A, 
-#  -- no need to setup taint
 #  -- easier to install docker, also no need to delete containerd related file
 set -x
 
@@ -40,6 +39,9 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 # Overlay Netwokr installation for CNI (using Weave Net)
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
+# get rid of taints, which prohibit from running one cluster
+kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
 
 # 4. test
 kubectl get nodes

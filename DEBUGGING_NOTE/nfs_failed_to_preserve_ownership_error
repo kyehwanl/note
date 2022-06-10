@@ -1,0 +1,33 @@
+
+1. issue
+
+- When setup for nfs sharing, trying to cp or mv to the sharing directory, the following error occured
+    "failed to preserve ownership for operation not permitted"
+
+- BUT, it complains about can't preserve ownership but moves the file anyway, and keeps the ownership
+
+- Interesting is 'mv' 'cp -a' (-a: --archive same as preserve=all) has a complaining error, 
+  but 'cp' doesn't have any error
+
+
+
+2. Reason
+    - when setup nfs mount folder, 
+
+        mkdir -p /mnt/mirror
+        chown -R nobody:nogroup /mnt/mirror
+        chmod 777 /mnt/mirror/
+
+      in /etc/exports, 
+        '/mnt/mirror 192.168.10.0/24(rw,sync)'
+
+    a file or folder which has root permission won't be written here, because of "chwon nobody:nobody" nobody(=id:65534)
+
+
+3. Solution
+
+(1) possible solution
+    -- change ownership might be one solution
+
+        chown 1005:1005 <file>  (id:1005 appuser)
+    

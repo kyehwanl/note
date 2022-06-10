@@ -1,0 +1,338 @@
+
+--------------------------------------
+1. Making NFS on the same network node 
+--------------------------------------
+NFS server IP: 192.168.10.2
+
+  apt install nfs-kernel-server -y
+  mkdir -p /mnt/mirror
+  chown -R nobody:nogroup /mnt/mirror
+  chmod 777 /mnt/mirror/
+  sed -i -e '$a/mnt/mirror 192.168.10.0/24(rw,sync)' /etc/exports
+  exportfs -a
+  systemctl restart nfs-kernel-server.service
+
+-- checking nfs mount
+    showmount -e localhost or
+    exportfs -v
+
+
+-----------------------------
+2. Making NFS client for test
+-----------------------------
+client IP: 192.168.10.11
+
+ -- to check nfs mount position,
+    showmount -e 192.168.10.2
+
+  apt install nfs-common -y
+  mkdir -p /mnt/mirror
+  mount 192.168.10.2:/mnt/mirror /mnt/mirror --> ('-t nfs' can be added)
+  touch /mnt/mirror/file.txt
+  echo hello >> /mnt/mirror/file.txt
+
+
+
+ -- to check nfs mount result,
+    df -hT
+
+
+
+-------------------------------
+3. Making Kubernetes Cluster 
+-------------------------------
+  - This pod will use nfs mounted folder as a Persistent Volume 
+
+  - In order to make Kubernetes cluster, 
+    follow the script file, install-docker-kubernetes-u18-{A|B}.sh
+
+
+    < install-docker-kubernetes-u18-B.sh >
+
+    # 1. Install Docker
+    sudo apt update -y
+    sudo apt install docker.io
+    sudo swapoff -a
+    sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+
+    # 2. Install Kubernetes
+    # written on the official web page
+    sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    deb https://apt.kubernetes.io/ kubernetes-xenial main
+    EOF
+    sudo apt-get update
+    sudo apt-get install -y kubelet kubeadm kubectl
+    sudo apt-mark hold kubelet kubeadm kubectl
+
+
+    # 3. Initializing
+    sudo kubeadm init --pod-network-cidr 192.168.0.0/16
+
+    # setting for client to communicate with kube API Server
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+    # Overlay Netwokr installation for CNI (using Weave Net)
+    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+    # get rid of taints, which prohibit from running one cluster
+    kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
+    kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
+
+
+
+
+
+
+----------------------
+4. Pre-requisite work
+----------------------
+(https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
+
+(1) setting the private registry for kubernetes to pull the images 
+
+  - mostly 'docker hub', but if you want to use a private registry
+
+  A. Docker Hub
+    - docker login --> makes ${USER}/.docker/config.json
+
+  B. Create a Secret based on existing credentials
+
+    kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
+    --type=kubernetes.io/dockerconfigjson 
+
+
+  C. Create a Secret by providing credentials on the command line (might be the private docker image repository)
+
+    kubectl create secret docker-registry regcred \ 
+        --docker-server=<your-registry-server> \  
+        --docker-username=<your-name>  \ 
+        --docker-password=<your-pword> \ 
+        --docker-email=<your-email>
+
+    <your-registry-server> is your Private Docker Registry FQDN. Use https://index.docker.io/v1/ for DockerHub.
+    
+
+    *FYI* I used the A way
+
+
+
+
+
+----------------------------------
+5. Persistent Volume (PV) example
+----------------------------------
+(1) described pv, pvc, statefulset, service, pod template
+
+(2) files: 
+    srx-pv.yaml, 
+    srx-server-deployment.yaml
+
+(3) combining contents with ---
+
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: srx-pv
+  spec:
+    capacity:
+      storage: 10Mi
+    volumeMode: Filesystem
+    accessModes:
+      - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Recycle
+    nfs:
+      path: /mnt/mirror
+      server: 192.168.10.2
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: srx-server-service
+    labels:
+      app: srx-server
+  spec:
+    clusterIP: None
+    ports:
+      - name: srx-cli
+        port: 57901
+        targetPort: 17901
+      - name: srx-server
+        port: 57900
+        targetPort: 17900
+    selector:
+      app: bgp-srx
+  ---
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: srx-pv-claim
+    labels:
+      app: srx-server
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Mi
+  ---
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: srx-server-statefulset
+    labels:
+      app: srx-server
+  spec:
+    selector:
+      matchLabels:
+        app: srx-server
+    serviceName: srx-server-service
+    template:
+      metadata:
+        labels:
+          app: srx-server
+      spec:
+        containers:
+        - name: srx-server
+          image: kyehwanl/nist-bgp-srx:6
+          command: ["/bin/sh", "-c"]
+          args:
+            - sed "s/localhost/172.37.0.101/g"  /usr/etc/srx_server.conf > /tmp/srx_server.conf;
+              srx_server -f /tmp/srx_server.conf;
+          ports:
+            - name: srx-cli
+              containerPort: 17901
+            - name: srx-server
+              containerPort: 17900
+          volumeMounts:
+          - name: bgpsec-key
+            mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys
+          - name: nfs-test
+            mountPath: /mnt/test
+
+        imagePullSecrets:
+        - name: regcred
+
+        volumes:
+        - name: bgpsec-key
+          hostPath:
+            path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys
+        - name: nfs-test
+          persistentVolumeClaim:
+            claimName: srx-pv-claim
+
+
+-----------------------
+4. Execution Commands 
+-----------------------
+
+(1) make pv 
+    kubectl apply -f srx-pv.yaml
+
+(2) make pvc, service, and deploy a statefulset pod
+    kubectl apply -f srx-server-deployment.yaml
+
+
+(3) Check the result
+
+  vagrant@Server1:~$ kubectl get pv -o wide                                                                                         
+  NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS        CLAIM                  STORAGECLASS   REASON   AGE    VOLUMEMODE
+  srx-pv   50Mi       RWO            Recycle          Bound         default/srx-pv-claim                           103m   Filesystem
+
+
+  vagrant@Server1:~$ kubectl get pvc -o wide                                                                                        
+  NAME           STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE     VOLUMEMODE                                      
+  srx-pv-claim   Bound    srx-pv   50Mi       RWO                           102m    Filesystem                                      
+
+
+  vagrant@Server1:~$ kubectl get svc -o wide                                                                                        
+  NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)               AGE    SELECTOR                                 
+  kubernetes           ClusterIP   10.96.0.1    <none>        443/TCP               20h    <none>                                   
+  srx-server-service   ClusterIP   None         <none>        57901/TCP,57900/TCP   102m   app=bgp-srx                              
+
+
+  vagrant@Server1:~$ kubectl get statefulset -o wide                                                                                
+  NAME                     READY   AGE    CONTAINERS   IMAGES                                                                       
+  srx-server-statefulset   1/1     103m   srx-server   kyehwanl/nist-bgp-srx:6                                                      
+
+
+  vagrant@Server1:~$ kubectl get po -o wide                                                                
+  NAME                       READY   STATUS    RESTARTS   AGE    IP          NODE      NOMINATED NODE   READINESS GATES             
+  quaggasrx-pod              1/1     Running   0          146m   10.32.0.4   server1   <none>           <none>         
+  srx-server-statefulset-0   1/1     Running   0          104m   10.32.0.5   server1   <none>           <none>                      
+
+
+
+
+
+----------
+5. Extras 
+----------
+
+(1) bash completion
+
+    apt install bash-completion
+    source /etc/profile.d/bash_completion.sh 
+    source <(kubectl completion bash)
+ 
+
+(2) Vagrantfile for running VM (located at /users/kyehwanl/config_and_diff_patch/vagrant/)
+
+  -->   used the file, "Vagrantfile_srx-test1_private_network" 
+        nfs server file, "Vagrantfile-nfs-mpi_simple"
+        nfs client file, "Vagrantfile-client"
+
+
+        <Vagrantfile_srx-test1_private_network>
+
+        Vagrant.configure("2") do |config|
+          config.vm.box = "bento/ubuntu-18.04"
+          config.vm.hostname = "Server1"
+          config.vm.network "forwarded_port", guest: 80, host: 8080
+          config.vm.network "private_network", ip: "192.168.10.5", hostname: true
+
+          config.vm.provider "virtualbox" do |vb|
+              #vb.memory = "16384"
+              vb.memory = "8192"
+              #vb.cpus = "4"
+              vb.cpus = "2"
+          end
+        end
+
+
+        <Vagrantfile-nfs-mpi_simple>
+
+        VM1 = "server"
+        ServerIP  = "192.168.10.2"
+
+        Vagrant.configure("2") do |config|
+          config.vm.define VM1 do |server|
+            # creating a vm from base image
+            server.vm.box = "ubuntu/bionic64"
+            server.vm.hostname = VM1
+            server.vm.network "private_network", ip: ServerIP, hostname: true
+          end
+        end
+
+
+
+
+        <Vagrantfile-client>
+
+        ClientIP  = "192.168.10.11"
+        Vagrant.configure("2") do |config|
+
+          config.vm.define "client1" do |node|
+
+            # creating a vm from base image
+            node.vm.box = "ubuntu/bionic64"
+            node.vm.hostname = "client1"
+            node.vm.network "private_network", ip: ClientIP, hostname: true
+
+          end
+        end

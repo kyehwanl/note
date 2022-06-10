@@ -45,6 +45,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
+# get rid of taints, which prohibit from running one cluster
 kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
 kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
 

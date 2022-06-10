@@ -1,6 +1,6 @@
 #!/bin/sh
 export KUBECONFIG=$HOME/.kube/config2
-if [ -f /etc/profile.d/bash_completion.sh ]; then
+if [ -f /etc/profile.d/bash_completion.sh ]; then # in case not exist, apt or yum install bash-completion
   source /etc/profile.d/bash_completion.sh # in case of errors, "bash: _get_comp_words_by_ref: command not found"
   source <(kubectl completion bash)
   alias k=kubectl
