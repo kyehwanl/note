@@ -2,7 +2,7 @@
 --------------------------------------
 1. Making NFS on the same network node 
 --------------------------------------
-NFS server IP: 192.168.10.2
+NFS server IP: 192.168.10.2 (vagrant file: Vagrantfile-nfs-mpi_simple)
 
   apt install nfs-kernel-server -y
   mkdir -p /mnt/mirror
@@ -20,7 +20,7 @@ NFS server IP: 192.168.10.2
 -----------------------------
 2. Making NFS client for test
 -----------------------------
-client IP: 192.168.10.11
+client IP: 192.168.10.11 (vagrant file: Vagrantfile-client_simple)
 
  -- to check nfs mount position,
     showmount -e 192.168.10.2
@@ -38,16 +38,56 @@ client IP: 192.168.10.11
 
 
 
--------------------------------
+----------------------------------------------------------
 3. Making Kubernetes Cluster 
+   -- Pre-requisite work  
+   (vagrant file: Vagrantfile_srx-test1_private_network)
+----------------------------------------------------------
+(https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
+
+
+(1) setting the private registry for kubernetes to pull the images 
+
+  - mostly 'docker hub', but if you want to use a private registry
+
+  A. Docker Hub
+    - docker login --> makes ${USER}/.docker/config.json
+
+  B. Create a Secret based on existing credentials
+
+    kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
+    --type=kubernetes.io/dockerconfigjson 
+
+
+  C. Create a Secret by providing credentials on the command line (might be the private docker image repository)
+
+    kubectl create secret docker-registry regcred \ 
+        --docker-server=<your-registry-server> \  
+        --docker-username=<your-name>  \ 
+        --docker-password=<your-pword> \ 
+        --docker-email=<your-email>
+
+    <your-registry-server> is your Private Docker Registry FQDN. Use https://index.docker.io/v1/ for DockerHub.
+    
+
+    *FYI* I used the A way
+
+
+
+
 -------------------------------
+4. Making Kubernetes Cluster 
+    -- Setup Kubernetes
+-------------------------------
+
   - This pod will use nfs mounted folder as a Persistent Volume 
 
   - In order to make Kubernetes cluster, 
-    follow the script file, install-docker-kubernetes-u18-{A|B}.sh
+    follow the script file, install-docker-kubernetes-ubuntu-v{1|2}.sh
 
 
-    < install-docker-kubernetes-u18-B.sh >
+    < install-docker-kubernetes-ubuntu-v2.sh >
 
     # 1. Install Docker
     sudo apt update -y
@@ -82,43 +122,6 @@ client IP: 192.168.10.11
     # get rid of taints, which prohibit from running one cluster
     kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
     kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
-
-
-
-
-
-
-----------------------
-4. Pre-requisite work
-----------------------
-(https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
-
-(1) setting the private registry for kubernetes to pull the images 
-
-  - mostly 'docker hub', but if you want to use a private registry
-
-  A. Docker Hub
-    - docker login --> makes ${USER}/.docker/config.json
-
-  B. Create a Secret based on existing credentials
-
-    kubectl create secret generic regcred \
-    --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
-    --type=kubernetes.io/dockerconfigjson 
-
-
-  C. Create a Secret by providing credentials on the command line (might be the private docker image repository)
-
-    kubectl create secret docker-registry regcred \ 
-        --docker-server=<your-registry-server> \  
-        --docker-username=<your-name>  \ 
-        --docker-password=<your-pword> \ 
-        --docker-email=<your-email>
-
-    <your-registry-server> is your Private Docker Registry FQDN. Use https://index.docker.io/v1/ for DockerHub.
-    
-
-    *FYI* I used the A way
 
 
 
@@ -231,10 +234,10 @@ client IP: 192.168.10.11
 4. Execution Commands 
 -----------------------
 
-(1) make pv 
+(1) make a persistent volume 
     kubectl apply -f srx-pv.yaml
 
-(2) make pvc, service, and deploy a statefulset pod
+(2) make a persistent volume claim (pvc), service, and deploy a statefulset pod
     kubectl apply -f srx-server-deployment.yaml
 
 

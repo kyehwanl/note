@@ -7,7 +7,7 @@ set -x
 
 # 1. Install Docker
 sudo apt update -y
-sudo apt install docker.io
+sudo apt install docker.io -y
 
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
@@ -45,6 +45,6 @@ kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
 
 # 4. test
 kubectl get nodes
-kubectl get po -A -o wide
+kubectl get po -A -o wide -w
 
 

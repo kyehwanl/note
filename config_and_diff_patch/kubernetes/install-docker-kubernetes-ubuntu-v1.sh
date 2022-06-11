@@ -37,6 +37,7 @@ sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 sudo rm /etc/containerd/config.toml
 sudo systemctl restart containerd
+sudo crictl config --set runtime-endpoint=unix:///var/run/containerd/containerd.sock
 sudo kubeadm init --pod-network-cidr 192.168.0.0/16
 
 mkdir -p $HOME/.kube

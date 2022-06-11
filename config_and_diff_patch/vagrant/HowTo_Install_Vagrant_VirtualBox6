@@ -1,0 +1,228 @@
+
+---------------------------------
+  I. VirtualBox Installation
+---------------------------------
+
+
+1.1 VirtualBox 6.0 on Centos 7
+===============================
+(https://phoenixnap.com/kb/how-to-install-virtualbox-centos-7)
+
+
+(0) Install vboxdrv Kernel Module
+  sudo yum install –y patch gcc kernel-headers kernel-devel make perl wget
+
+(1)  Download VirtualBox Repository 
+  sudo wget http://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo -P /etc/yum.repos.d
+
+(2) Install VirtualBox 6.0
+  sudo yum install VirtualBox-6.0
+
+  - After install, status check
+  sudo systemctl status vboxdrv
+
+(3) Install Oracle VirtualBox Extension Pack (Optional)
+  wget http://download.virtualbox.org/virtualbox/6.0.4/Oracle_VM_VirtualBox_Extension_Pack-6.0.4.vbox-extpack
+  sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-6.0.4.vbox-extpack
+
+(4) Start VirtualBox
+    VirtualBox
+
+
+
+    
+1.2 Install VirtualBox 6.1 on CentOS 8 / RHEL 8
+================================================
+(https://computingforgeeks.com/how-to-install-virtualbox-on-centos-rhel-8/)
+
+Step 1: Add VirtualBox / EPEL repository
+
+- Add the VirtualBox repository to the local system by downloading virtualbox.repo file and placing it under /etc/yum.repos.d directory.
+
+  sudo dnf -y install wget
+  wget https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo
+  sudo mv virtualbox.repo /etc/yum.repos.d/
+
+- Import Oracle public key:
+
+  wget -q https://www.virtualbox.org/download/oracle_vbox.asc
+  sudo rpm --import oracle_vbox.asc
+
+- We also need to add EPEL repository:
+  sudo dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+
+Step 2: Install VirtualBox on RHEL 8 / CentOS 8
+
+- Download required build tools for VirtualBox.
+
+  sudo dnf -y install binutils kernel-devel kernel-headers libgomp make patch gcc glibc-headers glibc-devel dkms
+
+
+- Then proceed to install the latest version of VirtualBox 6.1 by running the command:
+
+  sudo dnf install -y VirtualBox-6.1
+
+The installation command will build kernel modules and automatically create vboxusers group. Any system user who is going to use USB devices from Oracle VM VirtualBox guests must be a member of that group.
+
+- To manually add VirtualBox user must to be a member of the group.
+
+  sudo usermod -aG vboxusers $USER
+
+- To rebuild Kernel modules, run:
+
+  sudo /usr/lib/virtualbox/vboxdrv.sh setup
+
+
+
+Step 3: Starting VirtualBox on CentOS 8 / RHEL 8 Linux
+You have the flexibility of starting Oracle VM VirtualBox program by running the program of your choice (VirtualBox, VBoxManage, or VBoxHeadless) from a terminal.
+
+  $ VirtualBox
+
+Alternatively start VirtualBox 6.1 on RHEL 8 / CentOS 8 from GUI by navigating to Application >> System Tools >> Oracle VM VirtualBox.
+install virtualbox ubuntu 18.04 debian 9 01 min 1
+
+Download Extension Pack:
+
+  cd ~/
+  wget https://download.virtualbox.org/virtualbox/6.1.22/Oracle_VM_VirtualBox_Extension_Pack-6.1.22.vbox-extpack
+
+Click the file to install it.
+
+
+
+
+1.3 Install on Ubuntu 
+======================
+(http://www.codebind.com/linux-tutorials/install-vagrant-ubuntu-18-04-lts-linux/)
+
+sudo apt-get install virtualbox
+
+
+
+
+
+------------------------------------
+  II. Vagrant Installation
+------------------------------------
+
+Note that you should activate the Virtualization Technology (e.g., VT-x in Intel) 
+from your BIOS settings if it is not enabled previously
+
+
+2.1 Install Vagrant on CentOS 7
+===============================
+(https://phoenixnap.com/kb/how-to-install-vagrant-on-centos-7)
+
+(0) pre-requisite
+    sudo yum update
+
+(1) Install
+    sudo wget https://releases.hashicorp.com/vagrant/2.2.2/vagrant_2.2.2_x86_64.rpm
+    sudo yum localinstall vagrant_2.2.2_x86_64.rpm
+
+(2) Verify version
+    vagrant --version, -v
+
+
+
+
+2.2 Install Vagrant on Centos 8
+================================
+1. Normal way
+(https://computingforgeeks.com/how-to-install-vagrant-on-centos-rhel-linux/)
+
+  (1) Install packer build dependencies:
+
+    sudo dnf groupinstall "Development Tools" -y 
+    sudo dnf -y install rsync gcc zlib-devel libvirt-devel cmake
+
+
+  (2) Install Ruby and Ruby Development packages that are required to use Vagrant.
+
+    sudo dnf install -y ruby ruby-devel
+
+
+  (3) Add Vagrant YUM repository:
+
+    sudo yum install -y yum-utils
+    sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+
+  (4) Then install Vagrant on CentOS 8 / RHEL 8:
+
+    sudo yum install vagrant
+
+
+
+2. Simeple way
+(https://linuxize.com/post/how-to-install-vagrant-on-centos-8/)
+
+  sudo dnf install https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.rpm
+
+
+
+
+
+
+2.3 Install on Ubuntu 
+======================
+(http://www.codebind.com/linux-tutorials/install-vagrant-ubuntu-18-04-lts-linux/
+ https://medium.com/@vahidmohsseni/vagrant-nfs-mpi-49a3f03cdb77 )
+
+
+  sudo apt-get install vagrant
+
+
+  -- If a repository not found, try following,
+ 
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt-get update && sudo apt-get install vagrant 
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+   III. Usages of Vagrant with VirtualBox
+----------------------------------------------
+
+3.1. Get Started with Vagrant 
+===========================
+(1) mkdir /opt/vagrant-centos-7
+
+(2) cd /opt/vagrant-centos-7
+
+(3) vagrant box add centos/7
+
+(4) touch Vagrantfile or vagrant init
+
+(5) vagrant up
+
+
+
+
+
+3.2. Basic Vagrant Commands
+=========================
+
+(1) vagrant up, reload
+(2) vagrant ssh, ssh-config
+(3) vagrant halt, suspend, resume
+(4) vagrant destroy
+(5) vagrant status, global-status
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: srx-server-service
+  labels:
+    app: srx-server
+spec:
+  clusterIP: None
+  ports:
+    - name: srx-cli
+      port: 57901
+      targetPort: 17901
+    - name: srx-server
+      port: 57900
+      targetPort: 17900
+  selector:
+    app: bgp-srx
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: srx-pv-claim
+  labels:
+    app: srx-server 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet 
+metadata:
+  name: srx-server-statefulset
+  labels:
+    app: srx-server
+spec:
+  selector:
+    matchLabels:
+      app: srx-server
+  serviceName: srx-server-service
+  template:
+    metadata:
+      labels:
+        app: srx-server
+    spec:
+      containers:
+      - name: srx-server
+        image: kyehwanl/nist-bgp-srx:6
+        command: ["/bin/sh", "-c"] 
+        args:
+          - sed "s/localhost/172.37.0.101/g"  /usr/etc/srx_server.conf > /tmp/srx_server.conf; 
+            srx_server -f /tmp/srx_server.conf;
+        ports:
+          - name: srx-cli
+            containerPort: 17901
+          - name: srx-server
+            containerPort: 17900
+        volumeMounts:
+        - name: bgpsec-key 
+          mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+        - name: nfs-test
+          mountPath: /mnt/test
+
+      imagePullSecrets:
+      - name: regcred
+
+      volumes:
+      - name: bgpsec-key
+        hostPath: 
+          path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys 
+      - name: nfs-test
+        persistentVolumeClaim:
+          claimName: srx-pv-claim
+
+
