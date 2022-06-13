@@ -148,6 +148,8 @@ find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
 ssh -t -t -o StrictHostKeyChecking=no ops.emulab.antd.nist.gov
 ssh-keygen & ssh-copy-id <server>
 ssh -o ServerAliveInterval=100 <host>
+ssh -i ssh_keys/id_rsa vagrant@192.168.30.12  # to specify private key other than the keys in ~/.ssh/
+    (** if Error Message "Permissions 0640 for 'ssh_keys/id_rsa' are too open", then chmod 600 <private key>)
 
 
 (9) svn tips

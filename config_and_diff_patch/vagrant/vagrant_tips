@@ -162,13 +162,22 @@ Saving an existing Vagrant box:
       
 vagrant halt
       
+ -- updated. It will shut the machine down and start saving it to a file.
+    (https://stackoverflow.com/questions/22181325/saving-and-sharing-changes-made-to-vagrant-box)
     
+
 2. Execute create Vagrant box package:
 
 vagrant package --output centos7drupal.box
       
     
 3. The Vagrant box package will be saved as centos7drupal.box file.
+
+
+
+-- one of Smart ways is to use git clone or inline shell script inside Vagrantfile
+
+
 
 ---------------------------------
 Removing an existing Vagrant box:
