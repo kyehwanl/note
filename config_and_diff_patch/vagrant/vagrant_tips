@@ -360,6 +360,9 @@ aiab-4g
     mkdir psnc
     cd psnc
     vagrant init
+      ➜ Copy a previous build Vagrantfile to ~/vagrant/psnc/
+      ➜ Change the Vagrant Box inside the "Vagrantfile" file to "psnc"
+      ➜ config.vm.box = "psnc"
     vagrant up
 
 

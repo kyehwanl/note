@@ -12,9 +12,10 @@ NFS server IP: 192.168.10.2 (vagrant file: Vagrantfile-nfs-mpi_simple)
   exportfs -a
   systemctl restart nfs-kernel-server.service
 
--- checking nfs mount
+-- checking nfs mount with following commands:
     showmount -e localhost or
     exportfs -v
+    nfsstat -m
 
 
 -----------------------------

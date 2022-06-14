@@ -24,6 +24,7 @@
 (3) Install Oracle VirtualBox Extension Pack (Optional)
   wget http://download.virtualbox.org/virtualbox/6.0.4/Oracle_VM_VirtualBox_Extension_Pack-6.0.4.vbox-extpack
   sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-6.0.4.vbox-extpack
+  (If there is permission error, try to use /tmp - copy files into /tmp)
 
 (4) Start VirtualBox
     VirtualBox
