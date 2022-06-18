@@ -1,0 +1,29 @@
+
+
+1. secret object
+(1)
+kubectl create secret docker-registry regcred 
+        --docker-server=10.0.50.11 
+        --docker-username=kyehwanl 
+        --docker-password=dmsgPwlsfl1!
+
+
+or 
+
+(2)
+docker login 10.0.50.11:5000
+
+ then 
+ cat ~/.docker/config.json | base64 -w0
+
+    
+  Note that the base64 encoding should appear on a single line so with -w0 we disable the wrapping.
+  Next, create a yaml file: my-secret.yaml
+
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: registrypullsecret
+    data:
+      .dockerconfigjson: <base-64-encoded-json-here>
+    type: kubernetes.io/dockerconfigjson
