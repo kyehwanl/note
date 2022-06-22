@@ -1,0 +1,50 @@
+
+Debugging Kubernetes network issues with nsenter, dig and tcpdump
+==================================================================
+(https://prefetch.net/blog/2020/08/03/debugging-kubernetes-network-issues-with-nsenter-dig-and-tcpdump/)
+
+
+As a Kubernetes administrator I frequently find myself needing to debug application and system issues. 
+Most of the issues I encounter can be solved with Grafana dashboards and Prometheus metrics, or 
+by running one or more Elasticsearch queries to examine logs. But there are times when I need to go deeper 
+and actually inspect activity inside a running pod. A lot of debugging guides use the kubectl exec command 
+to run one or more commands inside a container:
+
+    $ kubectl exec -it container-XXXX dig @10.10.0.1 google.com
+
+But what happens if you don’t have a shell installed in the container? Or 
+what if your container runs as an unprivileged user (which it should), and the tools you need to debug 
+the issue aren’t installed? Kinda hard to install utilities if you don’t have root, and it defeats the 
+whole point of ephemeral infrastructure. In these situations the Linux nsenter command will become your best friend!
+
+
+If you aren’t familiar with nsenter, it allows you to run a program in a given namespace. 
+So lets say you have a microservice running in your Kubernetes cluster, and your developers 
+tell you that DNS resolution isn’t working correctly. 
+To debug this issue with nsenter, you can access the host the service is running on, 
+and execute nsenter with the “-t” (process to target) and “-n” (enter the network namespace) options. 
+The final argument is the command to run in the processes network namespace:
+
+  $ nsenter -t 1294 -n dig +short @10.11.2.2 *.*.svc.cluster.local
+
+  10.10.0.10
+  10.10.0.1
+
+
+In the example above, nsenter ran the dig command again the cluster DNS service IP. 
+It also used the dig binary that resides on the hosts file system, not the containers. 
+Nsenter is also super helpful when you need to capture traffic going in and out of a container:
+
+    $ nsenter -t 1294 -n tcpdump -i eth0 port 80 and "tcp[tcpflags] & tcp-syn != 0"
+
+    tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+    listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+    06:04:20.424938 IP 10.11.2.1.39168 > 10.11.2.3.80: Flags [S], seq 1491800784, win 29200, options [mss 1460,sackOK,TS val 59669904 ecr 0,nop,wscale 7], length 0
+    06:04:20.425000 IP 10.11.2.3.80 > 10.11.2.1.39168: Flags [S.], seq 3823341284, ack 1491800785, win 28960, options [mss 1460,sackOK,TS val 59669904 ecr 59669904,nop,wscale 7], length 0
+
+
+In the example above, nsenter executed the tcpdump utility inside process ID 1294’s namespace. 
+What makes this super powerful is the fact that you can run your containers with the minimum number of bits 
+needed to run your application, and your application can also run as an unprivileged user. 
+When you need to debug issues you don’t need to touch the container. 
+You just fire up the binary on your Kubernetes worker and debug away.

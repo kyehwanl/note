@@ -1,0 +1,41 @@
+
+1. Image pull if Container-Runtime is "containerd", not "docker"
+------------------------------------------------------------------
+
+(1) make registry server directory 
+    mkdir -p /etc/containerd/certs.d/10.0.50.11\:5000
+        --> 'certs/10...:5000' doesn't exist at first
+
+
+(2) copy certs (public certs)
+
+    cp /etc/docker/certs.d/10.0.50.11\:5000/ca.crt /etc/containerd/certs.d/10.0.50.11\:5000/
+
+
+(3) restart containerd service 
+
+    update-ca-certificates && systemctl restart containerd
+
+
+      root@vagrant:~# update-ca-certificates
+      Updating certificates in /etc/ssl/certs...
+      1 added, 0 removed; done.
+      Running hooks in /etc/ca-certificates/update.d...
+      done.
+
+      root@vagrant:~# systemctl restart containerd
+
+
+(4) pull the image from the private registry
+
+  vagrant@vagrant:~$ curl -k https://10.0.50.11:5000/v2/_catalog
+    {"repositories":["exabgpsec_src","gobgpsec_src","nist-bgp-srx","srx","srx-grpc","srx-swarm","srx_grpc", \
+      "srxcryptoapi_src","srxsuite_gl","srxsuite_src"]}
+
+
+  root@vagrant:~# crictl pull 10.0.50.11:5000/srx
+  Image is up to date for sha256:95d50477b3e651e0a43438449c2359bb201427691b8d2f08d989c75abab489e9
+
+  root@vagrant:~# crictl images
+  IMAGE                                TAG                 IMAGE ID            SIZE
+  10.0.50.11:5000/srx                  latest              95d50477b3e65       151MB

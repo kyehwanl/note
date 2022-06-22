@@ -1,7 +1,285 @@
 
 
-1. secret object
-(1)
+ Using Self signed certificate as a docker registry 
+====================================================
+(sources: https://github.com/coreos/tectonic-docs/blob/master/Documentation/admin/add-registry-cert.md
+ https://stackoverflow.com/questions/53545732/how-do-i-access-a-private-docker-registry-with-a-self-signed-certificate-using-k
+ )
+
+1. get 'ca.crt' file in the register server(10.0.50.11) at /etc/docker/certs.d/10.0.50.11:5000/ca.crt
+
+2. base64 string
+    base64 -w 0 ca.crt
+  
+    vagrant@vagrant:~$ base64 -w 0 /etc/docker/certs.d/10.0.50.11\:5000/ca.crt                                                         
+    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZhRENDQTFDZ0F3SUJBZ0lKQU9zVnJ1d0VuU2xtTUEwR0NTcUdTSWIzRFFFQkN3VUFNRUl4Q3pBSkJnTlYKQkFZVEF
+    
+
+    (1) registry-secret.yaml
+
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: registry-ca
+          namespace: kube-system
+        type: Opaque
+        data:
+          registry-ca: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURWek[...]
+
+
+    (2) Use kubectl to create the registry-ca secret:
+
+        kubectl create -f registry-secret.yaml
+
+
+
+3. DaemonSet mounts the CA as the file /home/core/registry-ca and then 
+    copies this file to the /etc/docker/certs.d/10.0.50.11:5000/ca.crt
+
+    --> if "CONTAINER-RUNTIME" is not 'docker', but 'containerd', then 
+        /etc/containerd/certs.d/10.0.50.11:5000/ca.crt
+
+
+    Currently the only way I can find to get this working with containerd is to 
+    add the certificate to the root store of the host and then restart the containerd service. 
+    Doing this via a DaemonSet requires using a privileged container and nsenter 
+    so that we can run a shell on the host. This config worked for me for an Ubuntu host 
+    (create the secret with your certificate first):
+    -- https://stackoverflow.com/questions/53545732/how-do-i-access-a-private-docker-registry-with-a-self-signed-certificate-using-k
+
+
+    (1) registry-ca-ds.yaml
+
+        apiVersion: apps/v1
+        kind: DaemonSet
+        metadata:
+          name: registry-ca
+          namespace: kube-system
+          labels:
+            k8s-app: registry-ca
+        spec:
+          selector:
+            matchLabels:
+              name: registry-ca
+          template:
+            metadata:
+              labels:
+                name: registry-ca
+            spec:
+              hostPID: true
+              hostNetwork: true
+              initContainers:
+              - name: registry-ca
+                image: busybox
+                securityContext:
+                  privileged: true
+                command: [ 'sh' ]
+                args:
+                  - -c
+                  - |
+                    cp /home/core/registry-ca /usr/local/share/ca-certificates/registry-ca.crt
+                    nsenter --mount=/proc/1/ns/mnt -- sh -c "update-ca-certificates && systemctl restart containerd"
+                volumeMounts:
+                - name: usr-local-share-certs
+                  mountPath: /usr/local/share/ca-certificates
+                - name: ca-cert
+                  mountPath: /home/core
+              terminationGracePeriodSeconds: 30
+              volumes:
+              - name: usr-local-share-certs
+                hostPath:
+                  path: /usr/local/share/ca-certificates
+              - name: ca-cert
+                secret:
+                  secretName: registry-ca
+
+              containers:
+                - name: srx
+                  image: 10.0.50.11:5000/srx
+
+
+         (*) using nssenter, first decide the namespace using mounting a file (/proc/1/ns/mnt)
+             and, run 'update...systemctl restart' to this target namespace
+
+
+             What is meaning of "nsenter --mount=/proc/1/ns/mnt"
+             (https://stackoverflow.com/questions/71583725/what-is-usr-bin-nsenter-m-proc-1-ns-mnt-in-kubernetes-daemonset)
+
+             it is not to mount , but to get access to the namespace of that partucular process. 
+             PID 1 is allocated to the very first process that start when you start your OS. 
+             Each process has a /proc/[pid]/ns/ subdirectory containing one entry for each namespace .ns stands for namespace. 
+             /proc/[pid]/ns/mnt is is a handle for the mount namespace of the process. 
+
+
+         (cf) nsenter examples
+         (https://prefetch.net/blog/2020/08/03/debugging-kubernetes-network-issues-with-nsenter-dig-and-tcpdump/)
+
+
+
+    (2)  execution logs and events
+
+        vagrant@vagrant:~$ kubectl apply -f daemonset-registry.yaml 
+        daemonset.apps/registry-ca created                          
+
+
+        vagrant@vagrant:~$ kubectl get po -A
+        NAMESPACE     NAME                                       READY   STATUS            RESTARTS        AGE
+        default       private-reg                                1/1     Running           0               21d
+        kube-system   calico-kube-controllers-56cdb7c587-rd58d   1/1     Running           0               21d
+        kube-system   calico-node-8kxz8                          1/1     Running           0               21d
+        kube-system   coredns-6d4b75cb6d-m2mls                   1/1     Running           0               21d
+        kube-system   coredns-6d4b75cb6d-m78s9                   1/1     Running           0               21d
+        kube-system   etcd-vagrant                               1/1     Running           3 (9d ago)      21d
+        kube-system   kube-apiserver-vagrant                     1/1     Running           5 (9d ago)      21d
+        kube-system   kube-controller-manager-vagrant            1/1     Running           61 (157m ago)   21d
+        kube-system   kube-proxy-2zl7x                           1/1     Running           0               21d 
+        kube-system   kube-scheduler-vagrant                     1/1     Running           62 (157m ago)   21d 
+        kube-system   registry-ca-s2wkz                          0/1     PodInitializing   0               11s
+
+        vagrant@vagrant:~$ kubectl get po -n kube-system registry-ca-s2wkz
+        NAME                READY   STATUS    RESTARTS   AGE
+        registry-ca-s2wkz   1/1     Running   0          29s
+
+
+        vagrant@vagrant:~$ kubectl describe po -n kube-system registry-ca-s2wkz
+        Name:         registry-ca-s2wkz
+        Namespace:    kube-system
+        Priority:     0
+        Node:         vagrant/10.0.2.15
+        Start Time:   Tue, 21 Jun 2022 20:58:03 +0000
+        Labels:       controller-revision-hash=56b5544cd5
+                      name=registry-ca
+                      pod-template-generation=1 
+        Annotations:  <none> 
+        Status:       Running
+        IP:           10.0.2.15
+        IPs:  
+          IP:           10.0.2.15
+        Controlled By:  DaemonSet/registry-ca 
+        Init Containers:
+          registry-ca:
+            Container ID:  containerd://68a038fb3ddb4f42ef7182b5bf1a9e6c7e54f67bf2cf02f1d913119a66b70429
+            Image:         busybox
+            Image ID:      docker.io/library/busybox@sha256:3614ca5eacf0a3a1bcc361c939202a974b4902b9334ff36eb29ffe9011aaad83
+            Port:          <none>
+            Host Port:     <none>
+            Command:
+              sh
+            Args:
+              -c
+              cp /home/core/registry-ca /usr/local/share/ca-certificates/registry-ca.crt
+              nsenter --mount=/proc/1/ns/mnt -- sh -c "update-ca-certificates && systemctl restart containerd"
+
+            State:          Terminated
+              Reason:       Completed
+              Exit Code:    0
+              Started:      Tue, 21 Jun 2022 20:58:04 +0000
+              Finished:     Tue, 21 Jun 2022 20:58:05 +0000
+            Ready:          True
+            Restart Count:  0
+            Environment:    <none>
+            Mounts:
+              /home/core from ca-cert (rw)
+              /usr/local/share/ca-certificates from usr-local-share-certs (rw)
+              /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-mz26g (ro)
+        Containers:
+          srx:
+            Container ID:   containerd://351f5b7c7ec747364e9cfc8e4f5d36d42ac1fa4da6b38efa22ad02cf522f2a76
+            Image:          10.0.50.11:5000/srx
+            Image ID:       10.0.50.11:5000/srx@sha256:03b6b3614e3d88e38ece2e6fdabedb7e053166d8b910e11472d1c0f90ac31ec6
+            Port:           <none>
+            Host Port:      <none>
+            State:          Running
+              Started:      Tue, 21 Jun 2022 20:58:23 +0000
+            Ready:          True
+            Restart Count:  0
+            Environment:    <none>
+            Mounts:
+              /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-mz26g (ro)
+        Conditions:
+          Type              Status
+          Initialized       True
+          Ready             True
+          ContainersReady   True
+          PodScheduled      True
+        Volumes:
+          usr-local-share-certs:
+            Type:          HostPath (bare host directory volume)
+            Path:          /usr/local/share/ca-certificates
+            HostPathType:
+          ca-cert:
+            Type:        Secret (a volume populated by a Secret)
+            SecretName:  registry-ca
+            Optional:    false
+          kube-api-access-mz26g:
+            Type:                    Projected (a volume that contains injected data from multiple sources)
+            TokenExpirationSeconds:  3607
+            ConfigMapName:           kube-root-ca.crt
+            ConfigMapOptional:       <nil>
+            DownwardAPI:             true
+        QoS Class:                   BestEffort
+        Node-Selectors:              <none>
+        Tolerations:                 node.kubernetes.io/disk-pressure:NoSchedule op=Exists
+                                     node.kubernetes.io/memory-pressure:NoSchedule op=Exists
+                                     node.kubernetes.io/network-unavailable:NoSchedule op=Exists
+                                     node.kubernetes.io/not-ready:NoExecute op=Exists
+                                     node.kubernetes.io/pid-pressure:NoSchedule op=Exists
+                                     node.kubernetes.io/unreachable:NoExecute op=Exists
+                                     node.kubernetes.io/unschedulable:NoSchedule op=Exists
+        Events:
+          Type    Reason     Age   From               Message
+          ----    ------     ----  ----               -------
+          Normal  Scheduled  41s   default-scheduler  Successfully assigned kube-system/registry-ca-s2wkz to vagrant
+          Normal  Pulling    41s   kubelet            Pulling image "busybox"
+          Normal  Pulled     40s   kubelet            Successfully pulled image "busybox" in 498.857501ms
+          Normal  Created    40s   kubelet            Created container registry-ca
+          Normal  Started    40s   kubelet            Started container registry-ca
+          Normal  Pulling    37s   kubelet            Pulling image "10.0.50.11:5000/srx"
+          Normal  Pulled     22s   kubelet            Successfully pulled image "10.0.50.11:5000/srx" in 15.898947926s
+          Normal  Created    21s   kubelet            Created container srx
+          Normal  Started    21s   kubelet            Started container srx
+
+
+
+      vagrant@vagrant:~$ kubectl exec -it -n kube-system registry-ca-s2wkz -c srx -- /bin/bash
+      [root@vagrant /]#
+      [root@vagrant /]#
+      [root@vagrant /]# ll
+      total 1736
+      -rw-r--r--   1 root root     11976 Apr  2  2018 anaconda-post.log
+      lrwxrwxrwx   1 root root         7 Apr  2  2018 bin -> usr/bin
+      drwxr-xr-x   5 root root       360 Jun 21 20:58 dev
+      drwxr-xr-x   1 root root      4096 Jun 21 20:58 etc
+      drwxr-xr-x   2 root root      4096 Nov  5  2016 home
+      lrwxrwxrwx   1 root root         7 Apr  2  2018 lib -> usr/lib
+      lrwxrwxrwx   1 root root         9 Apr  2  2018 lib64 -> usr/lib64
+      -rw-------   1 root quagga      79 Jun 21 20:58 log2
+      drwxr-xr-x   2 root root      4096 Nov  5  2016 media
+      drwxr-xr-x   2 root root      4096 Nov  5  2016 mnt
+      drwxr-xr-x   2 root root      4096 Nov  5  2016 opt
+      dr-xr-xr-x 206 root root         0 May 31 15:46 proc
+      -rw-r--r--   1 root root   1181496 Apr 20  2018 quaggasrx-0.4.2.7-22.el7.centos.x86_64.rpm
+      dr-xr-x---   1 root root      4096 Jun 21 20:59 root
+      drwxr-xr-x   1 root root      4096 Jun 21 20:58 run
+      lrwxrwxrwx   1 root root         8 Apr  2  2018 sbin -> usr/sbin
+      drwxr-xr-x   2 root root      4096 Nov  5  2016 srv
+      -rw-r--r--   1 root root    317676 Apr 20  2018 srx-0.5.1.0-1.el7.centos.x86_64.rpm
+      -rw-r--r--   1 root root     65260 May  2  2018 srxcryptoapi-0.3.0.0-1.el7.centos.x86_64.rpm
+      -rw-r--r--   1 root root    140292 Apr 20  2018 srx-proxy-0.5.1.0-1.el7.centos.x86_64.rpm
+      dr-xr-xr-x  13 root root         0 May 31 15:46 sys
+      drwxrwxrwt   7 root root      4096 Apr  2  2018 tmp
+      drwxr-xr-x   1 root root      4096 Apr  2  2018 usr
+      drwxr-xr-x   1 root root      4096 Apr  2  2018 var
+
+
+
+
+
+
+----------------------------------------------
+ Previous Failed example
+----------------------------------------------
+(1) secret object
 kubectl create secret docker-registry regcred 
         --docker-server=10.0.50.11 
         --docker-username=kyehwanl 
