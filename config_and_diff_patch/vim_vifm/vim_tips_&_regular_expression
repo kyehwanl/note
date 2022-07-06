@@ -368,7 +368,13 @@ When you add folds to other features like viewports and marks and jumps, Vim bec
 
 
 
+Indentation Guide lines
+=======================
+(https://vi.stackexchange.com/questions/666/how-to-add-indentation-guides-lines)
+Simple Usage is to use following settings
 
+set cursorcolumn
+set cursorline
 
 
 
