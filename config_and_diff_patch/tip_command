@@ -147,7 +147,21 @@ find -name "*.xls" -o -name "*.csv" ==  find -regex ".*\.\(xls\|csv\)"
 =================================
 ssh -t -t -o StrictHostKeyChecking=no ops.emulab.antd.nist.gov
 ssh-keygen & ssh-copy-id <server>
-ssh -o ServerAliveInterval=100 <host>  (used for pwct1.ctl.nist.gov)
+
+ssh -o ServerAliveInterval=100 <host>  
+    ServerAliveInterval: This sets a timeout interval in seconds, which is specified by you, from which 
+        if no packets are sent from the SSH client to the SSH server, SSH will send an encrypted request 
+        to the server for a TCP response. To make that request every 30 seconds:
+
+ssh -o TCPKeepAlive=yes <host>  (used for pwct1.ctl.nist.gov)
+    TCPKeepAlive: This uses the KEEPALIVE option of the TCP/IP protocol to keep a connection alive after 
+        a specified interval of inactivity. On most systems, this means 2 hours. 
+        So, with the TCPKeepAlive option passed to SSH, the SSH client will send an encrypted packet 
+        to the SSH server, keeping your TCP connection up and running.
+
+    --> what about using both ServerAliveInterval and TCPKeepAlive together 
+        for avoiding "Connection to <host> closed by remote host" ??
+
 ssh -i ssh_keys/id_rsa vagrant@192.168.30.12  # to specify private key other than the keys in ~/.ssh/
     (** if Error Message "Permissions 0640 for 'ssh_keys/id_rsa' are too open", then chmod 600 <private key>)
 
