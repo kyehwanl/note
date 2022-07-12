@@ -150,3 +150,13 @@ While describing how to do this I thought I'd mention the --dry-run switch to rs
 
 
 
+-------------------------------
+Excluding Not checking options
+-------------------------------
+
+Most options can be turned off by simply adding the --no- prefix to those options.
+
+Example:
+
+rsync -avz --no-perms(or --no-p) --no-owner --no-group /local-dir/ my-server:/remote-dir/
+This will disable syncing permissions, ownership, and groups.

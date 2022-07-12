@@ -1,6 +1,8 @@
 #/bin/sh -x
 #
+#--------------------------------
 # 1. project backup using rsync
+#--------------------------------
 #
 rsync -avPuni --delete ~/proj-bgp/ bgp2.antd.nist.gov:~/project-iip-bgp/proj-bgp/ 
 # if wanted to skip files that are newer on the receiver, use '-u'
@@ -8,7 +10,9 @@ rsync -avPuni --delete ~/proj-bgp/ bgp2.antd.nist.gov:~/project-iip-bgp/proj-bgp
 
 
 #
+#-------------------------------------------
 # 2. using exclude to exclude a certain dir 
+#-------------------------------------------
 #
 rsync -avPuni ls5.antd.nist.gov:/temp/kyehwanl/temp1/proj-bgp/extras/srxcryptoapi/ ./  --exclude=".git*" --include='*.[ch]' --exclude='test_install' --exclude='*.libs' --exclude='*.deps*' --exclude='*.o' --exclude='autom4te*' --exclude='*.l[oa]' --exclude='Makefile*' --exclude='config*'
 
@@ -19,8 +23,10 @@ rsync -avPuniz --delete $SOURCE $DEST  --exclude=".git*" --include='*.[ch]' --ex
 # more realistic example 2
 rsync -avPuniz --exclude=".git*" --include='*.[ch]' --exclude='_inst' --exclude='*.libs' --exclude='*.deps*' --exclude='*.o' --exclude='autom4te*' --exclude='*.l[oa]' --exclude='Makefile*' --exclude='config*' --exclude='*.sw*' --exclude="*~" --exclude="*cscope*" --exclude="*tags" --exclude="*.so*" access.antd.nist.gov:~/proj-program_data/Github_usnistgov/NIST-BGP-SRx/ ~/project/Github_usnistgov/NIST-BGP-SRx/ --delete
 
-#
+
+#----------------------------
 # 3. more exclude rules
+#----------------------------
 # https://unix.stackexchange.com/questions/307862/rsync-include-only-certain-files-types-excluding-some-directories
 #
 # source files .c and .h only
@@ -28,7 +34,9 @@ rsync -avz --exclude='.git' --include='*/' --include='*.[ch]' --exclude '*'  $so
 
 
 
+#------------------------------
 # 4. Tips and using ssh-tunnel
+#------------------------------
 #
   1. backup:  rsync -avPz --delete <src> <dest>    (-z: zipped communication)
     (example) rsync -avP config_and_diff_patch/tip_command bgp2.antd.nist.gov:~/config_and_diff_patch/
@@ -49,5 +57,95 @@ rsync -avz --exclude='.git' --include='*/' --include='*.[ch]' --exclude '*'  $so
         then,
   [kyehwanl@localhost ~]$ rsync -avPuiz -e "ssh -p 12345" localhost:/tmp/crontab-gobgp.log ./
 
+
+
+#------------------------------------------------------
+# 4. Using MobaXterm for comparing Windows directories
+#------------------------------------------------------
+
+1. run MobaXterm and select "Start local terminal"
+2. Use /mnt directory for accessing each drive and sub directories
+3. compare first with dry-run similar to the following command 
+
+    rsync -avPuniz --delete --no-p Projects/ /mnt/d/Data/Projects/  
+        (--no-p: ignore permission differences, -n: dry-run)
+
+        Other Useful ignoring options: --no-perms(or --no-p), --no-owner, --no-group
+
+    rsync -avPuniz --delete --no-p "세금 보험 및 각종기록 (Updated 20220525)"/ /mnt/d/Data/"세금 보험 및 각종기록 (Updated 20220525)"/ 
+
+
+4. run and replace without dry-run option
+
+
+
+
   
+
+--------------------------------------------------------
+6.  Understanding the output of rsync --itemize-changes
+--------------------------------------------------------
+
+(http://www.staroceans.org/e-book/understanding-the-output-of-rsync-itemize-changes.html)
+
+As you may know the rsync's --delete options if misused could make severe damage.
+To prevent this you can use the --itemize-change and the --dry-run options to figure out 
+how the command will behave before launching the real one.
+The output will be something like that:
+
+.d..t..g... ./
+.f...p.g... Something.pdf
+.f.....g... md5sum-2010-02-21.txt
+.f...p.g... prova.rb
+.d.....g... .metadata/
+.f...p.g... .metadata/.lock
+.f...p.g... .metadata/.log
+.f...p.g... .metadata/version.ini
+>f+++++++++ Parameter_Usage.txt
+
+Where the first field of each line tell what rsync would do to each file.
+I wrote this little schema that helped me to understand this output format and 
+I'm publishing hoping it will be useful for others.
+
+YXcstpoguax  path/to/file
+|||||||||||
+`----------- the type of update being done::
+ ||||||||||   <: file is being transferred to the remote host (sent).
+ ||||||||||   >: file is being transferred to the local host (received).
+ ||||||||||   c: local change/creation for the item, such as:
+ ||||||||||      - the creation of a directory
+ ||||||||||      - the changing of a symlink,
+ ||||||||||      - etc.
+ ||||||||||   h: the item is a hard link to another item (requires --hard-links).
+ ||||||||||   .: the item is not being updated (though it might have attributes that are being modified).
+ ||||||||||   *: means that the rest of the itemized-output area contains a message (e.g. "deleting").
+ ||||||||||
+ `---------- the file type:
+  |||||||||   f for a file,
+  |||||||||   d for a directory,
+  |||||||||   L for a symlink,
+  |||||||||   D for a device,
+  |||||||||   S for a special file (e.g. named sockets and fifos).
+  |||||||||
+  `--------- c: different checksum (for regular files)
+   ||||||||     changed value (for symlink, device, and special file)
+   `-------- s: Size is different
+    `------- t: Modification time is different
+     `------ p: Permission are different
+      `----- o: Owner is different
+       `---- g: Group is different
+        `--- u: The u slot is reserved for future use.
+         `-- a: The ACL information changed
+
+This schema is based on the contents of the rsync manual. 
+(https://www.samba.org/ftp/rsync/rsync.html)
+
+
+
+
+
+
+
+
+
 
