@@ -2,6 +2,10 @@
 Ansible Installation
 =====================
 
+
+1. Centos 7
+(https://buildvirtual.net/installing-and-configuring-ansible-on-centos)
+
   yum install epel-release
   yum install gcc git python-pip python-devel libffi-devel openssl-devel
   pip install setuptools --upgrade
@@ -9,3 +13,28 @@ Ansible Installation
   git clone https://github.com/ansible/ansible.git --recursive
   cd ansible
   make install
+
+
+
+2. Ubuntu 20
+(https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-ansible-on-ubuntu-20-04)
+
+  sudo apt update
+  sudo apt install ansible
+
+
+
+
+
+3. Setting Up the Inventory File
+(https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-ansible-on-ubuntu-20-04)
+
+  sudo nano /etc/ansible/hosts
+
+  [servers]
+  server1 ansible_host=203.0.113.111
+  server2 ansible_host=203.0.113.112
+  server3 ansible_host=203.0.113.113
+
+  [all:vars]
+  ansible_python_interpreter=/usr/bin/python3 

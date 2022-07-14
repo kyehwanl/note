@@ -510,6 +510,7 @@ Use the blow command into .bashrc or command line
 (34) htop sort by key
 =====================
   htop -s PERCENT_CPU
+  htop -s PERCENT_MEM
   ("htop --sort-key=help" list all items)
 
 
