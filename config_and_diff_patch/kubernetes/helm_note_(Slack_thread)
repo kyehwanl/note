@@ -1,6 +1,7 @@
 
  Helm Note from converation ONF developer
 =========================================
+(with Hyunsun, https://app.slack.com/client/T095Z193Q/threads)
 
   vagrant@vagrant:~/aether-in-a-box$ git clone "https://gerrit.opencord.org/sdfabric-helm-charts"
   Cloning into 'sdfabric-helm-charts'...                             
