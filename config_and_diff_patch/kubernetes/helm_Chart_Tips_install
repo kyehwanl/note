@@ -1,0 +1,200 @@
+Helm Tips 
+=============
+
+1. Installation from script 
+
+(https://helm.sh/docs/intro/install/)
+-- same as Aether uses
+
+  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  sudo DESIRED_VERSION="v3.6.3"./get_helm.sh
+
+
+2. by manager: Apt (Ubuntu)
+
+  curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+  sudo apt-get install apt-transport-https --yes
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  sudo apt-get update
+  sudo apt-get install helm
+
+
+
+
+
+
+3. Add repository
+
+
+    helm repo add aether https://charts.aetherproject.org
+
+    helm repo up[date]
+
+
+4. searching charts inside repository
+
+    helm search repo aether
+
+      $ helm search repo aether
+      NAME                            CHART VERSION   APP VERSION     DESCRIPTION
+      aether/aether-enterprise-portal 0.1.1           0.1.1           Aether Enterprise Portal
+      aether/aether-mock-exporter     0.2.1           v0.0.0          Aether ROC Mock Exporter
+      aether/aether-roc-api           1.7.10          v0.10.13        Aether ROC API
+      aether/aether-roc-gui           3.0.152         3.0.0           Aether ROC Graphical User Interface
+      ...
+
+
+5. showing values inside charts
+
+    helm show values aether/bess-upf
+
+        $ helm show values aether/bess-upf
+        images:
+          tags:
+            bess: "omecproject/upf-epc-bess:master-9a4d86c"
+            pfcpiface: "omecproject/upf-epc-pfcpiface:master-9a4d86c"
+            tools: registry.aetherproject.org/tools/busybox:stable
+          pullPolicy: IfNotPresent
+          # Secrets must be manually created in the namespace.
+          pullSecrets:
+            - name: aether.registry
+
+        config:
+          coreDump:
+            enabled: false
+            path: /tmp/coredump
+          gratuitousArp:
+            enabled: true
+            interval: 10 # seconds
+          upf:
+            # Enable privileged when run from VM with sriov support
+            privileged: false
+            hugepage:
+              enabled: true
+            sriov:
+              enabled: true
+ 
+
+
+6. Similar to #5, get manifests which is already installed chart
+
+
+  helm upgrade --install --wait --values ~/aether-in-a-box/roc-values.yaml atomix-controller atomix/atomix-controller
+  helm list
+
+  helm get manifest atomix-controller <-- get every manifest yaml files to be used for this chart
+  helm get hooks atomix-controller
+  helm get note atomix-controller
+  helm get notes atomix-controller
+  helm get values atomix-controller   <-- get modified values for this chart
+
+
+      $ helm upgrade --install --wait --values ~/aether-in-a-box/roc-values.yaml atomix-controller atomix/atomix-controller
+      Release "atomix-controller" does not exist. Installing it now.
+      NAME: atomix-controller
+      LAST DEPLOYED: Wed Jul 20 15:34:54 2022
+      NAMESPACE: default
+      STATUS: deployed
+      REVISION: 1
+      TEST SUITE: None
+
+      $ helm list
+      NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                      APP VERSION
+      atomix-controller       default         1               2022-07-20 15:34:54.786835065 +0000 UTC deployed        atomix-controller-0.6.9    v0.6.2
+
+
+      $ helm get manifest atomix-controller
+      ---
+      # Source: atomix-controller/templates/serviceaccount.yaml
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: atomix-controller
+        namespace: default
+      ---
+      # Source: atomix-controller/templates/configmap.yaml
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: atomix-controller-config
+      data:
+        logging.yaml: |-
+          loggers:
+            root:
+              level: debug
+              output:
+                stdout:
+                  sink: stdout
+          sinks:
+            stdout:
+              type: stdout
+              stdout: {}
+      ---
+      # Source: atomix-controller/templates/service.yaml
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: atomix-controller
+        labels:
+          name: atomix-controller
+      spec:
+        selector:
+          name: atomix-controller
+        ports:
+        - name: control
+          port: 5679
+        - name: webhook
+          port: 443
+          targetPort: 443
+      ---
+      # Source: atomix-controller/templates/deployment.yaml
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: atomix-controller
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            name: atomix-controller
+        template:
+          metadata:
+            labels:
+              name: atomix-controller
+          spec:
+            serviceAccountName: atomix-controller
+            initContainers:
+            - name: init-certs
+              image: "atomix/atomix-controller-init-certs:v0.6.2"
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsUser: 0
+              env:
+              - name: CONTROLLER_NAME
+                value: atomix-controller
+              - name: CONTROLLER_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              volumeMounts:
+              - name: config
+                mountPath: /etc/atomix/config
+                readOnly: true
+              - name: certs
+                mountPath: /etc/webhook/certs
+            containers:
+            - name: atomix-controller
+              # Replace this with the built image name
+              image: "atomix/atomix-controller:v0.6.2"
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsUser: 0
+              ports:
+              - containerPort: 5679
+                name: control
+              - containerPort: 443
+                name: webhook-server
+      ...
+
