@@ -516,6 +516,13 @@ Use the blow command into .bashrc or command line
 
 
 
+(35) Emulab Access from Windows 10
+==================================
+ssh -i /mnt/c/Users/kyehwanl/Documents/id_rsa -p 22 kyehwanl@pc849.emulab.net
+
+
+
+
 
 (ETC)
 =================================

@@ -75,6 +75,15 @@ HOW TO INSTALL DOCKER ON CENTOS 7
     # docker-compose version
 
 
+    ** (cf) Download command with curl: 
+        curl -L "https://github.com/docker/compose/releases/download/<version>/docker-compose-$(uname -s)-$(uname -m)" \
+             -o /usr/local/bin/docker-compose
+
+        (example) 
+            curl -L "https://github.com/docker/compose/releases/download/v2.9.0/docker-compose-linux-x86_64"
+                 -o /usr/local/docker-compose
+
+
 
 DOCKER INSTALLATION ON UBUNTU 16, 18
 ====================================

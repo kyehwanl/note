@@ -1,0 +1,27 @@
+
+--------------
+NetBox install
+--------------
+
+1. docker and docker compose install first
+2.
+    git clone -b release https://github.com/netbox-community/netbox-docker.git
+    cd netbox-docker
+    tee docker-compose.override.yml <<EOF
+    version: '3.4'
+    services:
+      netbox:
+        ports:
+          - 8000:8080
+    EOF
+    docker-compose pull
+    docker-compose up
+
+
+  Username: admin
+  Password: admin
+
+
+
+8. open browser and ip and port number 
+    http://0.0.0.0:8000
