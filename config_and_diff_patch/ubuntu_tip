@@ -1,5 +1,34 @@
 
-(1) sshd-server
+---------------
+1. sshd-server
+---------------
 sudo apt-get update
 sudo apt-get install openssh-server
 sudo ufw allow 22
+
+
+-----------------------------------------
+2. unlock screen saver from command line
+-----------------------------------------
+(https://askubuntu.com/questions/341014/unlock-login-screen-using-command-line)
+
+- Just following command (no root required)
+  $ loginctl unlock-session
+
+- if you have multiple sessions,
+
+  $ loginctl list-sessions
+     SESSION        UID USER             SEAT             TTY
+          c1        117 lightdm          seat0
+          c5       1003 kyehwanl
+          c3       1003 kyehwanl
+          c4       1003 kyehwanl
+        5402       1003 kyehwanl
+          c2       1003 kyehwanl
+         333       1003 kyehwanl
+        7594       1003 kyehwanl
+
+  8 sessions listed.
+
+  $ loginctl unlock-session c5
+
