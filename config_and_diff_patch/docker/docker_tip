@@ -517,6 +517,12 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
         vagrant@vagrant:~$ docker ps                                                                                                        │
         CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES                                                              │
 
+        --> Or just
+        newgrp docker 
+
+        (get access to group in current shell, 
+         Do not need to log out & in again)
+
 
 
 

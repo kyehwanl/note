@@ -1,0 +1,409 @@
+
+Minikube Install Ubuntu 20.04
+==============================
+(https://www.linuxtechi.com/how-to-install-minikube-on-ubuntu/)
+
+1. Apply updates
+
+  $ sudo apt update -y
+  $ sudo apt upgrade -y
+
+
+
+2. Install Minikube dependencies
+
+  $ sudo apt install -y curl wget apt-transport-https
+
+
+
+3. Download Minikube Binary
+
+  $ wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+  $ sudo cp minikube-linux-amd64 /usr/local/bin/minikube
+  $ sudo chmod +x /usr/local/bin/minikube
+
+  $ minikube version
+  minikube version: v1.21.0
+  commit: 76d74191d82c47883dc7e1319ef7cebd3e00ee11
+
+
+
+4. Install Kubectl utility
+-- below curl command to download latest version of kubectl.
+
+  $ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+  $ chmod +x kubectl
+  $ sudo mv kubectl /usr/local/bin/
+
+
+
+
+5. Install Docker
+
+  $ sudo apt install -y docker.io
+
+  $ sudo usermod -aG docker ${USER}
+
+  --  And then, logout and login again
+
+
+
+
+6. Start the minikube
+
+  $ minikube start --driver=docker
+
+
+
+7. Check Status
+
+  - Run below minikube command to check status,
+
+  $ minikube status
+  minikube
+  type: Control Plane
+  host: Running
+  kubelet: Running
+  apiserver: Running
+  kubeconfig: Configured
+
+  - Run following kubectl command to verify the Kubernetes version, node status and cluster info.
+
+  $ kubectl cluster-info
+  $ kubectl get nodes
+
+
+
+
+  - Managing Addons on minikube
+
+  $ minikube addons list
+
+
+  - If you wish to enable any addons run the below minikube command,
+
+  $ minikube addons enable <addon-name>
+
+    -- Let’s assume we want to enable and access kubernetes dashboard , run
+      $ minikube dashboard
+        It will open the Kubernetes dashboard in the web browser.
+
+
+    -- To enable Ingress controller addon, run
+      $ minikube addons enable ingress
+
+
+
+8. Verify Minikube Installation
+  - To verify the minikube installation, let’s try to deploy nginx based deployment.
+
+  $ kubectl create deployment my-nginx --image=nginx
+
+  $ kubectl get deployments.apps my-nginx
+  $ kubectl get pods
+
+
+  - Expose the deployment using following command,
+
+  $ kubectl expose deployment my-nginx --name=my-nginx-svc --type=NodePort --port=80
+  $ kubectl get svc my-nginx-svc
+
+  - Use below command to get your service url,
+  $ minikube service my-nginx-svc --url
+  http://192.168.49.2:31895
+
+
+  - Now try to access your nginx based deployment using above url,
+  $ curl http://192.168.49.2:31895
+
+
+
+9 Managing Minikube Cluster
+
+  - To stop the minikube, run
+  $ minikube stop
+
+  - To delete the minikube, run 
+  $ minikube delete
+
+  - To Start the minikube, run
+  $ minikube start
+
+
+  - In case you want to start the minikube with higher resource like 8 GB RM and 4 CPU 
+    then execute following commands one after the another.
+
+  $ minikube config set cpus 4
+  $ minikube config set memory 8192
+  $ minikube delete
+  $ minikube start
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+  Logs
+-----------------------
+
+vagrant@sakura:~$ wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+--2022-08-03 23:00:15--  https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+Resolving storage.googleapis.com (storage.googleapis.com)... 142.250.72.48, 142.250.72.16, 142.250.69.240, ...
+Connecting to storage.googleapis.com (storage.googleapis.com)|142.250.72.48|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 75566620 (72M) [application/octet-stream]
+Saving to: ‘minikube-linux-amd64’
+
+minikube-linux-amd64          100%[=================================================>]  72.07M  46.8MB/s    in 1.5s
+
+2022-08-03 23:00:17 (46.8 MB/s) - ‘minikube-linux-amd64’ saved [75566620/75566620]
+
+
+vagrant@sakura:~$ sudo cp minikube-linux-amd64 /usr/local/bin/minikube
+vagrant@sakura:~$ sudo chmod +x /usr/local/bin/minikube
+vagrant@sakura:~$ minikube version
+minikube version: v1.26.1
+commit: 62e108c3dfdec8029a890ad6d8ef96b6461426dc
+
+
+vagrant@sakura:~$ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 43.5M  100 43.5M    0     0  34.6M      0  0:00:01  0:00:01 --:--:-- 34.6M
+
+vagrant@sakura:~$ chmod +x kubectl
+vagrant@sakura:~$ sudo mv kubectl /usr/local/bin/
+
+vagrant@sakura:~$ kubectl version -o yaml
+clientVersion:
+  buildDate: "2022-07-13T14:30:46Z"
+  compiler: gc
+  gitCommit: aef86a93758dc3cb2c658dd9657ab4ad4afc21cb
+  gitTreeState: clean
+  gitVersion: v1.24.3
+  goVersion: go1.18.3
+  major: "1"
+  minor: "24"
+  platform: linux/amd64
+kustomizeVersion: v4.5.4
+
+
+
+vagrant@sakura:~$ sudo apt install docker.io
+Reading package lists... Done
+Building dependency tree
+...
+Processing triggers for ureadahead (0.100.0-21) ...
+
+
+vagrant@sakura:~$ sudo usermod -aG docker ${USER}
+
+
+vagrant@sakura:~$ exit
+logout
+Connection to 127.0.0.1 closed.
+
+idac-server03 [2012]{.../images/minikube-test}$ vagrant ssh
+Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 4.15.0-180-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Aug  3 23:07:13 UTC 2022
+
+  System load:  0.16              Processes:              113
+  Usage of /:   5.2% of 38.71GB   Users logged in:        0
+  Memory usage: 7%                IP address for enp0s3:  10.0.2.15
+  Swap usage:   0%                IP address for docker0: 172.17.0.1
+
+
+0 updates can be applied immediately.
+
+New release '20.04.4 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Wed Aug  3 22:54:33 2022 from 10.0.2.2
+
+
+
+
+vagrant@sakura:~$ minikube start --driver=docker
+😄  minikube v1.26.1 on Ubuntu 18.04 (vbox/amd64)
+✨  Using the docker driver based on user configuration
+📌  Using Docker driver with root privileges
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+💾  Downloading Kubernetes v1.24.3 preload ...
+    > preloaded-images-k8s-v18-v1...:  405.75 MiB / 405.75 MiB  100.00% 48.32 M
+    > gcr.io/k8s-minikube/kicbase:  386.60 MiB / 386.61 MiB  100.00% 19.11 MiB
+    > gcr.io/k8s-minikube/kicbase:  0 B [________________________] ?% ? p/s 37s
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🐳  Preparing Kubernetes v1.24.3 on Docker 20.10.17 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: default-storageclass, storage-provisioner
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+
+
+vagrant@sakura:~$ minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+vagrant@sakura:~$ kubectl cluster-info
+Kubernetes control plane is running at https://192.168.49.2:8443
+CoreDNS is running at https://192.168.49.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+
+vagrant@sakura:~$ kubectl get nodes
+NAME       STATUS   ROLES           AGE     VERSION
+minikube   Ready    control-plane   2m49s   v1.24.3
+
+
+vagrant@sakura:~$ minikube addons list
+|-----------------------------|----------|--------------|--------------------------------|
+|         ADDON NAME          | PROFILE  |    STATUS    |           MAINTAINER           |
+|-----------------------------|----------|--------------|--------------------------------|
+| ambassador                  | minikube | disabled     | 3rd party (Ambassador)         |
+| auto-pause                  | minikube | disabled     | Google                         |
+| csi-hostpath-driver         | minikube | disabled     | Kubernetes                     |
+| dashboard                   | minikube | disabled     | Kubernetes                     |
+| default-storageclass        | minikube | enabled ✅   | Kubernetes                     |
+| efk                         | minikube | disabled     | 3rd party (Elastic)            |
+| freshpod                    | minikube | disabled     | Google                         |
+| gcp-auth                    | minikube | disabled     | Google                         |
+| gvisor                      | minikube | disabled     | Google                         |
+| headlamp                    | minikube | disabled     | 3rd party (kinvolk.io)         |
+| helm-tiller                 | minikube | disabled     | 3rd party (Helm)               |
+| inaccel                     | minikube | disabled     | 3rd party (InAccel             |
+|                             |          |              | [info@inaccel.com])            |
+| ingress                     | minikube | disabled     | Kubernetes                     |
+| ingress-dns                 | minikube | disabled     | Google                         |
+| istio                       | minikube | disabled     | 3rd party (Istio)              |
+| istio-provisioner           | minikube | disabled     | 3rd party (Istio)              |
+| kong                        | minikube | disabled     | 3rd party (Kong HQ)            |
+| kubevirt                    | minikube | disabled     | 3rd party (KubeVirt)           |
+| logviewer                   | minikube | disabled     | 3rd party (unknown)            |
+| metallb                     | minikube | disabled     | 3rd party (MetalLB)            |
+| metrics-server              | minikube | disabled     | Kubernetes                     |
+| nvidia-driver-installer     | minikube | disabled     | Google                         |
+| nvidia-gpu-device-plugin    | minikube | disabled     | 3rd party (Nvidia)             |
+| olm                         | minikube | disabled     | 3rd party (Operator Framework) |
+| pod-security-policy         | minikube | disabled     | 3rd party (unknown)            |
+| portainer                   | minikube | disabled     | 3rd party (Portainer.io)       |
+| registry                    | minikube | disabled     | Google                         |
+| registry-aliases            | minikube | disabled     | 3rd party (unknown)            |
+| registry-creds              | minikube | disabled     | 3rd party (UPMC Enterprises)   |
+| storage-provisioner         | minikube | enabled ✅   | Google                         |
+| storage-provisioner-gluster | minikube | disabled     | 3rd party (Gluster)            |
+| volumesnapshots             | minikube | disabled     | Kubernetes                     |
+|-----------------------------|----------|--------------|--------------------------------|
+
+vagrant@sakura:~$ minikube dashboard
+🔌  Enabling dashboard ...
+    ▪ Using image kubernetesui/dashboard:v2.6.0
+    ▪ Using image kubernetesui/metrics-scraper:v1.0.8
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+kkk🎉  Opening http://127.0.0.1:41979/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
+👉  http://127.0.0.1:41979/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+
+
+vagrant@sakura:~$  minikube addons enable ingress
+💡  ingress is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
+You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v1.2.1
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1
+🔎  Verifying ingress addon...
+🌟  The 'ingress' addon is enabled
+
+
+
+vagrant@sakura:~$ kubectl create deployment my-nginx --image=nginx
+deployment.apps/my-nginx created
+
+
+vagrant@sakura:~$ kubectl get deployments.apps my-nginx 
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+my-nginx   1/1     1            1           102s
+
+
+vagrant@sakura:~$ kubectl get pods
+NAME                        READY   STATUS    RESTARTS   AGE
+my-nginx-7cddc5685c-bfttv   1/1     Running   0          118s
+
+
+vagrant@sakura:~$ kubectl expose deployment my-nginx --name=my-nginx-svc --type=NodePort --port=80
+service/my-nginx-svc exposed
+
+
+vagrant@sakura:~$ kubectl get svc my-nginx-svc
+NAME           TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+my-nginx-svc   NodePort   10.102.241.0   <none>        80:31930/TCP   7s
+
+
+vagrant@sakura:~$ minikube service my-nginx-svc --url
+http://192.168.49.2:31930
+
+
+vagrant@sakura:~$ curl http://192.168.49.2:31930
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
