@@ -26,10 +26,18 @@ sudo mv kubectl /usr/local/bin/
 #5. Install Docker
 sudo apt install docker.io -y
 sudo usermod -aG docker ${USER}
-newgrp docker
+
 
 #6. Start the minikube
+/usr/bin/newgrp docker <<EONG
+echo "newgrp starts a subshell with the group you specified"
+id
 minikube start --driver=docker
+EONG
+
+
+#7. Start with a new group, Otherwise need to logout & login again
+newgrp docker
 
 
 

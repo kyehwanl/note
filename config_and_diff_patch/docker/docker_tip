@@ -518,7 +518,7 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
         CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES                                                              │
 
         --> Or just
-        newgrp docker 
+        newgrp docker (--> newgrp starts a subshell with the group you specified)
 
         (get access to group in current shell, 
          Do not need to log out & in again)

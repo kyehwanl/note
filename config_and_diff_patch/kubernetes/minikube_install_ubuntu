@@ -48,6 +48,10 @@ Minikube Install Ubuntu 20.04
 
   --  And then, logout and login again
 
+  -- without logout, "newgrp docker" can be used to start with a new subshell
+  (https://unix.stackexchange.com/questions/18897/problem-while-running-newgrp-command-in-script)
+
+
 
 
 
@@ -120,7 +124,7 @@ Minikube Install Ubuntu 20.04
 
 
 
-9 Managing Minikube Cluster
+9. Managing Minikube Cluster
 
   - To stop the minikube, run
   $ minikube stop

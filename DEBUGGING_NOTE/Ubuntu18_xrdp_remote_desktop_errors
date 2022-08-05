@@ -18,12 +18,13 @@ Ubuntu 18 Xrdp errors
 
 
 2. error message:
+    [ERROR] Cannot read private key file /etc/xrdp/key.pem: Permission denied
 
  "because of a security error the client not connect to the remote computer.
   Verify that you are logged on to the network..."
 
 
-  2.1 cause : look into logs
+  2.1 cause : look into logs (also, journalctl -f can see the latest errors)
 
 
       vmware.062 [2030]{~}-> sudo tail -f /var/log/xrdp.log
@@ -49,7 +50,7 @@ Ubuntu 18 Xrdp errors
     2.2 solution
     (https://c-nergy.be/blog/?p=13708)
 
-    Option 1 – Change Permissions (Not the best option)
+    <Option 1> – Change Permissions (Not the best option)
     I mention this option because I have seen a lot of people using it.  
     This was basically the easiest way to fix their issue at that moment.  
     Based on our analysis, the Others group has no access to the folders and file needed by xRDP.  
@@ -63,7 +64,7 @@ Ubuntu 18 Xrdp errors
 
 
 
-    Option 2 – add user xrdp into ssl-cert group (BETTER solution) --> solved my problem !!
+    <Option 2> – add user xrdp into ssl-cert group (BETTER solution) --> solved my problem !!
 
     This would be the recommended approach. 
     Updating the group membership for the ssl-cert group with the appropriate user account should fix the issue.   

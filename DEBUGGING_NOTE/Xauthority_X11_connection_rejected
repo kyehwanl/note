@@ -1,0 +1,47 @@
+
+
+--------
+ Issues
+--------
+in ssh, 
+"X11 connection rejected because of wrong authentication"
+
+
+
+
+-------------
+ Solution
+-------------
+I don't quite know what solved the problem, so possible solutions are below
+
+
+A. 
+  (https://www.google.com/search?q=ssh+X11+connection+rejected+because+of+wrong+authentication&rlz=1C1GCEV_enUS1006US1006&oq=ssh+X11+connection+rejected+because+of+wrong+authentication+&aqs=chrome..69i57j0i7i30j0i5i30l2.5183j0j4&sourceid=chrome&ie=UTF-8&safe=active&ssui=on)
+
+  1. Log onto remote server
+  echo $DISPLAY This should display your current X11 display
+
+  xauth list If nothing prints on console, it means ssh did not automatically generate the X11 authorization cookies on the local display properly
+
+  2. Add the authorization cookie
+  xauth add $DISPLAY -  `mcookie` This adds your display's authorization cookie to the xauth
+
+  xauth list Check whether your display is added
+
+  3. Merge your cookie with your local machine
+  xauth nextract ~/xcookie $DISPLAY
+
+  exit
+
+  On local: scp user@remote:~/xcookie ~/xcookie
+
+  On local: xauth nmerge ~/xcookie
+
+  Finally log again in the remote server and it should be resolved.
+
+
+
+B. using -X instead of -Y
+
+
+C. reboot
