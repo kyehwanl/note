@@ -523,6 +523,19 @@ ssh -i /mnt/c/Users/kyehwanl/Documents/id_rsa -p 22 kyehwanl@pc849.emulab.net
 
 
 
+(36) Create a new Account
+=========================
+Use the -m (--create-home) option to create the user home directory as /home/username:
+
+sudo useradd -m username 
+sudo passwd username
+sudo useradd -g users username
+( or for multiple groups,  sudo useradd -g users -G wheel,developers username)
+sudo useradd -s /usr/bin/bash username
+( or edit /etc/passwd)
+
+
+
 
 (ETC)
 =================================

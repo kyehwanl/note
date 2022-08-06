@@ -2,9 +2,29 @@
 --------------
 NetBox install
 --------------
+(https://www.techrepublic.com/videos/how-to-deploy-the-netbox-network-documentationmanagement-tool-with-docker/)
+(https://github.com/netbox-community/netbox-docker)
 
 1. docker and docker compose install first
-2.
+    docker: 
+        apt install docker.io 
+        usermod -aG docker $USER && newgrp docker
+        systemctl start docker
+        systemctl enable docker
+
+    docker-compose:
+        curl -L "https://github.com/docker/compose/releases/download/<version>/docker-compose-$(uname -s)-$(uname -m)" \
+                    -o /usr/local/bin/docker-compose
+            <version> : need to search on website
+                        as of Aug.2022, v2.9.0 is the latest version
+        mv docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+        docker-compose version
+
+      OR 
+        on Ubuntu, apt install docker-compose
+
+2. NetBox install
     git clone -b release https://github.com/netbox-community/netbox-docker.git
     cd netbox-docker
     tee docker-compose.override.yml <<EOF
