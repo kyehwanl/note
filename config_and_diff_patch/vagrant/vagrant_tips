@@ -176,6 +176,7 @@ vagrant package --output centos7drupal.box
 
 
 -- one of Smart ways is to use git clone or inline shell script inside Vagrantfile
+-- Later, it will be used in Vagrantfile with the name of image, instead of default.
 
 
 
@@ -373,9 +374,7 @@ aiab-4g
     vagrant box add my-box name-of-the-box.box
 
 - Importing any directory
-    vagrant box add my-box file:///d:/path/to/file.box
-
-
+    vagrant box add my-box file:///d:/path/to/file.box (has to be URL format)
 
 
  
