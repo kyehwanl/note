@@ -8,7 +8,7 @@ Helm Tips
 
   curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
   chmod 700 get_helm.sh
-  sudo DESIRED_VERSION="v3.6.3"./get_helm.sh
+  sudo [DESIRED_VERSION="v3.6.3"] ./get_helm.sh
 
 
 2. by manager: Apt (Ubuntu)
@@ -197,4 +197,109 @@ Helm Tips
               - containerPort: 443
                 name: webhook-server
       ...
+
+
+
+
+
+-----------------------------------------
+ 7. Helm Chart and docker image relation
+-----------------------------------------
+
+(1) Verifying Helm templating to Kubernetes resources  
+idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
+
+ ...<snip>...
+  spec:
+    shareProcessNamespace: true
+    imagePullSecrets:          
+      - name: aether.registry  
+    initContainers:            
+    - name: bess-init          
+      image: "omecproject/upf-epc-bess:master-9a4d86c"
+      imagePullPolicy: "IfNotPresent"
+      command: ["sh", "-xec"]        
+      args:                          
+      - ip route replace 192.168.251.0/24 via 192.168.252.1; 
+        ip route replace default via 192.168.250.1 metric 110;
+        iptables -I OUTPUT -p icmp --icmp-type port-unreachable -j DROP;
+      securityContext:  
+        capabilities:   
+          add:          
+          - NET_ADMIN   
+      resources:        
+        limits:         
+          cpu: 128m     
+          memory: 64Mi  
+        requests:       
+          cpu: 128m     
+          memory: 64Mi  
+    containers:         
+    - name: bessd
+      image: "omecproject/upf-epc-bess:master-9a4d86c"
+      imagePullPolicy: "IfNotPresent" 
+    
+   ...<snip>...
+
+
+(2) for 'image' field,
+
+  - name: bess-init                                  
+    image: "omecproject/upf-epc-bess:master-9a4d86c" 
+
+    --> This means that image location is from hub.docker.com
+        (https://hub.docker.com/r/omecproject/upf-epc-bess/)
+
+        Also every image layers can be seen at https://hub.docker.com/r/omecproject/upf-epc-bess/tags
+        for individual layers to view their corresponding instruction(s)
+
+        For example, excerpt from the image layers web site,
+          ...
+          23 WORKDIR /opt/bess/bessctl
+          24 ENTRYPOINT ["bessd" "-f"]
+
+
+(3) Source and Kubernetes resources
+
+    https://github.com/omec-project/upf
+
+    for example, 
+    It has deployments/upf-k8s.yaml, .github/workflows/docker.yml, scripts/docker_setup.sh and etc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
