@@ -33,7 +33,7 @@ sudo kubeadm init --pod-network-cidr 192.168.0.0/16
 
 # setting for client to communicate with kube API Server
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Overlay Netwokr installation for CNI (using Weave Net)
