@@ -18,13 +18,13 @@
 
    @vmware-011:# mkdir registry_certs  <-- (located in vmware-011:/opt/project/docker_test)
    @vmware-011:$ openssl req -newkey rsa:4096 -nodes -sha256 \
-                -keyout registry_certs/domain.key -x509 -days 356 \
+                -keyout registry_certs/domain.key -x509 -days 3650 \
                 -out registry_certs/domain.cert
 
     Here I created a x509 certificate and a private RSA key. 
     The Common Name here is important as this is the server host name
 
-          [root@vmware-011 registry_certs]# openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.cert
+          [root@vmware-011 registry_certs]# openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 3650 -out domain.cert
           Generating a 4096 bit RSA private key
           ................................................................................++
           .................................................................................++
