@@ -114,10 +114,14 @@
 
 
   --> This means Docker client in vmware-005 has a setting for only accepting HTTPS connection,
-        So, need to make daemon.json file under /etc/docker/
+        So, need to make daemon.json file under /etc/docker/ with 
+            { 
+            "insecure-registries" : ["vmware-063.antd.nist.gov:8080"] 
+            }
+
         And then, restart docker 
 
-          sudo systemctl daemon-reload ( <-- is it necessary ?) 
+          sudo systemctl daemon-reload ( <-- is it really necessary ?) 
           sudo systemctl restart docker
 
 
