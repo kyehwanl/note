@@ -268,7 +268,8 @@
 
       -- check list (in idac-server02)
 
-        curl -X GET -u admin:Harbor12345 -k  https://10.0.50.59/v2/_catalog/library
+        curl -k -u admin:Harbor12345 https://10.0.50.59/v2/_catalog/
+        curl -X GET -u admin:Harbor12345 -k  https://10.0.50.59/v2/_catalog/
 
         [root@idac-server02 certs.d]# curl -X GET -u admin:Harbor12345 -k  https://10.0.50.59/v2/_catalog/
         {"repositories":["library/busybox-test2"]}
