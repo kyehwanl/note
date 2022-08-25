@@ -105,82 +105,105 @@ sudo apt-get install virtualbox
 
 
 ------------------------------------
-  II. Vagrant Installation
+  II. Vagrant Install (updated)
 ------------------------------------
+(https://www.vagrantup.com/downloads)
 
-Note that you should activate the Virtualization Technology (e.g., VT-x in Intel) 
-from your BIOS settings if it is not enabled previously
+  2.1 Ubuntu / Debian
 
-
-2.1 Install Vagrant on CentOS 7
-===============================
-(https://phoenixnap.com/kb/how-to-install-vagrant-on-centos-7)
-
-(0) pre-requisite
-    sudo yum update
-
-(1) Install
-    sudo wget https://releases.hashicorp.com/vagrant/2.2.2/vagrant_2.2.2_x86_64.rpm
-    sudo yum localinstall vagrant_2.2.2_x86_64.rpm
-
-(2) Verify version
-    vagrant --version, -v
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt update && sudo apt install vagrant
 
 
-
-
-2.2 Install Vagrant on Centos 8
-================================
-1. Normal way
-(https://computingforgeeks.com/how-to-install-vagrant-on-centos-rhel-linux/)
-
-  (1) Install packer build dependencies:
-
-    sudo dnf groupinstall "Development Tools" -y 
-    sudo dnf -y install rsync gcc zlib-devel libvirt-devel cmake
-
-
-  (2) Install Ruby and Ruby Development packages that are required to use Vagrant.
-
-    sudo dnf install -y ruby ruby-devel
-
-
-  (3) Add Vagrant YUM repository:
+  2.2 on CentOS / RHEL
 
     sudo yum install -y yum-utils
     sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-
-
-  (4) Then install Vagrant on CentOS 8 / RHEL 8:
-
-    sudo yum install vagrant
-
-
-
-2. Simeple way
-(https://linuxize.com/post/how-to-install-vagrant-on-centos-8/)
-
-  sudo dnf install https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.rpm
+    sudo yum -y install vagrant
 
 
 
 
+      ------------------------------------
+        II. Vagrant Install (old)
+      ------------------------------------
+
+      Note that you should activate the Virtualization Technology (e.g., VT-x in Intel) 
+      from your BIOS settings if it is not enabled previously
 
 
-2.3 Install on Ubuntu 
-======================
-(http://www.codebind.com/linux-tutorials/install-vagrant-ubuntu-18-04-lts-linux/
- https://medium.com/@vahidmohsseni/vagrant-nfs-mpi-49a3f03cdb77 )
+      2.1 Install Vagrant on CentOS 7
+      ===============================
+      (https://phoenixnap.com/kb/how-to-install-vagrant-on-centos-7)
+
+      (0) pre-requisite
+          sudo yum update
+
+      (1) Install
+          sudo wget https://releases.hashicorp.com/vagrant/2.2.2/vagrant_2.2.2_x86_64.rpm
+          sudo yum localinstall vagrant_2.2.2_x86_64.rpm
+
+      (2) Verify version
+          vagrant --version, -v
 
 
-  sudo apt-get install vagrant
 
 
-  -- If a repository not found, try following,
- 
-      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-      sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-      sudo apt-get update && sudo apt-get install vagrant 
+
+
+      2.2 Install Vagrant on Centos 8
+      ================================
+      1. Normal way
+      (https://computingforgeeks.com/how-to-install-vagrant-on-centos-rhel-linux/)
+
+        (1) Install packer build dependencies:
+
+          sudo dnf groupinstall "Development Tools" -y 
+          sudo dnf -y install rsync gcc zlib-devel libvirt-devel cmake
+
+
+        (2) Install Ruby and Ruby Development packages that are required to use Vagrant.
+
+          sudo dnf install -y ruby ruby-devel
+
+
+        (3) Add Vagrant YUM repository:
+
+          sudo yum install -y yum-utils
+          sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+
+        (4) Then install Vagrant on CentOS 8 / RHEL 8:
+
+          sudo yum install vagrant
+
+
+
+      2. Simeple way
+      (https://linuxize.com/post/how-to-install-vagrant-on-centos-8/)
+
+        sudo dnf install https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.rpm
+
+
+
+
+
+
+      2.3 Install on Ubuntu 
+      ======================
+      (http://www.codebind.com/linux-tutorials/install-vagrant-ubuntu-18-04-lts-linux/
+       https://medium.com/@vahidmohsseni/vagrant-nfs-mpi-49a3f03cdb77 )
+
+
+        sudo apt-get install vagrant
+
+
+        -- If a repository not found, try following,
+       
+            curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+            sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+            sudo apt-get update && sudo apt-get install vagrant 
 
 
 
