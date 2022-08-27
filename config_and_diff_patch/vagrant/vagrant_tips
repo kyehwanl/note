@@ -431,7 +431,7 @@ with Vagrant commands from any directory. For example:
 
     VAGRANT_CWD=~/some/path/ vagrant ssh-config
 
-    AGRANT_CWD is the directory where vagrant looks for Vagrantfile
+    VAGRANT_CWD is the directory where vagrant looks for Vagrantfile
     Quote from official docs :
 
       VAGRANT_CWD can be set to change the working directory of Vagrant.
