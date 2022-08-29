@@ -1,0 +1,28 @@
+# Start Configuration
+# Declare VARIABLES 
+
+VM1 = "minikube-idac3"
+#ServerIP  = "192.168.40.22"
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define VM1 do |server|
+
+    # creating a vm from base image
+    server.vm.box = "ubuntu/bionic64"
+    server.vm.hostname = "sakuramomo"
+    server.vm.network "private_network", ip: "192.168.50.55"
+    server.vm.synced_folder ".", "/vagrant"
+
+
+    server.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    #vb.gui = true
+    # Customize the amount of memory on the VM:
+      vb.memory = "4096"
+      vb.cpus = "2"
+    end
+    
+  end
+end
