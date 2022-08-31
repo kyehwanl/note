@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: registry-harbor-ca
+  namespace: kube-system
+  labels:
+    k8s-app: registry-harbor-ca
+spec:
+  selector:
+    matchLabels:
+      name: registry-harbor-ca
+  template:
+    metadata:
+      labels:
+        name: registry-harbor-ca
+    spec:
+      hostPID: true
+      hostNetwork: true
+      initContainers:
+        - name: registry-harbor-ca
+        image: busybox
+        securityContext:
+          privileged: true
+        command: [ 'sh' ]
+        args:
+          - -c
+          - |
+            cp /home/core/registry-harbor-ca /usr/local/share/ca-certificates/registry-harbor-ca.crt
+            nsenter --mount=/proc/1/ns/mnt -- sh -c "update-ca-certificates && systemctl restart containerd"
+        volumeMounts:
+        - name: usr-local-share-certs
+          mountPath: /usr/local/share/ca-certificates
+        - name: ca-cert
+          mountPath: /home/core
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: usr-local-share-certs
+        hostPath:
+          path: /usr/local/share/ca-certificates
+      - name: ca-cert
+        secret:
+          secretName: registry-harbor-ca
+
+      containers:
+        - name: srx 
+          image: 10.0.50.59/library/srx 

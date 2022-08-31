@@ -5,8 +5,11 @@
 (sources: https://github.com/coreos/tectonic-docs/blob/master/Documentation/admin/add-registry-cert.md
  https://stackoverflow.com/questions/53545732/how-do-i-access-a-private-docker-registry-with-a-self-signed-certificate-using-k
  )
+ -- This technique is also applicable to Harbor registry
+ 
 
 1. get 'ca.crt' file in the register server(10.0.50.11) at /etc/docker/certs.d/10.0.50.11:5000/ca.crt
+
 
 2. base64 string
     base64 -w 0 ca.crt
@@ -33,7 +36,51 @@
 
 
 
-3. DaemonSet mounts the CA as the file /home/core/registry-ca and then 
+3. Verifying the secret by creating a simple test pod 
+
+    vagrant@sakuramomo:~$ cat inspect-secret-pod.yaml
+    apiVersion: v1                                   
+    kind: Pod                                        
+    metadata:                                        
+      name: private-reg                              
+    spec:                                            
+      containers:                                    
+      - name:  srx                                    
+        image: 10.0.50.59/library/srx                
+      imagePullSecrets:                              
+      - name: registry-harbor-ca
+
+
+    vagrant@sakuramomo:~$ kubectl apply -f inspect-secret-pod.yaml
+    pod/private-reg created                                       
+
+
+    vagrant@sakuramomo:~$ kubectl get po                  
+    NAME          READY   STATUS    RESTARTS   AGE        
+    private-reg   1/1     Running   0          7m49s      
+
+    vagrant@sakuramomo:~$ kubectl describe po private-reg
+    [...]
+    Events:                                                                                                          
+      Type    Reason     Age   From               Message                                                            
+      ----    ------     ----  ----               -------                                                            
+      Normal  Scheduled  10m   default-scheduler  Successfully assigned default/private-reg to sakuramomo            
+      Normal  Pulling    10m   kubelet            Pulling image "10.0.50.59/library/srx"                             
+      Normal  Pulled     10m   kubelet            Successfully pulled image "10.0.50.59/library/srx" in 401.887465ms 
+      Normal  Created    10m   kubelet            Created container private-reg-container                            
+      Normal  Started    10m   kubelet            Started container private-reg-container                           
+
+    vagrant@sakuramomo:~$ kubectl exec -it private-reg -c srx -- /bin/bash
+    [root@private-reg /]# cat /etc/centos-release         
+    CentOS Linux release 7.4.1708 (Core)                  
+    [root@private-reg /]# whereis srx_server              
+    srx_server: /usr/bin/srx_server /etc/srx_server.conf  
+    [root@private-reg /]# whereis bgpd                    
+    bgpd: /usr/sbin/bgpd 
+
+
+
+4. DaemonSet mounts the CA as the file /home/core/registry-ca and then 
     copies this file to the /etc/docker/certs.d/10.0.50.11:5000/ca.crt
 
     --> if "CONTAINER-RUNTIME" is not 'docker', but 'containerd', then 
