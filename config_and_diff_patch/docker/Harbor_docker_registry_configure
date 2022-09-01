@@ -57,6 +57,9 @@
 
 
 
+----------------
+ To Use
+----------------
 
 3. Configure HTTPS access to Harbor
 (https://goharbor.io/docs/2.0.0/install-config/configure-https/)
@@ -401,3 +404,15 @@
   / # ls /etc/
   group        hostname     hosts        localtime    mtab         network      passwd       resolv.conf  shadow
   / # exit
+
+
+
+
+
+
+
+----------------------------
+ Kubernetes Setup as Secret 
+----------------------------
+
+--> refer to the file, "private_docker_registry_In_k8s" in config_and_diff_patch/kubernetes

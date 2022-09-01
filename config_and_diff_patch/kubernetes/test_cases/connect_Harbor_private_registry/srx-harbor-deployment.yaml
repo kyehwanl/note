@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srx-deployment
+  labels:
+    app: srx
+spec:
+  selector:
+    matchLabels:
+      app: srx
+  template:
+    metadata:
+      labels:
+        app: srx
+    spec:
+      containers:
+      - name: srx
+        image: 10.0.50.59/library/srx
+        command: ["/bin/sh", "-c"] 
+        args:
+          - sed "s/localhost/172.37.0.101/g"  /etc/srx_server.conf > /tmp/srx_server.conf; 
+            srx_server -f /tmp/srx_server.conf;
+        ports:
+          - name: srx-cli
+            containerPort: 17901
+          - name: srx-server
+            containerPort: 17900
+        volumeMounts:
+        - name: bgpsec-key 
+          mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+
+      imagePullSecrets:
+      - name: registry-harbor-ca
+
+      volumes:
+      - name: bgpsec-key
+        hostPath: 
+          path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys 
+
+
+
