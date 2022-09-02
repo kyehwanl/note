@@ -36,6 +36,7 @@ metadata:
   labels:
     app: srx-server
 spec:
+  replicas:3
   selector:
     matchLabels:
       app: srx-server
