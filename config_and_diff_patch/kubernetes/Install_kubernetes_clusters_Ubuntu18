@@ -238,7 +238,7 @@ As you can see, the status of master-node is NotReady. The CoreDNS service is al
 Step 4. Add nodes to your cluster
 As a final step, you need to add worker nodes to your cluster. We will use the kubeadm join auto-generated token in Step 1. here. Run your own version of the following command on all of the worker node VMs:
 
-  kubeadm join 102.130.114.240:6443 --token hpv60w.uw784fik3nqgf7fg --discovery-token-ca-cert-hash sha256:1ce91085c95535acaf1c536d5a84b54549680762fbbaf07467c6b8893a78db1a
+  kubeadm join 102.130.114.240:6443 --token hpv60w.u[...] --discovery-token-ca-cert-hash sha256:1ce91085c[...]
 
 
 Running the following command on the master-node should show your newly added node.
@@ -405,8 +405,8 @@ To set the role for your worker node, use the following command:
  (2) Make a worker node by running the same file, but #1 to #2, no more than #3
  (3) Use 'kubeadm join [...]' in the worker node
 
-    kubeadm join 155.98.36.133:6443 --token ckgff2.wsjb963um4c0aqt9 \
-            --discovery-token-ca-cert-hash sha256:72f8523c5f5aa93a742b3b55555879a29909a4f58c35971de93fe91099da331c
+    kubeadm join 155.98.36.133:6443 --token ckgff2[...] \
+            --discovery-token-ca-cert-hash sha256:72f85[...]
 
 
  (4) check the master, worker node 
