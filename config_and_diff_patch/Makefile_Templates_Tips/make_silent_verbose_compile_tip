@@ -1,6 +1,7 @@
 
  Makefile Option: Silent Compile
 ================================
+(like 'CC ..')
 
 
 1. in <configure>
