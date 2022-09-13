@@ -270,7 +270,29 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 
+--------------------------------------------------------
+8.  how to get resources from aether Helm chart 
+--------------------------------------------------------
 
+ if the helm install command implemented like following,
+
+  NODE_IP=10.0.2.15 DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 envsubst < /root/aether-in-a-box//sd-core-4g-values.yaml | \
+  helm upgrade --create-namespace --install --wait  \
+          --namespace omec \
+          --values - \
+          sd-core \
+          aether/sd-core
+
+
+(1) Use Helm Template
+
+  $ helm template [NAME] [CHART] [flags]
+    helm template my-test1 aether/sd-core
+
+
+    (example) with --values
+    vagrant:~$ NODE_IP=10.0.2.15 DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 \
+             envsubst < /home/vagrant/aether-in-a-box/sd-core-4g-values.yaml | helm template test1 --values - aether/sd-core
 
 
 
