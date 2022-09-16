@@ -1,18 +1,31 @@
 
-1. issues
+1. Issues
+
 - On Ubuntu 18,
-- when Aether in a box -5g installation
+- when Aether in a box installation
 - following error occurred 
 
-    systemd-networkd: Could not load configuration files Permission denied
+    (1)
+      systemd-networkd: Could not load configuration files Permission denied
+
+    or
+
+    (2)
+      Job for systemd-networkd.service failed because the control process exited with error code.
+      See "systemctl status systemd-networkd.service" and "journalctl -xe" for details.
+      Makefile:283: recipe for target '/root/aether-in-a-box//build/milestones/router-pod' failed
+      make: *** [/root/aether-in-a-box//build/milestones/router-pod] Error 1
+
 
 
 2. Diagnosis 
+
     using systemctl status systemd-networkd  and journalctl -xe
-    permission related error
+    It turns out --> permission related error of the newly added .netdev, .network files
 
 
-3. solve
+
+3. solution
 
     root@vmware-063:~/aether-in-a-box# ll /etc/systemd/network/   
     total 16                                                      
