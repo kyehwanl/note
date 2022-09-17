@@ -299,6 +299,20 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 
+(2) helm list & helm get
+
+    helm list [flags]       : displays all the releases
+    helm get [all|hooks|manifest|nodes|values] [release] [flags]
+
+
+    helm list -A 
+    helm get all sd-core -n omec  --> similar to helm template
+
+
+
+
+
+
 
 
 
