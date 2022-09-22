@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bgp-srx-service
+  labels:
+    app: bgp-srx
+spec:
+  clusterIP: None
+  ports:
+    - name: srx-cli
+      port: 57901
+      targetPort: 17901
+    - name: srx-server
+      port: 57900
+      targetPort: 17900
+    - name: bgp-port
+      port: 5179
+      targetPort: 179
+    - name: bgp-cli-port
+      port: 52605 
+      targetPort: 2605 
+    - name: rpkirtr-port
+      port: 5323
+      targetPort: 323
+  selector:
+    app: bgp-srx
+---
+apiVersion: apps/v1
+kind: StatefulSet 
+metadata:
+  name: bgp-srx-statefulset
+  labels:
+    app: bgp-srx
+spec:
+  selector:
+    matchLabels:
+      app: bgp-srx
+  serviceName: bgp-srx-service
+  template:
+    metadata:
+      labels:
+        app: bgp-srx
+    spec:
+      containers:
+      - name: srx-server
+        image: kyehwanl/nist-bgp-srx:6
+        command: ["/bin/sh", "-c"] 
+        args:
+          - srx_server -f /usr/etc/srx_server.conf;
+        ports:
+          - name: srx-cli
+            containerPort: 17901
+          - name: srx-server
+            containerPort: 17900
+        volumeMounts:
+        - name: bgpsec-key 
+          mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+
+      - name: rpkirtr-server
+        image: kyehwanl/nist-bgp-srx:6
+        command:
+        - /bin/bash
+        - -xc 
+        args:
+          - rpkirtr_svr; tail -f /dev/null;
+        ports:
+          - name: rpkirtr-port
+            containerPort: 323
+        volumeMounts:
+        - name: bgpsec-key 
+          mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+
+      - name: quaggasrx
+        image: kyehwanl/nist-bgp-srx:6
+        command: ["/bin/sh", "-c"] 
+        args:
+          - sed "s/srx connect/srx connect localhost 17900/g" /usr/etc/bgpd.conf > /tmp/bgpd.conf;
+            sed "s/verified.//g" /tmp/bgpd.conf > /etc/bgpd.conf;
+            bgpd -u root -f /etc/bgpd.conf;
+        ports:
+          - name: bgp-cli-port
+            containerPort: 2605
+          - name: bgp-port
+            containerPort: 179
+        volumeMounts:
+        - name: bgpsec-key 
+          mountPath: /usr/opt/bgp-srx-examples/bgpsec-keys 
+
+      imagePullSecrets:
+      - name: regcred
+
+      volumes:
+      - name: bgpsec-key
+        hostPath: 
+          path: /home/vagrant/NIST-BGP-SRx/examples/bgpsec-keys 
+
+
+
