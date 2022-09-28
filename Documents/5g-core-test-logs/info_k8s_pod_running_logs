@@ -1,0 +1,139 @@
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs gnbsim-0
++ cd /gnbsim
++ cat ./config/gnb.conf
+info:
+  version: 1.0.0
+  description: gNodeB sim initial configuration
+configuration:
+  gnbs: # pool of gNodeBs
+    gnb1:
+      n2IpAddr: # gNB N2 interface IP address used to connect to AMF
+      n2Port: 9487 # gNB N2 Port used to connect to AMF
+      n3IpAddr: 192.168.251.5 # gNB N3 interface IP address used to connect to UPF
+      n3Port: 2152 # gNB N3 Port used to connect to UPF
+      name: gnb1 # gNB name that uniquely identify a gNB within application
+      globalRanId:
+        plmnId:
+          mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+          mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        gNbId:
+          bitLength: 24
+          gNBValue: 000102 # gNB identifier (3 bytes hex string, range: 000000~FFFFFF)
+      supportedTaList:
+      - tac: 000001 # Tracking Area Code (3 bytes hex string, range: 000000~FFFFFF)
+        broadcastPlmnList:
+          - plmnId:
+              mcc: 208
+              mnc: 93
+            taiSliceSupportList:
+                - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+                  sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+      defaultAmf:
+        hostName: amf # Host name of AMF
+        ipAddr: # AMF IP address
+        port: 38412 # AMF port
+
+  profiles: # profile information
+    - profileType: register # profile type
+      profileName: profile1 # uniqely identifies a profile within application
+      enable: false # Set true to execute the profile, false otherwise.
+      gnbName: gnb1 # gNB to be used for this profile
+      startImsi: 208930100007487 #First IMSI. Subsequent values will be used if ueCount is mo    re than 1
+      ueCount: 5 # Number of UEs for for which the profile will be executed
+      plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+        mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+        mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+    - profileType: pdusessest
+      profileName: profile2
+      enable: true
+      gnbName: gnb1
+      startImsi: 208930100007492
+      ueCount: 5
+      plmnId:
+        mcc: 208
+        mnc: 93
+      dataPktCount: 5 # Number of UL user data packets to be transmitted. Common for all UEs
+    - profileType: anrelease
+      profileName: profile3
+      enable: false
+      gnbName: gnb1
+      startImsi: 208930100007497
+      ueCount: 5
+      plmnId:
+        mcc: 208
+        mnc: 93
+    - profileType: deregister
+      profileName: profile4
+      enable: false
+      gnbName: gnb1
+      startImsi: 208930100007497
+      ueCount: 5
+      plmnId:
+        mcc: 208
+        mnc: 93
+logger:
+  logLevel: info # how detailed the log will be, values: trace, debug, info, warn, error, fatal, panic
+
+
+
+
++ cat /etc/hosts
+# Kubernetes-managed hosts file.
+127.0.0.1       localhost
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+fe00::0 ip6-mcastprefix
+fe00::1 ip6-allnodes
+fe00::2 ip6-allrouters
+192.168.84.42   gnbsim-0.gnbsim-headless.omec.svc.cluster.local gnbsim-0
+
+
+
+
++ ip route add 192.168.252.0/24 via 192.168.251.1
+
+
+
++ ethtool -K enb tx off
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Actual changes:
+tx-checksumming: off
+        tx-checksum-ip-generic: off
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [requested on]
+        tx-tcp-ecn-segmentation: off [requested on]
+        tx-tcp-mangleid-segmentation: off [requested on]
+        tx-tcp6-segmentation: off [requested on]
++ sleep infinity
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl logs router
+net.ipv4.ip_forward = 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

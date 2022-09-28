@@ -1,0 +1,85 @@
+
+How to successfully install Aether-in-a-box version 1.6
+=======================================================
+
+
+1. Andy(ONF)'s email 
+
+	I am working on a patch to aether-in-a-box to freeze the version of onos-operator to 0.4.14.  
+	In the meantime you can make this change to the "configs/latest" file:
+
+	ONOS_OPERATOR_CHART := onosproject/onos-operator --version 0.4.14
+
+	Then you’ll need to remove the broken chart:
+
+	$ helm -n kube-system delete onos-operator
+
+	After that, "CHARTS=latest make roc-5g-models" should work.
+
+
+
+  	- open and modify "configs/latest" file,
+		ONOS_OPERATOR_CHART := onosproject/onos-operator --version 0.4.14
+
+
+
+2. in root account
+    - go to "aether-in-a-box" folder
+    - CHARTS=latest make roc-5g-models
+
+
+3. make 5g-test, NOT with "CHARTS=latest"
+
+
+
+
+4. Following is the description after successfully installed 'roc-5g-models'
+
+	# SPDX-FileCopyrightText: 2021 Open Networking Foundation
+	#
+	# SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+	Thank you for installing aether-roc-umbrella Helm chart.
+
+	Your release is named aether-roc-umbrella in namespace aether-roc.
+	See https://docs.onosproject.org/developers/deploy_with_helm/
+
+	To learn more about the release, try:
+	  $ helm -n aether-roc status aether-roc-umbrella
+	  $ helm -n aether-roc get all aether-roc-umbrella
+	  $ watch kubectl -n aether-roc get pods
+
+	You can attach to:
+	* Aether CLI pod with
+	$ kubectl -n aether-roc exec -it $(kubectl -n aether-roc get pods -l type=cli -o name) -- /bin/sh
+	* Aether Portal at http://<server_IP>:31190
+
+	If you are using KinD as a Kubernetes server, you will have to use a "port-forward" to access the Aether ROC GUI e.g.
+	$ kubectl -n aether-roc port-forward service/aether-roc-gui 8183:80
+	and then access the GUI at
+	* http://localhost:8183
+
+	The aether-roc-api is then available at http://localhost:8183/aether-roc-api
+
+
+
+
+
+5.  The commands described above in 4
+	  
+	$ helm -n aether-roc status aether-roc-umbrella
+		--> the result are the same with 4's description
+
+
+	$ helm -n aether-roc get all aether-roc-umbrella
+		--> all settings 
+
+
+
+
+
+
+
+
+
+

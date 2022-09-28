@@ -1,0 +1,278 @@
+
+
+------------------------
+ 1. clean
+------------------------
+
+
+root@vmware-062:~/aether-in-a-box# make clean
+
+root@vmware-062:~# git clone "https://gerrit.opencord.org/aether-in-a-box"
+Cloning into 'aether-in-a-box'...
+remote: Counting objects: 9, done
+remote: Finding sources: 100% (9/9)
+remote: Total 490 (delta 1), reused 485 (delta 1)
+Receiving objects: 100% (490/490), 167.69 KiB | 1.10 MiB/s, done.
+Resolving deltas: 100% (270/270), done.
+
+------------------------
+ 2. git cloning
+------------------------
+
+root@vmware-062:~# mkdir -p ~/cord
+root@vmware-062:~# cd cord
+root@vmware-062:~/cord# git clone "https://gerrit.opencord.org/sdcore-helm-charts"
+Cloning into 'sdcore-helm-charts'...
+remote: Counting objects: 4, done
+remote: Total 1006 (delta 0), reused 1006 (delta 0)
+Receiving objects: 100% (1006/1006), 218.44 KiB | 960.00 KiB/s, done.
+Resolving deltas: 100% (672/672), done.
+
+root@vmware-062:~/cord# git clone "https://gerrit.opencord.org/roc-helm-charts"
+Cloning into 'roc-helm-charts'...
+remote: Counting objects: 3, done
+remote: Total 2561 (delta 0), reused 2561 (delta 0)
+Receiving objects: 100% (2561/2561), 744.29 KiB | 2.95 MiB/s, done.
+Resolving deltas: 100% (1545/1545), done.
+
+
+
+
+
+
+
+
+------------------------
+ 3. make roc 4g
+------------------------
+
+
+root@vmware-062:~/aether-in-a-box# CHARTS=latest make roc-4g-models
+mkdir -p /root/aether-in-a-box//build/milestones
+touch /root/aether-in-a-box//build/milestones/interface-check
+sudo /root/aether-in-a-box//scripts/cloudlab-disksetup.sh
+sudo apt update; sudo apt install -y software-properties-common python3 python3-pip python3-venv jq httpie ipvsadm apparmor apparmor-utils
+Get:1 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Hit:2 http://us.archive.ubuntu.com/ubuntu bionic InRelease
+Get:3 http://us.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Hit:5 https://download.docker.com/linux/ubuntu bionic InRelease
+Get:6 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 DEP-11 Metadata [297 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 DEP-11 Metadata [301 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu bionic-updates/multiverse amd64 DEP-11 Metadata [2,464 B]
+Get:9 http://us.archive.ubuntu.com/ubuntu bionic-backports/universe amd64 DEP-11 Metadata [9,280 B]
+Get:10 http://security.ubuntu.com/ubuntu bionic-security/main amd64 DEP-11 Metadata [55.2 kB]
+Get:11 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 DEP-11 Metadata [59.8 kB]
+Get:12 http://security.ubuntu.com/ubuntu bionic-security/multiverse amd64 DEP-11 Metadata [2,460 B]
+Hit:13 http://download.virtualbox.org/virtualbox/debian bionic InRelease
+Fetched 979 kB in 3s (369 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+22 packages can be upgraded. Run 'apt list --upgradable' to see them.
+N: Skipping acquire of configured file 'contrib/binary-i386/Packages' as repository 'http://download.virtualbox.org/virtualbox/debian bionic InRelease' doesn't support architecture 'i386'
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+httpie is already the newest version (0.9.8-2).
+jq is already the newest version (1.5+dfsg-2).
+apparmor is already the newest version (2.12-4ubuntu5.1).
+apparmor-utils is already the newest version (2.12-4ubuntu5.1).
+ipvsadm is already the newest version (1:1.28-3ubuntu0.18.04.1).
+python3 is already the newest version (3.6.7-1~18.04).
+software-properties-common is already the newest version (0.96.24.32.18).
+python3-pip is already the newest version (9.0.1-2.3~ubuntu1.18.04.5).
+python3-venv is already the newest version (3.6.7-1~18.04).
+The following packages were automatically installed and are no longer required:
+  openvswitch-common python-six
+Use 'sudo apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 22 not upgraded.
+systemctl list-units --full -all | grep "docker.service" || sudo apt install -y docker.io
+  docker.service                                                                                        loaded    active     running      Docker Application Container Engine
+sudo adduser root docker || true
+The user `root' is already a member of `docker'.
+touch /root/aether-in-a-box//build/milestones/setup
+sudo mkdir -p /etc/rancher/rke2/
+[ -d /usr/local/etc/emulab ] && [ ! -e /var/lib/rancher ] && sudo ln -s /var/lib/rancher /mnt/extra/rancher || true  # that link gets deleted on cleanup
+echo "cni: multus,calico" >> config.yaml
+echo "cluster-cidr: 192.168.84.0/24" >> config.yaml
+echo "service-cidr: 192.168.85.0/24" >> config.yaml
+echo "kubelet-arg:" >> config.yaml
+echo "- --allowed-unsafe-sysctls="net.*"" >> config.yaml
+echo "- --node-ip="10.0.50.62"" >> config.yaml
+echo "pause-image: k8s.gcr.io/pause:3.3" >> config.yaml
+echo "kube-proxy-arg:" >> config.yaml
+echo "- --metrics-bind-address="0.0.0.0:10249"" >> config.yaml
+echo "- --proxy-mode="ipvs"" >> config.yaml
+echo "kube-apiserver-arg:" >> config.yaml
+echo "- --service-node-port-range="2000-36767"" >> config.yaml
+sudo mv config.yaml /etc/rancher/rke2/
+curl -sfL https://get.rke2.io | sudo INSTALL_RKE2_VERSION=v1.23.4+rke2r1 sh -
+[INFO]  using v1.23.4+rke2r1 as release
+[INFO]  downloading checksums at https://github.com/rancher/rke2/releases/download/v1.23.4+rke2r1/sha256sum-amd64.txt
+[INFO]  downloading tarball at https://github.com/rancher/rke2/releases/download/v1.23.4+rke2r1/rke2.linux-amd64.tar.gz
+[INFO]  verifying tarball
+[INFO]  unpacking tarball file to /usr/local
+sudo systemctl enable rke2-server.service
+Created symlink /etc/systemd/system/multi-user.target.wants/rke2-server.service → /usr/local/lib/systemd/system/rke2-server.service.
+sudo systemctl start rke2-server.service
+Job for rke2-server.service failed because the control process exited with error code.
+See "systemctl status rke2-server.service" and "journalctl -xe" for details.
+Makefile:183: recipe for target '/root/aether-in-a-box//build/milestones/k8s-ready' failed
+make: *** [/root/aether-in-a-box//build/milestones/k8s-ready] Error 1
+
+
+
+------------------------
+ 4. error logs
+------------------------
+
+root@vmware-062:~/aether-in-a-box# systemctl status rke2-server.service
+● rke2-server.service - Rancher Kubernetes Engine v2 (server)
+   Loaded: loaded (/usr/local/lib/systemd/system/rke2-server.service; enabled; vendor preset: enabled)
+   Active: activating (start) since Thu 2022-04-21 13:00:31 EDT; 5min ago
+     Docs: https://github.com/rancher/rke2#readme
+  Process: 28782 ExecStopPost=/bin/sh -c systemd-cgls /system.slice/rke2-server.service | grep -Eo '[0-9]+ (containerd|kubelet)' | awk '{print $1}' | xargs -r kill (code=exited, status=0/SUCCESS)
+  Process: 28790 ExecStartPre=/sbin/modprobe overlay (code=exited, status=0/SUCCESS)
+  Process: 28789 ExecStartPre=/sbin/modprobe br_netfilter (code=exited, status=0/SUCCESS)
+  Process: 28787 ExecStartPre=/bin/sh -xc ! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup.service (code=exited, status=0/SUCCESS)
+ Main PID: 28791 (rke2)
+    Tasks: 53
+   CGroup: /system.slice/rke2-server.service
+           ├─23800 /var/lib/rancher/rke2/data/v1.23.4-rke2r1-035428523904/bin/containerd-shim-runc-v2 -namespace k8s.io -id 9ab2297fb09265ed941f57b40449b1607ebd77ba7dd70f791ff3c465384ce01d -address /run/k3s/containerd/containerd.sock
+           ├─23823 /pause
+           ├─28791 /usr/local/bin/rke2 server
+           ├─28801 containerd -c /var/lib/rancher/rke2/agent/etc/containerd/config.toml -a /run/k3s/containerd/containerd.sock --state /run/k3s/containerd --root /var/lib/rancher/rke2/agent/containerd
+           └─28814 kubelet --volume-plugin-dir=/var/lib/kubelet/volumeplugins --file-check-frequency=5s --sync-frequency=30s --address=0.0.0.0 --allowed-unsafe-sysctls=net.* --alsologtostderr=false --anonymous-auth=false --authentication-token-webhook=true --autho
+
+Apr 21 13:05:42 vmware-062 rke2[28791]: time="2022-04-21T13:05:42-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:47 vmware-062 rke2[28791]: time="2022-04-21T13:05:47-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:52 vmware-062 rke2[28791]: time="2022-04-21T13:05:52-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:56 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:56.728-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:56 vmware-062 rke2[28791]: time="2022-04-21T13:05:56-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:05:57 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:57.921-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:57 vmware-062 rke2[28791]: time="2022-04-21T13:05:57-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:05:57 vmware-062 rke2[28791]: time="2022-04-21T13:05:57-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:01 vmware-062 rke2[28791]: time="2022-04-21T13:06:01-04:00" level=info msg="Waiting for API server to become available"
+Apr 21 13:06:01 vmware-062 rke2[28791]: time="2022-04-21T13:06:01-04:00" level=info msg="Waiting for etcd server to become available"
+
+
+
+
+
+root@vmware-062:~/aether-in-a-box# journalctl -xe
+Apr 21 13:05:37 vmware-062 rke2[28791]: time="2022-04-21T13:05:37-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:37 vmware-062 etcd[9554]: 2022-04-21 17:05:37.974835 I | embed: rejected connection from "127.0.0.1:50762" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:40 vmware-062 etcd[9554]: 2022-04-21 17:05:40.614304 I | embed: rejected connection from "127.0.0.1:50782" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:41 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:41.725-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:41 vmware-062 rke2[28791]: time="2022-04-21T13:05:41-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:05:42 vmware-062 etcd[9554]: 2022-04-21 17:05:42.466466 I | embed: rejected connection from "127.0.0.1:50798" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:42 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:42.922-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:42 vmware-062 rke2[28791]: time="2022-04-21T13:05:42-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:05:42 vmware-062 rke2[28791]: time="2022-04-21T13:05:42-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:46 vmware-062 etcd[9554]: 2022-04-21 17:05:46.734240 I | embed: rejected connection from "127.0.0.1:50830" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:47 vmware-062 etcd[9554]: 2022-04-21 17:05:47.739634 I | embed: rejected connection from "127.0.0.1:50846" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:47 vmware-062 etcd[9554]: 2022-04-21 17:05:47.927653 I | embed: rejected connection from "127.0.0.1:50848" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:47 vmware-062 rke2[28791]: time="2022-04-21T13:05:47-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:48 vmware-062 etcd[9554]: 2022-04-21 17:05:48.933813 I | embed: rejected connection from "127.0.0.1:50866" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:49 vmware-062 etcd[9554]: 2022-04-21 17:05:49.053554 I | embed: rejected connection from "127.0.0.1:50870" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:50 vmware-062 etcd[9554]: 2022-04-21 17:05:50.539923 I | embed: rejected connection from "127.0.0.1:50880" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:52 vmware-062 etcd[9554]: 2022-04-21 17:05:52.124571 I | embed: rejected connection from "127.0.0.1:50892" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:52 vmware-062 etcd[9554]: 2022-04-21 17:05:52.602371 I | embed: rejected connection from "127.0.0.1:50896" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:52 vmware-062 rke2[28791]: time="2022-04-21T13:05:52-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:05:55 vmware-062 etcd[9554]: 2022-04-21 17:05:55.799755 I | embed: rejected connection from "127.0.0.1:50928" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:56 vmware-062 etcd[9554]: 2022-04-21 17:05:56.123756 I | embed: rejected connection from "127.0.0.1:50936" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:05:56 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:56.728-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:56 vmware-062 rke2[28791]: time="2022-04-21T13:05:56-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:05:57 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:05:57.921-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:05:57 vmware-062 rke2[28791]: time="2022-04-21T13:05:57-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:05:57 vmware-062 rke2[28791]: time="2022-04-21T13:05:57-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:01 vmware-062 rke2[28791]: time="2022-04-21T13:06:01-04:00" level=info msg="Waiting for API server to become available"
+Apr 21 13:06:01 vmware-062 rke2[28791]: time="2022-04-21T13:06:01-04:00" level=info msg="Waiting for etcd server to become available"
+Apr 21 13:06:01 vmware-062 etcd[9554]: 2022-04-21 17:06:01.737235 I | embed: rejected connection from "127.0.0.1:50982" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:02 vmware-062 etcd[9554]: 2022-04-21 17:06:02.744267 I | embed: rejected connection from "127.0.0.1:50990" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:02 vmware-062 etcd[9554]: 2022-04-21 17:06:02.928928 I | embed: rejected connection from "127.0.0.1:50992" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:02 vmware-062 rke2[28791]: time="2022-04-21T13:06:02-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:03 vmware-062 etcd[9554]: 2022-04-21 17:06:03.934237 I | embed: rejected connection from "127.0.0.1:51008" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:04 vmware-062 etcd[9554]: 2022-04-21 17:06:04.151281 I | embed: rejected connection from "127.0.0.1:51014" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:05 vmware-062 etcd[9554]: 2022-04-21 17:06:05.402166 I | embed: rejected connection from "127.0.0.1:51022" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:06 vmware-062 etcd[9554]: 2022-04-21 17:06:06.809512 I | embed: rejected connection from "127.0.0.1:51032" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:07 vmware-062 rke2[28791]: time="2022-04-21T13:06:07-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:08 vmware-062 etcd[9554]: 2022-04-21 17:06:08.415725 I | embed: rejected connection from "127.0.0.1:51054" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:11 vmware-062 etcd[9554]: 2022-04-21 17:06:11.688882 I | embed: rejected connection from "127.0.0.1:51074" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:11 vmware-062 etcd[9554]: 2022-04-21 17:06:11.708799 I | embed: rejected connection from "127.0.0.1:51076" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:11 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:11.728-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:11 vmware-062 rke2[28791]: time="2022-04-21T13:06:11-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:06:12 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:12.923-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:12 vmware-062 rke2[28791]: time="2022-04-21T13:06:12-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:06:12 vmware-062 rke2[28791]: time="2022-04-21T13:06:12-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:16 vmware-062 etcd[9554]: 2022-04-21 17:06:16.734760 I | embed: rejected connection from "127.0.0.1:51122" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:17 vmware-062 etcd[9554]: 2022-04-21 17:06:17.743652 I | embed: rejected connection from "127.0.0.1:51130" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:17 vmware-062 etcd[9554]: 2022-04-21 17:06:17.927699 I | embed: rejected connection from "127.0.0.1:51132" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:17 vmware-062 rke2[28791]: time="2022-04-21T13:06:17-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:18 vmware-062 etcd[9554]: 2022-04-21 17:06:18.934624 I | embed: rejected connection from "127.0.0.1:51148" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:19 vmware-062 etcd[9554]: 2022-04-21 17:06:19.303095 I | embed: rejected connection from "127.0.0.1:51154" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:20 vmware-062 etcd[9554]: 2022-04-21 17:06:20.733983 I | embed: rejected connection from "127.0.0.1:51162" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:21 vmware-062 etcd[9554]: 2022-04-21 17:06:21.569102 I | embed: rejected connection from "127.0.0.1:51170" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:22 vmware-062 etcd[9554]: 2022-04-21 17:06:22.886820 I | embed: rejected connection from "127.0.0.1:51182" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:22 vmware-062 rke2[28791]: time="2022-04-21T13:06:22-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:25 vmware-062 etcd[9554]: 2022-04-21 17:06:25.607356 I | embed: rejected connection from "127.0.0.1:51206" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:26 vmware-062 etcd[9554]: 2022-04-21 17:06:26.354451 I | embed: rejected connection from "127.0.0.1:51216" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:26 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:26.729-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:26 vmware-062 rke2[28791]: time="2022-04-21T13:06:26-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:06:27 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:27.922-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:27 vmware-062 rke2[28791]: time="2022-04-21T13:06:27-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:06:27 vmware-062 rke2[28791]: time="2022-04-21T13:06:27-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:31 vmware-062 rke2[28791]: time="2022-04-21T13:06:31-04:00" level=info msg="Waiting for API server to become available"
+Apr 21 13:06:31 vmware-062 rke2[28791]: time="2022-04-21T13:06:31-04:00" level=info msg="Waiting for etcd server to become available"
+Apr 21 13:06:31 vmware-062 etcd[9554]: 2022-04-21 17:06:31.734936 I | embed: rejected connection from "127.0.0.1:51260" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:32 vmware-062 etcd[9554]: 2022-04-21 17:06:32.741859 I | embed: rejected connection from "127.0.0.1:51268" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:32 vmware-062 etcd[9554]: 2022-04-21 17:06:32.927925 I | embed: rejected connection from "127.0.0.1:51270" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:32 vmware-062 rke2[28791]: time="2022-04-21T13:06:32-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:33 vmware-062 etcd[9554]: 2022-04-21 17:06:33.933835 I | embed: rejected connection from "127.0.0.1:51286" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:34 vmware-062 etcd[9554]: 2022-04-21 17:06:34.028830 I | embed: rejected connection from "127.0.0.1:51290" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:35 vmware-062 etcd[9554]: 2022-04-21 17:06:35.354664 I | embed: rejected connection from "127.0.0.1:51300" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:36 vmware-062 etcd[9554]: 2022-04-21 17:06:36.995676 I | embed: rejected connection from "127.0.0.1:51322" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:37 vmware-062 etcd[9554]: 2022-04-21 17:06:37.528818 I | embed: rejected connection from "127.0.0.1:51326" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:37 vmware-062 rke2[28791]: time="2022-04-21T13:06:37-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:40 vmware-062 etcd[9554]: 2022-04-21 17:06:40.566545 I | embed: rejected connection from "127.0.0.1:51352" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:41 vmware-062 etcd[9554]: 2022-04-21 17:06:41.095847 I | embed: rejected connection from "127.0.0.1:51358" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:41 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:41.730-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:41 vmware-062 rke2[28791]: time="2022-04-21T13:06:41-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:06:42 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:42.926-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:42 vmware-062 rke2[28791]: time="2022-04-21T13:06:42-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:06:42 vmware-062 rke2[28791]: time="2022-04-21T13:06:42-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:46 vmware-062 etcd[9554]: 2022-04-21 17:06:46.737201 I | embed: rejected connection from "127.0.0.1:51404" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:47 vmware-062 etcd[9554]: 2022-04-21 17:06:47.742901 I | embed: rejected connection from "127.0.0.1:51414" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:47 vmware-062 etcd[9554]: 2022-04-21 17:06:47.928537 I | embed: rejected connection from "127.0.0.1:51416" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:47 vmware-062 rke2[28791]: time="2022-04-21T13:06:47-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:48 vmware-062 etcd[9554]: 2022-04-21 17:06:48.939477 I | embed: rejected connection from "127.0.0.1:51432" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:49 vmware-062 etcd[9554]: 2022-04-21 17:06:49.118539 I | embed: rejected connection from "127.0.0.1:51436" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:50 vmware-062 etcd[9554]: 2022-04-21 17:06:50.512375 I | embed: rejected connection from "127.0.0.1:51452" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:51 vmware-062 etcd[9554]: 2022-04-21 17:06:51.522877 I | embed: rejected connection from "127.0.0.1:51460" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:52 vmware-062 rke2[28791]: time="2022-04-21T13:06:52-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:06:53 vmware-062 etcd[9554]: 2022-04-21 17:06:53.394682 I | embed: rejected connection from "127.0.0.1:51480" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:55 vmware-062 etcd[9554]: 2022-04-21 17:06:55.212890 I | embed: rejected connection from "127.0.0.1:51494" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:56 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:56.731-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:56 vmware-062 rke2[28791]: time="2022-04-21T13:06:56-04:00" level=info msg="Failed to test data store connection: context deadline exceeded"
+Apr 21 13:06:57 vmware-062 etcd[9554]: 2022-04-21 17:06:57.251716 I | embed: rejected connection from "127.0.0.1:51514" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:06:57 vmware-062 rke2[28791]: {"level":"warn","ts":"2022-04-21T13:06:57.923-0400","logger":"etcd-client","caller":"v3@v3.5.1-k3s1/retry_interceptor.go:62","msg":"retrying of unary invoker failed","target":"etcd-endpoints://0xc00196dc00/127.0.0.1:2379","a
+Apr 21 13:06:57 vmware-062 rke2[28791]: time="2022-04-21T13:06:57-04:00" level=error msg="Failed to check local etcd status for learner management: context deadline exceeded"
+Apr 21 13:06:57 vmware-062 rke2[28791]: time="2022-04-21T13:06:57-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:07:01 vmware-062 rke2[28791]: time="2022-04-21T13:07:01-04:00" level=info msg="Waiting for etcd server to become available"
+Apr 21 13:07:01 vmware-062 rke2[28791]: time="2022-04-21T13:07:01-04:00" level=info msg="Waiting for API server to become available"
+Apr 21 13:07:01 vmware-062 etcd[9554]: 2022-04-21 17:07:01.738727 I | embed: rejected connection from "127.0.0.1:51546" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:02 vmware-062 etcd[9554]: 2022-04-21 17:07:02.747981 I | embed: rejected connection from "127.0.0.1:51554" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:02 vmware-062 etcd[9554]: 2022-04-21 17:07:02.928425 I | embed: rejected connection from "127.0.0.1:51556" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:02 vmware-062 rke2[28791]: time="2022-04-21T13:07:02-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+Apr 21 13:07:03 vmware-062 etcd[9554]: 2022-04-21 17:07:03.934990 I | embed: rejected connection from "127.0.0.1:51574" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:04 vmware-062 etcd[9554]: 2022-04-21 17:07:04.434804 I | embed: rejected connection from "127.0.0.1:51582" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:05 vmware-062 etcd[9554]: 2022-04-21 17:07:05.623007 I | embed: rejected connection from "127.0.0.1:51590" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:06 vmware-062 etcd[9554]: 2022-04-21 17:07:06.866601 I | embed: rejected connection from "127.0.0.1:51602" (error "remote error: tls: bad certificate", ServerName "")
+Apr 21 13:07:07 vmware-062 rke2[28791]: time="2022-04-21T13:07:07-04:00" level=info msg="Waiting to retrieve kube-proxy configuration; server is not ready: https://127.0.0.1:9345/v1-rke2/readyz: 500 Internal Server Error"
+
+
+
+
+
+

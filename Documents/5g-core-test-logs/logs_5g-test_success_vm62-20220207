@@ -1,0 +1,1065 @@
+
+
+root@vmware-062:~/aether-in-a-box# CHARTS=latest make 5g-test
+sudo cp /root/aether-in-a-box//resources/simpleovs /opt/cni/bin/
+sudo apt install -y openvswitch-switch
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libpython-stdlib openvswitch-common python python-minimal python-six python2.7 python2.7-minimal
+Suggested packages:
+  ethtool openvswitch-doc python-doc python-tk python2.7-doc binfmt-support
+The following NEW packages will be installed:
+  libpython-stdlib openvswitch-common openvswitch-switch python python-minimal python-six python2.7 python2.7-minimal
+0 upgraded, 8 newly installed, 0 to remove and 3 not upgraded.
+Need to get 4,030 kB of archives.
+After this operation, 15.3 MB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-minimal amd64 2.7.17-1~18.04ubuntu1.6 [1,291 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python-minimal amd64 2.7.15~rc1-1 [28.1 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7 amd64 2.7.17-1~18.04ubuntu1.6 [248 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-stdlib amd64 2.7.15~rc1-1 [7,620 B]
+Get:5 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python amd64 2.7.15~rc1-1 [140 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python-six all 1.11.0-2 [11.3 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openvswitch-common amd64 2.9.8-0ubuntu0.18.04.2 [806 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openvswitch-switch amd64 2.9.8-0ubuntu0.18.04.2 [1,498 kB]
+Fetched 4,030 kB in 0s (14.6 MB/s)
+Selecting previously unselected package python2.7-minimal.
+(Reading database ... 161866 files and directories currently installed.)
+Preparing to unpack .../python2.7-minimal_2.7.17-1~18.04ubuntu1.6_amd64.deb ...
+Unpacking python2.7-minimal (2.7.17-1~18.04ubuntu1.6) ...
+Selecting previously unselected package python-minimal.
+Preparing to unpack .../python-minimal_2.7.15~rc1-1_amd64.deb ...
+Unpacking python-minimal (2.7.15~rc1-1) ...
+Selecting previously unselected package python2.7.
+Preparing to unpack .../python2.7_2.7.17-1~18.04ubuntu1.6_amd64.deb ...
+Unpacking python2.7 (2.7.17-1~18.04ubuntu1.6) ...
+Selecting previously unselected package libpython-stdlib:amd64.
+Preparing to unpack .../libpython-stdlib_2.7.15~rc1-1_amd64.deb ...
+Unpacking libpython-stdlib:amd64 (2.7.15~rc1-1) ...
+Setting up python2.7-minimal (2.7.17-1~18.04ubuntu1.6) ...
+Linking and byte-compiling packages for runtime python2.7...
+Setting up python-minimal (2.7.15~rc1-1) ...
+Selecting previously unselected package python.
+(Reading database ... 161923 files and directories currently installed.)
+Preparing to unpack .../python_2.7.15~rc1-1_amd64.deb ...
+Unpacking python (2.7.15~rc1-1) ...
+Selecting previously unselected package python-six.
+Preparing to unpack .../python-six_1.11.0-2_all.deb ...
+Unpacking python-six (1.11.0-2) ...
+Selecting previously unselected package openvswitch-common.
+Preparing to unpack .../openvswitch-common_2.9.8-0ubuntu0.18.04.2_amd64.deb ...
+Unpacking openvswitch-common (2.9.8-0ubuntu0.18.04.2) ...
+Selecting previously unselected package openvswitch-switch.
+Preparing to unpack .../openvswitch-switch_2.9.8-0ubuntu0.18.04.2_amd64.deb ...
+Unpacking openvswitch-switch (2.9.8-0ubuntu0.18.04.2) ...
+Setting up python2.7 (2.7.17-1~18.04ubuntu1.6) ...
+Setting up libpython-stdlib:amd64 (2.7.15~rc1-1) ...
+Setting up python (2.7.15~rc1-1) ...
+Setting up python-six (1.11.0-2) ...
+Setting up openvswitch-common (2.9.8-0ubuntu0.18.04.2) ...
+Setting up openvswitch-switch (2.9.8-0ubuntu0.18.04.2) ...
+update-alternatives: using /usr/lib/openvswitch-switch/ovs-vswitchd to provide /usr/sbin/ovs-vswitchd (ovs-vswitchd) in auto mode
+Created symlink /etc/systemd/system/multi-user.target.wants/openvswitch-switch.service → /lib/systemd/system/openvswitch-switch.service.
+Processing triggers for gnome-menus (3.13.3-11ubuntu1.1) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+Processing triggers for desktop-file-utils (0.23-1ubuntu3.18.04.2) ...
+Processing triggers for systemd (237-3ubuntu10.53) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+sudo ovs-vsctl --may-exist add-br br-enb-net
+sudo ovs-vsctl --may-exist add-port br-enb-net enb -- set Interface enb type=internal
+sudo ip addr add 192.168.251.4/24 dev enb || true
+sudo ip link set enb up
+sudo ethtool --offload enb tx off
+sudo: ethtool: command not found
+Makefile:146: recipe for target '/tmp/build/milestones/fabric' failed
+make: *** [/tmp/build/milestones/fabric] Error 1
+
+
+root@vmware-062:~/aether-in-a-box# apt install ethtool
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  ethtool
+0 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Need to get 114 kB of archives.
+After this operation, 392 kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 ethtool amd64 1:4.15-0ubuntu1 [114 kB]
+Fetched 114 kB in 0s (1,402 kB/s)
+Selecting previously unselected package ethtool.
+(Reading database ... 162070 files and directories currently installed.)
+Preparing to unpack .../ethtool_1%3a4.15-0ubuntu1_amd64.deb ...
+Unpacking ethtool (1:4.15-0ubuntu1) ...
+Setting up ethtool (1:4.15-0ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+
+
+
+root@vmware-062:~/aether-in-a-box# CHARTS=latest make 5g-test
+sudo apt install -y openvswitch-switch
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+openvswitch-switch is already the newest version (2.9.8-0ubuntu0.18.04.2).
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+sudo ovs-vsctl --may-exist add-br br-enb-net
+sudo ovs-vsctl --may-exist add-port br-enb-net enb -- set Interface enb type=internal
+sudo ip addr add 192.168.251.4/24 dev enb || true
+RTNETLINK answers: File exists
+sudo ip link set enb up
+sudo ethtool --offload enb tx off
+Actual changes:
+tx-checksumming: off
+        tx-checksum-ip-generic: off
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [requested on]
+        tx-tcp-ecn-segmentation: off [requested on]
+        tx-tcp-mangleid-segmentation: off [requested on]
+        tx-tcp6-segmentation: off [requested on]
+sudo ip route replace 192.168.252.0/24 via 192.168.251.1 dev enb
+kubectl apply -f /root/aether-in-a-box//resources/router.yaml
+networkattachmentdefinition.k8s.cni.cncf.io/core-net created
+networkattachmentdefinition.k8s.cni.cncf.io/access-net created
+networkattachmentdefinition.k8s.cni.cncf.io/enb-net created
+pod/router created
+kubectl wait pod -n default --for=condition=Ready -l app=router --timeout=300s
+pod/router condition met
+kubectl -n default exec router -- ip route add 172.250.0.0/16 via 192.168.250.3
+kubectl delete net-attach-def core-net
+networkattachmentdefinition.k8s.cni.cncf.io "core-net" deleted
+touch /tmp/build/milestones/fabric
+kubectl get namespace omec 2> /dev/null || kubectl create namespace omec
+namespace/omec created
+kubectl -n omec get secret aether.registry || kubectl create -f /root/aether-in-a-box//resources/aether.registry.yaml
+Error from server (NotFound): secrets "aether.registry" not found
+secret/aether.registry created
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [[ "latest" == "local" || "latest" == "local-sdcore" ]]; then helm dep up aether/5g-control-plane; fi
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /root/aether-in-a-box//5g-core-values.yaml \
+        sim-app \
+        aether/omec-sub-provision && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /root/aether-in-a-box//upf-values.yaml \
+        5g-core-up \
+        aether/omec-user-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /root/aether-in-a-box//5g-core-values.yaml \
+        fgc-core \
+        aether/5g-control-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /root/aether-in-a-box//ransim-values.yaml \
+        5g-ransim-plane \
+        aether/5g-ran-sim
+Release "sim-app" does not exist. Installing it now.
+NAME: sim-app
+LAST DEPLOYED: Mon Feb  7 12:55:34 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Notes - Instructions to use SIM provision application helm charts
+Release "5g-core-up" does not exist. Installing it now.
+NAME: 5g-core-up
+LAST DEPLOYED: Mon Feb  7 12:56:08 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+Release "fgc-core" does not exist. Installing it now.
+NAME: fgc-core
+LAST DEPLOYED: Mon Feb  7 12:56:40 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Notes - Instructions to use 5g helm charts
+Release "5g-ransim-plane" does not exist. Installing it now.
+NAME: 5g-ransim-plane
+LAST DEPLOYED: Mon Feb  7 12:57:50 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Notes - Instructions to use 5g ran simulator helm charts
+touch /tmp/build/milestones/5g-core
+Test: Registration + UE initiated PDU Session Establishment + User Data packets
+2022-02-07T17:58:11Z [INFO][GNBSIM][App] App Name: GNBSIM
+2022-02-07T17:58:11Z [WARN][GNBSIM][App] No configuration file provided. Using default configuration file: /gnbsim/config/gnb.conf
+2022-02-07T17:58:11Z [INFO][GNBSIM][App] Application Usage: ./gnbsim -cfg [gnbsim configuration file]
+2022-02-07T17:58:11Z [INFO][GNBSIM][App] Setting log level to: info
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][gnb1] GNodeB IP:  GNodeB Port: 9487
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] User Plane transport listening on: 192.168.251.5:2152
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB] Current range selector value: 95
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB] Current ID range start: 1593835520 end: 1610612735
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Connected to AMF, AMF IP: 192.168.227.15 AMF Port: 38412
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 54 bytes
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 48 bytes from 192.168.227.15:38412
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][gnb1] NG Setup Successful: true
+2022-02-07T17:58:11Z [INFO][GNBSIM][App] executing profile: profile2 , profile type: pdusessest
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbCpUe for RANUENGAPID: 1593835520
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Connected to gNodeB, Name:gnb1, IP:, Port:9487
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: PROFILE-START-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Updated procedure to 1
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Initiating Registration Procedure
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: CONNECTION-REQUEST-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 73 bytes
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 69 bytes from &{20 <nil>}
+2022/02/07 17:58:11 Fetching GnbCpUe for RANUENGAPID: 1593835520
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Received Message Type: 86
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: AUTHENTICATION-REQUEST-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Next Event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 67 bytes
+cmac value: 0xadb79040
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 46 bytes from &{20 <nil>}
+2022/02/07 17:58:11 Fetching GnbCpUe for RANUENGAPID: 1593835520
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Calculate NAS MAC (algorithm: 2, DLCount: 0x0)
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] NAS integrity key: 6b1c93c87e366cd3f22c2aebce980368
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Received Message Type: 93
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: SECURITY-MODE-COMMAND-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:11Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 97 bytes
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 151 bytes from &{20 <nil>}
+2022/02/07 17:58:12 Fetching GnbCpUe for RANUENGAPID: 1593835520
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: INITIAL-CONTEXT-SETUP-REQUEST-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Calculate NAS MAC (algorithm: 2, DLCount: 0x1)
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] NAS integrity key: 6b1c93c87e366cd3f22c2aebce980368
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Received Message Type: 66
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: REGESTRATION-ACCEPT-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Updated procedure to PDU-SESSION-ESTABLISHMENT-PROCEDURE
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Initiating UE Requested PDU Session Establishment Procedure
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:12Z [INFO][NAS][Message] Encode ExtendedProtocolConfigurationOptions in EncodePDUSessionEstablishmentRequest
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 22 bytes
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+cmac value: 0x8ee7b283
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 56 bytes
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 99 bytes
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 184 bytes from &{20 <nil>}
+cmac value: 0x0a9c37c3
+2022/02/07 17:58:12 Fetching GnbCpUe for RANUENGAPID: 1593835520
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: PDU-SESSION-RESOURCE-SETUP-REQUEST-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] PDU Session ID: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] S-NSSAI - SST:  1
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] S-NSSAI - SD:  010203
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] UL GTP-TEID:  1
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] DL GTP-TEID:  1593835520
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] UPF Endpoint IP:  192.168.252.3
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] PDU Session Type:  IPV4
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] QoS Flow Id: 9
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Non Dynamic 5QI: 9
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] ARP Priority Level: 15
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Pre-emption Capability: 0
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Pre-emption Vulnerability: 0
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Adding new QosFlowItem corresponding to QFI: 9
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:12Z [WARN][GNBSIM][GNodeB][GnbPeerDao] key not present: 192.168.252.3
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Adding new GnbUpf corresponding to IP: 192.168.252.3
+a  before  &{{0} {0} {0} {0} {0 0 []} <nil> <nil> <nil> <nil> }
+Protocol Des  {126}
+Message identity  {104}
+payload container type  {1}
+payload container len  72
+*****
+buf  [46 10 0 194 17 0 9 1 0 6 49 49 1 1 255 9 6 1 3 208 1 3 208 41 5 1 172 250 0 1 34 4 1 1 2 3 121 0 6 9 32 65 1 1 9 123 0 13 128 0 13 4 8 8 8 8 0 16 2 5 180 37 9 8 105 110 116 101 114 110 101 116]
+
+
+Protocol Des  46
+PDU Session Id  10
+PTI  0
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Adding new GnbUpUe for PDU Sess ID: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Calculate NAS MAC (algorithm: 2, DLCount: 0x2)
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] NAS integrity key: 6b1c93c87e366cd3f22c2aebce980368
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Received Message Type: 104
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Payload contaner type:{1}
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Next Event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Adding new PDU Session for PDU Sess ID: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] PDU Session ID: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] PDU Session Type: IPV4
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] SSC Mode: 1
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] PDU Address: 172.250.0.1
+msg type  194
+session type , ssc mode  17
+qos len   9
+qos  [1 0 6 49 49 1 1 255 9]
+ambr len   6
+ambr  [1 3 208 1 3 208]
+remaining bytes ***** 49
+length of ip address =  5
+type of address =  1
+ip address =  [172 250 0 1]
+ip address in string  172.250.0.1
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Fetching PDU Session for pduSessId: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Updated procedure to USER-DATA-PACKET-GENERATION-PROCEDURE
+2022-02-07T17:58:12Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Initiating User Data Packet Generation Procedure
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Fetching GnbUpUe for pduSessId: 10
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbUpUe for TEID: 1593835520 Downlink: true
+2022-02-07T17:58:12Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Handling: INIT-EVENT
+2022-02-07T17:58:12Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 43 bytes
+2022-02-07T17:58:13Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Please wait, initiating uplink user data in 3 seconds ...
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Sent DL user data packet to UE
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Received ICMP Echo Reply, ID:12394, Seq:1
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Sent DL user data packet to UE
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Received ICMP Echo Reply, ID:12394, Seq:2
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Sent DL user data packet to UE
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Received ICMP Echo Reply, ID:12394, Seq:3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Sent DL user data packet to UE
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Received ICMP Echo Reply, ID:12394, Seq:4
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Sent DL user data packet to UE
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Received ICMP Echo Reply, ID:12394, Seq:5
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][Profile][profile2] No more procedures left
+2022-02-07T17:58:16Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Handling event: QUIT-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Handling: QUIT-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Handling: QUIT-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007492
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] Handling event: QUIT-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUeDao] Removing GnbUpUe for TEID: 1593835520 Downlink: true
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Handling: QUIT-EVENT
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835520] Gnb User-plane UE Context terminated
+2022-02-07T17:58:16Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835520] gNB Control-Plane UE context terminated
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007492][10] Pdu Session terminated
+2022-02-07T17:58:16Z [INFO][GNBSIM][RealUe][imsi-208930100007492] Real UE terminated
+2022-02-07T17:58:16Z [INFO][GNBSIM][SimUe][imsi-208930100007492] Sim UE terminated
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbCpUe for RANUENGAPID: 1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Connected to gNodeB, Name:gnb1, IP:, Port:9487
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: PROFILE-START-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Updated procedure to 1
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Initiating Registration Procedure
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: CONNECTION-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 73 bytes
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 69 bytes from &{20 <nil>}
+2022/02/07 17:58:18 Fetching GnbCpUe for RANUENGAPID: 1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Received Message Type: 86
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: AUTHENTICATION-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Next Event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 67 bytes
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 46 bytes from &{20 <nil>}
+2022/02/07 17:58:18 Fetching GnbCpUe for RANUENGAPID: 1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Calculate NAS MAC (algorithm: 2, DLCount: 0x0)
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] NAS integrity key: b974643abe07f5a60a1bcf96c159e212
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Received Message Type: 93
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: SECURITY-MODE-COMMAND-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 97 bytes
+cmac value: 0x5cc650ba
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 151 bytes from &{20 <nil>}
+2022/02/07 17:58:18 Fetching GnbCpUe for RANUENGAPID: 1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: INITIAL-CONTEXT-SETUP-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Calculate NAS MAC (algorithm: 2, DLCount: 0x1)
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] NAS integrity key: b974643abe07f5a60a1bcf96c159e212
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Received Message Type: 66
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: REGESTRATION-ACCEPT-EVENT
+cmac value: 0x9c8e2b0f
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Updated procedure to PDU-SESSION-ESTABLISHMENT-PROCEDURE
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Initiating UE Requested PDU Session Establishment Procedure
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][NAS][Message] Encode ExtendedProtocolConfigurationOptions in EncodePDUSessionEstablishmentRequest
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 22 bytes
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 56 bytes
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 99 bytes
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 184 bytes from &{20 <nil>}
+2022/02/07 17:58:18 Fetching GnbCpUe for RANUENGAPID: 1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: PDU-SESSION-RESOURCE-SETUP-REQUEST-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] PDU Session ID: 10
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] S-NSSAI - SST:  1
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] S-NSSAI - SD:  010203
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] UL GTP-TEID:  3
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] DL GTP-TEID:  1593835521
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] UPF Endpoint IP:  192.168.252.3
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] PDU Session Type:  IPV4
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] QoS Flow Id: 9
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Non Dynamic 5QI: 9
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] ARP Priority Level: 15
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Pre-emption Capability: 0
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Pre-emption Vulnerability: 0
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Adding new QosFlowItem corresponding to QFI: 9
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:18Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Adding new GnbUpUe for PDU Sess ID: 10
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Calculate NAS MAC (algorithm: 2, DLCount: 0x2)
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] NAS integrity key: b974643abe07f5a60a1bcf96c159e212
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Received Message Type: 104
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Payload contaner type:{1}
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+cmac value: 0x1e3234d6
+a  before  &{{0} {0} {0} {0} {0 0 []} <nil> <nil> <nil> <nil> }
+Protocol Des  {126}
+Message identity  {104}
+payload container type  {1}
+payload container len  72
+*****
+buf  [46 10 0 194 17 0 9 1 0 6 49 49 1 1 255 9 6 1 3 208 1 3 208 41 5 1 172 250 0 2 34 4 1 1 2 3 121 0 6 9 32 65 1 1 9 123 0 13 128 0 13 4 8 8 8 8 0 16 2 5 180 37 9 8 105 110 116 101 114 110 101 116]
+
+
+Protocol Des  46
+PDU Session Id  10
+PTI  0
+msg type  194
+session type , ssc mode  17
+qos len   9
+qos  [1 0 6 49 49 1 1 255 9]
+ambr len   6
+ambr  [1 3 208 1 3 208]
+remaining bytes ***** 49
+length of ip address =  5
+type of address =  1
+ip address =  [172 250 0 2]
+ip address in string  172.250.0.2
+2022-02-07T17:58:18Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Next Event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Adding new PDU Session for PDU Sess ID: 10
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] PDU Session ID: 10
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] PDU Session Type: IPV4
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] SSC Mode: 1
+2022-02-07T17:58:18Z [INFO][GNBSIM][RealUe][imsi-208930100007493] PDU Address: 172.250.0.2
+2022-02-07T17:58:19Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:19Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:19Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Fetching PDU Session for pduSessId: 10
+2022-02-07T17:58:19Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:19Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Updated procedure to USER-DATA-PACKET-GENERATION-PROCEDURE
+2022-02-07T17:58:19Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Initiating User Data Packet Generation Procedure
+2022-02-07T17:58:19Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:19Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Fetching GnbUpUe for pduSessId: 10
+2022-02-07T17:58:19Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbUpUe for TEID: 1593835521 Downlink: true
+2022-02-07T17:58:19Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Handling: INIT-EVENT
+2022-02-07T17:58:19Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 43 bytes
+2022-02-07T17:58:19Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Please wait, initiating uplink user data in 3 seconds ...
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Received ICMP Echo Reply, ID:12394, Seq:1
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Sent DL user data packet to UE
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Sent DL user data packet to UE
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Received ICMP Echo Reply, ID:12394, Seq:2
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Sent DL user data packet to UE
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Received ICMP Echo Reply, ID:12394, Seq:3
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Sent DL user data packet to UE
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Received ICMP Echo Reply, ID:12394, Seq:4
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Sent DL user data packet to UE
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Received ICMP Echo Reply, ID:12394, Seq:5
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][Profile][profile2] No more procedures left
+2022-02-07T17:58:22Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Handling event: QUIT-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Handling: QUIT-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Handling: QUIT-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007493
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] Handling event: QUIT-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUeDao] Removing GnbUpUe for TEID: 1593835521 Downlink: true
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Handling: QUIT-EVENT
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835521] Gnb User-plane UE Context terminated
+2022-02-07T17:58:22Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835521] gNB Control-Plane UE context terminated
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007493][10] Pdu Session terminated
+2022-02-07T17:58:22Z [INFO][GNBSIM][RealUe][imsi-208930100007493] Real UE terminated
+2022-02-07T17:58:22Z [INFO][GNBSIM][SimUe][imsi-208930100007493] Sim UE terminated
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbCpUe for RANUENGAPID: 1593835522
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Connected to gNodeB, Name:gnb1, IP:, Port:9487
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: PROFILE-START-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Updated procedure to 1
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Initiating Registration Procedure
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: CONNECTION-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 73 bytes
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 69 bytes from &{20 <nil>}
+2022/02/07 17:58:24 Fetching GnbCpUe for RANUENGAPID: 1593835522
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Received Message Type: 86
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: AUTHENTICATION-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Next Event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 67 bytes
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 46 bytes from &{20 <nil>}
+2022/02/07 17:58:24 Fetching GnbCpUe for RANUENGAPID: 1593835522
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Calculate NAS MAC (algorithm: 2, DLCount: 0x0)
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] NAS integrity key: 059b60beff44fa7dc881f1a60838253c
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Received Message Type: 93
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: SECURITY-MODE-COMMAND-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 97 bytes
+cmac value: 0x11bc34d3
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 151 bytes from &{20 <nil>}
+2022/02/07 17:58:24 Fetching GnbCpUe for RANUENGAPID: 1593835522
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: INITIAL-CONTEXT-SETUP-REQUEST-EVENT
+cmac value: 0x42888ff5
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 22 bytes
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Calculate NAS MAC (algorithm: 2, DLCount: 0x1)
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] NAS integrity key: 059b60beff44fa7dc881f1a60838253c
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Received Message Type: 66
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: REGESTRATION-ACCEPT-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Updated procedure to PDU-SESSION-ESTABLISHMENT-PROCEDURE
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Initiating UE Requested PDU Session Establishment Procedure
+2022-02-07T17:58:24Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][NAS][Message] Encode ExtendedProtocolConfigurationOptions in EncodePDUSessionEstablishmentRequest
+2022-02-07T17:58:24Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 56 bytes
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:24Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 99 bytes
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 184 bytes from &{20 <nil>}
+2022/02/07 17:58:25 Fetching GnbCpUe for RANUENGAPID: 1593835522
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: PDU-SESSION-RESOURCE-SETUP-REQUEST-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] PDU Session ID: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] S-NSSAI - SST:  1
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] S-NSSAI - SD:  010203
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] UL GTP-TEID:  5
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] DL GTP-TEID:  1593835522
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] UPF Endpoint IP:  192.168.252.3
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] PDU Session Type:  IPV4
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] QoS Flow Id: 9
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Non Dynamic 5QI: 9
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] ARP Priority Level: 15
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Pre-emption Capability: 0
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Pre-emption Vulnerability: 0
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Adding new QosFlowItem corresponding to QFI: 9
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Adding new GnbUpUe for PDU Sess ID: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Calculate NAS MAC (algorithm: 2, DLCount: 0x2)
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] NAS integrity key: 059b60beff44fa7dc881f1a60838253c
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Received Message Type: 104
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Payload contaner type:{1}
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Next Event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Adding new PDU Session for PDU Sess ID: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] PDU Session ID: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] PDU Session Type: IPV4
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] SSC Mode: 1
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] PDU Address: 172.250.0.3
+cmac value: 0x49a6a156
+a  before  &{{0} {0} {0} {0} {0 0 []} <nil> <nil> <nil> <nil> }
+Protocol Des  {126}
+Message identity  {104}
+payload container type  {1}
+payload container len  72
+*****
+buf  [46 10 0 194 17 0 9 1 0 6 49 49 1 1 255 9 6 1 3 208 1 3 208 41 5 1 172 250 0 3 34 4 1 1 2 3 121 0 6 9 32 65 1 1 9 123 0 13 128 0 13 4 8 8 8 8 0 16 2 5 180 37 9 8 105 110 116 101 114 110 101 116]
+
+
+Protocol Des  46
+PDU Session Id  10
+PTI  0
+msg type  194
+session type , ssc mode  17
+qos len   9
+qos  [1 0 6 49 49 1 1 255 9]
+ambr len   6
+ambr  [1 3 208 1 3 208]
+remaining bytes ***** 49
+length of ip address =  5
+type of address =  1
+ip address =  [172 250 0 3]
+ip address in string  172.250.0.3
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Fetching PDU Session for pduSessId: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Updated procedure to USER-DATA-PACKET-GENERATION-PROCEDURE
+2022-02-07T17:58:25Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Initiating User Data Packet Generation Procedure
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Fetching GnbUpUe for pduSessId: 10
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbUpUe for TEID: 1593835522 Downlink: true
+2022-02-07T17:58:25Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 43 bytes
+2022-02-07T17:58:25Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Handling: INIT-EVENT
+2022-02-07T17:58:26Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Please wait, initiating uplink user data in 3 seconds ...
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Sent DL user data packet to UE
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Received ICMP Echo Reply, ID:12394, Seq:1
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Sent DL user data packet to UE
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Received ICMP Echo Reply, ID:12394, Seq:2
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Sent DL user data packet to UE
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Received ICMP Echo Reply, ID:12394, Seq:3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Sent DL user data packet to UE
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Received ICMP Echo Reply, ID:12394, Seq:4
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Sent DL user data packet to UE
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Received ICMP Echo Reply, ID:12394, Seq:5
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][Profile][profile2] No more procedures left
+2022-02-07T17:58:29Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Handling event: QUIT-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Handling: QUIT-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Handling: QUIT-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007494
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] Handling event: QUIT-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUeDao] Removing GnbUpUe for TEID: 1593835522 Downlink: true
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Handling: QUIT-EVENT
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835522] Gnb User-plane UE Context terminated
+2022-02-07T17:58:29Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835522] gNB Control-Plane UE context terminated
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007494][10] Pdu Session terminated
+2022-02-07T17:58:29Z [INFO][GNBSIM][RealUe][imsi-208930100007494] Real UE terminated
+2022-02-07T17:58:29Z [INFO][GNBSIM][SimUe][imsi-208930100007494] Sim UE terminated
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbCpUe for RANUENGAPID: 1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Connected to gNodeB, Name:gnb1, IP:, Port:9487
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: PROFILE-START-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Updated procedure to 1
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Initiating Registration Procedure
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: CONNECTION-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 73 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 69 bytes from &{20 <nil>}
+2022/02/07 17:58:31 Fetching GnbCpUe for RANUENGAPID: 1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Received Message Type: 86
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: AUTHENTICATION-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Next Event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 67 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 46 bytes from &{20 <nil>}
+2022/02/07 17:58:31 Fetching GnbCpUe for RANUENGAPID: 1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Calculate NAS MAC (algorithm: 2, DLCount: 0x0)
+cmac value: 0xad5791d4
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] NAS integrity key: 367fd3bdc2785aa1b879a2928eae5ec2
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Received Message Type: 93
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: SECURITY-MODE-COMMAND-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 97 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 151 bytes from &{20 <nil>}
+2022/02/07 17:58:31 Fetching GnbCpUe for RANUENGAPID: 1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: INITIAL-CONTEXT-SETUP-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DL-INFO-TRANSFER-EVENT
+cmac value: 0x84c0e18c
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 22 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Calculate NAS MAC (algorithm: 2, DLCount: 0x1)
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] NAS integrity key: 367fd3bdc2785aa1b879a2928eae5ec2
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Received Message Type: 66
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: REGESTRATION-ACCEPT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Updated procedure to PDU-SESSION-ESTABLISHMENT-PROCEDURE
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Initiating UE Requested PDU Session Establishment Procedure
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][NAS][Message] Encode ExtendedProtocolConfigurationOptions in EncodePDUSessionEstablishmentRequest
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 56 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 99 bytes
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 184 bytes from &{20 <nil>}
+2022/02/07 17:58:31 Fetching GnbCpUe for RANUENGAPID: 1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: PDU-SESSION-RESOURCE-SETUP-REQUEST-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] PDU Session ID: 10
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] S-NSSAI - SST:  1
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] S-NSSAI - SD:  010203
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] UL GTP-TEID:  7
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] DL GTP-TEID:  1593835523
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] UPF Endpoint IP:  192.168.252.3
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] PDU Session Type:  IPV4
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] QoS Flow Id: 9
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Non Dynamic 5QI: 9
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] ARP Priority Level: 15
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Pre-emption Capability: 0
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Pre-emption Vulnerability: 0
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Adding new QosFlowItem corresponding to QFI: 9
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:31Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Adding new GnbUpUe for PDU Sess ID: 10
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Calculate NAS MAC (algorithm: 2, DLCount: 0x2)
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] NAS integrity key: 367fd3bdc2785aa1b879a2928eae5ec2
+cmac value: 0x9a94b045
+a  before  &{{0} {0} {0} {0} {0 0 []} <nil> <nil> <nil> <nil> }
+Protocol Des  {126}
+Message identity  {104}
+payload container type  {1}
+payload container len  72
+*****
+buf  [46 10 0 194 17 0 9 1 0 6 49 49 1 1 255 9 6 1 3 208 1 3 208 41 5 1 172 250 0 4 34 4 1 1 2 3 121 0 6 9 32 65 1 1 9 123 0 13 128 0 13 4 8 8 8 8 0 16 2 5 180 37 9 8 105 110 116 101 114 110 101 116]
+
+
+Protocol Des  46
+PDU Session Id  10
+PTI  0
+msg type  194
+session type , ssc mode  17
+qos len   9
+qos  [1 0 6 49 49 1 1 255 9]
+ambr len   6
+ambr  [1 3 208 1 3 208]
+remaining bytes ***** 49
+length of ip address =  5
+type of address =  1
+ip address =  [172 250 0 4]
+ip address in string  172.250.0.4
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Received Message Type: 104
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Payload contaner type:{1}
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Next Event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Adding new PDU Session for PDU Sess ID: 10
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] PDU Session ID: 10
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] PDU Session Type: IPV4
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] SSC Mode: 1
+2022-02-07T17:58:31Z [INFO][GNBSIM][RealUe][imsi-208930100007495] PDU Address: 172.250.0.4
+2022-02-07T17:58:32Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:32Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:32Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Fetching PDU Session for pduSessId: 10
+2022-02-07T17:58:32Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:32Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Updated procedure to USER-DATA-PACKET-GENERATION-PROCEDURE
+2022-02-07T17:58:32Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Initiating User Data Packet Generation Procedure
+2022-02-07T17:58:32Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:32Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Fetching GnbUpUe for pduSessId: 10
+2022-02-07T17:58:32Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbUpUe for TEID: 1593835523 Downlink: true
+2022-02-07T17:58:32Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 43 bytes
+2022-02-07T17:58:32Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Handling: INIT-EVENT
+2022-02-07T17:58:32Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Please wait, initiating uplink user data in 3 seconds ...
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Sent DL user data packet to UE
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Received ICMP Echo Reply, ID:12394, Seq:1
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Sent DL user data packet to UE
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Received ICMP Echo Reply, ID:12394, Seq:2
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Sent DL user data packet to UE
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Received ICMP Echo Reply, ID:12394, Seq:3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Sent DL user data packet to UE
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Received ICMP Echo Reply, ID:12394, Seq:4
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Sent DL user data packet to UE
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Received ICMP Echo Reply, ID:12394, Seq:5
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][Profile][profile2] No more procedures left
+2022-02-07T17:58:35Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Handling event: QUIT-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Handling: QUIT-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Handling: QUIT-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007495
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] Handling event: QUIT-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUeDao] Removing GnbUpUe for TEID: 1593835523 Downlink: true
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Handling: QUIT-EVENT
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835523] Gnb User-plane UE Context terminated
+2022-02-07T17:58:35Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835523] gNB Control-Plane UE context terminated
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007495][10] Pdu Session terminated
+2022-02-07T17:58:35Z [INFO][GNBSIM][RealUe][imsi-208930100007495] Real UE terminated
+2022-02-07T17:58:35Z [INFO][GNBSIM][SimUe][imsi-208930100007495] Sim UE terminated
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbCpUe for RANUENGAPID: 1593835524
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Connected to gNodeB, Name:gnb1, IP:, Port:9487
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: PROFILE-START-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Updated procedure to 1
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Initiating Registration Procedure
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: CONNECTION-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: REGESTRATION-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 73 bytes
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 69 bytes from &{20 <nil>}
+2022/02/07 17:58:37 Fetching GnbCpUe for RANUENGAPID: 1593835524
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Received Message Type: 86
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: AUTHENTICATION-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Next Event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: AUTHENTICATION-RESPONSE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 67 bytes
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 46 bytes from &{20 <nil>}
+2022/02/07 17:58:37 Fetching GnbCpUe for RANUENGAPID: 1593835524
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: DOWNLINK-NAS-TRANSPORT-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Calculate NAS MAC (algorithm: 2, DLCount: 0x0)
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] NAS integrity key: 2c892054541a902fca3f4c6af99361a9
+cmac value: 0x55fa238a
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Received Message Type: 93
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: SECURITY-MODE-COMMAND-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: SECURITY-MODE-COMPLETE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 97 bytes
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 151 bytes from &{20 <nil>}
+2022/02/07 17:58:37 Fetching GnbCpUe for RANUENGAPID: 1593835524
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: INITIAL-CONTEXT-SETUP-REQUEST-EVENT
+cmac value: 0x643b4156
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Calculate NAS MAC (algorithm: 2, DLCount: 0x1)
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] NAS integrity key: 2c892054541a902fca3f4c6af99361a9
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Received Message Type: 66
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: REGESTRATION-ACCEPT-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: REGESTRATION-COMPLETE-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Updated procedure to PDU-SESSION-ESTABLISHMENT-PROCEDURE
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Initiating UE Requested PDU Session Establishment Procedure
+2022-02-07T17:58:37Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][NAS][Message] Encode ExtendedProtocolConfigurationOptions in EncodePDUSessionEstablishmentRequest
+2022-02-07T17:58:37Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: PDU-SESSION-ESTABLISHMENT-REQUEST-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 22 bytes
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 56 bytes
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: UL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:37Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 99 bytes
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 184 bytes from &{20 <nil>}
+2022/02/07 17:58:38 Fetching GnbCpUe for RANUENGAPID: 1593835524
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: PDU-SESSION-RESOURCE-SETUP-REQUEST-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] PDU Session ID: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] S-NSSAI - SST:  1
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] S-NSSAI - SD:  010203
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] UL GTP-TEID:  9
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] DL GTP-TEID:  1593835524
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] UPF Endpoint IP:  192.168.252.3
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] PDU Session Type:  IPV4
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] QoS Flow Id: 9
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Non Dynamic 5QI: 9
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] ARP Priority Level: 15
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Pre-emption Capability: 0
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Pre-emption Vulnerability: 0
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Adding new QosFlowItem corresponding to QFI: 9
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Adding new GnbUpUe for PDU Sess ID: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DL-INFO-TRANSFER-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Calculate NAS MAC (algorithm: 2, DLCount: 0x2)
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] NAS integrity key: 2c892054541a902fca3f4c6af99361a9
+cmac value: 0xbb04c122
+a  before  &{{0} {0} {0} {0} {0 0 []} <nil> <nil> <nil> <nil> }
+Protocol Des  {126}
+Message identity  {104}
+payload container type  {1}
+payload container len  72
+*****
+buf  [46 10 0 194 17 0 9 1 0 6 49 49 1 1 255 9 6 1 3 208 1 3 208 41 5 1 172 250 0 5 34 4 1 1 2 3 121 0 6 9 32 65 1 1 9 123 0 13 128 0 13 4 8 8 8 8 0 16 2 5 180 37 9 8 105 110 116 101 114 110 101 116]
+
+
+Protocol Des  46
+PDU Session Id  10
+PTI  0
+msg type  194
+session type , ssc mode  17
+qos len   9
+qos  [1 0 6 49 49 1 1 255 9]
+ambr len   6
+ambr  [1 3 208 1 3 208]
+remaining bytes ***** 49
+length of ip address =  5
+type of address =  1
+ip address =  [172 250 0 5]
+ip address in string  172.250.0.5
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Received Message Type: 104
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Payload contaner type:{1}
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Next Event: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: PDU-SESSION-ESTABLISHMENT-ACCEPT-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Adding new PDU Session for PDU Sess ID: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] PDU Session ID: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] PDU Session Type: IPV4
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] SSC Mode: 1
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] PDU Address: 172.250.0.5
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DATA-BEARER-SETUP-REQUEST-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Fetching PDU Session for pduSessId: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Updated procedure to USER-DATA-PACKET-GENERATION-PROCEDURE
+2022-02-07T17:58:38Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Initiating User Data Packet Generation Procedure
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: DATA-BEARER-SETUP-RESPONSE-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Fetching GnbUpUe for pduSessId: 10
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][GnbUeDao] Adding new GnbUpUe for TEID: 1593835524 Downlink: true
+2022-02-07T17:58:38Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Handling: INIT-EVENT
+2022-02-07T17:58:38Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 43 bytes
+2022-02-07T17:58:39Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Please wait, initiating uplink user data in 3 seconds ...
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Handling: DATA-PACKET-GENERATION-REQUEST-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Sent DL user data packet to UE
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Received ICMP Echo Reply, ID:12394, Seq:1
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Sent DL user data packet to UE
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Received ICMP Echo Reply, ID:12394, Seq:2
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Sent DL user data packet to UE
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Received ICMP Echo Reply, ID:12394, Seq:3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Sent DL user data packet to UE
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Received ICMP Echo Reply, ID:12394, Seq:4
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Sent UDP Packet, length: 84 bytes
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] Read 84 bytes from 192.168.252.3:2152
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbPeerDao] Fetching GnbUpf corresponding to IP: 192.168.252.3
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Sent DL user data packet to UE
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Received ICMP Echo Reply, ID:12394, Seq:5
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: DATA-PACKET-SUCCESS-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][Profile][profile2] No more procedures left
+2022-02-07T17:58:42Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Handling event: QUIT-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Handling: QUIT-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Handling: QUIT-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007496
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] Handling event: QUIT-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUeDao] Removing GnbUpUe for TEID: 1593835524 Downlink: true
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Handling: QUIT-EVENT
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbUpUe][1593835524] Gnb User-plane UE Context terminated
+2022-02-07T17:58:42Z [INFO][GNBSIM][GNodeB][GnbCpUe][1593835524] gNB Control-Plane UE context terminated
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][PduSession][imsi-208930100007496][10] Pdu Session terminated
+2022-02-07T17:58:42Z [INFO][GNBSIM][RealUe][imsi-208930100007496] Real UE terminated
+2022-02-07T17:58:42Z [INFO][GNBSIM][SimUe][imsi-208930100007496] Sim UE terminated
+
+Test summary:
+2022-02-07T17:58:16Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007492
+2022-02-07T17:58:22Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007493
+2022-02-07T17:58:29Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007494
+2022-02-07T17:58:35Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007495
+2022-02-07T17:58:42Z [INFO][GNBSIM][Profile][profile2] Result: PASS, SimUe: imsi-208930100007496
+*** TEST PASSED ***

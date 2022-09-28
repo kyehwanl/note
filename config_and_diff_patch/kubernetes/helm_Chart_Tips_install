@@ -89,6 +89,16 @@ Helm Tips
   helm get notes atomix-controller
   helm get values atomix-controller   <-- get modified values for this chart
 
+    ( ** At some cases, -n, --namespace string, needed)
+      ** helm get [command]
+          Available commands:
+            all         download all information for a named release
+            hooks       download all hooks for a named release
+            manifest    download the manifest for a named release
+            notes       download the notes for a named release
+            values      download the values file for a named release
+
+
 
       $ helm upgrade --install --wait --values ~/aether-in-a-box/roc-values.yaml atomix-controller atomix/atomix-controller
       Release "atomix-controller" does not exist. Installing it now.
@@ -309,8 +319,42 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
     helm get all sd-core -n omec  --> similar to helm template
 
 
+    (example)
+
+      # helm list -n omec
+      NAME    NAMESPACE       REVISION        UPDATED               STATUS          CHART           APP VERSION
+      sd-core omec            2               2022-08-08 14:40:30   UTC deployed    sd-core-0.11.8
 
 
+      # helm get manifest -n omec sd-core
+      ---
+      # Source: sd-core/charts/5g-control-plane/templates/deployment-amf.yaml
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: amf
+        namespace: omec
+        labels:
+          release: sd-core
+          app: amf
+      ---
+      # Source: sd-core/charts/5g-control-plane/templates/deployment-ausf.yaml
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+      [...]
+
+
+
+
+
+(3) Behind Scene of helm's stored data
+(http://technosophos.com/2017/03/23/how-helm-uses-configmaps-to-store-data.html)
+
+    All the helm data, including charts, values, state info etc, are stored in ConfigMap with a giant long
+    base64 encoded blob binary. 
+    The release record is in a binary protobuf format, which is of little use to most users.
+    You can see a human-friendly version of this data with the helm get command.
 
 
 

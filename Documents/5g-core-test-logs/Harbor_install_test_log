@@ -1,0 +1,467 @@
+
+Harbor Registry Install Test
+============================
+
+
+root@vmware-063:~# wget https://github.com/goharbor/harbor/releases/download/v2.4.1/harbor-offline-installer-v2.4.1.tgz
+--2022-06-24 16:21:49--  https://github.com/goharbor/harbor/releases/download/v2.4.1/harbor-offline-installer-v2.4.1.tgz
+Resolving github.com (github.com)... 140.82.114.4
+Connecting to github.com (github.com)|140.82.114.4|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/50613991/7e5db83b-31c3-451b-bf71-6a0aa1036305?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20220624%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220624T202150Z&X-Amz-Expires=300&X-Amz-Signature=72c2c6475b5b290d982dc32e4497b7065e18f5e2189dc18633985f2b67eb0950&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=50613991&response-content-disposition=attachment%3B%20filename%3Dharbor-offline-installer-v2.4.1.tgz&response-content-type=application%2Foctet-stream [following]
+--2022-06-24 16:21:50--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/50613991/7e5db83b-31c3-451b-bf71-6a0aa1036305?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20220624%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220624T202150Z&X-Amz-Expires=300&X-Amz-Signature=72c2c6475b5b290d982dc32e4497b7065e18f5e2189dc18633985f2b67eb0950&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=50613991&response-content-disposition=attachment%3B%20filename%3Dharbor-offline-installer-v2.4.1.tgz&response-content-type=application%2Foctet-stream
+Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.109.133, 185.199.110.133, 185.199.108.133, ...
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.109.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 612698835 (584M) [application/octet-stream]
+Saving to: ‘harbor-offline-installer-v2.4.1.tgz’
+
+harbor-offline-installer-v2.4.1.t 100%[=============================================================>] 584.31M   111MB/s    in 5.5s
+
+2022-06-24 16:21:55 (106 MB/s) - ‘harbor-offline-installer-v2.4.1.tgz’ saved [612698835/612698835]
+
+root@vmware-063:~# tar -xvzf harbor-offline-installer-v2.4.1.tgz
+harbor/harbor.v2.4.1.tar.gz
+harbor/prepare
+harbor/LICENSE
+harbor/install.sh
+harbor/common.sh
+harbor/harbor.yml.tmpl
+root@vmware-063:~# cd harbor/
+root@vmware-063:~/harbor# ll
+total 601616
+drwxr-x---  2 root root      4096 Jun 24 16:22 ./
+drwx------ 21 root root      4096 Jun 24 16:22 ../
+-rw-r--r--  1 root root      3361 Dec 15  2021 common.sh
+-rw-r--r--  1 root root 616006217 Dec 15  2021 harbor.v2.4.1.tar.gz
+-rw-r--r--  1 root root      8999 Dec 15  2021 harbor.yml.tmpl
+-rwxr-xr-x  1 root root      2500 Dec 15  2021 install.sh*
+-rw-r--r--  1 root root     11347 Dec 15  2021 LICENSE
+-rwxr-xr-x  1 root root      1881 Dec 15  2021 prepare*
+root@vmware-063:~/harbor# cp harbor.yml.tmpl harbor.yml
+root@vmware-063:~/harbor# vim harbor.yml
+# Configuration file of Harbor
+
+# The IP address or hostname to access admin UI and registry service.
+# DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
+hostname: 10.0.50.
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+# https related config
+https:
+  # https port for harbor, default is 443
+  port: 443
+  # The path of cert and key files for nginx
+  certificate: /your/certificate/path
+  private_key: /your/private/key/path
+
+# # Uncomment following will enable tls communication between all harbor components
+# internal_tls:
+#   # set enabled to true means internal tls is enabled
+#   enabled: true
+#   # put your cert and key files on dir
+#   dir: /etc/harbor/tls/internal
+
+# Uncomment external_url if you want to enable external proxy
+# And when it enabled the hostname will no longer used
+# external_url: https://reg.mydomain.com:8433
+
+# The initial password of Harbor admin
+# It only works in first time to install harbor
+# Remember Change the admin password from UI after launching Harbor.
+harbor_admin_password: Harbor12345
+
+# Harbor DB configuration
+database:
+  # The password for the root user of Harbor DB. Change this before any production use.
+  password: root123
+  # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
+  max_idle_conns: 100
+  # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
+  # Note: the default number of connections is 1024 for postgres of harbor.
+  max_open_conns: 900
+
+# The default data volume
+data_volume: /data
+
+# Harbor Storage settings by default is using /data dir on local filesystem
+# Uncomment storage_service setting If you want to using external storage
+# storage_service:
+#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore
+#   # of registry's and chart repository's containers.  This is usually needed when the user hosts a internal storage with self signed certificate.
+#   ca_bundle:
+
+#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss
+#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/
+#   filesystem:
+#     maxthreads: 100
+#   # set disable to true when you want to disable registry redirect
+#   redirect:
+#     disabled: false
+
+# Trivy configuration
+#
+# Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.
+# It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached
+# in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it
+# should download a newer version from the Internet or use the cached one. Currently, the database is updated every
+# 12 hours and published as a new release to GitHub.
+trivy:
+  # ignoreUnfixed The flag to display only fixed vulnerabilities
+  ignore_unfixed: false
+  # skipUpdate The flag to enable or disable Trivy DB downloads from GitHub
+  #
+  # You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.
+  # If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and
+  # `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.
+  skip_update: false
+  #
+  # insecure The flag to skip verifying registry certificate
+:!hostname -I
+[No write since last change]
+10.0.50.63 172.17.0.1 192.168.84.0
+
+Press ENTER or type command to continue
+# Configuration file of Harbor
+
+# The IP address or hostname to access admin UI and registry service.
+# DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
+hostname: 10.0.50.63
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+# https related config
+#https:
+  # https port for harbor, default is 443
+  #port: 443
+  # The path of cert and key files for nginx
+  #certificate: /your/certificate/path
+  #private_key: /your/private/key/path
+
+# # Uncomment following will enable tls communication between all harbor components
+# internal_tls:
+#   # set enabled to true means internal tls is enabled
+#   enabled: true
+#   # put your cert and key files on dir
+#   dir: /etc/harbor/tls/internal
+
+# Uncomment external_url if you want to enable external proxy
+# And when it enabled the hostname will no longer used
+# external_url: https://reg.mydomain.com:8433
+
+# The initial password of Harbor admin
+# It only works in first time to install harbor
+# Remember Change the admin password from UI after launching Harbor.
+harbor_admin_password: Harbor12345
+
+# Harbor DB configuration
+database:
+  # The password for the root user of Harbor DB. Change this before any production use.
+  password: root123
+  # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
+  max_idle_conns: 100
+  # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
+  # Note: the default number of connections is 1024 for postgres of harbor.
+  max_open_conns: 900
+
+# The default data volume
+data_volume: /data
+
+# Harbor Storage settings by default is using /data dir on local filesystem
+# Uncomment storage_service setting If you want to using external storage
+# storage_service:
+#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore
+#   # of registry's and chart repository's containers.  This is usually needed when the user hosts a internal storage with self signed certificate.
+#   ca_bundle:
+
+#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss
+#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/
+#   filesystem:
+#     maxthreads: 100
+#   # set disable to true when you want to disable registry redirect
+#   redirect:
+#     disabled: false
+
+# Trivy configuration
+#
+# Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.
+# It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached
+# in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it
+# should download a newer version from the Internet or use the cached one. Currently, the database is updated every
+# 12 hours and published as a new release to GitHub.
+trivy:
+  # ignoreUnfixed The flag to display only fixed vulnerabilities
+  ignore_unfixed: false
+  # skipUpdate The flag to enable or disable Trivy DB downloads from GitHub
+  #
+  # You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.
+  # If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and
+  # `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.
+  skip_update: false
+  #
+  # insecure The flag to skip verifying registry certificate
+:q
+root@vmware-063:~/harbor# ./install.sh
+
+[Step 0]: checking if docker is installed ...
+
+Note: docker version: 20.10.8
+
+[Step 1]: checking docker-compose is installed ...
+✖ Need to install docker-compose(1.18.0+) by yourself first and run this script again.
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor# curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 12.1M  100 12.1M    0     0  62.2M      0 --:--:-- --:--:-- --:--:--  103M
+root@vmware-063:~/harbor# chmod +x /usr/local/bin/docker-compose
+root@vmware-063:~/harbor# ./install.sh
+[Step 0]: checking if docker is installed ...
+
+Note: docker version: 20.10.8
+
+[Step 1]: checking docker-compose is installed ...
+
+Note: docker-compose version: 1.29.2
+
+[Step 2]: loading Harbor images ...
+1e3f0dc884e2: Loading layer [==================================================>]  39.45MB/39.45MB
+3fd9ccd5eeaa: Loading layer [==================================================>]  5.275MB/5.275MB
+c600bceee2f7: Loading layer [==================================================>]  4.096kB/4.096kB
+724cd8711815: Loading layer [==================================================>]  3.072kB/3.072kB
+d7c82a981c89: Loading layer [==================================================>]  17.32MB/17.32MB
+a814341c2c44: Loading layer [==================================================>]  18.12MB/18.12MB
+Loaded image: goharbor/registry-photon:v2.4.1
+b00595b6932d: Loading layer [==================================================>]   5.27MB/5.27MB
+e34892d856ce: Loading layer [==================================================>]  5.928MB/5.928MB
+ac5a22c6047d: Loading layer [==================================================>]  14.47MB/14.47MB
+3d1ac12eb215: Loading layer [==================================================>]  29.29MB/29.29MB
+394b4b2ea0fa: Loading layer [==================================================>]  22.02kB/22.02kB
+bb0deb7416e0: Loading layer [==================================================>]  14.47MB/14.47MB
+Loaded image: goharbor/notary-signer-photon:v2.4.1
+c3b02aec560c: Loading layer [==================================================>]  8.422MB/8.422MB
+4d5b3acd128e: Loading layer [==================================================>]  3.584kB/3.584kB
+7afbf44c3706: Loading layer [==================================================>]   2.56kB/2.56kB
+31f95ac6eb9a: Loading layer [==================================================>]  75.59MB/75.59MB
+8981a12f5c17: Loading layer [==================================================>]  5.632kB/5.632kB
+16eb0821dcc3: Loading layer [==================================================>]  96.26kB/96.26kB
+b19eba29a0de: Loading layer [==================================================>]  11.78kB/11.78kB
+f0785d2e9965: Loading layer [==================================================>]  76.49MB/76.49MB
+26ce29b9d7ab: Loading layer [==================================================>]   2.56kB/2.56kB
+Loaded image: goharbor/harbor-core:v2.4.1
+59e3814aa5f1: Loading layer [==================================================>]  119.8MB/119.8MB
+1e99e9cd580e: Loading layer [==================================================>]  3.072kB/3.072kB
+2bab205001c7: Loading layer [==================================================>]   59.9kB/59.9kB
+c51450af480c: Loading layer [==================================================>]  61.95kB/61.95kB
+Loaded image: goharbor/redis-photon:v2.4.1
+3636ff090145: Loading layer [==================================================>]  8.421MB/8.421MB
+fa3d57c372c8: Loading layer [==================================================>]  3.584kB/3.584kB
+a2c97825dcbf: Loading layer [==================================================>]   2.56kB/2.56kB
+366b1363b528: Loading layer [==================================================>]  86.95MB/86.95MB
+3d2fd6d13a0f: Loading layer [==================================================>]  87.74MB/87.74MB
+Loaded image: goharbor/harbor-jobservice:v2.4.1
+8f71cf8bc1c6: Loading layer [==================================================>]  5.275MB/5.275MB
+5cb3457d8e25: Loading layer [==================================================>]  4.096kB/4.096kB
+02c18fad9dc6: Loading layer [==================================================>]  17.32MB/17.32MB
+7bbcea1ec44e: Loading layer [==================================================>]  3.072kB/3.072kB
+f2842e1ada70: Loading layer [==================================================>]  28.69MB/28.69MB
+4665575c3f9e: Loading layer [==================================================>]  46.81MB/46.81MB
+Loaded image: goharbor/harbor-registryctl:v2.4.1
+439595cfbbc0: Loading layer [==================================================>]  7.192MB/7.192MB
+Loaded image: goharbor/nginx-photon:v2.4.1
+a19de03ace6b: Loading layer [==================================================>]   5.27MB/5.27MB
+35bbd4cf35b6: Loading layer [==================================================>]  5.928MB/5.928MB
+88f852ebd746: Loading layer [==================================================>]  15.88MB/15.88MB
+e3c0db81a28c: Loading layer [==================================================>]  29.29MB/29.29MB
+f74e521b7a55: Loading layer [==================================================>]  22.02kB/22.02kB
+7d97a705f439: Loading layer [==================================================>]  15.88MB/15.88MB
+Loaded image: goharbor/notary-server-photon:v2.4.1
+1e6473070b18: Loading layer [==================================================>]    124MB/124MB
+f05c1a477d2d: Loading layer [==================================================>]  3.584kB/3.584kB
+bcab3e00aa98: Loading layer [==================================================>]  3.072kB/3.072kB
+970d569f474a: Loading layer [==================================================>]   2.56kB/2.56kB
+c659c9812277: Loading layer [==================================================>]  3.072kB/3.072kB
+9d401ff8bf07: Loading layer [==================================================>]  3.584kB/3.584kB
+968dfed00d2e: Loading layer [==================================================>]  19.97kB/19.97kB
+Loaded image: goharbor/harbor-log:v2.4.1
+b64000a1cd2c: Loading layer [==================================================>]  1.097MB/1.097MB
+e3fb7ac15701: Loading layer [==================================================>]  5.889MB/5.889MB
+d6e7f8008582: Loading layer [==================================================>]  165.9MB/165.9MB
+eff0812a8c6f: Loading layer [==================================================>]  15.07MB/15.07MB
+91a6abd7a540: Loading layer [==================================================>]  4.096kB/4.096kB
+47e875926154: Loading layer [==================================================>]  6.144kB/6.144kB
+04876e025d4a: Loading layer [==================================================>]  3.072kB/3.072kB
+b817a88114e6: Loading layer [==================================================>]  2.048kB/2.048kB
+e5fb37021dff: Loading layer [==================================================>]   2.56kB/2.56kB
+767486d5c318: Loading layer [==================================================>]   2.56kB/2.56kB
+b92f2b842b46: Loading layer [==================================================>]   2.56kB/2.56kB
+e90e3a7ea4e9: Loading layer [==================================================>]  8.704kB/8.704kB
+Loaded image: goharbor/harbor-db:v2.4.1
+daf3d38cddc8: Loading layer [==================================================>]  8.422MB/8.422MB
+8013b2cbc0b9: Loading layer [==================================================>]  18.13MB/18.13MB
+4445f5ea7083: Loading layer [==================================================>]  4.608kB/4.608kB
+32e035f0af8e: Loading layer [==================================================>]  18.93MB/18.93MB
+Loaded image: goharbor/harbor-exporter:v2.4.1
+0ad72e88d766: Loading layer [==================================================>]   8.54MB/8.54MB
+fe195f48d47b: Loading layer [==================================================>]  4.096kB/4.096kB
+71f2671db231: Loading layer [==================================================>]  3.072kB/3.072kB
+ddda0b4a8eae: Loading layer [==================================================>]  39.27MB/39.27MB
+c3fe76027866: Loading layer [==================================================>]  12.37MB/12.37MB
+d82a7403c39a: Loading layer [==================================================>]  52.43MB/52.43MB
+Loaded image: goharbor/trivy-adapter-photon:v2.4.1
+03e449493f09: Loading layer [==================================================>]  5.275MB/5.275MB
+4f4a25c7cc0d: Loading layer [==================================================>]   64.5MB/64.5MB
+77a37df05436: Loading layer [==================================================>]  3.072kB/3.072kB
+47c58e48962d: Loading layer [==================================================>]  4.096kB/4.096kB
+5dd56c28f3fc: Loading layer [==================================================>]  65.29MB/65.29MB
+Loaded image: goharbor/chartmuseum-photon:v2.4.1
+8b7cbddd8918: Loading layer [==================================================>]  165.6MB/165.6MB
+b8157b6f7cb8: Loading layer [==================================================>]   57.6MB/57.6MB
+4a53b9a92b30: Loading layer [==================================================>]   2.56kB/2.56kB
+59184fc56c3c: Loading layer [==================================================>]  1.536kB/1.536kB
+99431fe2c10f: Loading layer [==================================================>]  12.29kB/12.29kB
+3735b7f4881f: Loading layer [==================================================>]   2.62MB/2.62MB
+bcff3633b236: Loading layer [==================================================>]  325.6kB/325.6kB
+Loaded image: goharbor/prepare:v2.4.1
+eb57d0945b2e: Loading layer [==================================================>]  7.192MB/7.192MB
+dd9069fd53a8: Loading layer [==================================================>]  7.355MB/7.355MB
+e779dab1d180: Loading layer [==================================================>]  1.754MB/1.754MB
+Loaded image: goharbor/harbor-portal:v2.4.1
+
+
+[Step 3]: preparing environment ...
+
+[Step 4]: preparing harbor configs ...
+prepare base dir is set to /root/harbor
+WARNING:root:WARNING: HTTP protocol is insecure. Harbor will deprecate http protocol in the future. Please make sure to upgrade to https
+Generated configuration file: /config/portal/nginx.conf
+Generated configuration file: /config/log/logrotate.conf
+Generated configuration file: /config/log/rsyslog_docker.conf
+Generated configuration file: /config/nginx/nginx.conf
+Generated configuration file: /config/core/env
+Generated configuration file: /config/core/app.conf
+Generated configuration file: /config/registry/config.yml
+Generated configuration file: /config/registryctl/env
+Generated configuration file: /config/registryctl/config.yml
+Generated configuration file: /config/db/env
+Generated configuration file: /config/jobservice/env
+Generated configuration file: /config/jobservice/config.yml
+Generated and saved secret to file: /data/secret/keys/secretkey
+Successfully called func: create_root_cert
+Generated configuration file: /compose_location/docker-compose.yml
+Clean up the input dir
+
+
+
+[Step 5]: starting Harbor ...
+Creating network "harbor_harbor" with the default driver
+Creating harbor-log ... done
+Creating harbor-portal ... done
+Creating harbor-db     ... done
+Creating redis         ... done
+Creating registry      ... done
+Creating registryctl   ... done
+Creating harbor-core   ... done
+Creating nginx             ... done
+Creating harbor-jobservice ... done
+✔ ----Harbor has been installed and started successfully.----
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor# vim harbor.yml# Configuration file of Harbor
+
+# The IP address or hostname to access admin UI and registry service.
+# DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
+hostname: 10.0.50.63
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+# https related config
+#https:
+  # https port for harbor, default is 443
+  #port: 443
+  # The path of cert and key files for nginx
+  #certificate: /your/certificate/path
+  #private_key: /your/private/key/path
+
+# # Uncomment following will enable tls communication between all harbor components
+# internal_tls:
+#   # set enabled to true means internal tls is enabled
+#   enabled: true
+#   # put your cert and key files on dir
+#   dir: /etc/harbor/tls/internal
+
+# Uncomment external_url if you want to enable external proxy
+# And when it enabled the hostname will no longer used
+# external_url: https://reg.mydomain.com:8433
+
+# The initial password of Harbor admin
+# It only works in first time to install harbor
+# Remember Change the admin password from UI after launching Harbor.
+harbor_admin_password: Harbor12345
+
+# Harbor DB configuration
+database:
+  # The password for the root user of Harbor DB. Change this before any production use.
+  password: root123
+  # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
+  max_idle_conns: 100
+  # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
+  # Note: the default number of connections is 1024 for postgres of harbor.
+  max_open_conns: 900
+
+# The default data volume
+data_volume: /data
+
+# Harbor Storage settings by default is using /data dir on local filesystem
+# Uncomment storage_service setting If you want to using external storage
+# storage_service:
+#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore
+#   # of registry's and chart repository's containers.  This is usually needed when the user hosts a internal storage with self signed certificate.
+#   ca_bundle:
+
+#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss
+#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/
+#   filesystem:
+#     maxthreads: 100
+#   # set disable to true when you want to disable registry redirect
+#   redirect:
+#     disabled: false
+
+# Trivy configuration
+#
+# Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.
+# It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached
+# in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it
+# should download a newer version from the Internet or use the cached one. Currently, the database is updated every
+# 12 hours and published as a new release to GitHub.
+trivy:
+  # ignoreUnfixed The flag to display only fixed vulnerabilities
+  ignore_unfixed: false
+  # skipUpdate The flag to enable or disable Trivy DB downloads from GitHub
+  #
+  # You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.
+  # If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and
+  # `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.
+  skip_update: false
+  #
+  # insecure The flag to skip verifying registry certificate
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor#
+root@vmware-063:~/harbor# docker login 10.0.50.63 -u admin
+Password:
+Error response from daemon: Get "https://10.0.50.63/v2/": dial tcp 10.0.50.63:443: connect: connection refused
+root@vmware-063:~/harbor#
+r

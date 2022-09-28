@@ -1,0 +1,826 @@
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs simapp-6cdc4fcd94-wl5cm
++ cd /simapp
++ cat config/simapp.yaml
+configuration:
+  device-groups:
+  - imsis:
+    - "208930100007487"
+    - "208930100007488"
+    - "208930100007489"
+    - "208930100007490"
+    - "208930100007491"
+    - "208930100007492"
+    - "208930100007493"
+    - "208930100007494"
+    - "208930100007495"
+    - "208930100007496"
+    - "208930100007497"
+    - "208930100007498"
+    - "208930100007499"
+    - "208930100007500"
+    - "208930100007501"
+    ip-domain-expanded:
+      dnn: internet
+      dns-primary: 8.8.8.8
+      mtu: 1460
+      ue-dnn-qos:
+        bitrate-unit: bps
+        dnn-mbr-downlink: 20000000
+        dnn-mbr-uplink: 4000000
+        traffic-class:
+          arp: 6
+          name: platinum
+          pdb: 300
+          pelr: 6
+          qci: 9
+      ue-ip-pool: 172.250.0.0/16
+    ip-domain-name: pool1
+    name: 5g-gnbsim-user
+    site-info: aiab
+  network-slices:
+  - application-filtering-rules:
+    - action: permit
+      endpoint: 0.0.0.0/0
+      priority: 250
+      rule-name: ALLOW-ALL
+    name: default
+    site-device-group:
+    - 5g-gnbsim-user
+    site-info:
+      gNodeBs:
+      - name: aiab-gnb1
+        tac: 1
+      plmn:
+        mcc: "208"
+        mnc: "93"
+      site-name: aiab
+      upf:
+        upf-name: upf
+        upf-port: 8805
+    slice-id:
+      sd: "010203"
+      sst: 1
+  provision-network-slice: false
+  sub-provision-endpt:
+    addr: webui
+    port: 5000
+  subscribers:
+  - key: 5122250214c33e723a5dd523fc145fc0
+    op: ""
+    opc: 981d464c7c52eb6e5036234984ad0bcf
+    plmnId: 20893
+    sequenceNumber: 16f3b3f70fc2
+    ueId-end: 208930100007501
+    ueId-start: 208930100007487
+info:
+  description: SIMAPP initial local configuration
+  http-version: 1
+  version: 1.0.0
+logger:
+  APP:
+    ReportCaller: false
+    debugLevel: info+ ./bin/simapp -simapp config/simapp.yaml
+2022/02/07 17:56:04 SimApp started
+2022/02/07 17:56:04 Function called  ./config/simapp.yaml
+2022/02/07 17:56:04 Subscriber Provision Endpoint:
+2022/02/07 17:56:04 Address  webui
+2022/02/07 17:56:04 Port  5000
+2022/02/07 17:56:04 Number of subscriber ranges 1
+2022/02/07 17:56:04 Subscribers:
+2022/02/07 17:56:04     UeIdStart 208930100007487
+2022/02/07 17:56:04     UeIdEnd 208930100007501
+2022/02/07 17:56:04     PlmnId 20893
+2022/02/07 17:56:04     OPc 981d464c7c52eb6e5036234984ad0bcf
+2022/02/07 17:56:04     OP
+2022/02/07 17:56:04     Key 5122250214c33e723a5dd523fc145fc0
+2022/02/07 17:56:04     SequenceNumber 16f3b3f70fc2
+2022/02/07 17:56:04     UeId 208930100007487
+2022/02/07 17:56:04     UeId 208930100007488
+2022/02/07 17:56:04     UeId 208930100007489
+2022/02/07 17:56:04     UeId 208930100007490
+2022/02/07 17:56:04     UeId 208930100007491
+2022/02/07 17:56:04     UeId 208930100007492
+2022/02/07 17:56:04     UeId 208930100007493
+2022/02/07 17:56:04     UeId 208930100007494
+2022/02/07 17:56:04     UeId 208930100007495
+2022/02/07 17:56:04     UeId 208930100007496
+2022/02/07 17:56:04     UeId 208930100007497
+2022/02/07 17:56:04     UeId 208930100007498
+2022/02/07 17:56:04     UeId 208930100007499
+2022/02/07 17:56:04     UeId 208930100007500
+2022/02/07 17:56:04     UeId 208930100007501
+2022/02/07 17:56:04 Number of device Groups  1
+2022/02/07 17:56:04 Group Name  5g-gnbsim-user
+2022/02/07 17:56:04   Site Name  aiab
+2022/02/07 17:56:04   Imsis  [208930100007487 208930100007488 208930100007489 208930100007490 208930100007491 208930100007492 208930100007493 208930100007494 208930100007495 208930100007496 208930100007497 208930100007498 208930100007499 208930100007500 208930100007501]
+2022/02/07 17:56:04   IMSI  208930100007487
+2022/02/07 17:56:04   IMSI  208930100007488
+2022/02/07 17:56:04   IMSI  208930100007489
+2022/02/07 17:56:04   IMSI  208930100007490
+2022/02/07 17:56:04   IMSI  208930100007491
+2022/02/07 17:56:04   IMSI  208930100007492
+2022/02/07 17:56:04   IMSI  208930100007493
+2022/02/07 17:56:04   IMSI  208930100007494
+2022/02/07 17:56:04   IMSI  208930100007495
+2022/02/07 17:56:04   IMSI  208930100007496
+2022/02/07 17:56:04   IMSI  208930100007497
+2022/02/07 17:56:04   IMSI  208930100007498
+2022/02/07 17:56:04   IMSI  208930100007499
+2022/02/07 17:56:04   IMSI  208930100007500
+2022/02/07 17:56:04   IMSI  208930100007501
+2022/02/07 17:56:04   IpDomainName  pool1
+2022/02/07 17:56:04   IpDomain Dnn  internet
+2022/02/07 17:56:04   IpDomain Dns Primary  8.8.8.8
+2022/02/07 17:56:04   IpDomain Mtu  1460
+2022/02/07 17:56:04   IpDomain UePool  172.250.0.0/16
+2022/02/07 17:56:04 Don't configure network slice
+2022/02/07 17:56:04 Number of network Slices  1
+2022/02/07 17:56:04   Slice Name :  default
+  Slice sst 1, sd 0102032022/02/07 17:56:04   Slice site info  &{aiab [0xc0003170c0] 0xc000317140 0xc0003171a0}
+2022/02/07 17:56:04   Slice site name  aiab
+2022/02/07 17:56:04   Slice gNB  1
+  Slice gNB[0] = &{aiab-gnb1 1}
+2022/02/07 17:56:04   Slice Plmn  &{208 93}
+2022/02/07 17:56:04   Slice Upf  &{upf 8805}
+2022/02/07 17:56:04   Slice Device Groups  [5g-gnbsim-user]
+2022/02/07 17:56:04   Attached Device Groups   5g-gnbsim-user
+2022/02/07 17:56:04 Don't configure network slice
+2022/02/07 17:56:04 WatchConfig done
+2022/02/07 17:56:04 Subscriber Provision Endpoint in sendMessage:
+2022/02/07 17:56:04 Address  webui
+2022/02/07 17:56:04 Port  5000
+2022/02/07 17:56:04 webui running at  webui
+2022/02/07 17:56:04 device trigger  http endpoint  http://webui:5000/config/v1/device-group/
+2022/02/07 17:56:04 network slice http endpoint  http://webui:5000/config/v1/device-group/
+2022/02/07 17:56:04 subscriber http endpoint  http://webui:5000/api/subscriber/imsi-
+2022/02/07 17:56:04 Received Message from Channel 0xc00030e720 Config msg name [208930100007487], type [subscriber], op [add_op]
+2022/02/07 17:56:04 Post Message [Config msg name [208930100007487], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007487
+2022/02/07 17:56:04 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 3 sec...
+2022/02/07 17:56:07 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 6 sec...
+2022/02/07 17:56:13 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 9 sec...
+2022/02/07 17:56:22 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 10 sec...
+2022/02/07 17:56:32 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 10 sec...
+2022/02/07 17:56:42 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp: lookup webui on 169.254.25.10:53: no such host], retrying after 10 sec...
+2022/02/07 17:56:53 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp 192.168.161.26:5000: connect: connection refused], retrying after 10 sec...
+2022/02/07 17:57:04 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp 192.168.161.26:5000: connect: connection refused], retrying after 10 sec...
+2022/02/07 17:57:15 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp 192.168.161.26:5000: connect: connection refused], retrying after 10 sec...
+2022/02/07 17:57:26 http req send error [Post "http://webui:5000/api/subscriber/imsi-208930100007487": dial tcp 192.168.161.26:5000: connect: connection refused], retrying after 10 sec...
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007488], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007488], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007488
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007489], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007489], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007489
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007490], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007490], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007490
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007491], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007491], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007491
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007492], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007492], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007492
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007493], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007493], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007493
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007494], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007494], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007494
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007495], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007495], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007495
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007496], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007496], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007496
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007497], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007497], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007497
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007498], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007498], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007498
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007499], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007499], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007499
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007500], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007500], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007500
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+2022/02/07 17:57:36 Received Message from Channel 0xc00030e720 Config msg name [208930100007501], type [subscriber], op [add_op]
+2022/02/07 17:57:36 Post Message [Config msg name [208930100007501], type [subscriber], op [add_op]] to http://webui:5000/api/subscriber/imsi-208930100007501
+2022/02/07 17:57:36 config push success
+Message POST 201 Success
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs simapp-6cdc
+
+^[[AError from server (NotFound): pods "simapp-6cdc" not found
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl -n omec get pods simapp-6cdc4fcd94-wl5cm
+NAME                      READY   STATUS    RESTARTS   AGE
+simapp-6cdc4fcd94-wl5cm   1/1     Running   0          3d2h
+root@vmware-062:/var/lib/kubelet# kubectl -n omec get pods simapp-6cdc4fcd94-wl5cm -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 6a8fb9d504f0270a61a0fc69660df488ae08ea5adac125beed4f93c46986a1eb
+    cni.projectcalico.org/podIP: 192.168.84.29/32
+    cni.projectcalico.org/podIPs: 192.168.84.29/32
+    field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "5"
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "cni0",
+          "ips": [
+              "192.168.84.29"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "cni0",
+          "ips": [
+              "192.168.84.29"
+          ],
+          "default": true,
+          "dns": {}
+      }]
+  creationTimestamp: "2022-02-07T17:55:34Z"
+  generateName: simapp-6cdc4fcd94-
+  labels:
+    app: simapp
+    pod-template-hash: 6cdc4fcd94
+    release: sim-app
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:field.cattle.io/workloadMetrics: {}
+          f:helm.sh/hook: {}
+          f:helm.sh/hook-weight: {}
+        f:generateName: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:pod-template-hash: {}
+          f:release: {}
+        f:ownerReferences:
+          .: {}
+          k:{"uid":"370967d9-b143-462c-8c69-3c6c5a355e85"}:
+            .: {}
+            f:apiVersion: {}
+            f:blockOwnerDeletion: {}
+            f:controller: {}
+            f:kind: {}
+            f:name: {}
+            f:uid: {}
+      f:spec:
+        f:containers:
+          k:{"name":"simapp"}:
+            .: {}
+            f:command: {}
+            f:env:
+              .: {}
+              k:{"name":"POD_IP"}:
+                .: {}
+                f:name: {}
+                f:valueFrom:
+                  .: {}
+                  f:fieldRef:
+                    .: {}
+                    f:apiVersion: {}
+                    f:fieldPath: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources: {}
+            f:stdin: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+            f:tty: {}
+            f:volumeMounts:
+              .: {}
+              k:{"mountPath":"/simapp/config"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+              k:{"mountPath":"/simapp/script/simapp-run.sh"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+                f:subPath: {}
+        f:dnsPolicy: {}
+        f:enableServiceLinks: {}
+        f:imagePullSecrets:
+          .: {}
+          k:{"name":"aether.registry"}:
+            .: {}
+            f:name: {}
+        f:initContainers:
+          .: {}
+          k:{"name":"wait-simapp-module2"}:
+            .: {}
+            f:command: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+        f:restartPolicy: {}
+        f:schedulerName: {}
+        f:securityContext: {}
+        f:serviceAccount: {}
+        f:serviceAccountName: {}
+        f:terminationGracePeriodSeconds: {}
+        f:volumes:
+          .: {}
+          k:{"name":"nf-config"}:
+            .: {}
+            f:configMap:
+              .: {}
+              f:defaultMode: {}
+              f:name: {}
+            f:name: {}
+          k:{"name":"run-script"}:
+            .: {}
+            f:configMap:
+              .: {}
+              f:defaultMode: {}
+              f:name: {}
+            f:name: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2022-02-07T17:55:34Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:conditions:
+          k:{"type":"AtomixReady"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+    manager: atomix-controller
+    operation: Update
+    time: "2022-02-07T17:55:35Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:cni.projectcalico.org/containerID: {}
+          f:cni.projectcalico.org/podIP: {}
+          f:cni.projectcalico.org/podIPs: {}
+    manager: calico
+    operation: Update
+    time: "2022-02-07T17:55:35Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:k8s.v1.cni.cncf.io/network-status: {}
+          f:k8s.v1.cni.cncf.io/networks-status: {}
+    manager: multus
+    operation: Update
+    time: "2022-02-07T17:55:35Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:conditions:
+          k:{"type":"ContainersReady"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Initialized"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Ready"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+        f:containerStatuses: {}
+        f:hostIP: {}
+        f:initContainerStatuses: {}
+        f:phase: {}
+        f:podIP: {}
+        f:podIPs:
+          .: {}
+          k:{"ip":"192.168.84.29"}:
+            .: {}
+            f:ip: {}
+        f:startTime: {}
+    manager: kubelet
+    operation: Update
+    time: "2022-02-07T17:56:04Z"
+  name: simapp-6cdc4fcd94-wl5cm
+  namespace: omec
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: simapp-6cdc4fcd94
+    uid: 370967d9-b143-462c-8c69-3c6c5a355e85
+  resourceVersion: "457567"
+  uid: b379f734-28bc-4434-a877-fe54307da896
+spec:
+  containers:
+  - command:
+    - /simapp/script/simapp-run.sh
+    env:
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    image: registry.aetherproject.org/omecproject/simapp:main-552bbec
+    imagePullPolicy: IfNotPresent
+    name: simapp
+    resources: {}
+    stdin: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    tty: true
+    volumeMounts:
+    - mountPath: /simapp/script/simapp-run.sh
+      name: run-script
+      subPath: simapp-run.sh
+    - mountPath: /simapp/config
+      name: nf-config
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: simapp-token-xvqsv
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  imagePullSecrets:
+  - name: aether.registry
+  initContainers:
+  - command:
+    - sh
+    - -c
+    - until nslookup simapp; do echo waiting for simapp; sleep 4; done;
+    image: docker.io/omecproject/pod-init:1.0.0
+    imagePullPolicy: IfNotPresent
+    name: wait-simapp-module2
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: simapp-token-xvqsv
+      readOnly: true
+  nodeName: node1
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: simapp
+  serviceAccountName: simapp
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - configMap:
+      defaultMode: 493
+      name: simapp
+    name: run-script
+  - configMap:
+      defaultMode: 493
+      name: simapp
+    name: nf-config
+  - name: simapp-token-xvqsv
+    secret:
+      defaultMode: 420
+      secretName: simapp-token-xvqsv
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:55:35Z"
+    status: "True"
+    type: AtomixReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:55:39Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:04Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:04Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:55:34Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://dae231c60969e491c56d8e5c26985ee8c7064d9325443e30d258bd3ba0cbf1db
+    image: registry.aetherproject.org/omecproject/simapp:main-552bbec
+    imageID: docker-pullable://registry.aetherproject.org/omecproject/simapp@sha256:684d05c54d43e380c9593cf85fc594bb6d2f6bf45d0fbf8bfa8ceeefed8b0024
+    lastState: {}
+    name: simapp
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:04Z"
+  hostIP: 10.0.50.62
+  initContainerStatuses:
+  - containerID: docker://190addac9e3ce7655031c0e3c8b12b2f0a731871be46cfdc86b4d8ca5f6dacdc
+    image: omecproject/pod-init:1.0.0
+    imageID: docker-pullable://omecproject/pod-init@sha256:16c14327ce4a191c4f1ced5c0c0cd835150c893a824cc21f80748b674d0308dc
+    lastState: {}
+    name: wait-simapp-module2
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: docker://190addac9e3ce7655031c0e3c8b12b2f0a731871be46cfdc86b4d8ca5f6dacdc
+        exitCode: 0
+        finishedAt: "2022-02-07T17:55:38Z"
+        reason: Completed
+        startedAt: "2022-02-07T17:55:38Z"
+  phase: Running
+  podIP: 192.168.84.29
+  podIPs:
+  - ip: 192.168.84.29
+  qosClass: BestEffort
+  startTime: "2022-02-07T17:55:34Z"
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl -n omec describe pods simapp-6cdc4fcd94-wl5cm
+Name:         simapp-6cdc4fcd94-wl5cm
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.62
+Start Time:   Mon, 07 Feb 2022 12:55:34 -0500
+Labels:       app=simapp
+              pod-template-hash=6cdc4fcd94
+              release=sim-app
+Annotations:  cni.projectcalico.org/containerID: 6a8fb9d504f0270a61a0fc69660df488ae08ea5adac125beed4f93c46986a1eb
+              cni.projectcalico.org/podIP: 192.168.84.29/32
+              cni.projectcalico.org/podIPs: 192.168.84.29/32
+              field.cattle.io/workloadMetrics: [{"path":"/metrics","port":9089,"schema":"HTTP"}]
+              helm.sh/hook: pre-install
+              helm.sh/hook-weight: 5
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.29"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.29"
+                    ],
+                    "default": true,
+                    "dns": {}
+                }]
+Status:       Running
+IP:           192.168.84.29
+IPs:
+  IP:           192.168.84.29
+Controlled By:  ReplicaSet/simapp-6cdc4fcd94
+Init Containers:
+  wait-simapp-module2:
+    Container ID:  docker://190addac9e3ce7655031c0e3c8b12b2f0a731871be46cfdc86b4d8ca5f6dacdc
+    Image:         docker.io/omecproject/pod-init:1.0.0
+    Image ID:      docker-pullable://omecproject/pod-init@sha256:16c14327ce4a191c4f1ced5c0c0cd835150c893a824cc21f80748b674d0308dc
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup simapp; do echo waiting for simapp; sleep 4; done;
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 07 Feb 2022 12:55:38 -0500
+      Finished:     Mon, 07 Feb 2022 12:55:38 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from simapp-token-xvqsv (ro)
+Containers:
+  simapp:
+    Container ID:  docker://dae231c60969e491c56d8e5c26985ee8c7064d9325443e30d258bd3ba0cbf1db
+    Image:         registry.aetherproject.org/omecproject/simapp:main-552bbec
+    Image ID:      docker-pullable://registry.aetherproject.org/omecproject/simapp@sha256:684d05c54d43e380c9593cf85fc594bb6d2f6bf45d0fbf8bfa8ceeefed8b0024
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /simapp/script/simapp-run.sh
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:04 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      POD_IP:   (v1:status.podIP)
+    Mounts:
+      /simapp/config from nf-config (rw)
+      /simapp/script/simapp-run.sh from run-script (rw,path="simapp-run.sh")
+      /var/run/secrets/kubernetes.io/serviceaccount from simapp-token-xvqsv (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  run-script:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      simapp
+    Optional:  false
+  nf-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      simapp
+    Optional:  false
+  simapp-token-xvqsv:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  simapp-token-xvqsv
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:          <none>
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl get configmap simapp -n omec -o yaml
+apiVersion: v1
+data:
+  simapp-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+    set -xe
+
+    cd /simapp
+    cat config/simapp.yaml
+
+    ./bin/simapp -simapp config/simapp.yaml
+  simapp.yaml: |-
+    configuration:
+      device-groups:
+      - imsis:
+        - "208930100007487"
+        - "208930100007488"
+        - "208930100007489"
+        - "208930100007490"
+        - "208930100007491"
+        - "208930100007492"
+        - "208930100007493"
+        - "208930100007494"
+        - "208930100007495"
+        - "208930100007496"
+        - "208930100007497"
+        - "208930100007498"
+        - "208930100007499"
+        - "208930100007500"
+        - "208930100007501"
+        ip-domain-expanded:
+          dnn: internet
+          dns-primary: 8.8.8.8
+          mtu: 1460
+          ue-dnn-qos:
+            bitrate-unit: bps
+            dnn-mbr-downlink: 20000000
+            dnn-mbr-uplink: 4000000
+            traffic-class:
+              arp: 6
+              name: platinum
+              pdb: 300
+              pelr: 6
+              qci: 9
+          ue-ip-pool: 172.250.0.0/16
+        ip-domain-name: pool1
+        name: 5g-gnbsim-user
+        site-info: aiab
+      network-slices:
+      - application-filtering-rules:
+        - action: permit
+          endpoint: 0.0.0.0/0
+          priority: 250
+          rule-name: ALLOW-ALL
+        name: default
+        site-device-group:
+        - 5g-gnbsim-user
+        site-info:
+          gNodeBs:
+          - name: aiab-gnb1
+            tac: 1
+          plmn:
+            mcc: "208"
+            mnc: "93"
+          site-name: aiab
+          upf:
+            upf-name: upf
+            upf-port: 8805
+        slice-id:
+          sd: "010203"
+          sst: 1
+      provision-network-slice: false
+      sub-provision-endpt:
+        addr: webui
+        port: 5000
+      subscribers:
+      - key: 5122250214c33e723a5dd523fc145fc0
+        op: ""
+        opc: 981d464c7c52eb6e5036234984ad0bcf
+        plmnId: 20893
+        sequenceNumber: 16f3b3f70fc2
+        ueId-end: 208930100007501
+        ueId-start: 208930100007487
+    info:
+      description: SIMAPP initial local configuration
+      http-version: 1
+      version: 1.0.0
+    logger:
+      APP:
+        ReportCaller: false
+        debugLevel: info
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: sim-app
+    meta.helm.sh/release-namespace: omec
+  creationTimestamp: "2022-02-07T17:55:34Z"
+  labels:
+    app: simapp
+    app.kubernetes.io/managed-by: Helm
+    release: sim-app
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:simapp-run.sh: {}
+        f:simapp.yaml: {}
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:meta.helm.sh/release-name: {}
+          f:meta.helm.sh/release-namespace: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:app.kubernetes.io/managed-by: {}
+          f:release: {}
+    manager: helm
+    operation: Update
+    time: "2022-02-07T17:55:34Z"
+  name: simapp
+  namespace: omec
+  resourceVersion: "457469"
+  uid: d3b34fd1-aa06-4242-af82-1aaaef9fb6f4
+

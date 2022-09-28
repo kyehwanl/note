@@ -1,0 +1,813 @@
+---
+# Source: oaisim/templates/statefulset-enb.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: enb
+  namespace: omec
+  labels:
+    release: oaisim
+    app: enb
+---
+# Source: oaisim/templates/statefulset-ue.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ue
+  namespace: omec
+  labels:
+    release: oaisim
+    app: ue
+---
+# Source: oaisim/templates/configmap-enb.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: enb
+  labels:
+    release: oaisim
+    app: enb
+data:
+  nfapi.conf: |
+    Active_eNBs = ("eNB-OAISIM-LTEBox");
+    Asn1_verbosity = "none";
+
+    eNBs = (
+      {
+        ////////// Identification parameters:
+        eNB_ID    =  0xe00;
+        cell_type =  "CELL_MACRO_ENB";
+        eNB_name  =  "eNB-OAISIM-LTEBox";
+
+        ////////// Tracking area code, 0x0000 and 0xfffe are reserved values:
+        tracking_area_code = 1;
+        plmn_list = (
+          {
+            mcc = 208;
+            mnc = 01;
+            mnc_length = 2;
+          }
+        );
+        tr_s_preference     = "local_mac"
+
+        ////////// Physical parameters:
+        component_carriers = (
+          {
+            node_function                                                   = "3GPP_eNODEB";
+            node_timing                                                     = "synch_to_ext_device";
+            node_synch_ref                                                  = 0;
+            frame_type                                                      = "FDD";
+            tdd_config                                                      = 3;
+            tdd_config_s                                                    = 0;
+            prefix_type                                                     = "NORMAL";
+            eutra_band                                                      = 7;
+            downlink_frequency                                              = 2685000000L;
+            uplink_frequency_offset                                         = -120000000;
+            Nid_cell                                                        = 0;
+            N_RB_DL                                                         = 50;
+            Nid_cell_mbsfn                                                  = 0;
+            nb_antenna_ports                                                = 1;
+            nb_antennas_tx                                                  = 1;
+            nb_antennas_rx                                                  = 1;
+            tx_gain                                                         = 90;
+            rx_gain                                                         = 125;
+            pbch_repetition                                                 = "FALSE";
+            prach_root                                                      = 0;
+            prach_config_index                                              = 0;
+            prach_high_speed                                                = "DISABLE";
+            prach_zero_correlation                                          = 1;
+            prach_freq_offset                                               = 2;
+            pucch_delta_shift                                               = 1;
+            pucch_nRB_CQI                                                   = 0;
+            pucch_nCS_AN                                                    = 0;
+            pucch_n1_AN                                                     = 0;
+            pdsch_referenceSignalPower                                      = -27;
+            pdsch_p_b                                                       = 0;
+            pusch_n_SB                                                      = 1;
+            pusch_enable64QAM                                               = "DISABLE";
+            pusch_hoppingMode                                               = "interSubFrame";
+            pusch_hoppingOffset                                             = 0;
+            pusch_groupHoppingEnabled                                       = "ENABLE";
+            pusch_groupAssignment                                           = 0;
+            pusch_sequenceHoppingEnabled                                    = "DISABLE";
+            pusch_nDMRS1                                                    = 1;
+            phich_duration                                                  = "NORMAL";
+            phich_resource                                                  = "ONESIXTH";
+            srs_enable                                                      = "DISABLE";
+
+            pusch_p0_Nominal                                                = -96;
+            pusch_alpha                                                     = "AL1";
+            pucch_p0_Nominal                                                = -104;
+            msg3_delta_Preamble                                             = 6;
+            pucch_deltaF_Format1                                            = "deltaF2";
+            pucch_deltaF_Format1b                                           = "deltaF3";
+            pucch_deltaF_Format2                                            = "deltaF0";
+            pucch_deltaF_Format2a                                           = "deltaF0";
+            pucch_deltaF_Format2b                                           = "deltaF0";
+
+            rach_numberOfRA_Preambles                                       = 64;
+            rach_preamblesGroupAConfig                                      = "DISABLE";
+            rach_powerRampingStep                                           = 4;
+            rach_preambleInitialReceivedTargetPower                         = -108;
+            rach_preambleTransMax                                           = 10;
+            rach_raResponseWindowSize                                       = 10;
+            rach_macContentionResolutionTimer                               = 48;
+            rach_maxHARQ_Msg3Tx                                             = 4;
+
+            pcch_default_PagingCycle                                        = 128;
+            pcch_nB                                                         = "oneT";
+            bcch_modificationPeriodCoeff                                    = 2;
+            ue_TimersAndConstants_t300                                      = 1000;
+            ue_TimersAndConstants_t301                                      = 1000;
+            ue_TimersAndConstants_t310                                      = 1000;
+            ue_TimersAndConstants_t311                                      = 10000;
+            ue_TimersAndConstants_n310                                      = 20;
+            ue_TimersAndConstants_n311                                      = 1;
+            ue_TransmissionMode                                             = 1;
+
+            //Parameters for SIB18
+            rxPool_sc_CP_Len                                                = "normal";
+            rxPool_sc_Period                                                = "sf40";
+            rxPool_data_CP_Len                                              = "normal";
+            rxPool_ResourceConfig_prb_Num                                   = 20;
+            rxPool_ResourceConfig_prb_Start                                 = 5;
+            rxPool_ResourceConfig_prb_End                                   = 44;
+            rxPool_ResourceConfig_offsetIndicator_present                   = "prSmall";
+            rxPool_ResourceConfig_offsetIndicator_choice                    = 0;
+            rxPool_ResourceConfig_subframeBitmap_present                    = "prBs40";
+            rxPool_ResourceConfig_subframeBitmap_choice_bs_buf              = "00000000000000000000";
+            rxPool_ResourceConfig_subframeBitmap_choice_bs_size             = 5;
+            rxPool_ResourceConfig_subframeBitmap_choice_bs_bits_unused      = 0;
+
+            // Parameters for SIB19
+            discRxPool_cp_Len                                               = "normal"
+            discRxPool_discPeriod                                           = "rf32"
+            discRxPool_numRetx                                              = 1;
+            discRxPool_numRepetition                                        = 2;
+            discRxPool_ResourceConfig_prb_Num                               = 5;
+            discRxPool_ResourceConfig_prb_Start                             = 3;
+            discRxPool_ResourceConfig_prb_End                               = 21;
+            discRxPool_ResourceConfig_offsetIndicator_present               = "prSmall";
+            discRxPool_ResourceConfig_offsetIndicator_choice                = 0;
+            discRxPool_ResourceConfig_subframeBitmap_present                = "prBs40";
+            discRxPool_ResourceConfig_subframeBitmap_choice_bs_buf          = "f0ffffffff";
+            discRxPool_ResourceConfig_subframeBitmap_choice_bs_size         = 5;
+            discRxPool_ResourceConfig_subframeBitmap_choice_bs_bits_unused  = 0;
+          }
+        );
+
+        srb1_parameters :
+        {
+          # timer_poll_retransmit = (ms) [5, 10, 15, 20,... 250, 300, 350, ... 500]
+          timer_poll_retransmit    = 80;
+
+          # timer_reordering = (ms) [0,5, ... 100, 110, 120, ... ,200]
+          timer_reordering         = 35;
+
+          # timer_reordering = (ms) [0,5, ... 250, 300, 350, ... ,500]
+          timer_status_prohibit    = 0;
+
+          # poll_pdu = [4, 8, 16, 32 , 64, 128, 256, infinity(>10000)]
+          poll_pdu                 =  4;
+
+          # poll_byte = (kB) [25,50,75,100,125,250,375,500,750,1000,1250,1500,2000,3000,infinity(>10000)]
+          poll_byte                =  99999;
+
+          # max_retx_threshold = [1, 2, 3, 4 , 6, 8, 16, 32]
+          max_retx_threshold       =  4;
+        }
+
+        # ------- SCTP definitions
+        SCTP :
+        {
+          # Number of streams to use in input/output
+          SCTP_INSTREAMS  = 2;
+          SCTP_OUTSTREAMS = 2;
+        };
+
+        ////////// MME parameters:
+        mme_ip_address = (
+          {
+            ipv4       = "192.168.251.3";
+            ipv6       = "192:168:30::17";
+            active     = "yes";
+            preference = "ipv4";
+          }
+       );
+
+        NETWORK_INTERFACES :
+        {
+          ENB_INTERFACE_NAME_FOR_S1_MME            = "enb";
+          ENB_IPV4_ADDRESS_FOR_S1_MME              = S1_MME_IP_ADDRESS;
+          ENB_INTERFACE_NAME_FOR_S1U               = "enb";
+          ENB_IPV4_ADDRESS_FOR_S1U                 = S1U_IP_ADDRESS;
+          ENB_PORT_FOR_S1U                         = 2152; # Spec 2152
+          ENB_IPV4_ADDRESS_FOR_X2C                 = X2C_IP_ADDRESS;
+          ENB_PORT_FOR_X2C                         = 36422; # Spec 36422
+        };
+      }
+    );
+
+    MACRLCs = (
+      {
+        num_cc = 1;
+        local_s_if_name  = "lo:";
+        remote_s_address = "127.0.0.1";
+        local_s_address  = "127.0.0.2";
+        local_s_portc    = 50001;
+        remote_s_portc   = 50000;
+        local_s_portd    = 50011;
+        remote_s_portd   = 50010;
+        tr_s_preference  = "nfapi";
+        tr_n_preference  = "local_RRC";
+      }
+    );
+
+    THREAD_STRUCT = (
+      {
+        #three config for level of parallelism "PARALLEL_SINGLE_THREAD", "PARALLEL_RU_L1_SPLIT", or "PARALLEL_RU_L1_TRX_SPLIT"
+        parallel_config    = "PARALLEL_RU_L1_TRX_SPLIT";
+        #two option for worker "WORKER_DISABLE" or "WORKER_ENABLE"
+        worker_config      = "WORKER_ENABLE";
+      }
+    );
+
+    log_config =
+      {
+        global_log_level                      ="info";
+        global_log_verbosity                  ="medium";
+        hw_log_level                          ="info";
+        hw_log_verbosity                      ="medium";
+        phy_log_level                         ="info";
+        phy_log_verbosity                     ="medium";
+        mac_log_level                         ="info";
+        mac_log_verbosity                     ="high";
+        rlc_log_level                         ="info";
+        rlc_log_verbosity                     ="medium";
+        pdcp_log_level                        ="info";
+        pdcp_log_verbosity                    ="medium";
+        rrc_log_level                         ="info";
+        rrc_log_verbosity                     ="medium";
+     };
+  enb-init.sh: |
+    #!/bin/bash
+    #
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    
+    set -ex
+    
+    cp /opt/oaisim/enb/config/nfapi.conf /etc/oaisim/enb/nfapi.conf
+    
+    S1_MME_IFACE=enb
+    S1_MME_IP=$(ip addr show $S1_MME_IFACE | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1)
+    sed -i "s/S1_MME_IP_ADDRESS/\"$S1_MME_IP\"/g" /etc/oaisim/enb/nfapi.conf
+    
+    S1U_IFACE=enb
+    S1U_IP=$(ip addr show $S1U_IFACE | grep inet | grep -v inet6 | awk '{print $2}' | cut -d'/' -f1)
+    sed -i "s/S1U_IP_ADDRESS/\"$S1U_IP\"/g" /etc/oaisim/enb/nfapi.conf
+    sed -i "s/X2C_IP_ADDRESS/\"$ENB_LOCAL_IP\"/g" /etc/oaisim/enb/nfapi.conf
+    
+  enb-run.sh: |
+    #!/bin/bash
+    #
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    
+    set -ex
+    COMMAND="${@:-start}"
+    
+    function start () {
+      cd /openairinterface5g/cmake_targets
+    
+      cat /etc/oaisim/enb/nfapi.conf
+      exec ./lte_build_oai/build/lte-softmodem -O /etc/oaisim/enb/nfapi.conf
+    }
+    
+    function stop () {
+      kill -TERM 1
+    }
+    
+    $COMMAND
+---
+# Source: oaisim/templates/configmap-ue.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ue
+  labels:
+    release: oaisim
+    app: ue
+data:
+  ue_comac_test.conf: |
+    PLMN: {
+      PLMN0: {
+             FULLNAME="COMAC Test Network";
+             SHORTNAME="COMAC";
+             MCC="208";
+             MNC="01";
+      };
+    };
+    UE0: {
+      USER: {
+            IMEI="356113022094149";
+            MANUFACTURER="OAISIM";
+            MODEL="OAISIM";
+            PIN="0000";
+      };
+      SIM: {
+           MSIN="0167891201";
+           USIM_API_K="465b5ce8b199b49faa5f0a2ee238a6bc";
+           OPC="d4416644f6154936193433dd20a0ace0";
+           MSISDN="1122334456";
+      };
+      HPLMN= "20801";
+      UCPLMN_LIST = ();
+      OPLMN_LIST = ("20801");
+      OCPLMN_LIST = ();
+      FPLMN_LIST = ();
+      EHPLMN_LIST= ();
+    };
+  nfapi.conf: |
+    log_config = {
+      global_log_level                      ="info";
+      global_log_verbosity                  ="medium";
+      hw_log_level                          ="info";
+      hw_log_verbosity                      ="medium";
+      phy_log_level                         ="info";
+      phy_log_verbosity                     ="medium";
+      mac_log_level                         ="info";
+      mac_log_verbosity                     ="medium";
+      rlc_log_level                         ="info";
+      rlc_log_verbosity                     ="medium";
+      pdcp_log_level                        ="info";
+      pdcp_log_verbosity                    ="medium";
+      rrc_log_level                         ="info";
+      rrc_log_verbosity                     ="full";
+    };
+
+    L1s = (
+      {
+        num_cc = 1;
+        tr_n_preference = "nfapi";
+        local_n_if_name  = "lo";
+        remote_n_address = "127.0.0.2";
+        local_n_address  = "127.0.0.1";
+        local_n_portc    = 50000;
+        remote_n_portc   = 50001;
+        local_n_portd    = 50010;
+        remote_n_portd   = 50011;
+      }
+    );
+
+    RUs = (
+      {
+        local_rf       = "yes"
+        nb_tx          = 1
+        nb_rx          = 1
+        att_tx         = 90
+        att_rx         = 0;
+        bands          = [7,38,42,43];
+        max_pdschReferenceSignalPower = -27;
+        max_rxgain                    = 125;
+      }
+    );
+  ue-gen-usim.sh: |
+    #!/bin/bash
+    #
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    
+    set -ex
+    
+    # Generate USIM data
+    conf_nvram_path=/opt/oaisim/ue/config/ue_comac_test.conf
+    gen_nvram_path=/etc/oaisim/ue
+    
+    cd /openairinterface5g/cmake_targets
+    ./nvram --gen -c $conf_nvram_path -o $gen_nvram_path
+    ./usim --gen -c $conf_nvram_path -o $gen_nvram_path
+    
+  ue-init.sh: |
+    #!/bin/bash
+    #
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    
+    set -ex
+    
+    LTE_IF=oip1
+    
+    ip link set $LTE_IF up
+    if ! grep -q lte /etc/iproute2/rt_tables; then
+      echo "200 lte " >> /etc/iproute2/rt_tables
+    fi
+    
+    ip rule add fwmark 1 table lte
+    ip route add default dev $LTE_IF table lte || true
+    
+    # enable inet6 for lo interface
+    # lte-uesoftmodem uses AF_INET6 for UDP socket
+    echo 0 > /proc/sys/net/ipv6/conf/lo/disable_ipv6
+    
+  ue-run.sh: |
+    #!/bin/bash
+    #
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    # http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    
+    set -ex
+    
+    COMMAND="${@:-start}"
+    
+    function start () {
+      cd /openairinterface5g/cmake_targets
+      cp /opt/oaisim/ue/config/nfapi.conf /etc/oaisim/ue/nfapi.conf
+    
+      # Copy USIM data
+      cp /etc/oaisim/ue/.u* .
+      cp /etc/oaisim/ue/.u* ./lte_build_oai/build/
+    
+      exec ./lte_build_oai/build/lte-uesoftmodem -O /etc/oaisim/ue/nfapi.conf --L2-emul 3 --num-ues 1 --nums_ue_thread 1
+    }
+    
+    function stop () {
+      # TODO: clean up ip tables and rules
+      kill -TERM 1
+    }
+    
+    $COMMAND
+---
+# Source: oaisim/templates/statefulset-enb.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: enb
+  namespace: omec
+  labels:
+    release: oaisim
+    app: enb
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - statefulsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: oaisim/templates/statefulset-ue.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ue
+  namespace: omec
+  labels:
+    release: oaisim
+    app: ue
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+    resources:
+      - statefulsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: oaisim/templates/statefulset-enb.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: enb
+  namespace: omec
+  labels:
+    release: oaisim
+    app: enb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: enb
+subjects:
+  - kind: ServiceAccount
+    name: enb
+    namespace: omec
+---
+# Source: oaisim/templates/statefulset-ue.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ue
+  namespace: omec
+  labels:
+    release: oaisim
+    app: ue
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ue
+subjects:
+  - kind: ServiceAccount
+    name: ue
+    namespace: omec
+---
+# Source: oaisim/templates/statefulset-enb.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: enb
+  labels:
+    release: oaisim
+    app: enb
+spec:
+  replicas: 1
+  serviceName: oaisim-enb
+  selector:
+    matchLabels:
+      release: oaisim
+      app: enb
+  template:
+    metadata:
+      labels:
+        release: oaisim
+        app: enb
+    spec:
+      serviceAccountName: enb
+      hostNetwork: true
+      initContainers:
+        - name: enb-dep-check
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: COMMAND
+              value: "echo done"
+            - name: DEPENDENCY_POD_JSON
+              value: '[{"labels": {"app": "mme"}, "requireSameNode": false}]'
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            []
+        - name: enb-init
+          image: "omecproject/lte-softmodem:1.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          command:
+            - /opt/oaisim/enb/scripts/enb-init.sh
+          env:
+            - name: ENB_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: script
+              mountPath: /opt/oaisim/enb/scripts/enb-init.sh
+              subPath: enb-init.sh
+            - name: config
+              mountPath: /opt/oaisim/enb/config
+            - name: pod-share
+              mountPath: /etc/oaisim/enb
+      containers:
+        - name: enb
+          image: "omecproject/lte-softmodem:1.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          command:
+            - /opt/oaisim/enb/scripts/enb-run.sh
+            - start
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /opt/oaisim/enb/scripts/enb-run.sh
+                  - stop
+          env:
+            - name: ENB_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: script
+              mountPath: /opt/oaisim/enb/scripts/enb-run.sh
+              subPath: enb-run.sh
+            - name: pod-share
+              mountPath: /etc/oaisim/enb
+      volumes:
+        - name: config
+          configMap:
+            name: enb
+            defaultMode: 420
+        - name: script
+          configMap:
+            name: enb
+            defaultMode: 493
+        - name: pod-share
+          emptyDir: {}
+---
+# Source: oaisim/templates/statefulset-ue.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ue
+  labels:
+    release: oaisim
+    app: ue
+spec:
+  replicas: 1
+  serviceName: oaisim-ue
+  selector:
+    matchLabels:
+      release: oaisim
+      app: ue
+  template:
+    metadata:
+      labels:
+        release: oaisim
+        app: ue
+    spec:
+      serviceAccountName: ue
+      hostNetwork: true
+      initContainers:
+        - name: ue-dep-check
+          image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: COMMAND
+              value: "echo done"
+            - name: DEPENDENCY_POD_JSON
+              value: '[{"labels": {"app": "enb"}, "requireSameNode": true}]'
+            - name: DEPENDENCY_JOBS
+              value: ue-setup-if
+          command:
+            - kubernetes-entrypoint
+          volumeMounts:
+            []
+        - name: ue-gen-usim
+          image: "omecproject/lte-uesoftmodem:1.1.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /opt/oaisim/ue/scripts/ue-gen-usim.sh
+          volumeMounts:
+            - name: script
+              mountPath: /opt/oaisim/ue/scripts/ue-gen-usim.sh
+              subPath: ue-gen-usim.sh
+            - name: config
+              mountPath: /opt/oaisim/ue/config
+            - name: pod-share
+              mountPath: /etc/oaisim/ue
+        - name: ue-init
+          image: "omecproject/lte-uesoftmodem:1.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          command:
+            - /opt/oaisim/ue/scripts/ue-init.sh
+          volumeMounts:
+            - name: script
+              mountPath: /opt/oaisim/ue/scripts/ue-init.sh
+              subPath: ue-init.sh
+      containers:
+        - name: ue
+          image: "omecproject/lte-uesoftmodem:1.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          command:
+            - /opt/oaisim/ue/scripts/ue-run.sh
+            - start
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /opt/oaisim/enb/scripts/ue-run.sh
+                  - stop
+          env:
+            - name: UE_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: script
+              mountPath: /opt/oaisim/ue/scripts/ue-run.sh
+              subPath: ue-run.sh
+            - name: config
+              mountPath: /opt/oaisim/ue/config
+            - name: pod-share
+              mountPath: /etc/oaisim/ue
+      volumes:
+        - name: config
+          configMap:
+            name: ue
+            defaultMode: 420
+        - name: script
+          configMap:
+            name: ue
+            defaultMode: 493
+        - name: pod-share
+          emptyDir: {}
+

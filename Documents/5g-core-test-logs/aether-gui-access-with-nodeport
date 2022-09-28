@@ -1,0 +1,68 @@
+
+
+How to Access GUI dash board with Node port service
+===================================================
+
+1. services of gui with nodePort
+
+    (1) service
+    root@vmware-062:~# kubectl get svc -A
+    NAMESPACE          NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                     AGE
+    aether-roc         aether-mock-exporter                      ClusterIP   192.168.85.238   <none>        2112/TCP,8081/TCP                                                                           45d
+    aether-roc         aether-roc-api                            ClusterIP   192.168.85.98    <none>        8181/TCP                                                                                    45d
+    aether-roc         aether-roc-gui-v2-1                       NodePort    192.168.85.229   <none>        80:17085/TCP                                                                                45d
+    aether-roc         aether-roc-gui-v2-1-external              NodePort    192.168.85.137   <none>        80:31194/TCP                                                                                45d
+    ...
+
+
+    (2) End points: 192.168.84.14:80 <-- connection with actual IP address to external entities
+        IP address of this service: 192.168.85.137 <-- for internal pods 
+
+    root@vmware-062:~# kubectl describe svc -n aether-roc aether-roc-gui-v2-1-external 
+    Name:                     aether-roc-gui-v2-1-external
+    Namespace:                aether-roc
+    Labels:                   app=aether-roc-gui-v2-1
+                              app.kubernetes.io/instance=aether-roc-umbrella
+                              app.kubernetes.io/managed-by=Helm
+                              app.kubernetes.io/name=aether-roc-gui-v2-1
+                              app.kubernetes.io/version=2.0.0
+                              chart=aether-roc-gui-v2-1-2.1.15
+                              helm.sh/chart=aether-roc-gui-v2-1-2.1.15
+                              heritage=Helm
+                              release=aether-roc-umbrella
+    Annotations:              meta.helm.sh/release-name: aether-roc-umbrella
+                              meta.helm.sh/release-namespace: aether-roc
+    Selector:                 app.kubernetes.io/instance=aether-roc-umbrella,app.kubernetes.io/name=aether-roc-gui-v2-1,app=aether,name=aether-roc-gui-v2-1,resource=aether-roc-gui-v2-1,type=arg
+    Type:                     NodePort
+    IP Family Policy:         SingleStack
+    IP Families:              IPv4
+    IP:                       192.168.85.137
+    IPs:                      192.168.85.137
+    Port:                     web  80/TCP
+    TargetPort:               80/TCP
+    NodePort:                 web  31194/TCP
+    Endpoints:                192.168.84.14:80
+    Session Affinity:         None
+    External Traffic Policy:  Cluster
+    Events:                   <none>
+
+
+    (3) show Nodes
+    root@vmware-062:~# kubectl get node -o wide
+    NAME         STATUS   ROLES                       AGE   VERSION          INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION       CONTAINER-RUNTIME
+    vmware-062   Ready    control-plane,etcd,master   45d   v1.23.4+rke2r1   10.0.50.62    <none>        Ubuntu 18.04.6 LTS   4.15.0-189-generic   containerd://1.5.9-k3s1
+
+
+2. Access GUI -- all work
+
+(1) Cluster IP: port
+     http://192.168.85.137:80
+
+(2) End points 
+    http://192.168.84.14:80
+
+(3) Node Port (aether-roc-gui-v2-1-external)
+    http://10.0.50.62:31194
+
+(3) Node Port (aether-roc-gui-v2-1)
+    http://10.0.50.62:17085

@@ -1,0 +1,1200 @@
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec describe pod upf-0
+Name:         upf-0
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.62
+Start Time:   Mon, 07 Feb 2022 12:56:08 -0500
+Labels:       app=upf
+              controller-revision-hash=upf-56c6cf7b4b
+              release=5g-core-up
+              statefulset.kubernetes.io/pod-name=upf-0
+Annotations:  cni.projectcalico.org/containerID: 63ee5a5d4002e766744ecef44804ad69209e4af6a7c1fa44d8b01bd140ebde56
+              cni.projectcalico.org/podIP: 192.168.84.30/32
+              cni.projectcalico.org/podIPs: 192.168.84.30/32
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.30"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/access-net",
+                    "dns": {}
+                },{
+                    "name": "omec/core-net",
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks:
+                [ { "name": "access-net", "interface": "access", "ips": ["192.168.252.3/24"] }, { "name": "core-net", "interface": "core", "ips": ["192.16...
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.30"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/access-net",
+                    "dns": {}
+                },{
+                    "name": "omec/core-net",
+                    "dns": {}
+                }]
+Status:       Running
+IP:           192.168.84.30
+IPs:
+  IP:           192.168.84.30
+Controlled By:  StatefulSet/upf
+Init Containers:
+  bess-init:
+    Container ID:  docker://6eef258ba3f03040fdbd245a01ef077a37d53c24f955c7299149e51b1e7939bd
+    Image:         registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    Image ID:      docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -xec
+    Args:
+      ip route replace 192.168.251.0/24 via 192.168.252.1; ip route replace default via 192.168.250.1 metric 110; iptables -I OUTPUT -p icmp --icmp-type port-unreachable -j DROP;
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 07 Feb 2022 12:56:25 -0500
+      Finished:     Mon, 07 Feb 2022 12:56:25 -0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     128m
+      memory:  64Mi
+    Requests:
+      cpu:        128m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+Containers:
+  bessd:
+    Container ID:  docker://2c7ab25a6b87bf952e86768492717655d7497d229db51fbd63868df5ac60d784
+    Image:         registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    Image ID:      docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/bash
+      -xc
+    Args:
+      bessd -m 0 -f -grpc-url=0.0.0.0:10514
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:26 -0500
+    Ready:          True
+    Restart Count:  0
+    Liveness:       tcp-socket :10514 delay=15s timeout=1s period=20s #success=1 #failure=3
+    Environment:
+      CONF_FILE:  /etc/bess/conf/upf.json
+    Mounts:
+      /etc/bess/conf from configs (rw)
+      /pod-share from shared-app (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+  routectl:
+    Container ID:  docker://52e3b7525ad414909538faec31c997c226d6b2f5dfc9446b2d7af6281ef2f05e
+    Image:         registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    Image ID:      docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /opt/bess/bessctl/conf/route_control.py
+    Args:
+      -i
+      access
+      core
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:31 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      PYTHONUNBUFFERED:  1
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+  web:
+    Container ID:  docker://3dd9a37ca1611309b56ec24a455249cdd1585e4600ac77d3c82da249d3161cb0
+    Image:         registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    Image ID:      docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/bash
+      -xc
+      bessctl http 0.0.0.0 8000
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:31 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+  pfcp-agent:
+    Container ID:  docker://362e961c3439de5ffbb58d59e0f07082eab8d51b00cb1076728da1b4f752dcd7
+    Image:         registry.aetherproject.org/proxy/omecproject/upf-epc-pfcpiface:master-103b198
+    Image ID:      docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-pfcpiface@sha256:02e119046823b53427fcde2047e1c53fad997c859d7b46d075c84d84b5a289f8
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      pfcpiface
+    Args:
+      -config
+      /tmp/conf/upf.json
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:34 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /pod-share from shared-app (rw)
+      /tmp/conf from configs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+  arping:
+    Container ID:  docker://c8a49208216f8e167be47b634659612568d73ac4a1037830df31b433b193b5b9
+    Image:         registry.aetherproject.org/tools/busybox:stable
+    Image ID:      docker-pullable://registry.aetherproject.org/tools/busybox@sha256:b862520da7361ea093806d292ce355188ae83f21e8e3b2a3ce4dbdba0a230f83
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -xc
+    Args:
+      while true; do
+        # arping does not work - BESS graph is still disconnected
+        #arping -c 2 -I access 192.168.252.1
+        #arping -c 2 -I core 192.168.250.1
+        ping -c 2 192.168.252.1
+        ping -c 2 192.168.250.1
+        sleep 10
+      done
+
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:56:36 -0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     128m
+      memory:  64Mi
+    Requests:
+      cpu:        128m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bk5fr (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  configs:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      upf
+    Optional:  false
+  shared-app:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  default-token-bk5fr:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-bk5fr
+    Optional:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:          <none>
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec get pods upf-0 -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 63ee5a5d4002e766744ecef44804ad69209e4af6a7c1fa44d8b01bd140ebde56
+    cni.projectcalico.org/podIP: 192.168.84.30/32
+    cni.projectcalico.org/podIPs: 192.168.84.30/32
+    k8s.v1.cni.cncf.io/network-status: |-
+      [{
+          "name": "cni0",
+          "ips": [
+              "192.168.84.30"
+          ],
+          "default": true,
+          "dns": {}
+      },{
+          "name": "omec/access-net",
+          "dns": {}
+      },{
+          "name": "omec/core-net",
+          "dns": {}
+      }]
+    k8s.v1.cni.cncf.io/networks: '[ { "name": "access-net", "interface": "access",
+      "ips": ["192.168.252.3/24"] }, { "name": "core-net", "interface": "core", "ips":
+      ["192.168.250.3/24"] } ]'
+    k8s.v1.cni.cncf.io/networks-status: |-
+      [{
+          "name": "cni0",
+          "ips": [
+              "192.168.84.30"
+          ],
+          "default": true,
+          "dns": {}
+      },{
+          "name": "omec/access-net",
+          "dns": {}
+      },{
+          "name": "omec/core-net",
+          "dns": {}
+      }]
+  creationTimestamp: "2022-02-07T17:56:08Z"
+  generateName: upf-
+  labels:
+    app: upf
+    controller-revision-hash: upf-56c6cf7b4b
+    release: 5g-core-up
+    statefulset.kubernetes.io/pod-name: upf-0
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:k8s.v1.cni.cncf.io/networks: {}
+        f:generateName: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:controller-revision-hash: {}
+          f:release: {}
+          f:statefulset.kubernetes.io/pod-name: {}
+        f:ownerReferences:
+          .: {}
+          k:{"uid":"077e3af0-3dc7-4f6c-a896-f6b61be7ce63"}:
+            .: {}
+            f:apiVersion: {}
+            f:blockOwnerDeletion: {}
+            f:controller: {}
+            f:kind: {}
+            f:name: {}
+            f:uid: {}
+      f:spec:
+        f:containers:
+          k:{"name":"arping"}:
+            .: {}
+            f:args: {}
+            f:command: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources:
+              .: {}
+              f:limits:
+                .: {}
+                f:cpu: {}
+                f:memory: {}
+              f:requests:
+                .: {}
+                f:cpu: {}
+                f:memory: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+          k:{"name":"bessd"}:
+            .: {}
+            f:args: {}
+            f:command: {}
+            f:env:
+              .: {}
+              k:{"name":"CONF_FILE"}:
+                .: {}
+                f:name: {}
+                f:value: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:lifecycle:
+              .: {}
+              f:postStart:
+                .: {}
+                f:exec:
+                  .: {}
+                  f:command: {}
+            f:livenessProbe:
+              .: {}
+              f:failureThreshold: {}
+              f:initialDelaySeconds: {}
+              f:periodSeconds: {}
+              f:successThreshold: {}
+              f:tcpSocket:
+                .: {}
+                f:port: {}
+              f:timeoutSeconds: {}
+            f:name: {}
+            f:resources: {}
+            f:securityContext:
+              .: {}
+              f:capabilities:
+                .: {}
+                f:add: {}
+            f:stdin: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+            f:tty: {}
+            f:volumeMounts:
+              .: {}
+              k:{"mountPath":"/etc/bess/conf"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+              k:{"mountPath":"/pod-share"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+          k:{"name":"pfcp-agent"}:
+            .: {}
+            f:args: {}
+            f:command: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+            f:volumeMounts:
+              .: {}
+              k:{"mountPath":"/pod-share"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+              k:{"mountPath":"/tmp/conf"}:
+                .: {}
+                f:mountPath: {}
+                f:name: {}
+          k:{"name":"routectl"}:
+            .: {}
+            f:args: {}
+            f:command: {}
+            f:env:
+              .: {}
+              k:{"name":"PYTHONUNBUFFERED"}:
+                .: {}
+                f:name: {}
+                f:value: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+          k:{"name":"web"}:
+            .: {}
+            f:command: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+        f:dnsPolicy: {}
+        f:enableServiceLinks: {}
+        f:hostname: {}
+        f:imagePullSecrets:
+          .: {}
+          k:{"name":"aether.registry"}:
+            .: {}
+            f:name: {}
+        f:initContainers:
+          .: {}
+          k:{"name":"bess-init"}:
+            .: {}
+            f:args: {}
+            f:command: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:resources:
+              .: {}
+              f:limits:
+                .: {}
+                f:cpu: {}
+                f:memory: {}
+              f:requests:
+                .: {}
+                f:cpu: {}
+                f:memory: {}
+            f:securityContext:
+              .: {}
+              f:capabilities:
+                .: {}
+                f:add: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+        f:restartPolicy: {}
+        f:schedulerName: {}
+        f:securityContext: {}
+        f:shareProcessNamespace: {}
+        f:subdomain: {}
+        f:terminationGracePeriodSeconds: {}
+        f:volumes:
+          .: {}
+          k:{"name":"configs"}:
+            .: {}
+            f:configMap:
+              .: {}
+              f:defaultMode: {}
+              f:name: {}
+            f:name: {}
+          k:{"name":"shared-app"}:
+            .: {}
+            f:emptyDir: {}
+            f:name: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2022-02-07T17:56:08Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:conditions:
+          k:{"type":"AtomixReady"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+    manager: atomix-controller
+    operation: Update
+    time: "2022-02-07T17:56:09Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:cni.projectcalico.org/containerID: {}
+          f:cni.projectcalico.org/podIP: {}
+          f:cni.projectcalico.org/podIPs: {}
+    manager: calico
+    operation: Update
+    time: "2022-02-07T17:56:10Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:k8s.v1.cni.cncf.io/network-status: {}
+          f:k8s.v1.cni.cncf.io/networks-status: {}
+    manager: multus
+    operation: Update
+    time: "2022-02-07T17:56:11Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:conditions:
+          k:{"type":"ContainersReady"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Initialized"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Ready"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+        f:containerStatuses: {}
+        f:hostIP: {}
+        f:initContainerStatuses: {}
+        f:phase: {}
+        f:podIP: {}
+        f:podIPs:
+          .: {}
+          k:{"ip":"192.168.84.30"}:
+            .: {}
+            f:ip: {}
+        f:startTime: {}
+    manager: kubelet
+    operation: Update
+    time: "2022-02-07T17:56:37Z"
+  name: upf-0
+  namespace: omec
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: StatefulSet
+    name: upf
+    uid: 077e3af0-3dc7-4f6c-a896-f6b61be7ce63
+  resourceVersion: "457698"
+  uid: d0879258-76db-4f17-b78b-fd4e0ef56f03
+spec:
+  containers:
+  - args:
+    - bessd -m 0 -f -grpc-url=0.0.0.0:10514
+    command:
+    - /bin/bash
+    - -xc
+    env:
+    - name: CONF_FILE
+      value: /etc/bess/conf/upf.json
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /etc/bess/conf/bessd-poststart.sh
+    livenessProbe:
+      failureThreshold: 3
+      initialDelaySeconds: 15
+      periodSeconds: 20
+      successThreshold: 1
+      tcpSocket:
+        port: 10514
+      timeoutSeconds: 1
+    name: bessd
+    resources: {}
+    securityContext:
+      capabilities:
+        add:
+        - IPC_LOCK
+    stdin: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    tty: true
+    volumeMounts:
+    - mountPath: /pod-share
+      name: shared-app
+    - mountPath: /etc/bess/conf
+      name: configs
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  - args:
+    - -i
+    - access
+    - core
+    command:
+    - /opt/bess/bessctl/conf/route_control.py
+    env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imagePullPolicy: IfNotPresent
+    name: routectl
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  - command:
+    - /bin/bash
+    - -xc
+    - bessctl http 0.0.0.0 8000
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imagePullPolicy: IfNotPresent
+    name: web
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  - args:
+    - -config
+    - /tmp/conf/upf.json
+    command:
+    - pfcpiface
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-pfcpiface:master-103b198
+    imagePullPolicy: IfNotPresent
+    name: pfcp-agent
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /pod-share
+      name: shared-app
+    - mountPath: /tmp/conf
+      name: configs
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  - args:
+    - |
+      while true; do
+        # arping does not work - BESS graph is still disconnected
+        #arping -c 2 -I access 192.168.252.1
+        #arping -c 2 -I core 192.168.250.1
+        ping -c 2 192.168.252.1
+        ping -c 2 192.168.250.1
+        sleep 10
+      done
+    command:
+    - sh
+    - -xc
+    image: registry.aetherproject.org/tools/busybox:stable
+    imagePullPolicy: IfNotPresent
+    name: arping
+    resources:
+      limits:
+        cpu: 128m
+        memory: 64Mi
+      requests:
+        cpu: 128m
+        memory: 64Mi
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  hostname: upf-0
+  imagePullSecrets:
+  - name: aether.registry
+  initContainers:
+  - args:
+    - ip route replace 192.168.251.0/24 via 192.168.252.1; ip route replace default
+      via 192.168.250.1 metric 110; iptables -I OUTPUT -p icmp --icmp-type port-unreachable
+      -j DROP;
+    command:
+    - sh
+    - -xec
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imagePullPolicy: IfNotPresent
+    name: bess-init
+    resources:
+      limits:
+        cpu: 128m
+        memory: 64Mi
+      requests:
+        cpu: 128m
+        memory: 64Mi
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-bk5fr
+      readOnly: true
+  nodeName: node1
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  shareProcessNamespace: true
+  subdomain: upf-headless
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - configMap:
+      defaultMode: 493
+      name: upf
+    name: configs
+  - emptyDir: {}
+    name: shared-app
+  - name: default-token-bk5fr
+    secret:
+      defaultMode: 420
+      secretName: default-token-bk5fr
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:09Z"
+    status: "True"
+    type: AtomixReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:26Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:36Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:36Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-02-07T17:56:08Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://c8a49208216f8e167be47b634659612568d73ac4a1037830df31b433b193b5b9
+    image: registry.aetherproject.org/tools/busybox:stable
+    imageID: docker-pullable://registry.aetherproject.org/tools/busybox@sha256:b862520da7361ea093806d292ce355188ae83f21e8e3b2a3ce4dbdba0a230f83
+    lastState: {}
+    name: arping
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:36Z"
+  - containerID: docker://2c7ab25a6b87bf952e86768492717655d7497d229db51fbd63868df5ac60d784
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imageID: docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    lastState: {}
+    name: bessd
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:26Z"
+  - containerID: docker://362e961c3439de5ffbb58d59e0f07082eab8d51b00cb1076728da1b4f752dcd7
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-pfcpiface:master-103b198
+    imageID: docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-pfcpiface@sha256:02e119046823b53427fcde2047e1c53fad997c859d7b46d075c84d84b5a289f8
+    lastState: {}
+    name: pfcp-agent
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:34Z"
+  - containerID: docker://52e3b7525ad414909538faec31c997c226d6b2f5dfc9446b2d7af6281ef2f05e
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imageID: docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    lastState: {}
+    name: routectl
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:31Z"
+  - containerID: docker://3dd9a37ca1611309b56ec24a455249cdd1585e4600ac77d3c82da249d3161cb0
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imageID: docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    lastState: {}
+    name: web
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2022-02-07T17:56:31Z"
+  hostIP: 10.0.50.62
+  initContainerStatuses:
+  - containerID: docker://6eef258ba3f03040fdbd245a01ef077a37d53c24f955c7299149e51b1e7939bd
+    image: registry.aetherproject.org/proxy/omecproject/upf-epc-bess:master-103b198
+    imageID: docker-pullable://registry.aetherproject.org/proxy/omecproject/upf-epc-bess@sha256:1f0b0d51d08b7f912911d159579a7585e43be27102145eca8b78ec02bbca4db2
+    lastState: {}
+    name: bess-init
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: docker://6eef258ba3f03040fdbd245a01ef077a37d53c24f955c7299149e51b1e7939bd
+        exitCode: 0
+        finishedAt: "2022-02-07T17:56:25Z"
+        reason: Completed
+        startedAt: "2022-02-07T17:56:25Z"
+  phase: Running
+  podIP: 192.168.84.30
+  podIPs:
+  - ip: 192.168.84.30
+  qosClass: Burstable
+  startTime: "2022-02-07T17:56:08Z"
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl get pods upf-0 -n omec -o jsonpath='{.spec.containers[*].name}'
+bessd routectl web pfcp-agent arping
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs upf-0 -c routectl
+/opt/bess/bessctl/conf/route_control.py:311: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if item.prefix_len is 0:
+Deprecation warning https://docs.pyroute2.org/ipdb_toc.html
+Connecting to BESS daemon...
+Done.
+Adding entry core in arp probe table
+Adding entry {neigh: 192.168.250.1, iface: core, ip-range: 0.0.0.0/0} in arp probe table
+.
+Sent 1 packets.
+Adding entry access in arp probe table
+Adding entry {neigh: 192.168.252.1, iface: access, ip-range: 192.168.251.0/24} in arp probe table
+.
+Sent 1 packets.
+Registering netlink event listener callback...
+Done.
+Linking module accessRoutes with accessMerge (Dest MAC: 7a:6b:03:9e:8b:01)
+Adding route entry 192.168.251.0/24 for accessRoutes
+Trying to retrieve neighbor entry 192.168.252.1 from neighbor cache
+Neighbor does not exist
+Update module created
+Linking accessRoutesDstMAC7A6B039E8B01 module
+Linking accessMerge module
+Linking module coreRoutes with coreMerge (Dest MAC: 1e:49:92:a6:2c:02)
+Adding route entry 0.0.0.0/0 for coreRoutes
+Trying to retrieve neighbor entry 192.168.250.1 from neighbor cache
+Neighbor does not exist
+Update module created
+Linking coreRoutesDstMAC1E4992A62C02 module
+Linking coreMerge module
+
+
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs upf-0 -c bessd | tail -n 100
+I0207 17:56:30.494575   312 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:30.494801   312 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494822   312 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:30.494832   312 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494864   312 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494887   312 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494899   312 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494976   312 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:30.494988   312 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.495040   312 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.495054   312 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:30.496101   313 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:30.496244   313 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:30.496574   313 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.213039   361 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.214955   373 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.215025   373 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215037   373 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.215044   373 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215051   373 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215057   373 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215065   373 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215071   373 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.215077   373 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215083   373 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215090   373 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.216003   374 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:36.216044   374 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.216090   374 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.216696   375 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.217742   377 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.217813   377 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217823   377 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.217839   377 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217847   377 module.cc:224] Mismatch in number of workers for module accessRoutesDstMAC7A6B039E8B01 min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217857   377 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217867   377 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217877   377 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217890   377 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.217900   377 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217916   377 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217944   377 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.218745   378 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:36.218808   378 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.218855   378 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.219272   379 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.219914   381 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.219995   381 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220024   381 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.220046   381 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220072   381 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220088   381 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220104   381 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220120   381 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.220141   381 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220157   381 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.220173   381 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.220952   382 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:36.221004   382 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.221128   382 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.221663   383 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.222330   385 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.222419   385 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.222443   385 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.222461   385 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.222488   385 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.222501   385 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.223335   386 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.223459   386 bessctl.cc:516] *** Resuming ***
+I0207 17:56:37.213541   387 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:37.214663   390 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:37.214821   390 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.214848   390 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:37.214856   390 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.214869   390 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.214875   390 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:37.215823   391 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:37.215875   391 bessctl.cc:516] *** Resuming ***
+I0207 17:56:37.216260   392 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:37.217034   394 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:37.217111   394 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.217180   394 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:37.217237   394 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.217248   394 module.cc:224] Mismatch in number of workers for module coreRoutesDstMAC1E4992A62C02 min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.217259   394 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.217270   394 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:37.218147   395 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:37.218185   395 bessctl.cc:516] *** Resuming ***
+I0207 17:56:37.218663   396 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:37.219427   398 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:37.219558   398 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.219583   398 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:37.219594   398 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.219604   398 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:37.219614   398 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:37.220414   399 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:37.220597   399 bessctl.cc:516] *** Resuming ***
+I0207 17:56:37.220973   400 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:37.221679   402 bessctl.cc:691] Checking scheduling constraints
+I0207 17:56:37.222671   403 bessctl.cc:516] *** Resuming ***
+root@vmware-062:/var/lib/kubelet#
+
+
+
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs upf-0 -c pfcp-agent
+time="2022-02-07T17:56:34Z" level=info msg="{af_packet {access} {core} {[] false upf false 172.250.0.0/16 8080 internet} {   } false false {0 <nil> <nil> <nil> <nil> <nil>  } 0 0 true false /pod-share/notifycp  info [{0 50000 50000 50000 10 7}] {1000000000 12500000 1000000000 12500000} 0  false }" func=main.main file="/pfcpiface/main.go:184"
+time="2022-02-07T17:56:34Z" level=info msg="Access  IP:  192.168.252.3" func=main.ParseIP file="/pfcpiface/main.go:152"
+time="2022-02-07T17:56:34Z" level=info msg="Core  IP:  192.168.250.3" func=main.ParseIP file="/pfcpiface/main.go:152"
+time="2022-02-07T17:56:34Z" level=info msg="setUpfInfo bess" func="main.(*bess).setUpfInfo" file="/pfcpiface/bess.go:525"
+time="2022-02-07T17:56:34Z" level=info msg="bessIP  localhost:10514" func="main.(*bess).setUpfInfo" file="/pfcpiface/bess.go:529"
+time="2022-02-07T17:56:34Z" level=info msg="listening for new PFCP connections on [::]:8805" func="main.(*PFCPNode).handleNewPeers" file="/pfcpiface/node.go:56"
+time="2022-02-07T17:57:31Z" level=info msg="handle http request for /v1/config/network-slices" func="main.(*ConfigHandler).ServeHTTP" file="/pfcpiface/web-service.go:47"
+time="2022-02-07T17:57:31Z" level=info msg="handle slice config :  aiab-vcs" func=main.handleSliceConfig file="/pfcpiface/web-service.go:126"
+time="2022-02-07T17:57:34Z" level=info msg="Created PFCPConn from: 192.168.84.30:8805 to: 192.168.84.36:8805" func="main.(*PFCPNode).NewPFCPConn" file="/pfcpiface/conn.go:117"
+time="2022-02-07T17:57:34Z" level=info msg="Association Setup with DNN: internet" func="main.(*PFCPConn).associationIEs" file="/pfcpiface/messages-conn.go:61"
+time="2022-02-07T17:57:34Z" level=info msg="Association Setup Request from 192.168.84.36:8805 with recovery timestamp: 2022-02-07 17:57:34 +0000 UTC" func="main.(*PFCPConn).handleAssociationSetupRequest" file="/pfcpiface/messages-conn.go:134"
+time="2022-02-07T17:57:34Z" level=info msg="Association setup done between nodes local: 192.168.155.138 remote: 192.168.84.36" func="main.(*PFCPConn).handleAssociationSetupRequest" file="/pfcpiface/messages-conn.go:145"
+time="2022-02-07T17:58:12Z" level=info msg="TunnelIPv4Address: 192.168.252.3" func="main.(*pdr).parsePDI" file="/pfcpiface/parse-pdr.go:149"
+time="2022-02-07T17:58:12Z" level=info msg="Could not read GBRUL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:80"
+time="2022-02-07T17:58:12Z" level=info msg="Could not read GBRDL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:85"
+time="2022-02-07T17:58:12Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:12Z" level=info msg="Add PDRs with UPF alloc IPs to Establishment response" func=main.addPdrInfo file="/pfcpiface/session-pdr.go:32"
+time="2022-02-07T17:58:12Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:18Z" level=info msg="TunnelIPv4Address: 192.168.252.3" func="main.(*pdr).parsePDI" file="/pfcpiface/parse-pdr.go:149"
+time="2022-02-07T17:58:18Z" level=info msg="Could not read GBRUL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:80"
+time="2022-02-07T17:58:18Z" level=info msg="Could not read GBRDL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:85"
+time="2022-02-07T17:58:18Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:18Z" level=info msg="Add PDRs with UPF alloc IPs to Establishment response" func=main.addPdrInfo file="/pfcpiface/session-pdr.go:32"
+time="2022-02-07T17:58:19Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:25Z" level=info msg="TunnelIPv4Address: 192.168.252.3" func="main.(*pdr).parsePDI" file="/pfcpiface/parse-pdr.go:149"
+time="2022-02-07T17:58:25Z" level=info msg="Could not read GBRUL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:80"
+time="2022-02-07T17:58:25Z" level=info msg="Could not read GBRDL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:85"
+time="2022-02-07T17:58:25Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:25Z" level=info msg="Add PDRs with UPF alloc IPs to Establishment response" func=main.addPdrInfo file="/pfcpiface/session-pdr.go:32"
+time="2022-02-07T17:58:25Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:31Z" level=info msg="TunnelIPv4Address: 192.168.252.3" func="main.(*pdr).parsePDI" file="/pfcpiface/parse-pdr.go:149"
+time="2022-02-07T17:58:31Z" level=info msg="Could not read GBRUL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:80"
+time="2022-02-07T17:58:31Z" level=info msg="Could not read GBRDL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:85"
+time="2022-02-07T17:58:31Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:31Z" level=info msg="Add PDRs with UPF alloc IPs to Establishment response" func=main.addPdrInfo file="/pfcpiface/session-pdr.go:32"
+time="2022-02-07T17:58:32Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:38Z" level=info msg="TunnelIPv4Address: 192.168.252.3" func="main.(*pdr).parsePDI" file="/pfcpiface/parse-pdr.go:149"
+time="2022-02-07T17:58:38Z" level=info msg="Could not read GBRUL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:80"
+time="2022-02-07T17:58:38Z" level=info msg="Could not read GBRDL!" func="main.(*qer).parseQER" file="/pfcpiface/parse-qer.go:85"
+time="2022-02-07T17:58:38Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+time="2022-02-07T17:58:38Z" level=info msg="Add PDRs with UPF alloc IPs to Establishment response" func=main.addPdrInfo file="/pfcpiface/session-pdr.go:32"
+time="2022-02-07T17:58:38Z" level=info msg="need atleast 1 QER in PDR or 2 QERs in session to mark session QER." func="main.(*PFCPSession).MarkSessionQer" file="/pfcpiface/session-qer.go:81"
+
+
+
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet#
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs upf-0 -c web
++ bessctl http 0.0.0.0 8000
+ * Serving Flask app 'server' (lazy loading)
+ * Environment: development
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.84.30:8000/ (Press CTRL+C to quit)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec logs upf-0 -c bessd | tail -n 100
+I0207 17:56:30.494575   312 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:30.494801   312 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494822   312 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:30.494832   312 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494864   312 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494887   312 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494899   312 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.494976   312 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:30.494988   312 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.495040   312 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:30.495054   312 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:30.496101   313 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:30.496244   313 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:30.496574   313 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.213039   361 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.214955   373 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.215025   373 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215037   373 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.215044   373 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215051   373 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215057   373 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215065   373 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215071   373 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.215077   373 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215083   373 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.215090   373 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.216003   374 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:36.216044   374 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.216090   374 bessctl.cc:516] *** Resuming ***
+I0207 17:56:36.216696   375 bessctl.cc:487] *** All workers have been paused ***
+I0207 17:56:36.217742   377 bessctl.cc:691] Checking scheduling constraints
+E0207 17:56:36.217813   377 module.cc:224] Mismatch in number of workers for module accessMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217823   377 module.cc:224] Mismatch in number of workers for module accessQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.217839   377 module.cc:224] Mismatch in number of workers for module accessQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217847   377 module.cc:224] Mismatch in number of workers for module accessRoutesDstMAC7A6B039E8B01 min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217857   377 module.cc:224] Mismatch in number of workers for module accessSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217867   377 module.cc:224] Mismatch in number of workers for module access_measure min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217877   377 module.cc:224] Mismatch in number of workers for module coreMerge min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217890   377 module.cc:224] Mismatch in number of workers for module coreQ0FastPO min required 1 max allowed 1 attached workers 0
+E0207 17:56:36.217900   377 module.cc:224] Mismatch in number of workers for module coreQSplit min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217916   377 module.cc:224] Mismatch in number of workers for module coreSrcEther min required 1 max allowed 64 attached workers 0
+E0207 17:56:36.217944   377 module.cc:224] Mismatch in number of workers for module core_measure min required 1 max allowed 64 attached workers 0
+W0207 17:56:36.218745   378 metadata.cc:77] Metadata attr timestamp/8 of module access_measure has no upstream module that sets the value!
+W0207 17:56:36.218808   378 metadata.cc:77] Metadata attr timestamp/8 of module core_measure has no upstream module that sets the value!
+I0207 17:56:36.218855   378 bessctl.cc:516] *** Resuming ***
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl get configmap upf -n omec -o yaml
+apiVersion: v1
+data:
+  bessd-poststart.sh: |
+    #!/bin/bash
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+    set -ex
+
+    until bessctl run /opt/bess/bessctl/conf/up4; do
+        sleep 2;
+    done;
+  upf.json: '{"access":{"ifname":"access"},"core":{"ifname":"core"},"cpiface":{"dnn":"internet","enable_ue_ip_alloc":false,"hostname":"upf","http_port":"8080","ue_ip_pool":"172.250.0.0/16"},"enable_notify_bess":true,"max_sessions":50000,"measure_upf":true,"mode":"af_packet","notify_sockaddr":"/pod-share/notifycp","qci_qos_config":[{"burst_duration_ms":10,"cbs":50000,"ebs":50000,"pbs":50000,"priority":7,"qci":0}],"slice_rate_limit_config":{"n3_bps":1000000000,"n3_burst_bytes":12500000,"n6_bps":1000000000,"n6_burst_bytes":12500000},"table_sizes":{"appQERLookup":200000,"farLookup":150000,"pdrLookup":50000,"sessionQERLookup":100000},"workers":1}'
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: 5g-core-up
+    meta.helm.sh/release-namespace: omec
+  creationTimestamp: "2022-02-07T17:56:08Z"
+  labels:
+    app: upf
+    app.kubernetes.io/managed-by: Helm
+    release: 5g-core-up
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:bessd-poststart.sh: {}
+        f:upf.json: {}
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:meta.helm.sh/release-name: {}
+          f:meta.helm.sh/release-namespace: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:app.kubernetes.io/managed-by: {}
+          f:release: {}
+    manager: helm
+    operation: Update
+    time: "2022-02-07T17:56:08Z"
+  name: upf
+  namespace: omec
+  resourceVersion: "457581"
+  uid: 4c2242f6-fc20-425c-8e22-e69c87d3cca8
+

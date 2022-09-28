@@ -1,0 +1,423 @@
+
+
+-----------------------------------------------------------------
+root@vagrant:~/aether-in-a-box# CHARTS=latest make roc-4g-models
+-----------------------------------------------------------------
+
+mkdir -p /root/aether-in-a-box//build/milestones
+touch /root/aether-in-a-box//build/milestones/interface-check
+sudo /root/aether-in-a-box//scripts/cloudlab-disksetup.sh
+sudo apt update; sudo apt install -y software-properties-common python3 python3-pip python3-venv jq httpie ipvsadm apparmor apparmor-utils
+Hit:1 http://archive.ubuntu.com/ubuntu bionic InRelease
+Get:2 http://archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:4 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Fetched 252 kB in 10s (24.5 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+83 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+httpie is already the newest version (0.9.8-2).
+jq is already the newest version (1.5+dfsg-2).
+apparmor is already the newest version (2.12-4ubuntu5.1).
+apparmor-utils is already the newest version (2.12-4ubuntu5.1).
+ipvsadm is already the newest version (1:1.28-3ubuntu0.18.04.1).
+python3 is already the newest version (3.6.7-1~18.04).
+software-properties-common is already the newest version (0.96.24.32.18).
+python3-pip is already the newest version (9.0.1-2.3~ubuntu1.18.04.5).
+python3-venv is already the newest version (3.6.7-1~18.04).
+0 upgraded, 0 newly installed, 0 to remove and 83 not upgraded.
+systemctl list-units --full -all | grep "docker.service" || sudo apt install -y docker.io
+  docker.service                                                                                                 loaded    active   running   Docker Application Container Engine
+sudo adduser root docker || true
+The user `root' is already a member of `docker'.
+touch /root/aether-in-a-box//build/milestones/setup
+sudo mkdir -p /etc/rancher/rke2/
+[ -d /usr/local/etc/emulab ] && [ ! -e /var/lib/rancher ] && sudo ln -s /var/lib/rancher /mnt/extra/rancher || true  # that link gets deleted on cleanup
+echo "cni: multus,calico" >> config.yaml
+echo "cluster-cidr: 192.168.84.0/24" >> config.yaml
+echo "service-cidr: 192.168.85.0/24" >> config.yaml
+echo "kubelet-arg:" >> config.yaml
+echo "- --allowed-unsafe-sysctls="net.*"" >> config.yaml
+echo "- --node-ip="10.0.2.15"" >> config.yaml
+echo "pause-image: k8s.gcr.io/pause:3.3" >> config.yaml
+echo "kube-proxy-arg:" >> config.yaml
+echo "- --metrics-bind-address="0.0.0.0:10249"" >> config.yaml
+echo "- --proxy-mode="ipvs"" >> config.yaml
+echo "kube-apiserver-arg:" >> config.yaml
+echo "- --service-node-port-range="2000-36767"" >> config.yaml
+sudo mv config.yaml /etc/rancher/rke2/
+curl -sfL https://get.rke2.io | sudo INSTALL_RKE2_VERSION=v1.23.4+rke2r1 sh -
+[INFO]  using v1.23.4+rke2r1 as release
+[INFO]  downloading checksums at https://github.com/rancher/rke2/releases/download/v1.23.4+rke2r1/sha256sum-amd64.txt
+[INFO]  downloading tarball at https://github.com/rancher/rke2/releases/download/v1.23.4+rke2r1/rke2.linux-amd64.tar.gz
+[INFO]  verifying tarball
+[INFO]  unpacking tarball file to /usr/local
+sudo systemctl enable rke2-server.service
+Created symlink /etc/systemd/system/multi-user.target.wants/rke2-server.service → /usr/local/lib/systemd/system/rke2-server.service.
+sudo systemctl start rke2-server.service
+sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml wait nodes --for=condition=Ready --all --timeout=300s
+node/vagrant condition met
+sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml wait deployment -n kube-system --for=condition=available --all --timeout=300s
+deployment.apps/rke2-coredns-rke2-coredns condition met
+deployment.apps/rke2-coredns-rke2-coredns-autoscaler condition met
+curl -LO "https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   154  100   154    0     0   1305      0 --:--:-- --:--:-- --:--:--  1305
+100 44.4M  100 44.4M    0     0  61.2M      0 --:--:-- --:--:-- --:--:-- 80.0M
+sudo chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+kubectl version --client
+Client Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.0", GitCommit:"ab69524f795c42094a6630298ff53f3c3ebab7f4", GitTreeState:"clean", BuildDate:"2021-12-07T18:16:20Z", GoVersion:"go1.17.3", Compiler:"gc", Platform:"linux/amd64"}
+mkdir -p /root/.kube
+sudo cp /etc/rancher/rke2/rke2.yaml /root/.kube/config
+sudo chown -R 0:0 /root/.kube
+touch /root/aether-in-a-box//build/milestones/k8s-ready
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+sudo DESIRED_VERSION=v3.6.3 ./get_helm.sh
+Helm v3.6.3 is already v3.6.3
+helm repo add incubator https://charts.helm.sh/incubator
+"incubator" already exists with the same configuration, skipping
+helm repo add cord https://charts.opencord.org
+"cord" already exists with the same configuration, skipping
+helm repo add atomix https://charts.atomix.io
+"atomix" already exists with the same configuration, skipping
+helm repo add onosproject https://charts.onosproject.org
+"onosproject" already exists with the same configuration, skipping
+helm repo add aether https://charts.aetherproject.org
+"aether" already exists with the same configuration, skipping
+touch /root/aether-in-a-box//build/milestones/helm-ready
+kubectl get namespace aether-roc 2> /dev/null || kubectl create namespace aether-roc
+namespace/aether-roc created
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "cord" chart repository
+...Successfully got an update from the "aether" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [ "latest" == "local" ]; then helm dep up aether/aether-roc-umbrella; fi
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values.yaml \
+        atomix-controller \
+        atomix/atomix-controller
+Release "atomix-controller" does not exist. Installing it now.
+NAME: atomix-controller
+LAST DEPLOYED: Sat Apr 30 00:10:12 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values.yaml \
+        atomix-raft-storage \
+        atomix/atomix-raft-storage
+Release "atomix-raft-storage" does not exist. Installing it now.
+NAME: atomix-raft-storage
+LAST DEPLOYED: Sat Apr 30 00:10:41 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values.yaml \
+        onos-operator \
+        onosproject/onos-operator
+Release "onos-operator" does not exist. Installing it now.
+NAME: onos-operator
+LAST DEPLOYED: Sat Apr 30 00:10:55 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace aether-roc \
+        --values /root/aether-in-a-box//roc-values.yaml \
+        aether-roc-umbrella \
+        aether/aether-roc-umbrella
+Release "aether-roc-umbrella" does not exist. Installing it now.
+W0430 00:11:21.548706   31448 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0430 00:11:21.550087   31448 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0430 00:11:21.675633   31448 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0430 00:11:21.675896   31448 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0430 00:11:21.833338   31448 warnings.go:70] spec.template.metadata.annotations[seccomp.security.alpha.kubernetes.io/pod]: deprecated since v1.19, non-functional in v1.25+; use the "seccompProfile" field instead
+NAME: aether-roc-umbrella
+LAST DEPLOYED: Sat Apr 30 00:11:20 2022
+NAMESPACE: aether-roc
+STATUS: deployed
+REVISION: 1
+NOTES:
+# SPDX-FileCopyrightText: 2021 Open Networking Foundation
+#
+# SPDX-License-Identifier: Apache-2.0
+
+Thank you for installing aether-roc-umbrella Helm chart.
+
+Your release is named aether-roc-umbrella in namespace aether-roc.
+See https://docs.onosproject.org/developers/deploy_with_helm/
+
+To learn more about the release, try:
+  $ helm -n aether-roc status aether-roc-umbrella
+  $ helm -n aether-roc get all aether-roc-umbrella
+  $ watch kubectl -n aether-roc get pods
+
+You can attach to:
+* Aether CLI pod with
+$ kubectl -n aether-roc exec -it $(kubectl -n aether-roc get pods -l type=cli -o name) -- /bin/sh
+* Aether Portal at http://<server_IP>:31190
+
+If you are using KinD as a Kubernetes server, you will have to use a "port-forward" to access the Aether ROC GUI e.g.
+$ kubectl -n aether-roc port-forward service/aether-roc-gui 8183:80
+and then access the GUI at
+* http://localhost:8183
+
+The aether-roc-api is then available at http://localhost:8183/aether-roc-api
+touch /root/aether-in-a-box//build/milestones/roc
+sed -i 's/provision-network-slice: true/provision-network-slice: false/' /root/aether-in-a-box//sd-core-4g-values.yaml
+sed -i 's/# syncUrl/syncUrl/' /root/aether-in-a-box//sd-core-4g-values.yaml
+if [ "false" == "true" ] ; then \
+        sed -i 's/# sub-proxy-endpt:/sub-proxy-endpt:/' /root/aether-in-a-box//sd-core-4g-values.yaml ; \
+        sed -i 's/#   addr: sub/  addr: sub/' /root/aether-in-a-box//sd-core-4g-values.yaml ; \
+        sed -i 's/#   port: 5000/  port: 5000/' /root/aether-in-a-box//sd-core-4g-values.yaml ; \
+fi
+echo "ONOS CLI pod: pod/onos-cli-c48c7ff4f-rrx2j"
+ONOS CLI pod: pod/onos-cli-c48c7ff4f-rrx2j
+until kubectl -n aether-roc exec pod/onos-cli-c48c7ff4f-rrx2j -- \
+        curl -s -f -L -X PATCH "http://aether-roc-api:8181/aether-roc-api" \
+        --header 'Content-Type: application/json' \
+        --data-raw "$(cat /root/aether-in-a-box//roc-4g-models.json)"; do sleep 5; done
+"uuid:026cb1d2-1ce0-4f0b-a4ae-e86d50eec9b9"
+root@vagrant:~/aether-in-a-box#
+root@vagrant:~/aether-in-a-box#
+root@vagrant:~/aether-in-a-box#
+
+
+----------------------------------------------------------
+root@vagrant:~/aether-in-a-box# CHARTS=latest make test
+----------------------------------------------------------
+
+echo "Installed /etc/systemd/network/10-aiab-dummy.netdev"
+Installed /etc/systemd/network/10-aiab-dummy.netdev
+echo "Installed /etc/systemd/network/20-aiab-dummy.network"
+Installed /etc/systemd/network/20-aiab-dummy.network
+sudo systemctl restart systemd-networkd
+DATA_IFACE=data envsubst < /root/aether-in-a-box//resources/router.yaml | kubectl apply -f -
+networkattachmentdefinition.k8s.cni.cncf.io/router-net created
+pod/router created
+kubectl wait pod -n default --for=condition=Ready -l app=router --timeout=300s
+pod/router condition met
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "cord" chart repository
+...Successfully got an update from the "aether" chart repository
+Update Complete. ⎈Happy Helming!⎈
+NODE_IP=10.0.2.15 DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 envsubst < /root/aether-in-a-box//sd-core-4g-values.yaml | \
+helm upgrade --create-namespace --install --wait  \
+        --namespace omec \
+        --values - \
+        sd-core \
+        aether/sd-core
+Release "sd-core" does not exist. Installing it now.
+NAME: sd-core
+LAST DEPLOYED: Sat Apr 30 00:14:53 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Notes - Instructions to use SD-Core application helm charts
+cd /root/aether-in-a-box//build/openairinterface; \
+sg docker -c "docker build . --target lte-uesoftmodem \
+        --build-arg build_base=omecproject/oai-base:1.1.0 \
+        --file Dockerfile.ue \
+        --tag omecproject/lte-uesoftmodem:1.1.0 && \
+        docker save -o /tmp/lte-uesoftmodem.tar omecproject/lte-uesoftmodem:1.1.0"
+Sending build context to Docker daemon  114.2kB
+Step 1/19 : ARG build_base
+Step 2/19 : FROM $build_base AS ue-builder
+ ---> bfbce2242f3d
+Step 3/19 : RUN apt-get update && apt-get install -y     linux-headers-`uname -r`  && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> b1d2de1639a8
+Step 4/19 : WORKDIR /openairinterface5g
+ ---> Using cache
+ ---> f69426999af0
+Step 5/19 : ENV USER=root
+ ---> Using cache
+ ---> 9de7974a84a5
+Step 6/19 : RUN /bin/bash -c "source oaienv" && cd cmake_targets && ./build_oai --UE -t ETHERNET -c
+ ---> Using cache
+ ---> f967de056b3c
+Step 7/19 : FROM ubuntu:18.04 AS lte-uesoftmodem
+ ---> fdf0753c97a9
+Step 8/19 : RUN apt-get update && apt-get install -y     libssl1.0.0     libnettle6     libsctp1     libforms2     libconfig9     libblas3     liblapacke     libatlas3-base     sudo     dnsutils     iproute2     iputils-ping     net-tools  && rm -rf /var/lib/apt/lists/*
+ ---> Using cache
+ ---> eb98a98281e2
+Step 9/19 : WORKDIR /openairinterface5g/cmake_targets
+ ---> Using cache
+ ---> 9f775359260f
+Step 10/19 : COPY --from=ue-builder /openairinterface5g/cmake_targets .
+ ---> Using cache
+ ---> 22b1a4f6b609
+Step 11/19 : COPY --from=ue-builder /openairinterface5g/targets/bin/nvram .
+ ---> Using cache
+ ---> 92a650fbffc1
+Step 12/19 : COPY --from=ue-builder /openairinterface5g/targets/bin/usim .
+ ---> Using cache
+ ---> d01c061b9b43
+Step 13/19 : COPY --from=ue-builder /openairinterface5g/targets ../targets
+ ---> Using cache
+ ---> e30c654e4cfe
+Step 14/19 : ARG org_label_schema_version=unknown
+ ---> Using cache
+ ---> 116d32d8a484
+Step 15/19 : ARG org_label_schema_vcs_url=unknown
+ ---> Using cache
+ ---> 2e3f36c374f5
+Step 16/19 : ARG org_label_schema_vcs_ref=unknown
+ ---> Using cache
+ ---> f228f0843486
+Step 17/19 : ARG org_label_schema_build_date=unknown
+ ---> Using cache
+ ---> bb6981dfc011
+Step 18/19 : ARG org_opencord_vcs_commit_date=unknown
+ ---> Using cache
+ ---> e3e2ef7da5e5
+Step 19/19 : LABEL org.label-schema.schema-version=1.0       org.label-schema.name=lte-uesoftmodem       org.label-schema.version=$org_label_schema_version       org.label-schema.vcs-url=$org_label_schema_vcs_url       org.label-schema.vcs-ref=$org_label_schema_vcs_ref       org.label-schema.build-date=$org_label_schema_build_date       org.opencord.vcs-commit-date=$org_opencord_vcs_commit_date
+ ---> Using cache
+ ---> 944d4fbc3c73
+Successfully built 944d4fbc3c73
+Successfully tagged omecproject/lte-uesoftmodem:1.1.0
+sudo /var/lib/rancher/rke2/bin/ctr --address /run/k3s/containerd/containerd.sock --namespace k8s.io images import /tmp/lte-uesoftmodem.tar
+unpacking docker.io/omecproject/lte-uesoftmodem:1.1.0 (sha256:0ce2ea11c6e50cda0910fa223b3b05e3da51bbd5c7553939240c6e0250423e55)...done
+touch /root/aether-in-a-box//build/milestones/ue-image
+echo "Installed /etc/systemd/network/20-aiab-lo.network"
+Installed /etc/systemd/network/20-aiab-lo.network
+echo "Installed /etc/systemd/network/10-aiab-enb.netdev"
+Installed /etc/systemd/network/10-aiab-enb.netdev
+echo "Installed /etc/systemd/network/20-aiab-enb.network"
+Installed /etc/systemd/network/20-aiab-enb.network
+sudo systemctl restart systemd-networkd
+helm upgrade --create-namespace --install  --namespace omec oaisim cord/oaisim -f /root/aether-in-a-box//oaisim-values.yaml \
+        --set images.pullPolicy=IfNotPresent
+Release "oaisim" does not exist. Installing it now.
+NAME: oaisim
+LAST DEPLOYED: Sat Apr 30 00:18:39 2022
+NAMESPACE: omec
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+kubectl rollout status -n omec statefulset ue
+Waiting for 1 pods to be ready...
+partitioned roll out complete: 1 new pods have been updated...
+Waiting for UE 1 gets IP address
+Waiting for UE 1 gets IP address
+Waiting for UE 1 gets IP address
+Waiting for UE 1 gets IP address
+Waiting for UE 1 gets IP address
+touch /root/aether-in-a-box//build/milestones/oaisim
+Test1: ping from UE to SGI network gateway
+ping -I oip1 192.168.250.1 -c 15
+PING 192.168.250.1 (192.168.250.1) from 172.250.255.254 oip1: 56(84) bytes of data.
+64 bytes from 192.168.250.1: icmp_seq=1 ttl=64 time=26.3 ms
+64 bytes from 192.168.250.1: icmp_seq=2 ttl=64 time=13.2 ms
+64 bytes from 192.168.250.1: icmp_seq=3 ttl=64 time=24.0 ms
+64 bytes from 192.168.250.1: icmp_seq=4 ttl=64 time=28.8 ms
+64 bytes from 192.168.250.1: icmp_seq=5 ttl=64 time=27.5 ms
+64 bytes from 192.168.250.1: icmp_seq=6 ttl=64 time=25.7 ms
+64 bytes from 192.168.250.1: icmp_seq=7 ttl=64 time=23.9 ms
+64 bytes from 192.168.250.1: icmp_seq=8 ttl=64 time=22.7 ms
+64 bytes from 192.168.250.1: icmp_seq=9 ttl=64 time=20.7 ms
+64 bytes from 192.168.250.1: icmp_seq=10 ttl=64 time=28.8 ms
+64 bytes from 192.168.250.1: icmp_seq=11 ttl=64 time=26.3 ms
+64 bytes from 192.168.250.1: icmp_seq=12 ttl=64 time=25.5 ms
+64 bytes from 192.168.250.1: icmp_seq=14 ttl=64 time=60.3 ms
+64 bytes from 192.168.250.1: icmp_seq=15 ttl=64 time=24.4 ms
+
+--- 192.168.250.1 ping statistics ---
+15 packets transmitted, 14 received, 6% packet loss, time 14031ms
+rtt min/avg/max/mdev = 13.236/27.053/60.309/9.971 ms
+Test2: ping from UE to 8.8.8.8
+ping -I oip1 8.8.8.8 -c 3
+PING 8.8.8.8 (8.8.8.8) from 172.250.255.254 oip1: 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=59 time=25.9 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=59 time=23.4 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=59 time=33.2 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 23.482/27.591/33.294/4.163 ms
+Test3: ping from UE to google.com
+ping -I oip1 google.com -c 3
+PING google.com (172.253.122.101) from 172.250.255.254 oip1: 56(84) bytes of data.
+64 bytes from bh-in-f101.1e100.net (172.253.122.101): icmp_seq=1 ttl=59 time=33.8 ms
+64 bytes from bh-in-f101.1e100.net (172.253.122.101): icmp_seq=2 ttl=59 time=31.4 ms
+64 bytes from bh-in-f101.1e100.net (172.253.122.101): icmp_seq=3 ttl=59 time=30.2 ms
+
+--- google.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 30.246/31.830/33.826/1.490 ms
+Finished to test
+root@vagrant:~/aether-in-a-box#
+
+root@vagrant:~/aether-in-a-box# kubectl get po -A
+NAMESPACE          NAME                                                    READY   STATUS      RESTARTS      AGE
+aether-roc         aether-roc-api-597f787846-mgcks                         1/1     Running     0             12m
+aether-roc         aether-roc-gui-v2-5dd9f7f55f-gjgvf                      1/1     Running     0             12m
+aether-roc         aether-roc-umbrella-grafana-d78b95bc7-jt4th             2/2     Running     0             12m
+aether-roc         aether-roc-websocket-568db578d4-ln729                   1/1     Running     0             12m
+aether-roc         onos-cli-c48c7ff4f-rrx2j                                1/1     Running     0             12m
+aether-roc         onos-config-7bd6fdcf4b-xbk2d                            6/6     Running     0             12m
+aether-roc         onos-consensus-store-0                                  1/1     Running     0             12m
+aether-roc         onos-topo-767cdb5f8-g9qvg                               3/3     Running     0             12m
+aether-roc         sdcore-adapter-v2-1-b6994fcd4-mj4v8                     1/1     Running     0             12m
+calico-apiserver   calico-apiserver-658fdf7db8-d7tlg                       1/1     Running     0             12m
+calico-system      calico-kube-controllers-6dc5cd4855-9656v                1/1     Running     0             14m
+calico-system      calico-node-dv86d                                       1/1     Running     0             14m
+calico-system      calico-typha-6bfc6fdc96-9cz94                           1/1     Running     0             14m
+default            router                                                  1/1     Running     0             8m57s
+kube-system        atomix-controller-5fd6d58b57-sbk72                      1/1     Running     0             13m
+kube-system        atomix-raft-storage-controller-6f68f9647f-b2495         1/1     Running     0             12m
+kube-system        cloud-controller-manager-vagrant                        1/1     Running     0             14m
+kube-system        etcd-vagrant                                            1/1     Running     0             14m
+kube-system        helm-install-rke2-calico-crd-hfbjz                      0/1     Completed   0             14m
+kube-system        helm-install-rke2-calico-xz42m                          0/1     Completed   1             14m
+kube-system        helm-install-rke2-coredns-l9l44                         0/1     Completed   0             14m
+kube-system        helm-install-rke2-ingress-nginx-mx7t6                   0/1     Completed   0             14m
+kube-system        helm-install-rke2-metrics-server-6v7k6                  0/1     Completed   0             14m
+kube-system        helm-install-rke2-multus-rd9nv                          0/1     Completed   0             14m
+kube-system        kube-apiserver-vagrant                                  1/1     Running     0             14m
+kube-system        kube-controller-manager-vagrant                         1/1     Running     1 (15m ago)   14m
+kube-system        kube-multus-ds-hjhvm                                    1/1     Running     0             14m
+kube-system        kube-proxy-vagrant                                      1/1     Running     0             14m
+kube-system        kube-scheduler-vagrant                                  1/1     Running     1 (15m ago)   14m
+kube-system        onos-operator-app-5cb4687946-k758x                      1/1     Running     0             12m
+kube-system        onos-operator-topo-54656868fc-f9rlf                     1/1     Running     0             12m
+kube-system        rke2-coredns-rke2-coredns-869b5d56d4-2m7kp              1/1     Running     0             14m
+kube-system        rke2-coredns-rke2-coredns-autoscaler-5b947fbb77-4qlnz   1/1     Running     0             14m
+kube-system        rke2-ingress-nginx-controller-thkkl                     1/1     Running     0             13m
+kube-system        rke2-metrics-server-6564db4569-jgzpd                    1/1     Running     0             13m
+omec               cassandra-0                                             1/1     Running     0             8m45s
+omec               config4g-0                                              1/1     Running     0             8m46s
+omec               enb-0                                                   1/1     Running     0             4m45s
+omec               hss-0                                                   1/1     Running     0             8m46s
+omec               mme-0                                                   4/4     Running     0             8m45s
+omec               pcrf-0                                                  1/1     Running     0             8m46s
+omec               simapp-6c49b87c96-wv5b4                                 1/1     Running     0             8m46s
+omec               spgwc-0                                                 2/2     Running     0             8m46s
+omec               ue-0                                                    1/1     Running     0             4m45s
+omec               ue-setup-if-zq64h                                       0/1     Completed   0             4m59s
+omec               upf-0                                                   5/5     Running     0             8m46s
+tigera-operator    tigera-operator-6df8b7694c-g6hfr                        1/1     Running     0             14m
+

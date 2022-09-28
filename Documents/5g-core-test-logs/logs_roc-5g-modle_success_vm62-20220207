@@ -1,0 +1,169 @@
+root@vmware-062:~/aether-in-a-box# CHARTS=latest make roc-5g-models
+kubectl get namespace aether-roc 2> /dev/null || kubectl create namespace aether-roc
+namespace/aether-roc created
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [ "latest" == "local" ]; then helm dep up aether/aether-roc-umbrella --version 1.4.64 ; fi
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        atomix-controller \
+        atomix/atomix-controller
+Release "atomix-controller" has been upgraded. Happy Helming!
+NAME: atomix-controller
+LAST DEPLOYED: Mon Feb  7 12:37:29 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 6
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        atomix-raft-storage \
+        atomix/atomix-raft-storage
+Release "atomix-raft-storage" has been upgraded. Happy Helming!
+NAME: atomix-raft-storage
+LAST DEPLOYED: Mon Feb  7 12:37:31 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 6
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        onos-operator \
+        onosproject/onos-operator
+Release "onos-operator" has been upgraded. Happy Helming!
+NAME: onos-operator
+LAST DEPLOYED: Mon Feb  7 12:37:33 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 6
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace aether-roc \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        aether-roc-umbrella \
+        aether/aether-roc-umbrella --version 1.4.64
+Release "aether-roc-umbrella" does not exist. Installing it now.
+Error: unable to build kubernetes objects from release manifest: [unable to recognize "": no matches for kind "Model" in version "config.onosproject.org/v1beta1", unable to recognize "": no matches for kind "ModelRegistry" in version "config.onosproject.org/v1beta1"]
+Makefile:252: recipe for target '/tmp/build/milestones/roc' failed
+make: *** [/tmp/build/milestones/roc] Error 1
+
+
+
+root@vmware-062:~/aether-in-a-box# helm -n kube-system delete onos-operator
+release "onos-operator" uninstalled
+
+
+
+root@vmware-062:~/aether-in-a-box# CHARTS=latest make roc-5g-models
+kubectl get namespace aether-roc 2> /dev/null || kubectl create namespace aether-roc
+NAME         STATUS   AGE
+aether-roc   Active   2m40s
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [ "latest" == "local" ]; then helm dep up aether/aether-roc-umbrella --version 1.4.64 ; fi
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        atomix-controller \
+        atomix/atomix-controller
+Release "atomix-controller" has been upgraded. Happy Helming!
+NAME: atomix-controller
+LAST DEPLOYED: Mon Feb  7 12:40:10 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 7
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        atomix-raft-storage \
+        atomix/atomix-raft-storage
+Release "atomix-raft-storage" has been upgraded. Happy Helming!
+NAME: atomix-raft-storage
+LAST DEPLOYED: Mon Feb  7 12:40:11 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 7
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace kube-system \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        onos-operator \
+        onosproject/onos-operator --version 0.4.14
+Release "onos-operator" does not exist. Installing it now.
+NAME: onos-operator
+LAST DEPLOYED: Mon Feb  7 12:40:13 2022
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+helm upgrade --install --wait  \
+        --namespace aether-roc \
+        --values /root/aether-in-a-box//roc-values-v4.yaml \
+        aether-roc-umbrella \
+        aether/aether-roc-umbrella --version 1.4.64
+Release "aether-roc-umbrella" does not exist. Installing it now.
+NAME: aether-roc-umbrella
+LAST DEPLOYED: Mon Feb  7 12:40:44 2022
+NAMESPACE: aether-roc
+STATUS: deployed
+REVISION: 1
+NOTES:
+# SPDX-FileCopyrightText: 2021 Open Networking Foundation
+#
+# SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+Thank you for installing aether-roc-umbrella Helm chart.
+
+Your release is named aether-roc-umbrella in namespace aether-roc.
+See https://docs.onosproject.org/developers/deploy_with_helm/
+
+To learn more about the release, try:
+  $ helm -n aether-roc status aether-roc-umbrella
+  $ helm -n aether-roc get all aether-roc-umbrella
+  $ watch kubectl -n aether-roc get pods
+
+You can attach to:
+* Aether CLI pod with
+$ kubectl -n aether-roc exec -it $(kubectl -n aether-roc get pods -l type=cli -o name) -- /bin/sh
+* Aether Portal at http://<server_IP>:31190
+
+If you are using KinD as a Kubernetes server, you will have to use a "port-forward" to access the Aether ROC GUI e.g.
+$ kubectl -n aether-roc port-forward service/aether-roc-gui 8183:80
+and then access the GUI at
+* http://localhost:8183
+
+The aether-roc-api is then available at http://localhost:8183/aether-roc-api
+touch /tmp/build/milestones/roc
+sed -i 's/provision-network-slice: true/provision-network-slice: false/' /root/aether-in-a-box//5g-core-values.yaml
+sed -i 's/# syncUrl/syncUrl/' /root/aether-in-a-box//5g-core-values.yaml
+if [ "false" == "true" ] ; then \
+        sed -i 's/addr: webui/addr: subscriber-proxy.aether-roc.svc.cluster.local/' /root/aether-in-a-box//5g-core-values.yaml ;\
+fi
+echo "ONOS CLI pod: pod/onos-cli-5b947f8f6-4r5nm"
+ONOS CLI pod: pod/onos-cli-5b947f8f6-4r5nm
+until kubectl -n aether-roc exec pod/onos-cli-5b947f8f6-4r5nm -- \
+        curl -s -f -L -X PATCH "http://aether-roc-api:8181/aether-roc-api" \
+        --header 'Content-Type: application/json' \
+        --data-raw "$(cat /root/aether-in-a-box//roc-5g-models-v4.json)"; do sleep 5; done
+command terminated with exit code 22
+command terminated with exit code 22
+command terminated with exit code 22
+command terminated with exit code 22
+command terminated with exit code 22
+"9513ea10-883d-11ec-84bf-721e388172cd"

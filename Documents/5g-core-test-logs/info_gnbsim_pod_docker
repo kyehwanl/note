@@ -1,0 +1,655 @@
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl get configmap gnbsim -n omec -o yaml
+apiVersion: v1
+data:
+  gnb.conf: |
+    info:
+      version: 1.0.0
+      description: gNodeB sim initial configuration
+    configuration:
+      gnbs: # pool of gNodeBs
+        gnb1:
+          n2IpAddr: # gNB N2 interface IP address used to connect to AMF
+          n2Port: 9487 # gNB N2 Port used to connect to AMF
+          n3IpAddr: 192.168.251.5 # gNB N3 interface IP address used to connect to UPF
+          n3Port: 2152 # gNB N3 Port used to connect to UPF
+          name: gnb1 # gNB name that uniquely identify a gNB within application
+          globalRanId:
+            plmnId:
+              mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+              mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+            gNbId:
+              bitLength: 24
+              gNBValue: 000102 # gNB identifier (3 bytes hex string, range: 000000~FFFFFF)
+          supportedTaList:
+          - tac: 000001 # Tracking Area Code (3 bytes hex string, range: 000000~FFFFFF)
+            broadcastPlmnList:
+              - plmnId:
+                  mcc: 208
+                  mnc: 93
+                taiSliceSupportList:
+                    - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+                      sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+          defaultAmf:
+            hostName: amf # Host name of AMF
+            ipAddr: # AMF IP address
+            port: 38412 # AMF port
+
+      profiles: # profile information
+        - profileType: register # profile type
+          profileName: profile1 # uniqely identifies a profile within application
+          enable: false # Set true to execute the profile, false otherwise.
+          gnbName: gnb1 # gNB to be used for this profile
+          startImsi: 208930100007487 #First IMSI. Subsequent values will be used if ueCount is mo    re than 1
+          ueCount: 5 # Number of UEs for for which the profile will be executed
+          plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+            mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+            mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        - profileType: pdusessest
+          profileName: profile2
+          enable: true
+          gnbName: gnb1
+          startImsi: 208930100007492
+          ueCount: 5
+          plmnId:
+            mcc: 208
+            mnc: 93
+          dataPktCount: 5 # Number of UL user data packets to be transmitted. Common for all UEs
+        - profileType: anrelease
+          profileName: profile3
+          enable: false
+          gnbName: gnb1
+          startImsi: 208930100007497
+          ueCount: 5
+          plmnId:
+            mcc: 208
+            mnc: 93
+        - profileType: deregister
+          profileName: profile4
+          enable: false
+          gnbName: gnb1
+          startImsi: 208930100007497
+          ueCount: 5
+          plmnId:
+            mcc: 208
+            mnc: 93
+    logger:
+      logLevel: info # how detailed the log will be, values: trace, debug, info, warn, error, fatal, panic
+  gnbsim-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+    set -xe
+
+    cd /gnbsim
+    cat ./config/gnb.conf
+    cat /etc/hosts
+    ip route add 192.168.252.0/24 via 192.168.251.1
+    # Disabling checksum offloading to hardware
+    ethtool -K enb tx off
+    sleep infinity
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: 5g-ransim-plane
+    meta.helm.sh/release-namespace: omec
+  creationTimestamp: "2022-02-07T17:57:50Z"
+  labels:
+    app: gnbsim
+    app.kubernetes.io/managed-by: Helm
+    release: 5g-ransim-plane
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:gnb.conf: {}
+        f:gnbsim-run.sh: {}
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:meta.helm.sh/release-name: {}
+          f:meta.helm.sh/release-namespace: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:app.kubernetes.io/managed-by: {}
+          f:release: {}
+    manager: helm
+    operation: Update
+    time: "2022-02-07T17:57:50Z"
+  name: gnbsim
+  namespace: omec
+  resourceVersion: "458244"
+  uid: 6799759f-069a-41c8-85a4-3508a1fdd67e
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec describe pod gnbsim-0
+Name:         gnbsim-0
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.62
+Start Time:   Mon, 07 Feb 2022 12:57:50 -0500
+Labels:       app=gnbsim
+              controller-revision-hash=gnbsim-7cd4cf9f5c
+              release=5g-ransim-plane
+              statefulset.kubernetes.io/pod-name=gnbsim-0
+Annotations:  cni.projectcalico.org/containerID: 7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82
+              cni.projectcalico.org/podIP: 192.168.84.42/32
+              cni.projectcalico.org/podIPs: 192.168.84.42/32
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.42"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks: [ { "name": "enb-net", "interface": "enb", "ips": ["192.168.251.5/24"] } ]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.42"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+Status:       Running
+IP:           192.168.84.42
+IPs:
+  IP:           192.168.84.42
+Controlled By:  StatefulSet/gnbsim
+Init Containers:
+  wait-amf-module:
+    Container ID:  docker://84620646d0ce96d5897f0d95db50cba7be82dcf6d07b5df95cbeffe630c4976c
+    Image:         docker.io/omecproject/pod-init:1.0.0
+    Image ID:      docker-pullable://omecproject/pod-init@sha256:16c14327ce4a191c4f1ced5c0c0cd835150c893a824cc21f80748b674d0308dc
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup amf; do echo waiting for nrf; sleep 4; done;
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 07 Feb 2022 12:57:56 -0500
+      Finished:     Mon, 07 Feb 2022 12:57:57 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-dz94n (ro)
+Containers:
+  gnbsim:
+    Container ID:  docker://ba531f25a24e774a3372b56d2fcbde5d527bc2e15f45775ad1d731f014ee6dd0
+    Image:         registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647
+    Image ID:      docker-pullable://registry.aetherproject.org/omecproject/5gc-gnbsim@sha256:808acc3f37888c95ea1bf9623641ebab32099830bde0a0db61771049c8f33713
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /opt/cp/scripts/gnbsim-run.sh
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:58:06 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MEM_LIMIT:  node allocatable (limits.memory)
+      POD_IP:      (v1:status.podIP)
+    Mounts:
+      /gnbsim/config from cp-config (rw)
+      /opt/cp/scripts/gnbsim-run.sh from cp-script (rw,path="gnbsim-run.sh")
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-dz94n (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  cp-script:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  cp-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  gnbsim-token-dz94n:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  gnbsim-token-dz94n
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:          <none>
+
+
+
+
+
+
+
+root@vmware-062:~# docker ps
+CONTAINER ID   IMAGE                                                            COMMAND                  CREATED        STATUS        PORTS     NAMES
+ba531f25a24e   registry.aetherproject.org/omecproject/5gc-gnbsim                "/opt/cp/scripts/gnb…"   25 hours ago   Up 25 hours             k8s_gnbsim_gnbsim-0_omec_49686517-9d7a-4f56-abaf-b9c237d9231b_0
+7
+
+
+root@vmware-062:~# docker inspect ba531
+[
+    {
+        "Id": "ba531f25a24e774a3372b56d2fcbde5d527bc2e15f45775ad1d731f014ee6dd0",
+        "Created": "2022-02-07T17:58:04.565993864Z",
+        "Path": "/opt/cp/scripts/gnbsim-run.sh",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 28359,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2022-02-07T17:58:06.017036867Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:36b8c2768e0c3ffb994fc60418bac32b35d4e2c864b3a85225db53aaa899ff2f",
+        "ResolvConfPath": "/var/lib/docker/containers/7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82/hostname",
+        "HostsPath": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/etc-hosts",
+        "LogPath": "/var/lib/docker/containers/ba531f25a24e774a3372b56d2fcbde5d527bc2e15f45775ad1d731f014ee6dd0/ba531f25a24e774a3372b56d2fcbde5d527bc2e15f45775ad1d731f014ee6dd0-json.log",
+        "Name": "/k8s_gnbsim_gnbsim-0_omec_49686517-9d7a-4f56-abaf-b9c237d9231b_0",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "unconfined",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volume-subpaths/cp-script/gnbsim/0:/opt/cp/scripts/gnbsim-run.sh:ro",
+                "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volumes/kubernetes.io~configmap/cp-config:/gnbsim/config:ro",
+                "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volumes/kubernetes.io~secret/gnbsim-token-dz94n:/var/run/secrets/kubernetes.io/serviceaccount:ro",
+                "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/etc-hosts:/etc/hosts",
+                "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/containers/gnbsim/c74e000d:/dev/termination-log"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {
+                    "max-file": "5",
+                    "max-size": "50m"
+                }
+            },
+            "NetworkMode": "container:7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82",
+            "PortBindings": null,
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "container:7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 1000,
+            "PidMode": "",
+            "Privileged": true,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [
+                "seccomp=unconfined",
+                "label=disable"
+            ],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 2,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "kubepods-besteffort-pod49686517_9d7a_4f56_abaf_b9c237d9231b.slice",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 100000,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": null,
+            "ReadonlyPaths": null
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/5e09dccee576b97f63b9d41d23b71c96fe37c1f98ceacf38be2ee5b839a8f72a-init/diff:/var/lib/docker/overlay2/26169d0360041715be46807f7b50a9ea5a238e3a9f4966a3597aca4aa3b39ef0/diff:/var/lib/docker/overlay2/42a6feff9b656b8ffb7596ec0c8c65979f3832fd8e5b9ddff325a18596994bcb/diff:/var/lib/docker/overlay2/67a03d6745a7e44e9cd5e9a51b1a15a4875315847565a1a635b215ae8d922754/diff:/var/lib/docker/overlay2/e31b69c9f9eae2aaf34762791ebcbbb45e8886b52ca0536ee55ab85c96e1a2e6/diff:/var/lib/docker/overlay2/7e4066e72ba544aba707cff02a9e9a150888bf8d49badd3c11578649a712c7f3/diff:/var/lib/docker/overlay2/b233705144e5e45a440b9a51c998e85972f052049b3d4e290bde1799100cfbb6/diff:/var/lib/docker/overlay2/7526b489e8ccb3ff608620b26f7e5ecc795cd53185c7e90ffe0fa5cf63a2342b/diff:/var/lib/docker/overlay2/de939437f1dd04693aaabbbb295c40f981d99b19d02a1462b2f30b398c55746d/diff:/var/lib/docker/overlay2/7e37dbd89b35197beac34925b14cbbceb96cbfd61c01cb83edcfc2aa05b29bfb/diff:/var/lib/docker/overlay2/e2cf1dfddff7bbf3a53bf8a94e05f3165e014a679035d4a0ebdde2ab021c741a/diff:/var/lib/docker/overlay2/6c268d50c2350ffc6a0c53e457623db1fc7c6d453c7aa59eb6341f51eed730e6/diff:/var/lib/docker/overlay2/74727bede893733d6b8e2e95032ae83d2061aa2f9b79f2e5ec147bef9fa664f4/diff:/var/lib/docker/overlay2/21aeaaa03c4aff7dc464378334927d49bfa3afeaf8ee6fca086a3d4596ea6600/diff:/var/lib/docker/overlay2/a7b60a4a1e896950054c79d6fe41105544beaf13dc6df70aa7e58b1907a5d71c/diff:/var/lib/docker/overlay2/f82b204c02ac9dfc9829a6b926d937f8c1580cd6afedb6dc6247daafe8f78f56/diff:/var/lib/docker/overlay2/111d5f8c226032711fb201a2afdcc7ee84fc88748caf44c0ce33d1dc6a91d57c/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5e09dccee576b97f63b9d41d23b71c96fe37c1f98ceacf38be2ee5b839a8f72a/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5e09dccee576b97f63b9d41d23b71c96fe37c1f98ceacf38be2ee5b839a8f72a/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5e09dccee576b97f63b9d41d23b71c96fe37c1f98ceacf38be2ee5b839a8f72a/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volume-subpaths/cp-script/gnbsim/0",
+                "Destination": "/opt/cp/scripts/gnbsim-run.sh",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volumes/kubernetes.io~configmap/cp-config",
+                "Destination": "/gnbsim/config",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/volumes/kubernetes.io~secret/gnbsim-token-dz94n",
+                "Destination": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/etc-hosts",
+                "Destination": "/etc/hosts",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/lib/kubelet/pods/49686517-9d7a-4f56-abaf-b9c237d9231b/containers/gnbsim/c74e000d",
+                "Destination": "/dev/termination-log",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "gnbsim-0",
+            "Domainname": "",
+            "User": "0",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "MEM_LIMIT=15429",
+                "POD_IP=192.168.84.42",
+                "PCF_PORT=tcp://192.168.148.255:29507",
+                "SIMAPP_SERVICE_PORT_CONFIG_EXPORTER=8080",
+                "SIMAPP_PORT_9089_TCP=tcp://192.168.160.239:9089",
+                "SIMAPP_PORT_8080_TCP_PORT=8080",
+                "NSSF_PORT_29531_TCP_PROTO=tcp",
+                "UPF_HTTP_SERVICE_HOST=192.168.152.147",
+                "WEBUI_PORT_9876_TCP_PROTO=tcp",
+                "AMF_PORT_29518_TCP_PROTO=tcp",
+                "AMF_PORT_38412_SCTP_PROTO=sctp",
+                "WEBUI_PORT=tcp://192.168.161.26:5000",
+                "GNBSIM_SERVICE_HOST=192.168.235.107",
+                "PCF_SERVICE_PORT_SBI=29507",
+                "SMF_PORT_9089_TCP=tcp://192.168.135.26:9089",
+                "SIMAPP_PORT_9089_TCP_ADDR=192.168.160.239",
+                "KUBERNETES_PORT_443_TCP_PORT=443",
+                "PCF_PORT_29507_TCP_PORT=29507",
+                "SMF_PORT_9089_TCP_ADDR=192.168.135.26",
+                "SMF_PORT_29502_TCP_PROTO=tcp",
+                "SIMAPP_PORT_8080_TCP_PROTO=tcp",
+                "MONGODB_PORT_27017_TCP=tcp://192.168.164.199:27017",
+                "NRF_PORT_29510_TCP=tcp://192.168.134.34:29510",
+                "KUBERNETES_PORT_443_TCP_ADDR=192.168.128.1",
+                "AUSF_PORT_29509_TCP_PROTO=tcp",
+                "SMF_SERVICE_PORT_PFCP=8805",
+                "AMF_SERVICE_PORT=9089",
+                "AMF_PORT=tcp://192.168.227.15:9089",
+                "AMF_PORT_9089_TCP_PROTO=tcp",
+                "NSSF_SERVICE_PORT=29531",
+                "GNBSIM_PORT_38412_SCTP_ADDR=192.168.235.107",
+                "SMF_SERVICE_PORT=8805",
+                "AMF_PORT_38412_SCTP_ADDR=192.168.227.15",
+                "UPF_HTTP_PORT_8000_TCP=tcp://192.168.152.147:8000",
+                "UPF_HTTP_PORT_8080_TCP=tcp://192.168.152.147:8080",
+                "WEBUI_PORT_5000_TCP=tcp://192.168.161.26:5000",
+                "UDR_SERVICE_HOST=192.168.221.254",
+                "SMF_SERVICE_PORT_SBI=29502",
+                "SIMAPP_SERVICE_PORT_PROMETHEUS_EXPORTER=9089",
+                "NRF_SERVICE_PORT=29510",
+                "NSSF_PORT_29531_TCP=tcp://192.168.230.144:29531",
+                "WEBUI_PORT_5000_TCP_ADDR=192.168.161.26",
+                "WEBUI_PORT_9876_TCP=tcp://192.168.161.26:9876",
+                "AUSF_SERVICE_PORT=29509",
+                "SMF_PORT_8805_UDP_ADDR=192.168.135.26",
+                "NRF_PORT_29510_TCP_PROTO=tcp",
+                "AUSF_PORT_29509_TCP_ADDR=192.168.159.185",
+                "SIMAPP_SERVICE_PORT=9089",
+                "NSSF_PORT_29531_TCP_ADDR=192.168.230.144",
+                "WEBUI_SERVICE_PORT=5000",
+                "UDM_SERVICE_PORT=29503",
+                "AUSF_SERVICE_HOST=192.168.159.185",
+                "SIMAPP_PORT_8080_TCP_ADDR=192.168.160.239",
+                "UDM_SERVICE_HOST=192.168.202.49",
+                "AUSF_PORT=tcp://192.168.159.185:29509",
+                "SMF_PORT_8805_UDP_PROTO=udp",
+                "UPF_PORT_8805_UDP=udp://192.168.155.138:8805",
+                "UPF_HTTP_SERVICE_PORT=8000",
+                "PCF_PORT_29507_TCP_ADDR=192.168.148.255",
+                "SMF_SERVICE_HOST=192.168.135.26",
+                "KUBERNETES_SERVICE_HOST=192.168.128.1",
+                "SMF_PORT=udp://192.168.135.26:8805",
+                "KUBERNETES_SERVICE_PORT_HTTPS=443",
+                "AMF_SERVICE_PORT_PROMETHEUS_EXPORTER=9089",
+                "UPF_HTTP_PORT_8000_TCP_ADDR=192.168.152.147",
+                "AUSF_PORT_29509_TCP=tcp://192.168.159.185:29509",
+                "SMF_PORT_9089_TCP_PROTO=tcp",
+                "NSSF_SERVICE_HOST=192.168.230.144",
+                "WEBUI_PORT_9876_TCP_ADDR=192.168.161.26",
+                "UDM_PORT=tcp://192.168.202.49:29503",
+                "AUSF_SERVICE_PORT_SBI=29509",
+                "NRF_PORT=tcp://192.168.134.34:29510",
+                "AMF_PORT_9089_TCP_PORT=9089",
+                "UPF_PORT_8805_UDP_PORT=8805",
+                "WEBUI_SERVICE_HOST=192.168.161.26",
+                "PCF_SERVICE_HOST=192.168.148.255",
+                "SMF_SERVICE_PORT_PROMETHEUS_EXPORTER=9089",
+                "NRF_SERVICE_PORT_SBI=29510",
+                "UPF_SERVICE_HOST=192.168.155.138",
+                "UPF_HTTP_SERVICE_PORT_BESS_WEB=8000",
+                "WEBUI_PORT_5000_TCP_PORT=5000",
+                "MONGODB_PORT_27017_TCP_PROTO=tcp",
+                "AMF_SERVICE_PORT_NGAPP=38412",
+                "AMF_PORT_29518_TCP=tcp://192.168.227.15:29518",
+                "UPF_HTTP_PORT_8000_TCP_PORT=8000",
+                "GNBSIM_SERVICE_PORT=38412",
+                "UDR_PORT_29504_TCP_ADDR=192.168.221.254",
+                "SIMAPP_PORT_8080_TCP=tcp://192.168.160.239:8080",
+                "MONGODB_SERVICE_PORT=27017",
+                "MONGODB_PORT_27017_TCP_PORT=27017",
+                "AMF_PORT_29518_TCP_PORT=29518",
+                "UDM_SERVICE_PORT_SBI=29503",
+                "UDR_PORT_29504_TCP_PORT=29504",
+                "SMF_PORT_29502_TCP_PORT=29502",
+                "SMF_PORT_29502_TCP_ADDR=192.168.135.26",
+                "KUBERNETES_PORT=tcp://192.168.128.1:443",
+                "GNBSIM_PORT=sctp://192.168.235.107:38412",
+                "SMF_PORT_9089_TCP_PORT=9089",
+                "KUBERNETES_PORT_443_TCP_PROTO=tcp",
+                "WEBUI_SERVICE_PORT_URLPORT_HTTP=5000",
+                "GNBSIM_PORT_38412_SCTP=sctp://192.168.235.107:38412",
+                "SMF_PORT_8805_UDP=udp://192.168.135.26:8805",
+                "NRF_PORT_29510_TCP_ADDR=192.168.134.34",
+                "UDR_PORT_29504_TCP=tcp://192.168.221.254:29504",
+                "SMF_PORT_29502_TCP=tcp://192.168.135.26:29502",
+                "KUBERNETES_PORT_443_TCP=tcp://192.168.128.1:443",
+                "UPF_PORT_8805_UDP_ADDR=192.168.155.138",
+                "UPF_HTTP_PORT_8080_TCP_PORT=8080",
+                "WEBUI_SERVICE_PORT_GRPC=9876",
+                "GNBSIM_SERVICE_PORT_NGAPP=38412",
+                "SIMAPP_PORT=tcp://192.168.160.239:9089",
+                "SIMAPP_PORT_9089_TCP_PORT=9089",
+                "NRF_SERVICE_HOST=192.168.134.34",
+                "AMF_PORT_29518_TCP_ADDR=192.168.227.15",
+                "AMF_PORT_38412_SCTP=sctp://192.168.227.15:38412",
+                "UPF_HTTP_PORT=tcp://192.168.152.147:8000",
+                "UDM_PORT_29503_TCP=tcp://192.168.202.49:29503",
+                "UDR_SERVICE_PORT_SBI=29504",
+                "UPF_SERVICE_PORT=8805",
+                "NSSF_SERVICE_PORT_SBI=29531",
+                "NSSF_PORT_29531_TCP_PORT=29531",
+                "WEBUI_PORT_9876_TCP_PORT=9876",
+                "UDM_PORT_29503_TCP_ADDR=192.168.202.49",
+                "AUSF_PORT_29509_TCP_PORT=29509",
+                "PCF_SERVICE_PORT=29507",
+                "SIMAPP_PORT_9089_TCP_PROTO=tcp",
+                "KUBERNETES_SERVICE_PORT=443",
+                "UDM_PORT_29503_TCP_PROTO=tcp",
+                "MONGODB_SERVICE_HOST=192.168.164.199",
+                "MONGODB_SERVICE_PORT_MONGODB=27017",
+                "GNBSIM_PORT_38412_SCTP_PROTO=sctp",
+                "UDM_PORT_29503_TCP_PORT=29503",
+                "UPF_HTTP_PORT_8000_TCP_PROTO=tcp",
+                "UPF_HTTP_PORT_8080_TCP_PROTO=tcp",
+                "UPF_HTTP_PORT_8080_TCP_ADDR=192.168.152.147",
+                "GNBSIM_PORT_38412_SCTP_PORT=38412",
+                "AMF_SERVICE_HOST=192.168.227.15",
+                "AMF_PORT_9089_TCP=tcp://192.168.227.15:9089",
+                "UDR_SERVICE_PORT=29504",
+                "UDR_PORT=tcp://192.168.221.254:29504",
+                "UDR_PORT_29504_TCP_PROTO=tcp",
+                "MONGODB_PORT_27017_TCP_ADDR=192.168.164.199",
+                "AMF_SERVICE_PORT_SBI=29518",
+                "AMF_PORT_9089_TCP_ADDR=192.168.227.15",
+                "UPF_PORT=udp://192.168.155.138:8805",
+                "NSSF_PORT=tcp://192.168.230.144:29531",
+                "UPF_HTTP_SERVICE_PORT_PROMETHEUS_EXPORTER=8080",
+                "PCF_PORT_29507_TCP=tcp://192.168.148.255:29507",
+                "PCF_PORT_29507_TCP_PROTO=tcp",
+                "SIMAPP_SERVICE_HOST=192.168.160.239",
+                "SMF_PORT_8805_UDP_PORT=8805",
+                "MONGODB_PORT=tcp://192.168.164.199:27017",
+                "NRF_PORT_29510_TCP_PORT=29510",
+                "AMF_PORT_38412_SCTP_PORT=38412",
+                "UPF_SERVICE_PORT_PFCP=8805",
+                "UPF_PORT_8805_UDP_PROTO=udp",
+                "WEBUI_PORT_5000_TCP_PROTO=tcp",
+                "PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOLANG_VERSION=1.14.4",
+                "GOPATH=/go"
+            ],
+            "Cmd": null,
+            "Healthcheck": {
+                "Test": [
+                    "NONE"
+                ]
+            },
+            "Image": "registry.aetherproject.org/omecproject/5gc-gnbsim@sha256:808acc3f37888c95ea1bf9623641ebab32099830bde0a0db61771049c8f33713",
+            "Volumes": null,
+            "WorkingDir": "/gnbsim/bin",
+            "Entrypoint": [
+                "/opt/cp/scripts/gnbsim-run.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "annotation.io.kubernetes.container.hash": "2c972a5f",
+                "annotation.io.kubernetes.container.restartCount": "0",
+                "annotation.io.kubernetes.container.terminationMessagePath": "/dev/termination-log",
+                "annotation.io.kubernetes.container.terminationMessagePolicy": "File",
+                "annotation.io.kubernetes.pod.terminationGracePeriod": "30",
+                "io.kubernetes.container.logpath": "/var/log/pods/omec_gnbsim-0_49686517-9d7a-4f56-abaf-b9c237d9231b/gnbsim/0.log",
+                "io.kubernetes.container.name": "gnbsim",
+                "io.kubernetes.docker.type": "container",
+                "io.kubernetes.pod.name": "gnbsim-0",
+                "io.kubernetes.pod.namespace": "omec",
+                "io.kubernetes.pod.uid": "49686517-9d7a-4f56-abaf-b9c237d9231b",
+                "io.kubernetes.sandbox.id": "7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82",
+                "maintainer": "ONF <omec-dev@opennetworking.org>"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {}
+        }
+    }
+]

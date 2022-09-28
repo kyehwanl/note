@@ -1,0 +1,3108 @@
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-amf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: amf
+  namespace: default
+  labels:
+    release: test1
+    app: amf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-ausf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ausf
+  namespace: default
+  labels:
+    release: test1
+    app: ausf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nrf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nrf
+  namespace: default
+  labels:
+    release: test1
+    app: nrf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nssf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nssf
+  namespace: default
+  labels:
+    release: test1
+    app: nssf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-pcf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pcf
+  namespace: default
+  labels:
+    release: test1
+    app: pcf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-smf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: smf
+  namespace: default
+  labels:
+    release: test1
+    app: smf
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udm.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: udm
+  namespace: default
+  labels:
+    release: test1
+    app: udm
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udr.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: udr
+  namespace: default
+  labels:
+    release: test1
+    app: udr
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-webui.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webui
+  namespace: default
+  labels:
+    release: test1
+    app: webui
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-amf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: amf
+  labels:
+    release: test1
+    app: amf
+data:
+  amf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    IMGPATH=/free5gc
+    
+    cd $IMGPATH
+    cat config/amfcfg.conf
+    
+    GOTRACEBACK=crash ./amf/amf -amfcfg config/amfcfg.conf
+    
+  amfcfg.conf: |-
+    configuration:
+      amfDBName: sdcore_amf
+      amfName: AMF
+      enableDBStore: false
+      enableSctpLb: false
+      networkFeatureSupport5GS:
+        emc: 0
+        emcN3: 0
+        emf: 0
+        enable: true
+        imsVoPS: 0
+        iwkN26: 0
+        mcsi: 0
+        mpsi: 0
+      networkName:
+        full: Aether5G
+        short: Aether
+      nfKafka:
+        enable: false
+        topic: sdcore-nf-data-source
+        urls:
+        - sd-core-kafka-headless:9092
+      ngapIpList:
+      - 0.0.0.0
+      ngappPort: 38412
+      non3gppDeregistrationTimerValue: 3240
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+        snssaiList:
+        - sd: "010203"
+          sst: 1
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29518
+        registerIPv4: amf
+        scheme: http
+      sctpGrpcPort: 9000
+      security:
+        cipheringOrder:
+        - NEA0
+        integrityOrder:
+        - NIA1
+        - NIA2
+      servedGuamiList:
+      - amfId: cafe00
+        plmnId:
+          mcc: "208"
+          mnc: "93"
+      serviceNameList:
+      - namf-comm
+      - namf-evts
+      - namf-mt
+      - namf-loc
+      - namf-oam
+      supportDnnList:
+      - internet
+      supportTaiList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+        tac: 1
+      t3502Value: 720
+      t3512Value: 3600
+      t3513:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3522:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3550:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3560:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3565:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+    info:
+      description: AMF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+    mongodb:
+      name: free5gc
+      url: mongodb://mongodb
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-ausf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ausf
+  labels:
+    release: test1
+    app: ausf
+data:
+  ausf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    cat config/ausfcfg.conf
+    
+    GOTRACEBACK=crash ./ausf/ausf -ausfcfg config/ausfcfg.conf
+    
+  ausfcfg.conf: |-
+    configuration:
+      groupId: ausfGroup001
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - mcc: "208"
+        mnc: "93"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29509
+        registerIPv4: ausf
+        scheme: http
+      serviceNameList:
+      - nausf-auth
+    info:
+      description: AUSF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-nrf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nrf
+  labels:
+    release: test1
+    app: nrf
+data:
+  nrf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/nrfcfg.conf
+    
+    GOTRACEBACK=crash ./nrf/nrf -nrfcfg config/nrfcfg.conf
+    
+  nrfcfg.conf: |-
+    configuration:
+      DefaultPlmnId:
+        mcc: "208"
+        mnc: "93"
+      MongoDBName: free5gc
+      MongoDBUrl: mongodb://mongodb
+      mongoDBStreamEnable: true
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      nfKeepAliveTime: 60
+      nfProfileExpiryEnable: true
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29510
+        registerIPv4: nrf
+        scheme: http
+      serviceNameList:
+      - nnrf-nfm
+      - nnrf-disc
+    info:
+      description: NRF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-nssf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nssf
+  labels:
+    release: test1
+    app: nssf
+data:
+  nssf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/nssfcfg.conf
+    
+    GOTRACEBACK=crash ./nssf/nssf -nssfcfg config/nssfcfg.conf
+    
+  nssfcfg.conf: |-
+    configuration:
+      nrfUri: http://nrf:29510
+      nsiList:
+      - nsiInformationList:
+        - nrfId: http://nrf:29510/nnrf-nfm/v1/nf-instances
+          nsiId: 22
+        snssai:
+          sd: "010203"
+          sst: 1
+      nssfName: NSSF
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29531
+        registerIPv4: nssf
+        scheme: http
+      serviceNameList:
+      - nnssf-nsselection
+      - nnssf-nssaiavailability
+      supportedNssaiInPlmnList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+        supportedSnssaiList:
+        - sd: "010203"
+          sst: 1
+      supportedPlmnList:
+      - mcc: "208"
+        mnc: "93"
+    info:
+      description: NSSF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-pcf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pcf
+  labels:
+    release: test1
+    app: pcf
+data:
+  pcf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/pcfcfg.conf
+    
+    GOTRACEBACK=crash ./pcf/pcf -pcfcfg config/pcfcfg.conf
+    
+  pcfcfg.conf: |-
+    configuration:
+      defaultBdtRefId: BdtPolicyId-
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      nrfUri: http://nrf:29510
+      pcfName: PCF
+      plmnList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "333"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29507
+        registerIPv4: pcf
+        scheme: http
+      serviceList:
+      - serviceName: npcf-am-policy-control
+      - serviceName: npcf-smpolicycontrol
+        suppFeat: 3fff
+      - serviceName: npcf-bdtpolicycontrol
+      - serviceName: npcf-policyauthorization
+        suppFeat: 3
+      - serviceName: npcf-eventexposure
+      - serviceName: npcf-ue-policy-control
+    info:
+      description: PCF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-smf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smf
+  labels:
+    release: test1
+    app: smf
+data:
+  smf-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/smfcfg.conf
+    cat uerouting/uerouting.conf
+    
+    GOTRACEBACK=crash ./smf/smf -smfcfg config/smfcfg.conf -uerouting uerouting/uerouting.conf
+    
+  smfcfg.conf: |-
+    configuration:
+      enableDBStore: false
+      enableUPFAdapter: false
+      nfKafka:
+        enable: false
+        topic: sdcore-nf-data-source
+        urls:
+        - sd-core-kafka-headless:9092
+      nrfUri: http://nrf:29510
+      pfcp:
+        addr: POD_IP
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29502
+        registerIPv4: smf
+        scheme: http
+        tls:
+          key: gofree5gc/support/TLS/smf.key
+          pem: gofree5gc/support/TLS/smf.pem
+      serviceNameList:
+      - nsmf-pdusession
+      - nsmf-event-exposure
+      smfDBName: sdcore_smf
+      smfName: SMF
+      snssaiInfos:
+      - dnnInfos:
+        - dnn: internet
+          dns:
+            ipv4: 8.8.8.8
+            ipv6: 2001:4860:4860::8888
+          ueSubnet: 172.250.0.0/16
+        sNssai:
+          sd: "010203"
+          sst: 1
+      userplane_information:
+        links:
+        - A: gNB1
+          B: UPF
+        up_nodes:
+          UPF:
+            interfaces:
+            - endpoints:
+              - upf
+              interfaceType: N3
+              networkInstance: internet
+            node_id: upf
+            sNssaiUpfInfos:
+            - dnnUpfInfoList:
+              - dnn: internet
+              plmnId:
+                mcc: "208"
+                mnc: "93"
+              sNssai:
+                sd: "010203"
+                sst: 1
+            - dnnUpfInfoList:
+              - dnn: internet
+              plmnId:
+                mcc: "208"
+                mnc: "93"
+              sNssai:
+                sd: "112233"
+                sst: 1
+            type: UPF
+          gNB1:
+            type: AN
+    info:
+      description: SMF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+    mongodb:
+      name: free5gc
+      url: mongodb://mongodb
+  uerouting.conf: |-
+    info:
+      description: Routing information for UE
+      version: 1.0.0
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-udm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udm
+  labels:
+    release: test1
+    app: udm
+data:
+  udm-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/udmcfg.conf
+    
+    GOTRACEBACK=crash ./udm/udm -udmcfg config/udmcfg.conf
+    
+  udmcfg.conf: |-
+    configuration:
+      keys:
+        udmProfileAHNPrivateKey: c53c22208b61860b06c62e5406a7b330c2b577aa5558981510d128247d38bd1d
+        udmProfileAHNPublicKey: 5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650
+        udmProfileBHNPrivateKey: F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA
+        udmProfileBHNPublicKey: 0472DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD15A7DED52FCBB097A4ED250E036C7B9C8C7004C4EEDC4F068CD7BF8D3F900E3B4
+      nrfUri: http://nrf:29510
+      plmnList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "222"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29503
+        registerIPv4: udm
+        scheme: http
+        tls:
+          key: free5gc/support/TLS/udm.key
+          log: free5gc/udmsslkey.log
+          pem: free5gc/support/TLS/udm.pem
+      serviceNameList:
+      - nudm-sdm
+      - nudm-uecm
+      - nudm-ueau
+      - nudm-ee
+      - nudm-pp
+    info:
+      description: UDM initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-udr.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udr
+  labels:
+    release: test1
+    app: udr
+data:
+  udr-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/udrcfg.conf
+    
+    GOTRACEBACK=crash ./udr/udr -udrcfg config/udrcfg.conf
+    
+  udrcfg.conf: |-
+    configuration:
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "333"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29504
+        registerIPv4: udr
+        scheme: http
+    info:
+      description: UDR initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/5g-control-plane/templates/configmap-webui.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webui
+  labels:
+    release: test1
+    app: webui
+data:
+  webui-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /free5gc
+    
+    cat config/webuicfg.conf
+    
+    GOTRACEBACK=crash ./webconsole/webconsole -webuicfg config/webuicfg.conf
+    
+  webuicfg.conf: |-
+    configuration:
+      managedByConfigPod:
+        enabled: false
+        syncUrl: ""
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      spec-compliant-sdf: false
+    info:
+      description: WebUI initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: false
+        debugLevel: info
+      AUSF:
+        ReportCaller: false
+        debugLevel: info
+      Aper:
+        ReportCaller: false
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: false
+        debugLevel: info
+      FSM:
+        ReportCaller: false
+        debugLevel: info
+      MongoDBLibrary:
+        ReportCaller: false
+        debugLevel: info
+      N3IWF:
+        ReportCaller: false
+        debugLevel: info
+      NAS:
+        ReportCaller: false
+        debugLevel: info
+      NGAP:
+        ReportCaller: false
+        debugLevel: info
+      NRF:
+        ReportCaller: false
+        debugLevel: info
+      NamfComm:
+        ReportCaller: false
+        debugLevel: info
+      NamfEventExposure:
+        ReportCaller: false
+        debugLevel: info
+      NsmfPDUSession:
+        ReportCaller: false
+        debugLevel: info
+      NudrDataRepository:
+        ReportCaller: false
+        debugLevel: info
+      OpenApi:
+        ReportCaller: false
+        debugLevel: info
+      PCF:
+        ReportCaller: false
+        debugLevel: info
+      PFCP:
+        ReportCaller: false
+        debugLevel: info
+      PathUtil:
+        ReportCaller: false
+        debugLevel: info
+      SMF:
+        ReportCaller: false
+        debugLevel: info
+      UDM:
+        ReportCaller: false
+        debugLevel: info
+      UDR:
+        ReportCaller: false
+        debugLevel: info
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/omec-sub-provision/templates/configmap-simapp.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+data:
+  simapp-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /simapp
+    cat config/simapp.yaml
+    
+    ./bin/simapp -simapp config/simapp.yaml
+    
+  simapp.yaml: |-
+    configuration:
+      device-groups:
+      - imsis:
+        - "123456789123458"
+        - "208014567891201"
+        ip-domain-expanded:
+          dnn: internet
+          dns-primary: 8.8.8.8
+          mtu: 1460
+          ue-dnn-qos:
+            bitrate-unit: bps
+            dnn-mbr-downlink: 5000000
+            dnn-mbr-uplink: 2000000
+            traffic-class:
+              arp: 6
+              name: gold
+              pdb: 300
+              pelr: 6
+              qci: 9
+          ue-ip-pool: 10.91.0.0/16
+        ip-domain-name: pool1
+        name: iot-camera
+        site-info: menlo
+      network-slices:
+      - applications-information:
+        - app-name: iot-app
+          end-port: 40000
+          endpoint: 1.1.1.1/32
+          protocol: 17
+          start-port: 40000
+        name: slice1
+        site-device-group:
+        - iot-camera
+        site-info:
+          gNodeBs:
+          - name: menlo-gnb1
+            tac: 1
+          plmn:
+            mcc: "315"
+            mnc: "010"
+          site-name: menlo
+          upf:
+            upf-name: upf
+            upf-port: 8805
+        slice-id:
+          sd: 65565
+          sst: 255
+      provision-network-slice: false
+      sub-provision-endpt:
+        addr: webui
+        port: 5000
+      subscribers:
+      - key: 465b5ce8b199b49faa5f0a2ee238a6bc
+        opc: d4416644f6154936193433dd20a0ace0
+        plmnId: 20893
+        sequenceNumber: 96
+        ueId-end: 208014567891201
+        ueId-start: 208014567891201
+      - key: 8baf473f2f8fd09487cccbd7097c6862
+        opc: 8e27b6af0e692e750f32667a3b14605d
+        plmnId: 20893
+        sequenceNumber: 16f3b3f70fc2
+        ueId-end: 123456789123458
+        ueId-start: 123456789123458
+      - key: 8baf473f2f8fd09487cccbd7097c6862
+        opc: 8e27b6af0e692e750f32667a3b14605d
+        plmnId: 20893
+        sequenceNumber: 16f3b3f70fc2
+        ueId-end: 123456789123465
+        ueId-start: 123456789123460
+    info:
+      description: SIMAPP initial local configuration
+      http-version: 1
+      version: 1.0.0
+    logger:
+      APP:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/omec-user-plane/templates/configmap-upf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+data:
+  upf.json: "{\"access\":{\"ifname\":\"access\"},\"core\":{\"ifname\":\"core\"},\"cpiface\":{\"dnn\":\"internet\",\"hostname\":\"upf\",\"http_port\":\"8080\"},\"enable_notify_bess\":true,\"max_sessions\":50000,\"measure_flow\":false,\"measure_upf\":true,\"mode\":\"dpdk\",\"notify_sockaddr\":\"/pod-share/notifycp\",\"qci_qos_config\":[{\"burst_duration_ms\":10,\"cbs\":50000,\"ebs\":50000,\"pbs\":50000,\"priority\":7,\"qci\":0}],\"slice_rate_limit_config\":{\"n3_bps\":1000000000,\"n3_burst_bytes\":12500000,\"n6_bps\":1000000000,\"n6_burst_bytes\":12500000},\"table_sizes\":{\"appQERLookup\":200000,\"farLookup\":150000,\"pdrLookup\":50000,\"sessionQERLookup\":100000},\"workers\":1}"
+  bessd-poststart.sh: |
+    #!/bin/bash
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    
+    until bessctl run /opt/bess/bessctl/conf/up4; do
+        sleep 2;
+    done;
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-amf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: amf
+  namespace: default
+  labels:
+    release: test1
+    app: amf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-ausf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ausf
+  namespace: default
+  labels:
+    release: test1
+    app: ausf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nrf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nrf
+  namespace: default
+  labels:
+    release: test1
+    app: nrf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nssf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nssf
+  namespace: default
+  labels:
+    release: test1
+    app: nssf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-pcf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pcf
+  namespace: default
+  labels:
+    release: test1
+    app: pcf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-smf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: smf
+  namespace: default
+  labels:
+    release: test1
+    app: smf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udm.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: udm
+  namespace: default
+  labels:
+    release: test1
+    app: udm
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udr.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: udr
+  namespace: default
+  labels:
+    release: test1
+    app: udr
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-webui.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: webui
+  namespace: default
+  labels:
+    release: test1
+    app: webui
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-amf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: amf
+  namespace: default
+  labels:
+    release: test1
+    app: amf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: amf
+subjects:
+  - kind: ServiceAccount
+    name: amf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-ausf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ausf
+  namespace: default
+  labels:
+    release: test1
+    app: ausf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ausf
+subjects:
+  - kind: ServiceAccount
+    name: ausf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nrf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nrf
+  namespace: default
+  labels:
+    release: test1
+    app: nrf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nrf
+subjects:
+  - kind: ServiceAccount
+    name: nrf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nssf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nssf
+  namespace: default
+  labels:
+    release: test1
+    app: nssf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nssf
+subjects:
+  - kind: ServiceAccount
+    name: nssf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-pcf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pcf
+  namespace: default
+  labels:
+    release: test1
+    app: pcf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pcf
+subjects:
+  - kind: ServiceAccount
+    name: pcf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-smf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: smf
+  namespace: default
+  labels:
+    release: test1
+    app: smf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: smf
+subjects:
+  - kind: ServiceAccount
+    name: smf
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udm.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: udm
+  namespace: default
+  labels:
+    release: test1
+    app: udm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: udm
+subjects:
+  - kind: ServiceAccount
+    name: udm
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udr.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: udr
+  namespace: default
+  labels:
+    release: test1
+    app: udr
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: udr
+subjects:
+  - kind: ServiceAccount
+    name: udr
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-webui.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: webui
+  namespace: default
+  labels:
+    release: test1
+    app: webui
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: webui
+subjects:
+  - kind: ServiceAccount
+    name: webui
+    namespace: default
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: simapp
+subjects:
+  - kind: ServiceAccount
+    name: simapp
+    namespace: default
+---
+# Source: sd-core/charts/5g-control-plane/charts/mongodb/templates/standalone/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: default
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-10.31.5
+    app.kubernetes.io/instance: test1
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: mongodb
+spec:
+  type: ClusterIP
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: mongodb
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: test1
+    app.kubernetes.io/component: mongodb
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-amf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: amf
+  labels:
+    release: test1
+    app: amf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: amf
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: sbi
+    port: 29518
+    protocol: TCP
+  - name: ngapp
+    port: 38412
+    protocol: SCTP
+  - name: sctp-grpc
+    port: 9000
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-amf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: amf-headless
+  labels:
+    release: test1
+    app: amf
+spec:
+  selector:
+    release: test1
+    app: amf
+  clusterIP: None
+  ports:
+  - name: grpc
+    port: 9000
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-ausf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ausf
+  labels:
+    release: test1
+    app: ausf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: ausf
+  ports:
+  - name: sbi
+    port: 29509
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-nrf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nrf
+  labels:
+    release: test1
+    app: nrf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: nrf
+  ports:
+  - name: sbi
+    port: 29510
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-nssf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nssf
+  labels:
+    release: test1
+    app: nssf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: nssf
+  ports:
+  - name: sbi
+    port: 29531
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-pcf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcf
+  labels:
+    release: test1
+    app: pcf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: pcf
+  ports:
+  - name: sbi
+    port: 29507
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-smf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: smf
+  labels:
+    release: test1
+    app: smf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: smf
+  ports:
+  - name: pfcp
+    port: 8805
+    protocol: UDP
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: sbi
+    port: 29502
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-udm.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: udm
+  labels:
+    release: test1
+    app: udm
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: udm
+  ports:
+  - name: sbi
+    port: 29503
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-udr.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: udr
+  labels:
+    release: test1
+    app: udr
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: udr
+  ports:
+  - name: sbi
+    port: 29504
+    protocol: TCP
+---
+# Source: sd-core/charts/5g-control-plane/templates/service-webui.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webui
+  labels:
+    release: test1
+    app: webui
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: webui
+  ports:
+  - name: urlport-http
+    port: 5000
+    protocol: TCP
+  - name: grpc
+    port: 9876
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-sub-provision/templates/service-simapp.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: simapp
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: config-exporter
+    port: 8080
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-user-plane/templates/service-upf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: upf
+  ports:
+  - name: pfcp
+    protocol: UDP
+    port: 8805
+---
+# Source: sd-core/charts/omec-user-plane/templates/service-upf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf-http
+  labels:
+    release: test1
+    app: upf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: upf
+  ports:
+  - name: bess-web
+    protocol: TCP
+    port: 8000
+  - name: prometheus-exporter
+    protocol: TCP
+    port: 8080
+---
+# Source: sd-core/charts/5g-control-plane/charts/mongodb/templates/standalone/dep-sts.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: default
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-10.31.5
+    app.kubernetes.io/instance: test1
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: mongodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/instance: test1
+      app.kubernetes.io/component: mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb
+        helm.sh/chart: mongodb-10.31.5
+        app.kubernetes.io/instance: test1
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: mongodb
+    spec:
+      
+      serviceAccountName: default
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: mongodb
+                    app.kubernetes.io/instance: test1
+                    app.kubernetes.io/component: mongodb
+                namespaces:
+                  - "default"
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        sysctls: []
+      containers:
+        - name: mongodb
+          image: docker.io/bitnami/mongodb:4.4.11-debian-10-r12
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: MONGODB_SYSTEM_LOG_VERBOSITY
+              value: "0"
+            - name: MONGODB_DISABLE_SYSTEM_LOG
+              value: "no"
+            - name: MONGODB_DISABLE_JAVASCRIPT
+              value: "no"
+            - name: MONGODB_ENABLE_JOURNAL
+              value: "yes"
+            - name: MONGODB_ENABLE_IPV6
+              value: "no"
+            - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+              value: "no"
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --disableImplicitSessions
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - -ec
+                - |
+                  # Run the proper check depending on the version
+                  [[ $(mongo --version | grep "MongoDB shell") =~ ([0-9]+\.[0-9]+\.[0-9]+) ]] && VERSION=${BASH_REMATCH[1]}
+                  . /opt/bitnami/scripts/libversion.sh
+                  VERSION_MAJOR="$(get_sematic_version "$VERSION" 1)"
+                  VERSION_MINOR="$(get_sematic_version "$VERSION" 2)"
+                  VERSION_PATCH="$(get_sematic_version "$VERSION" 3)"
+                  if [[ "$VERSION_MAJOR" -ge 4 ]] && [[ "$VERSION_MINOR" -ge 4 ]] && [[ "$VERSION_PATCH" -ge 2 ]]; then
+                      mongo --disableImplicitSessions $TLS_OPTIONS --eval 'db.hello().isWritablePrimary || db.hello().secondary' | grep -q 'true'
+                  else
+                      mongo --disableImplicitSessions $TLS_OPTIONS --eval 'db.isMaster().ismaster || db.isMaster().secondary' | grep -q 'true'
+                  fi
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: datadir
+              mountPath: /bitnami/mongodb
+              subPath: 
+      volumes:
+        - name: datadir
+          emptyDir: {}
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-amf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amf
+  labels:
+    release: test1
+    app: amf
+spec:
+  replicas: 1
+  #serviceName: amf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: amf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: amf
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    spec:
+      serviceAccountName: amf
+      initContainers:
+      - name: wait-nrf-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup nrf; do echo waiting for nrf; sleep 4; done;']
+      containers:
+      - name: amf
+        image: omecproject/5gc-amf:master-4d461bf
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: [ /free5gc/script/amf-run.sh ]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/amf-run.sh
+          subPath: amf-run.sh
+        - name: amf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: amf
+          defaultMode: 493
+      - name: amf-config
+        configMap:
+          name: amf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-ausf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ausf
+  labels:
+    release: test1
+    app: ausf
+spec:
+  replicas: 1
+  #serviceName: ausf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: ausf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: ausf
+    spec:
+      serviceAccountName: ausf
+      initContainers:
+      - name: wait-ausf-module2
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup ausf; do echo waiting for ausf; sleep 4; done;']
+      containers:
+      - name: ausf
+        image: omecproject/5gc-ausf:master-1bfd38d
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/ausf-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/ausf-run.sh
+          subPath: ausf-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: ausf
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: ausf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nrf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nrf
+  labels:
+    release: test1
+    app: nrf
+spec:
+  replicas: 1
+  #serviceName: nrf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: nrf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: nrf
+    spec:
+      serviceAccountName: nrf
+      containers:
+      - name: nrf
+        image: omecproject/5gc-nrf:master-a431afa
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/nrf-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/nrf-run.sh
+          subPath: nrf-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: nrf
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: nrf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-nssf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nssf
+  labels:
+    release: test1
+    app: nssf
+spec:
+  replicas: 1
+  #serviceName: nssf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: nssf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: nssf
+    spec:
+      serviceAccountName: nssf
+      initContainers:
+      - name: wait-nssf-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup nssf; do echo waiting for nssf; sleep 4; done;']
+      containers:
+      - name: nssf
+        image: omecproject/5gc-nssf:master-93cd53b
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/nssf-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/nssf-run.sh
+          subPath: nssf-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: nssf
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: nssf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-pcf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pcf
+  labels:
+    release: test1
+    app: pcf
+spec:
+  replicas: 1
+  #serviceName: pcf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: pcf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: pcf
+    spec:
+      serviceAccountName: pcf
+      initContainers:
+      - name: wait-pcf-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup pcf; do echo waiting for pcf; sleep 4; done;']
+      containers:
+      - name: pcf
+        image: omecproject/5gc-pcf:master-0e90976
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/pcf-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/pcf-run.sh
+          subPath: pcf-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: pcf
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: pcf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-smf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smf
+  labels:
+    release: test1
+    app: smf
+spec:
+  replicas: 1
+  #serviceName: smf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: smf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: smf
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "5"
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    spec:
+      serviceAccountName: smf
+      initContainers:
+      - name: wait-smf-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup smf; do echo waiting for smf; sleep 4; done;']
+      containers:
+      - name: smf
+        image: omecproject/5gc-smf:master-b73f587
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/smf-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/smf-run.sh
+          subPath: smf-run.sh
+        - name: nf-config
+          mountPath: /free5gc/uerouting
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: smf
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: smf
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udm.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udm
+  labels:
+    release: test1
+    app: udm
+spec:
+  replicas: 1
+  #serviceName: udm-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: udm
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: udm
+    spec:
+      serviceAccountName: udm
+      initContainers:
+      - name: wait-udm-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup udm; do echo waiting for udm; sleep 4; done;']
+      - name: wait-udr-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup udr; do echo waiting for udr; sleep 4; done;']
+      containers:
+      - name: udm
+        image: omecproject/5gc-udm:master-5992f3f
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/udm-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/udm-run.sh
+          subPath: udm-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: udm
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: udm
+          defaultMode: 493
+      - name: config-dir
+        emptyDir: {}
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-udr.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udr
+  labels:
+    release: test1
+    app: udr
+spec:
+  replicas: 1
+  #serviceName: udr-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: udr
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: udr
+    spec:
+      serviceAccountName: udr
+      initContainers:
+      - name: wait-udr-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup udr; do echo waiting for udr; sleep 4; done;']
+      containers:
+      - name: udr
+        image: omecproject/5gc-udr:master-c9c04fe
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/udr-run.sh"]
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/udr-run.sh
+          subPath: udr-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: udr
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: udr
+          defaultMode: 493
+---
+# Source: sd-core/charts/5g-control-plane/templates/deployment-webui.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui
+  labels:
+    release: test1
+    app: webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: test1
+      app: webui
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: webui
+    spec:
+      serviceAccountName: webui
+      initContainers:
+      - name: wait-webui-module
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup webui; do echo waiting for webui; sleep 4; done;']
+      containers:
+      - name: webui
+        image: omecproject/5gc-webui:master-fec9bfc
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: "info"
+        - name: GRPC_TRACE
+          value: "all"
+        - name: GRPC_VERBOSITY
+          value: "debug"
+        - name: CONFIGPOD_DEPLOYMENT
+          value: "5G"
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/webui-run.sh"]
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/webui-run.sh
+          subPath: webui-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: webui
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: webui
+          defaultMode: 493
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+spec:
+  replicas: 1
+  #serviceName: simapp-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: simapp
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: simapp
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "5"
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    spec:
+      serviceAccountName: simapp
+      initContainers:
+      - name: wait-simapp-module2
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup simapp; do echo waiting for simapp; sleep 4; done;']
+      containers:
+      - name: simapp
+        image: omecproject/simapp:main-9545c5e
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/simapp/script/simapp-run.sh"]
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /simapp/script/simapp-run.sh
+          subPath: simapp-run.sh
+        - name: nf-config
+          mountPath: /simapp/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: simapp
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: simapp
+          defaultMode: 493
+---
+# Source: sd-core/charts/omec-user-plane/templates/statefulset-upf.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+spec:
+  replicas: 1
+  serviceName: upf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: upf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: upf
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+          {
+            "name": "access-net",
+            "interface": "access",
+            "ips": ["192.168.252.3/24"]
+          },
+          {
+            "name": "core-net",
+            "interface": "core",
+            "ips": ["192.168.250.3/24"]
+          }
+        ]'
+    spec:
+      shareProcessNamespace: true
+      imagePullSecrets:
+        - name: aether.registry
+      initContainers:
+      - name: bess-init
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["sh", "-xec"]
+        args:
+        - ip route replace 192.168.251.0/24 via 192.168.252.1;
+          ip route replace default via 192.168.250.1 metric 110;
+          iptables -I OUTPUT -p icmp --icmp-type port-unreachable -j DROP;
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+          limits:
+            cpu: 128m
+            memory: 64Mi
+          requests:
+            cpu: 128m
+            memory: 64Mi
+      containers:
+      - name: bessd
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        securityContext:
+          capabilities:
+            add:
+            - IPC_LOCK
+        stdin: true
+        tty: true
+        command: ["/bin/bash", "-xc"]
+        args:
+          - bessd -f -grpc-url=0.0.0.0:10514
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/etc/bess/conf/bessd-poststart.sh"]
+        livenessProbe:
+          tcpSocket:
+            port: 10514
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 2
+            memory: 1Gi
+            hugepages-1Gi: 2Gi
+            intel.com/intel_sriov_vfio: 2
+          limits:
+            cpu: 2
+            memory: 1Gi
+            hugepages-1Gi: 2Gi
+            intel.com/intel_sriov_vfio: 2
+        env:
+          - name: CONF_FILE
+            value: /etc/bess/conf/upf.json
+        volumeMounts:
+          - name: shared-app
+            mountPath: /pod-share
+          - name: hugepages
+            mountPath: /dev/hugepages
+          - name: configs
+            mountPath: /etc/bess/conf
+      - name: routectl
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+        command: ["/opt/bess/bessctl/conf/route_control.py"]
+        args:
+          - -i
+          - access
+          - core
+        resources:
+          limits:
+            cpu: 256m
+            memory: 128Mi
+          requests:
+            cpu: 256m
+            memory: 128Mi
+      - name: web
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["/bin/bash", "-xc", "bessctl http 0.0.0.0 8000"]
+        resources:
+          limits:
+            cpu: 256m
+            memory: 128Mi
+          requests:
+            cpu: 256m
+            memory: 128Mi
+      - name: pfcp-agent
+        image: "omecproject/upf-epc-pfcpiface:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["pfcpiface"]
+        args:
+          - -config
+          - /tmp/conf/upf.json
+        resources:
+          limits:
+            cpu: 256m
+            memory: 128Mi
+          requests:
+            cpu: 256m
+            memory: 128Mi
+        volumeMounts:
+          - name: shared-app
+            mountPath: /pod-share
+          - name: configs
+            mountPath: /tmp/conf
+      - name: arping
+        image: "registry.aetherproject.org/tools/busybox:stable"
+        imagePullPolicy: "IfNotPresent"
+        command: ["sh", "-xc"]
+        args:
+          - |
+            while true; do
+              # arping does not work - BESS graph is still disconnected
+              #arping -c 2 -I access 192.168.252.1
+              #arping -c 2 -I core 192.168.250.1
+              ping -c 2 192.168.252.1
+              ping -c 2 192.168.250.1
+              sleep 10
+            done
+        resources:
+          limits:
+            cpu: 128m
+            memory: 64Mi
+          requests:
+            cpu: 128m
+            memory: 64Mi
+      volumes:
+      - name: configs
+        configMap:
+          name: upf
+          defaultMode: 493
+      - name: shared-app
+        emptyDir: {}
+      - name: hugepages
+        emptyDir:
+          medium: HugePages
+---
+# Source: sd-core/charts/omec-user-plane/templates/networks.yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: access-net
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: intel.com/intel_sriov_vfio
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "type": "vfioveth",
+    "ipam": {
+        "type": "static"
+    },
+    "capabilities": { "mac": true}
+  }'
+---
+# Source: sd-core/charts/omec-user-plane/templates/networks.yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: core-net
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: intel.com/intel_sriov_vfio
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "type": "vfioveth",
+    "ipam": {
+        "type": "static"
+    },
+    "capabilities": { "mac": true}
+  }'

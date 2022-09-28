@@ -1,0 +1,2666 @@
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-config4g.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: config4g
+  namespace: default
+  labels:
+    release: test1
+    app: config4g
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-hss.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hss
+  namespace: default
+  labels:
+    release: test1
+    app: hss
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-mme.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mme
+  namespace: default
+  labels:
+    release: test1
+    app: mme
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-pcrf.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pcrf
+  namespace: default
+  labels:
+    release: test1
+    app: pcrf
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-spgwc.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spgwc
+  namespace: default
+  labels:
+    release: test1
+    app: spgwc
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-config4g.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config4g
+  labels:
+    release: test1
+    app: config4g
+data:
+  config4g-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    cp /free5gc/webconsole/webconsole /tmp/coredump/
+    
+    cd /free5gc
+    
+    cat config/webuicfg.conf
+    
+    ./webconsole/webconsole -webuicfg config/webuicfg.conf
+    
+  webuicfg.conf: |-
+    configuration:
+      endpoints:
+      - configCheckUrl: http://spgwc:8080/v1/config-check
+        configPushUrl: http://spgwc:8080/v1/config
+        type: spgw
+      - configCheckUrl: http://mme:8081/v1/config-check
+        configPushUrl: http://mme:8081/v1/config/slice
+        type: mme-s1ap
+      - configCheckUrl: http://hss:8080/v2/config-check
+        configPushUrl: http://hss:8080/v2/config/imsis
+        type: hss
+      - configCheckUrl: http://pcrf:8080/v1/config-check
+        configPushUrl: http://pcrf:8080/v1/config/policies
+        type: pcrf
+      managedByConfigPod:
+        enabled: true
+      spec-compliant-sdf: false
+    info:
+      description: WebUI initial local configuration
+      version: 1.0.0
+    logger:
+      WEBUI:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-hss.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hss-configs
+  labels:
+    release: test1
+    app: hss
+data:
+  acl.conf: |
+    ALLOW_OLD_TLS *.cluster.local
+  hss.conf: |
+    Identity = "hss.default.svc.cluster.local";
+    Realm = "default.svc.cluster.local";
+    TLS_Cred = "/opt/c3po/hss/conf/hss.cert.pem",
+               "/opt/c3po/hss/conf/hss.key.pem";
+    TLS_CA = "/opt/c3po/hss/conf/cacert.pem";
+    No_SCTP;
+    Prefer_TCP;
+    No_IPv6;
+    SCTP_streams = 3;
+    NoRelay;
+    AppServThreads = 4;
+    Port = 3868;
+    SecPort = 5868;
+    LoadExtension = "/usr/local/lib/freeDiameter/acl_wl.fdx" : "/opt/c3po/hss/conf/acl.conf";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_3gpp2_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_draftload_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_etsi283034_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4004_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4006bis_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4072_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4590_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5447_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5580_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5777_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5778_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6734_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6942_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7155_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7683_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7944_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29061_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29128_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29154_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29173_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29212_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29214_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29215_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29217_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29229_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29272_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29273_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29329_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29336_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29337_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29338_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29343_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29344_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29345_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29368_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29468_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts32299_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6as6d.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6t.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6c.fdx";
+  hss.json: |-
+    {
+      "common": {
+        "fdcfg": "conf/hss.conf",
+        "originhost": "hss.default.svc.cluster.local",
+        "originrealm": "default.svc.cluster.local",
+        "prom_port": 9089
+      },
+      "hss": {
+        "auditlogname": "",
+        "auditlognumber": 5,
+        "auditlogsize": 20,
+        "casscoreconnections": 2,
+        "cassdb": "vhss",
+        "cassioqueuesize": 32768,
+        "cassiothreads": 2,
+        "cassmaxconnections": 8,
+        "casspwd": "root",
+        "casssrv": "cassandra",
+        "cassusr": "root",
+        "concurrent": 10,
+        "gtwhost": "*",
+        "gtwport": 9080,
+        "logname": "",
+        "lognumber": 5,
+        "logqsize": 8192,
+        "logsize": 20,
+        "numworkers": 4,
+        "optkey": "63bfa50ee6523365ff14c1f45f88737d",
+        "ossfile": "conf/oss.json",
+        "ossport": 9082,
+        "randv": true,
+        "reloadkey": false,
+        "restport": 8080,
+        "statfreq": 2000,
+        "statlogname": "",
+        "statlognumber": 5,
+        "statlogsize": 20,
+        "verifyroamingsubscribers": false
+      }
+    }
+  oss.json: |-
+    {
+      "option": {
+        "id": "url",
+        "type": "string"
+      },
+      "services": [
+        {
+          "commands": [
+            {
+              "id": "describe_loggers"
+            },
+            {
+              "id": "set_logger_level",
+              "options": [
+                {
+                  "id": "name",
+                  "type": "string"
+                },
+                {
+                  "id": "level",
+                  "type": "integer"
+                }
+              ]
+            }
+          ],
+          "id": "logger"
+        },
+        {
+          "commands": [
+            {
+              "id": "describe_stats_frequency"
+            },
+            {
+              "id": "describe_stats_live"
+            },
+            {
+              "id": "set_stats_frequency",
+              "options": [
+                {
+                  "id": "frequency",
+                  "type": "integer"
+                }
+              ]
+            }
+          ],
+          "id": "stats"
+        }
+      ]
+    }
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-hss.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hss-scripts
+  labels:
+    release: test1
+    app: hss
+data:
+  hss-run.sh: |
+    #!/bin/bash
+    
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    cp /bin/hss /tmp/coredump/
+    
+    CONF_DIR="/opt/c3po/hss/conf"
+    LOGS_DIR="/opt/c3po/hss/logs"
+    mkdir -p $CONF_DIR $LOGS_DIR
+    
+    cp /etc/hss/conf/{acl.conf,hss.json,hss.conf,oss.json} $CONF_DIR
+    cat $CONF_DIR/{hss.json,hss.conf}
+    
+    cd $CONF_DIR
+    make_certs.sh hss default.svc.cluster.local
+    
+    cd ..
+    hss -j $CONF_DIR/hss.json
+    
+  hss-bootstrap.sh: |
+    #!/bin/bash
+    
+    # Copyright 2018 Intel Corporation
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    
+    function provision_users() {
+        count=${1}
+        imsi=${2}
+        msisdn=${3}
+        apn=${4}
+        key=${5}
+        opc=${6}
+        sqn=${7}
+        cassandra_ip=${8}
+        mmeidentity=${9}
+        mmerealm=${10}
+    
+        for (( i=1; i<=$count; i++ ))
+        do
+            echo "IMSI=$imsi MSISDN=$msisdn"
+            cqlsh $cassandra_ip -e "INSERT INTO vhss.users_imsi (imsi, msisdn, access_restriction, key, opc, mmehost, mmeidentity_idmmeidentity, mmerealm, rand, sqn, subscription_data, supported_features) VALUES ('$imsi', $msisdn, 41, '$key', '$opc','$mmeidentity', 3, '$mmerealm', '2683b376d1056746de3b254012908e0e', $sqn, '{\"Subscription-Data\":{\"Access-Restriction-Data\":41,\"Subscriber-Status\":0,\"Network-Access-Mode\":2,\"Regional-Subscription-Zone-Code\":[\"0x0123\",\"0x4567\",\"0x89AB\",\"0xCDEF\",\"0x1234\",\"0x5678\",\"0x9ABC\",\"0xDEF0\",\"0x2345\",\"0x6789\"],\"MSISDN\":\"0x$msisdn\",\"AMBR\":{\"Max-Requested-Bandwidth-UL\":50000000,\"Max-Requested-Bandwidth-DL\":100000000},\"APN-Configuration-Profile\":{\"Context-Identifier\":0,\"All-APN-Configurations-Included-Indicator\":0,\"APN-Configuration\":{\"Context-Identifier\":0,\"PDN-Type\":0,\"Served-Party-IP-Address\":[\"0.0.0.0\"],\"Service-Selection\":\"$apn\",\"EPS-Subscribed-QoS-Profile\":{\"QoS-Class-Identifier\":9,\"Allocation-Retention-Priority\":{\"Priority-Level\":15,\"Pre-emption-Capability\":0,\"Pre-emption-Vulnerability\":0}},\"AMBR\":{\"Max-Requested-Bandwidth-UL\":50000000,\"Max-Requested-Bandwidth-DL\":100000000},\"PDN-GW-Allocation-Type\":0,\"MIP6-Agent-Info\":{\"MIP-Home-Agent-Address\":[\"172.26.17.183\"]}}},\"Subscribed-Periodic-RAU-TAU-Timer\":0}}', '{\"Supported-Features\":{\"Vendor-Id\": 10415, \"Feature-List-ID\": 2, \"Feature-List\": 134217728}}');"
+    
+            if [ $? -ne 0 ];then
+               echo -e "oops! Something went wrong adding $imsi to vhss.users_imsi!\n"
+               exit 1
+            fi
+    
+            cqlsh $cassandra_ip -e "INSERT INTO vhss.msisdn_imsi (msisdn, imsi) VALUES ($msisdn, '$imsi');"
+            if [ $? -ne 0 ];then
+               echo -e "oops! Something went wrong adding $imsi to vhss.msisdn_imsi!\n"
+               exit 1
+            fi
+    
+            echo -e "Added $imsi\n"
+    
+            imsi=`expr $imsi + 1`;
+            msisdn=`expr $msisdn + 1`
+        done
+    }
+    
+    function provision_staticusers() {
+        imsi=${1}
+        msisdn=${2}
+        apn=${3}
+        key=${4}
+        opc=${5}
+        sqn=${6}
+        cassandra_ip=${7}
+        mmeidentity=${8}
+        mmerealm=${9}
+        staticAddr=${10}
+    
+        echo "IMSI=$imsi MSISDN=$msisdn"
+        cqlsh $cassandra_ip -e "INSERT INTO vhss.users_imsi (imsi, msisdn, access_restriction, key, opc, mmehost, mmeidentity_idmmeidentity, mmerealm, rand, sqn, subscription_data, supported_features) VALUES ('$imsi', $msisdn, 41, '$key', '$opc','$mmeidentity', 3, '$mmerealm', '2683b376d1056746de3b254012908e0e', $sqn, '{\"Subscription-Data\":{\"Access-Restriction-Data\":41,\"Subscriber-Status\":0,\"Network-Access-Mode\":2,\"Regional-Subscription-Zone-Code\":[\"0x0123\",\"0x4567\",\"0x89AB\",\"0xCDEF\",\"0x1234\",\"0x5678\",\"0x9ABC\",\"0xDEF0\",\"0x2345\",\"0x6789\"],\"MSISDN\":\"0x$msisdn\",\"AMBR\":{\"Max-Requested-Bandwidth-UL\":50000000,\"Max-Requested-Bandwidth-DL\":100000000},\"APN-Configuration-Profile\":{\"Context-Identifier\":0,\"All-APN-Configurations-Included-Indicator\":0,\"APN-Configuration\":{\"Context-Identifier\":0,\"PDN-Type\":0,\"Served-Party-IP-Address\":[\"$staticAddr\"],\"Service-Selection\":\"$apn\",\"EPS-Subscribed-QoS-Profile\":{\"QoS-Class-Identifier\":9,\"Allocation-Retention-Priority\":{\"Priority-Level\":15,\"Pre-emption-Capability\":0,\"Pre-emption-Vulnerability\":0}},\"AMBR\":{\"Max-Requested-Bandwidth-UL\":50000000,\"Max-Requested-Bandwidth-DL\":100000000},\"PDN-GW-Allocation-Type\":0,\"MIP6-Agent-Info\":{\"MIP-Home-Agent-Address\":[\"172.26.17.183\"]}}},\"Subscribed-Periodic-RAU-TAU-Timer\":0}}', '{\"Supported-Features\":{\"Vendor-Id\": 10415, \"Feature-List-ID\": 2, \"Feature-List\": 134217728}}');"
+    
+        cqlsh $cassandra_ip -e "INSERT INTO vhss.msisdn_imsi (msisdn, imsi) VALUES ($msisdn, '$imsi');"
+        echo -e "Added $imsi\n"
+    }
+    
+    function provision_mme() {
+        id=$1
+        isdn=$2
+        host=$3
+        realm=$4
+        uereachability=$5
+        cassandra_ip=$6
+    
+        cqlsh $cassandra_ip -e "INSERT INTO vhss.mmeidentity (idmmeidentity, mmeisdn, mmehost, mmerealm, ue_reachability) VALUES ($id, '$isdn', '$host', '$realm', $uereachability);"
+        if [ $? -ne 0 ];then
+           echo -e "oops! Something went wrong adding to vhss.mmeidentity!\n"
+           exit 1
+        fi
+    
+        cqlsh $cassandra_ip -e "INSERT INTO vhss.mmeidentity_host (idmmeidentity, mmeisdn, mmehost, mmerealm, ue_reachability) VALUES ($id, '$isdn', '$host', '$realm', $uereachability);"
+        if [ $? -ne 0 ];then
+           echo -e "oops! Something went wrong adding to vhss.mmeidentity_host!\n"
+           exit 1
+        fi
+    
+        echo -e "Added mme $id\n"
+    }
+    
+    until cqlsh --file /opt/c3po/hssdb/oai_db.cql cassandra;
+        do echo "Provisioning HSSDB";
+        sleep 2;
+    done
+    provision_mme \
+        1 \
+        19136246000 \
+        mme.omec.svc.cluster.local \
+        omec.svc.cluster.local \
+        1 \
+        cassandra
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-mme.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mme-configs
+  labels:
+    release: test1
+    app: mme
+data:
+  s6a_fd.conf: |
+    Identity = "mme.default.svc.cluster.local";
+    Realm = "default.svc.cluster.local";
+    TLS_Cred = "conf/mme.cert.pem",
+               "conf/mme.key.pem";
+    TLS_CA = "conf/cacert.pem";
+    AppServThreads = 40;
+    SCTP_streams = 3;
+    NoRelay;
+    No_IPv6;
+    #Port = 3868;
+    #SecPort = 3869;
+
+    ConnectPeer = "hss.default.svc.cluster.local" { No_TLS; port = 3868; };
+
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_3gpp2_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_draftload_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_etsi283034_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4004_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4006bis_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4072_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4590_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5447_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5580_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5777_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5778_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6734_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6942_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7155_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7683_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7944_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29061_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29128_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29154_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29173_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29212_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29214_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29215_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29217_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29229_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29272_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29273_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29329_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29336_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29337_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29338_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29343_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29344_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29345_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29368_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29468_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts32299_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6as6d.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6c.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_S6t.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_SGd.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_T6aT6bT7.fdx";
+  config.json: |-
+    {
+      "mme": {
+        "apnlist": {
+          "default": "spgwc",
+          "internet": "spgwc"
+        },
+        "code": 1,
+        "feature_list": {
+          "dcnr_support": "disabled"
+        },
+        "group_id": 1,
+        "logging": "debug",
+        "name": "vmmestandalone",
+        "plmnlist": {
+          "plmn1": "mcc=315,mnc=010",
+          "plmn2": "mcc=208,mnc=01"
+        },
+        "prom_port": 3081,
+        "security": {
+          "int_alg_list": "[EIA1, EIA2, EIA0]",
+          "sec_alg_list": "[EEA0, EEA1, EEA2]"
+        }
+      },
+      "s11": {
+        "egtp_default_port": 2123
+      },
+      "s1ap": {
+        "sctp_port": 36412
+      },
+      "s6a": {
+        "host": "hss.default.svc.cluster.local",
+        "host_type": "freediameter",
+        "realm": "default.svc.cluster.local"
+      }
+    }
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-mme.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mme-scripts
+  labels:
+    release: test1
+    app: mme
+data:
+  mme-init.sh: |
+    #!/bin/sh
+    
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    
+    cp /opt/mme/config/config.json /opt/mme/config/shared/config.json
+    cd /opt/mme/config/shared
+    
+    # Set local IP address for s1ap and s11 networks to the config
+    jq --arg MME_LOCAL_IP "$POD_IP" '.mme.ip_addr=$MME_LOCAL_IP' config.json > config.tmp && mv config.tmp config.json
+    jq --arg MME_LOCAL_IP "$POD_IP" '.s1ap.s1ap_local_addr=$MME_LOCAL_IP' config.json > config.tmp && mv config.tmp config.json
+    jq --arg MME_LOCAL_IP "$POD_IP" '.s11.egtp_local_addr=$MME_LOCAL_IP' config.json > config.tmp && mv config.tmp config.json
+    
+    # Set SPGWC address to the config
+    # We need to convert service domain name to actual IP address
+    # because mme apps does not take domain address - should be fixed in openmme
+    SPGWC_ADDR=$(dig +short +search spgwc)
+    jq --arg SPGWC_ADDR "$SPGWC_ADDR" '.s11.sgw_addr //= $SPGWC_ADDR' config.json > config.tmp && mv config.tmp config.json
+    jq --arg SPGWC_ADDR "$SPGWC_ADDR" '.s11.pgw_addr //= $SPGWC_ADDR' config.json > config.tmp && mv config.tmp config.json
+    
+    # Add additional redundant keys - should be fixed in openmme
+    HSS_TYPE=$(jq -r '.s6a.host_type' config.json)
+    HSS_HOST=$(jq -r '.s6a.host' config.json)
+    jq --arg HSS_TYPE "$HSS_TYPE" '.s6a.hss_type=$HSS_TYPE' config.json > config.tmp && mv config.tmp config.json
+    jq --arg HSS_HOST "$HSS_HOST" '.s6a.host_name=$HSS_HOST' config.json > config.tmp && mv config.tmp config.json
+    
+    # Copy the final configs for each applications
+    cp /opt/mme/config/shared/config.json /opt/mme/config/shared/mme.json
+    cp /opt/mme/config/shared/config.json /opt/mme/config/shared/s11.json
+    cp /opt/mme/config/shared/config.json /opt/mme/config/shared/s1ap.json
+    cp /opt/mme/config/shared/config.json /opt/mme/config/shared/s6a.json
+    cp /opt/mme/config/s6a_fd.conf /opt/mme/config/shared/s6a_fd.conf
+    
+    #This multiple copies of config needs some cleanup. For now I want 
+    #that after running mme_init config to be present in the target directory
+    cp /opt/mme/config/shared/* /openmme/target/conf/
+    
+    # Generate certs
+    MME_IDENTITY="mme.default.svc.cluster.local";
+    DIAMETER_HOST=$(echo $MME_IDENTITY | cut -d'.' -f1)
+    DIAMETER_REALM="default.svc.cluster.local";
+    
+    cp /openmme/target/conf/make_certs.sh /opt/mme/config/shared/make_certs.sh
+    cd /opt/mme/config/shared
+    ./make_certs.sh $DIAMETER_HOST $DIAMETER_REALM
+    
+  mme-run.sh: |
+    #!/bin/bash
+    
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    APPLICATION=$1
+    cp /openmme/target/bin/$APPLICATION /tmp/coredump/
+    
+    # copy config files to openmme target directly
+    cp /opt/mme/config/shared/* /openmme/target/conf/
+    
+    cd /openmme/target
+    export LD_LIBRARY_PATH=/usr/local/lib:./lib
+    
+    case $APPLICATION in
+        "mme-app")
+          echo "Starting mme-app"
+          echo "conf/mme.json"
+          cat conf/mme.json
+          ./bin/mme-app
+          ;;
+        "s1ap-app")
+          echo "Starting s1ap-app"
+          echo "conf/s1ap.json"
+          today=`date '+%Y_%m_%d__%H_%M_%S'`;
+          filename="/tmp/valgrind_output_s1ap_$today.txt"
+          echo $filename
+          cat conf/s1ap.json
+          ./bin/s1ap-app
+          ;;
+        "s6a-app")
+          echo "Starting s6a-app"
+          echo "conf/s6a.json"
+          cat conf/s6a.json
+          echo "conf/s6a_fd.conf"
+          cat conf/s6a_fd.conf
+          ./bin/s6a-app
+          ;;
+        "s11-app")
+          echo "Starting s11-app"
+          echo "conf/s11.json"
+          cat conf/s11.json
+          ./bin/s11-app
+          ;;
+        *)
+          echo "invalid app $APPLICATION"
+          ;;
+    esac
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-pcrf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pcrf-configs
+  labels:
+    release: test1
+    app: pcrf
+data:
+  acl.conf: |
+    ALLOW_OLD_TLS *.cluster.local
+  pcrf.conf: |
+    Identity = "pcrf.default.svc.cluster.local";
+    Realm = "default.svc.cluster.local";
+    TLS_Cred = "/opt/c3po/pcrf/conf/pcrf.cert.pem",
+               "/opt/c3po/pcrf/conf/pcrf.key.pem";
+    TLS_CA = "/opt/c3po/pcrf/conf/cacert.pem";
+    No_SCTP;
+    Prefer_TCP;
+    No_IPv6;
+    SCTP_streams = 3;
+    NoRelay;
+    AppServThreads = 4;
+    Port = 3868;
+    SecPort = 5868;
+    LoadExtension = "/usr/local/lib/freeDiameter/acl_wl.fdx" : "/opt/c3po/pcrf/conf/acl.conf";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_3gpp2_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_draftload_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_etsi283034_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4004_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4006bis_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4072_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4590_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5447_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5580_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5777_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5778_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6734_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6942_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7155_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7683_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7944_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29061_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29128_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29154_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29173_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29212_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29214_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29215_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29217_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29229_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29272_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29273_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29329_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29336_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29337_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29338_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29343_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29344_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29345_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29368_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29468_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts32299_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_CreditControl.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_Gx.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_NAS.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_Rx.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_Sd.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_St.fdx";
+  oss.json: |-
+    {
+      "option": {
+        "id": "url",
+        "type": "string"
+      },
+      "services": [
+        {
+          "commands": [
+            {
+              "id": "describe_loggers"
+            },
+            {
+              "id": "set_logger_level",
+              "options": [
+                {
+                  "id": "name",
+                  "type": "string"
+                },
+                {
+                  "id": "level",
+                  "type": "integer"
+                }
+              ]
+            }
+          ],
+          "id": "logger"
+        },
+        {
+          "commands": [
+            {
+              "id": "describe_stats_frequency"
+            },
+            {
+              "id": "describe_stats_live"
+            },
+            {
+              "id": "set_stats_frequency",
+              "options": [
+                {
+                  "id": "frequency",
+                  "type": "integer"
+                }
+              ]
+            }
+          ],
+          "id": "stats"
+        }
+      ]
+    }
+  pcrf.json: |-
+    {
+      "common": {
+        "fdcfg": "conf/pcrf.conf",
+        "originhost": "pcrf.default.svc.cluster.local",
+        "originrealm": "default.svc.cluster.local",
+        "prom_port": 9089
+      },
+      "pcrf": {
+        "auditlogname": "",
+        "auditlognumber": 5,
+        "auditlogsize": 20,
+        "casscoreconnections": 2,
+        "cassdb": "vpcrf",
+        "casshost": "cassandra",
+        "cassioqueuesize": 32768,
+        "cassiothreads": 2,
+        "casskeyspace": "vpcrf",
+        "cassmaxconnections": 8,
+        "casspwd": "root",
+        "casssrv": "cassandra",
+        "cassusr": "root",
+        "concurrent": 10,
+        "gtwhost": "*",
+        "gtwport": 9080,
+        "logname": "",
+        "lognumber": 5,
+        "logqsize": 8192,
+        "logsize": 20,
+        "numworkers": 4,
+        "optkey": "63bfa50ee6523365ff14c1f45f88737d",
+        "ossfile": "conf/oss.json",
+        "ossport": 9082,
+        "randv": true,
+        "reloadkey": false,
+        "restport": 8080,
+        "rulesfile": "conf/subscriber_mapping.json",
+        "statfreq": 2000,
+        "statlogname": "",
+        "statlognumber": 5,
+        "statlogsize": 20,
+        "verifyroamingsubscribers": false
+      }
+    }
+  subscriber_mapping.json: |-
+    {
+      "Policies": {
+        "rules": {
+          "best-effort-internet-access": {
+            "definition": {
+              "Charging-Rule-Name": "best-effort-internet-access",
+              "Flow-Information": {
+                "Flow-Description": "permit out ip from 0.0.0.0/0 to assigned",
+                "Flow-Direction": 3
+              },
+              "Flow-Status": 2,
+              "QoS-Information": {
+                "Allocation-Retention-Priority": {
+                  "Pre-emption-Capability": 1,
+                  "Pre-emption-Vulnerability": 1,
+                  "Priority-Level": 1
+                },
+                "Guaranteed-Bitrate-DL": 0,
+                "Guaranteed-Bitrate-UL": 0,
+                "Max-Requested-Bandwidth-DL": 5120000,
+                "Max-Requested-Bandwidth-UL": 512000,
+                "QoS-Class-Identifier": 9
+              }
+            }
+          }
+        },
+        "service-groups": {
+          "internet": {
+            "default-activate-service": [
+              "be-internet-access"
+            ]
+          }
+        },
+        "services": {
+          "be-internet-access": {
+            "AMBR_DL": 10240000,
+            "AMBR_UL": 1024000,
+            "arp": 1,
+            "qci": 9,
+            "service-activation-rules": [
+              "best-effort-internet-access"
+            ]
+          }
+        }
+      }
+    }
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-pcrf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pcrf-scripts
+  labels:
+    release: test1
+    app: pcrf
+data:
+  pcrf-run.sh: |
+    #!/bin/bash
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    cp /bin/pcrf /tmp/coredump/
+    
+    CONF_DIR="/opt/c3po/pcrf/conf"
+    LOGS_DIR="/opt/c3po/pcrf/logs"
+    #TODO - Need to remove logs directory
+    mkdir -p $CONF_DIR $LOGS_DIR
+    
+    cp /etc/pcrf/conf/{acl.conf,pcrf.json,pcrf.conf,oss.json,subscriber_mapping.json} $CONF_DIR
+    cat $CONF_DIR/{pcrf.json,pcrf.conf}
+    
+    cd $CONF_DIR
+    make_certs.sh pcrf default.svc.cluster.local
+    
+    cd ..
+    pcrf -j $CONF_DIR/pcrf.json
+    
+  pcrf-bootstrap.sh: |
+    #!/bin/bash
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    
+    until cqlsh --file /opt/c3po/pcrfdb/pcrf_cassandra.cql cassandra;
+        do echo "Provisioning PCRFDB";
+        sleep 2;
+    done
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-spgwc.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spgwc-configs
+  labels:
+    release: test1
+    app: spgwc
+data:
+  gx.conf: |
+    Identity = "spgwc.default.svc.cluster.local";
+    Realm = "default.svc.cluster.local";
+    TLS_Cred = "config/spgwc.cert.pem",
+               "config/spgwc.key.pem";
+    TLS_CA = "config/cacert.pem";
+    AppServThreads = 40;
+    SCTP_streams = 3;
+    NoRelay;
+    No_IPv6;
+    #Port = 3868;
+    #SecPort = 3869;
+
+    ConnectPeer = "pcrf.default.svc.cluster.local" { No_TLS; port = 3868; };
+
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_3gpp2_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_draftload_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_etsi283034_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4004_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4006bis_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4072_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc4590_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5447_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5580_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5777_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc5778_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6734_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc6942_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7155_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7683_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_rfc7944_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29061_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29128_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29154_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29173_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29212_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29214_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29215_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29217_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29229_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29272_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29273_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29329_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29336_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29337_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29338_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29343_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29344_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29345_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29368_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts29468_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_ts32299_avps.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_CreditControl.fdx";
+    LoadExtension = "/usr/local/lib/freeDiameter/dict_Gx.fdx";
+  config.json: |-
+    {
+      "gx": {
+        "host": "pcrf.default.svc.cluster.local",
+        "host_type": "freediameter",
+        "realm": "default.svc.cluster.local"
+      }
+    }
+  cp.json: |-
+    {
+      "global": {
+        "gxConfig": 1,
+        "heartbeatFailure": true,
+        "httpPort": 8080,
+        "loggingLevel": "LOG_DEBUG",
+        "periodicTimerSec": 10,
+        "pfcpPort": 8805,
+        "prometheusPort": 9089,
+        "requestTimeoutMilliSec": 5000,
+        "requestTries": 3,
+        "s11Port": 2123,
+        "transmitCount": 5,
+        "transmitTimerSec": 2,
+        "upfdnstimeout": 100,
+        "urrConfig": 0
+      },
+      "ip_pool_config": {
+        "staticUeIpPool": {
+          "ip": "172.250.1.0",
+          "mask": "255.255.255.0"
+        },
+        "ueIpPool": {
+          "ip": "172.250.0.0",
+          "mask": "255.255.0.0"
+        }
+      }
+    }
+  subscriber_mapping.json: |-
+    {
+      "access-profiles": {
+        "access-all": {
+          "type": "allow-all"
+        },
+        "apps-only": {
+          "filter": "only_apps_network",
+          "type": "specific-network"
+        },
+        "excluding-app": {
+          "filter": "exclude-app-name",
+          "type": "excluding-this-app"
+        },
+        "internet-only": {
+          "filter": "No_private_network",
+          "type": "internet-only"
+        },
+        "intranet-only": {
+          "filter": "only_private_network",
+          "type": "intranet-only"
+        },
+        "specific-app": {
+          "filter": "allow-app-name",
+          "type": "specific-destination-only"
+        }
+      },
+      "apn-profiles": {
+        "apn-profile1": {
+          "apn-name": "internet",
+          "dns_primary": "8.8.8.4",
+          "dns_secondary": "8.8.8.8",
+          "gx_enabled": true,
+          "mtu": 1460,
+          "network": "lbo",
+          "usage": 1
+        }
+      },
+      "qos-profiles": {
+        "mobile": {
+          "apn-ambr": [
+            12345678,
+            12345678
+          ],
+          "arp": 1,
+          "qci": 9
+        },
+        "qos-profile1": {
+          "apn-ambr": [
+            12345678,
+            12345678
+          ],
+          "arp": 1,
+          "qci": 9
+        }
+      },
+      "subscriber-selection-rules": [
+        {
+          "keys": {
+            "imsi-range": {
+              "from": 200000000000000,
+              "to": 299999999999999
+            },
+            "serving-plmn": {
+              "mcc": 208,
+              "mnc": 10,
+              "tac": 1
+            }
+          },
+          "priority": 5,
+          "selected-access-profile": [
+            "access-all"
+          ],
+          "selected-apn-profile": "apn-profile1",
+          "selected-qos-profile": "qos-profile1",
+          "selected-user-plane-profile": "user-plane1"
+        },
+        {
+          "keys": {
+            "match-all": true
+          },
+          "priority": 10,
+          "selected-access-profile": [
+            "access-all"
+          ],
+          "selected-apn-profile": "apn-profile1",
+          "selected-qos-profile": "qos-profile1",
+          "selected-user-plane-profile": "user-plane1"
+        }
+      ],
+      "user-plane-profiles": {
+        "user-plane1": {
+          "access-tags": {
+            "tag1": "ACC"
+          },
+          "global-address": true,
+          "qos-tags": {
+            "tag1": "BW"
+          },
+          "user-plane": "upf"
+        }
+      }
+    }
+---
+# Source: sd-core/charts/omec-control-plane/templates/configmap-spgwc.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spgwc-scripts
+  labels:
+    release: test1
+    app: spgwc
+data:
+  spgwc-run.sh: |
+    #!/bin/bash
+    
+    # Copyright 2019-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    APPLICATION=$1
+    set -xe
+    
+    mkdir -p /opt/cp/config
+    cd /opt/cp/config
+    cp /etc/cp/config/{*.json,*.conf} .
+    
+    case $APPLICATION in
+        "ngic_controlplane")
+          echo "Starting ngic controlplane app"
+          cat /opt/cp/config/cp.json
+          cat /opt/cp/config/subscriber_mapping.json
+          cp /bin/ngic_controlplane /tmp/coredump/
+    
+          ngic_controlplane -f /etc/cp/config/
+          ;;
+    
+        "gx-app")
+          echo "Starting gx-app"
+          SPGWC_IDENTITY="spgwc.default.svc.cluster.local";
+          DIAMETER_HOST=$(echo $SPGWC_IDENTITY| cut -d'.' -f1)
+          DIAMETER_REALM="default.svc.cluster.local";
+          chmod +x /bin/make_certs.sh
+          cp /bin/make_certs.sh /opt/cp/config
+          /bin/make_certs.sh $DIAMETER_HOST $DIAMETER_REALM
+          cp /bin/gx_app /tmp/coredump/
+          cd /opt/cp/
+          gx_app
+          ;;
+    
+        *)
+          echo "invalid app $APPLICATION"
+          ;;
+    esac
+    
+  spgwc-init.sh: |
+    #!/bin/sh
+    
+    # Copyright 2021-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    while ! curl -f --connect-timeout 5 http://spgwc:8080/startup
+    do
+      echo Waiting for SPGWC to be ready
+      sleep 5
+    done
+    echo SPGWC is ready
+    
+    echo Posting to sync URL 
+    while ! curl --connect-timeout 5 -f -X POST 
+    do
+      echo Failed posting to sync URL
+      sleep 5
+    done
+    echo
+    
+    echo Sleeping forever
+    while true
+    do
+      sleep 86400
+    done
+---
+# Source: sd-core/charts/omec-sub-provision/templates/configmap-simapp.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+data:
+  simapp-run.sh: |
+    #!/bin/sh
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -xe
+    
+    cd /simapp
+    cat config/simapp.yaml
+    
+    ./bin/simapp -simapp config/simapp.yaml
+    
+  simapp.yaml: |-
+    configuration:
+      device-groups:
+      - imsis:
+        - "208010167891201"
+        - "208010167891202"
+        ip-domain-expanded:
+          dnn: internet
+          dns-primary: 8.8.8.8
+          mtu: 1460
+          ue-dnn-qos:
+            bitrate-unit: bps
+            dnn-mbr-downlink: 20000000
+            dnn-mbr-uplink: 4000000
+            traffic-class:
+              arp: 6
+              name: platinum
+              pdb: 300
+              pelr: 6
+              qci: 9
+          ue-ip-pool: 172.250.0.0/16
+        ip-domain-name: pool1
+        name: 4g-oaisim-user
+        site-info: aiab
+      network-slices:
+      - application-filtering-rules:
+        - action: permit
+          endpoint: 0.0.0.0/0
+          priority: 250
+          rule-name: ALLOW-ALL
+        name: default
+        site-device-group:
+        - 4g-oaisim-user
+        site-info:
+          gNodeBs:
+          - name: aiab-gnb1
+            tac: 1
+          plmn:
+            mcc: "208"
+            mnc: "01"
+          site-name: aiab
+          upf:
+            upf-name: upf
+            upf-port: 8805
+        slice-id:
+          sd: "010203"
+          sst: 1
+      provision-network-slice: true
+      sub-provision-endpt:
+        addr: config4g.omec.svc.cluster.local
+        port: 5000
+      subscribers:
+      - key: 465b5ce8b199b49faa5f0a2ee238a6bc
+        op: ""
+        opc: d4416644f6154936193433dd20a0ace0
+        plmnId: 20801
+        sequenceNumber: 96
+        ueId-end: 208010167891211
+        ueId-start: 208010167891201
+    info:
+      description: SIMAPP initial local configuration
+      http-version: 1
+      version: 1.0.0
+    logger:
+      APP:
+        ReportCaller: false
+        debugLevel: info
+---
+# Source: sd-core/charts/omec-user-plane/templates/configmap-upf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+data:
+  upf.json: "{\"access\":{\"ifname\":\"access\"},\"core\":{\"ifname\":\"core\"},\"cpiface\":{\"dnn\":\"internet\",\"hostname\":\"upf\",\"http_port\":\"8080\"},\"enable_notify_bess\":true,\"hwcksum\":true,\"max_sessions\":50000,\"measure_flow\":false,\"measure_upf\":true,\"mode\":\"af_packet\",\"notify_sockaddr\":\"/pod-share/notifycp\",\"qci_qos_config\":[{\"burst_duration_ms\":10,\"cbs\":50000,\"ebs\":50000,\"pbs\":50000,\"priority\":7,\"qci\":0}],\"slice_rate_limit_config\":{\"n3_bps\":1000000000,\"n3_burst_bytes\":12500000,\"n6_bps\":1000000000,\"n6_burst_bytes\":12500000},\"table_sizes\":{\"appQERLookup\":200000,\"farLookup\":150000,\"pdrLookup\":50000,\"sessionQERLookup\":100000},\"workers\":1}"
+  bessd-poststart.sh: |
+    #!/bin/bash
+    
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+    
+    set -ex
+    
+    until bessctl run /opt/bess/bessctl/conf/up4; do
+        sleep 2;
+    done;
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-config4g.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: config4g
+  namespace: default
+  labels:
+    release: test1
+    app: config4g
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-hss.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: hss
+  namespace: default
+  labels:
+    release: test1
+    app: hss
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-mme.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mme
+  namespace: default
+  labels:
+    release: test1
+    app: mme
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-pcrf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pcrf
+  namespace: default
+  labels:
+    release: test1
+    app: pcrf
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-spgwc.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spgwc
+  namespace: default
+  labels:
+    release: test1
+    app: spgwc
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - batch
+      - apps
+    verbs:
+      - get
+      - list
+      - patch
+    resources:
+      - statefulsets
+      - daemonsets
+      - jobs
+      - pods
+      - services
+      - endpoints
+      - configmaps
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-config4g.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: config4g
+  namespace: default
+  labels:
+    release: test1
+    app: config4g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: config4g
+subjects:
+  - kind: ServiceAccount
+    name: config4g
+    namespace: default
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-hss.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hss
+  namespace: default
+  labels:
+    release: test1
+    app: hss
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hss
+subjects:
+  - kind: ServiceAccount
+    name: hss
+    namespace: default
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-mme.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mme
+  namespace: default
+  labels:
+    release: test1
+    app: mme
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mme
+subjects:
+  - kind: ServiceAccount
+    name: mme
+    namespace: default
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-pcrf.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pcrf
+  namespace: default
+  labels:
+    release: test1
+    app: pcrf
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pcrf
+subjects:
+  - kind: ServiceAccount
+    name: pcrf
+    namespace: default
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-spgwc.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spgwc
+  namespace: default
+  labels:
+    release: test1
+    app: spgwc
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spgwc
+subjects:
+  - kind: ServiceAccount
+    name: spgwc
+    namespace: default
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: simapp
+  namespace: default
+  labels:
+    release: test1
+    app: simapp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: simapp
+subjects:
+  - kind: ServiceAccount
+    name: simapp
+    namespace: default
+---
+# Source: sd-core/charts/omec-control-plane/charts/cassandra/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  labels:
+    app: cassandra
+    chart: cassandra-0.13.1
+    release: test1
+    heritage: Helm
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+  - name: intra
+    port: 7000
+    targetPort: 7000
+  - name: tls
+    port: 7001
+    targetPort: 7001
+  - name: jmx
+    port: 7199
+    targetPort: 7199
+  - name: cql
+    port: 9042
+    targetPort: 9042
+  - name: thrift
+    port: 9160
+    targetPort: 9160
+  selector:
+    app: cassandra
+    release: test1
+---
+# Source: sd-core/charts/omec-control-plane/templates/service-config4g.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: config4g
+  labels:
+    release: test1
+    app: config4g
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: config4g
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: urlport-http
+    port: 5000
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-control-plane/templates/service-hss.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hss
+  labels:
+    release: test1
+    app: hss
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: hss
+  ports:
+  - name: s6a
+    port: 3868
+    protocol: TCP
+  - name: config-port
+    port: 8080
+    protocol: TCP
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-control-plane/templates/service-mme.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mme
+  labels:
+    release: test1
+    app: mme
+spec:
+  type: NodePort
+  selector:
+    release: test1
+    app: mme
+  ports:
+    - name: s11
+      port: 2123
+      protocol: UDP
+      nodePort: 32124
+    - name: s6a
+      port: 3868
+      protocol: TCP
+      nodePort: 33869
+    - name: prometheus-exporter
+      port: 3081
+      protocol: TCP
+      nodePort: 30085
+    - name: s1ap
+      port: 36412
+      protocol: SCTP
+      nodePort: 36412
+    - name: mme-app-config
+      port: 8080
+      protocol: TCP
+    - name: mme-s1ap-config
+      port: 8081
+      protocol: TCP
+---
+# Source: sd-core/charts/omec-control-plane/templates/service-pcrf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcrf
+  labels:
+    release: test1
+    app: pcrf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: pcrf
+  ports:
+  - name: gx
+    port: 3868
+    protocol: TCP
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: config-port
+    port: 8080
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-control-plane/templates/service-spgwc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: spgwc
+  labels:
+    release: test1
+    app: spgwc
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: spgwc
+  ports:
+  - name: s11
+    port: 2123
+    protocol: UDP
+  - name: pfcp
+    port: 8805
+    protocol: UDP
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: rest
+    port: 8080
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-sub-provision/templates/service-simapp.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: simapp
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: config-exporter
+    port: 8080
+    protocol: TCP
+---
+# Source: sd-core/charts/omec-user-plane/templates/service-upf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: upf
+  ports:
+  - name: pfcp
+    protocol: UDP
+    port: 8805
+---
+# Source: sd-core/charts/omec-user-plane/templates/service-upf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf-http
+  labels:
+    release: test1
+    app: upf
+spec:
+  type: ClusterIP
+  selector:
+    release: test1
+    app: upf
+  ports:
+  - name: bess-web
+    protocol: TCP
+    port: 8000
+  - name: prometheus-exporter
+    protocol: TCP
+    port: 8080
+---
+# Source: sd-core/charts/omec-sub-provision/templates/deployment-simapp.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simapp
+  labels:
+    release: test1
+    app: simapp
+spec:
+  replicas: 1
+  #serviceName: simapp-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: simapp
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: simapp
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "5"
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    spec:
+      serviceAccountName: simapp
+      initContainers:
+      - name: wait-simapp-module2
+        image: registry.opennetworking.org/docker.io/omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nslookup simapp; do echo waiting for simapp; sleep 4; done;']
+      containers:
+      - name: simapp
+        image: registry.opennetworking.org/docker.io/omecproject/simapp:main-9545c5e
+        imagePullPolicy: IfNotPresent
+        stdin: true
+        tty: true
+        command: ["/simapp/script/simapp-run.sh"]
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: run-script
+          mountPath: /simapp/script/simapp-run.sh
+          subPath: simapp-run.sh
+        - name: nf-config
+          mountPath: /simapp/config
+      volumes:
+      - name: run-script
+        configMap:
+          name: simapp
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: simapp
+          defaultMode: 493
+---
+# Source: sd-core/charts/omec-control-plane/charts/cassandra/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  labels:
+    app: cassandra
+    chart: cassandra-0.13.1
+    release: test1
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: cassandra
+      release: test1
+  serviceName: cassandra
+  replicas: 1
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: OnDelete
+  template:
+    metadata:
+      labels:
+        app: cassandra
+        release: test1
+    spec:
+      hostNetwork: false
+      containers:
+      - name: cassandra
+        image: "cassandra:2.1.20"
+        imagePullPolicy: "IfNotPresent"
+        resources:
+          {}
+        env:
+        - name: CASSANDRA_SEEDS
+          value: "cassandra-0.cassandra.default.svc.cluster.local"
+        - name: MAX_HEAP_SIZE
+          value: "2048M"
+        - name: HEAP_NEWSIZE
+          value: "512M"
+        - name: CASSANDRA_ENDPOINT_SNITCH
+          value: "GossipingPropertyFileSnitch"
+        - name: CASSANDRA_CLUSTER_NAME
+          value: "cassandra"
+        - name: CASSANDRA_DC
+          value: "DC1"
+        - name: CASSANDRA_RACK
+          value: "RAC1"
+        - name: CASSANDRA_START_RPC
+          value: "false"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        livenessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status" ]
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status | grep -E \"^UN\\s+${POD_IP}\"" ]
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: intra
+          containerPort: 7000
+        - name: tls
+          containerPort: 7001
+        - name: jmx
+          containerPort: 7199
+        - name: cql
+          containerPort: 9042
+        - name: thrift
+          containerPort: 9160
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/cassandra
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "exec nodetool decommission"]
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        emptyDir: {}
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-config4g.yaml
+apiVersion: apps/v1
+kind: StatefulSet 
+metadata:
+  name: config4g
+  labels:
+    release: test1
+    app: config4g
+spec:
+  replicas: 1
+  serviceName: config4g-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: config4g
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: config4g
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+    spec:
+      serviceAccountName: config4g
+      containers:
+      - name: config-4g
+        image: registry.opennetworking.org/docker.io/omecproject/5gc-webui:master-87adbcc
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 0
+        stdin: true
+        tty: true
+        command: ["/free5gc/script/config4g-run.sh"]
+        env:
+        - name: CONFIGPOD_DEPLOYMENT
+          value: "4G"
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: run-script
+          mountPath: /free5gc/script/config4g-run.sh
+          subPath: config4g-run.sh
+        - name: nf-config
+          mountPath: /free5gc/config
+        - name: coredump
+          mountPath: /tmp/coredump
+      volumes:
+      - name: run-script
+        configMap:
+          name: config4g
+          defaultMode: 493
+      - name: nf-config
+        configMap:
+          name: config4g
+          defaultMode: 493
+      - name: host-rootfs
+        hostPath:
+          path: /
+      - name: coredump
+        hostPath:
+          path: /tmp/coredump
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-hss.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hss
+  labels:
+    release: test1
+    app: hss
+spec:
+  replicas: 1
+  serviceName: hss-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: hss
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: hss
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+        fluentbit.io/parser: hss
+    spec:
+      serviceAccountName: hss
+      initContainers:
+      - name: hss-bootstrap
+        image: registry.opennetworking.org/docker.io/omecproject/c3po-hssdb:master-df54425
+        imagePullPolicy: IfNotPresent
+        command: ["/opt/c3po/hss/scripts/hss-bootstrap.sh"]
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/c3po/hss/scripts
+      - name: hss-coredump-init
+        image: "omecproject/busybox:stable"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["sh", "-xc"]
+        args:
+          - echo '/tmp/coredump/core.%h.%e.%t' > /mnt/host-rootfs/proc/sys/kernel/core_pattern
+        volumeMounts:
+          - name: host-rootfs
+            mountPath: /mnt/host-rootfs
+      containers:
+      - name: hss
+        image: registry.opennetworking.org/docker.io/omecproject/c3po-hss:master-df54425
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        stdin: true
+        tty: true
+        command: ["bash", "-c", "/opt/c3po/hss/scripts/hss-run.sh; sleep 3600"]
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/c3po/hss/scripts
+        - name: configs
+          mountPath: /etc/hss/conf
+        - name: coredump
+          mountPath: /tmp/coredump
+      volumes:
+      - name: scripts
+        configMap:
+          name: hss-scripts
+          defaultMode: 493
+      - name: configs
+        configMap:
+          name: hss-configs
+          defaultMode: 420
+      - name: host-rootfs
+        hostPath:
+          path: /
+      - name: coredump
+        hostPath:
+          path: /tmp/coredump
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-mme.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mme
+  labels:
+    release: test1
+    app: mme
+spec:
+  replicas: 1
+  serviceName: mme-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: mme
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: mme
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":3081,"schema":"HTTP"}]'
+        fluentbit.io/parser: mme
+    spec:
+      serviceAccountName: mme
+      initContainers:
+      - name: mme-load-sctp-module
+        image: registry.opennetworking.org/docker.io/omecproject/busybox:stable
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["sh", "-xc"]
+        args:
+        - |
+          if chroot /mnt/host-rootfs modinfo nf_conntrack_proto_sctp > /dev/null 2>&1; then \
+              chroot /mnt/host-rootfs modprobe nf_conntrack_proto_sctp; \
+          fi;
+          chroot /mnt/host-rootfs modprobe tipc
+        volumeMounts:
+        - name: host-rootfs
+          mountPath: /mnt/host-rootfs
+      - name: mme-dep-check
+        image: "quay.io/stackanetes/kubernetes-entrypoint:v0.3.1"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsUser: 0
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PATH
+            value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+          - name: COMMAND
+            value: "echo done"
+          - name: DEPENDENCY_POD_JSON
+            value: '[{"labels": {"app": "hss"}, "requireSameNode": false}]'
+          # add dependency job for make_certs.sh
+        command:
+          - kubernetes-entrypoint
+        volumeMounts:
+          []
+      - name: mme-init
+        image: registry.opennetworking.org/docker.io/omecproject/nucleus:master-a8002eb
+        imagePullPolicy: IfNotPresent
+        command: ["/opt/mme/scripts/mme-init.sh"]
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/mme/scripts
+        - name: configs
+          mountPath: /opt/mme/config
+        - name: shared-data
+          mountPath: /opt/mme/config/shared
+      - name: mme-coredump-init
+        image: "omecproject/busybox:stable"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["sh", "-xc"]
+        args:
+          - echo '/tmp/coredump/core.%h.%e.%t' > /mnt/host-rootfs/proc/sys/kernel/core_pattern
+        volumeMounts:
+          - name: host-rootfs
+            mountPath: /mnt/host-rootfs
+      containers:
+      - name: mme-app
+        image: registry.opennetworking.org/docker.io/omecproject/nucleus:master-a8002eb
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["bash", "-xc"]
+        args:
+        - /opt/mme/scripts/mme-run.sh mme-app
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MMERUNENV
+          value: "container"
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/mme/scripts
+        - name: shared-data
+          mountPath: /opt/mme/config/shared
+        - name: shared-app
+          mountPath: /tmp
+        - name: configs
+          mountPath: /opt/mme/config
+        - name: coredump
+          mountPath: /tmp/coredump
+      - name: s1ap-app
+        image: registry.opennetworking.org/docker.io/omecproject/nucleus:master-a8002eb
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["bash", "-xc"]
+        args:
+        - /opt/mme/scripts/mme-run.sh s1ap-app
+        env:
+        - name: MMERUNENV
+          value: "container"
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/mme/scripts
+        - name: shared-data
+          mountPath: /opt/mme/config/shared
+        - name: shared-app
+          mountPath: /tmp
+        - name: configs
+          mountPath: /opt/mme/config
+        - name: coredump
+          mountPath: /tmp/coredump
+      - name: s6a-app
+        image: registry.opennetworking.org/docker.io/omecproject/nucleus:master-a8002eb
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["bash", "-xc"]
+        args:
+        - /opt/mme/scripts/mme-run.sh s6a-app
+        env:
+        - name: MMERUNENV
+          value: "container"
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/mme/scripts
+        - name: shared-data
+          mountPath: /opt/mme/config/shared
+        - name: shared-app
+          mountPath: /tmp
+        - name: coredump
+          mountPath: /tmp/coredump
+      - name: s11-app
+        image: registry.opennetworking.org/docker.io/omecproject/nucleus:master-a8002eb
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["bash", "-xc"]
+        args:
+        - /opt/mme/scripts/mme-run.sh s11-app
+        env:
+        - name: MMERUNENV
+          value: "container"
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/mme/scripts
+        - name: shared-data
+          mountPath: /opt/mme/config/shared
+        - name: shared-app
+          mountPath: /tmp
+        - name: coredump
+          mountPath: /tmp/coredump
+      volumes:
+      - name: scripts
+        configMap:
+          name: mme-scripts
+          defaultMode: 493
+      - name: configs
+        configMap:
+          name: mme-configs
+          defaultMode: 420
+      - name: shared-data
+        emptyDir: {}
+      - name: shared-app
+        emptyDir: {}
+      - name: host-rootfs
+        hostPath:
+          path: /
+      - name: coredump
+        hostPath:
+          path: /tmp/coredump
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-pcrf.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pcrf
+  labels:
+    release: test1
+    app: pcrf
+spec:
+  replicas: 1
+  serviceName: pcrf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: pcrf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: pcrf
+    spec:
+      serviceAccountName: pcrf
+      initContainers:
+      - name: pcrf-bootstrap
+        image: registry.opennetworking.org/docker.io/omecproject/c3po-pcrfdb:pcrf-d58dd1c
+        imagePullPolicy: IfNotPresent
+        command: ["/opt/c3po/pcrf/pcrf-bootstrap.sh"]
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/c3po/pcrf
+      - name: pcrf-coredump-init
+        image: "omecproject/busybox:stable"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["sh", "-xc"]
+        args:
+          - echo '/tmp/coredump/core.%h.%e.%t' > /mnt/host-rootfs/proc/sys/kernel/core_pattern
+        volumeMounts:
+          - name: host-rootfs
+            mountPath: /mnt/host-rootfs
+      containers:
+      - name: pcrf
+        image: registry.opennetworking.org/docker.io/omecproject/c3po-pcrf:pcrf-d58dd1c
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        stdin: true
+        tty: true
+        command: ["bash", "-c", "/opt/c3po/pcrf/scripts/pcrf-run.sh"]
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/c3po/pcrf/scripts
+        - name: configs
+          mountPath: /etc/pcrf/conf
+        - name: coredump
+          mountPath: /tmp/coredump
+      volumes:
+      - name: scripts
+        configMap:
+          name: pcrf-scripts
+          defaultMode: 493
+      - name: configs
+        configMap:
+          name: pcrf-configs
+          defaultMode: 420
+      - name: host-rootfs
+        hostPath:
+          path: /
+      - name: coredump
+        hostPath:
+          path: /tmp/coredump
+---
+# Source: sd-core/charts/omec-control-plane/templates/statefulset-spgwc.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: spgwc
+  labels:
+    release: test1
+    app: spgwc
+spec:
+  replicas: 1
+  serviceName: spgwc-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: spgwc
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: spgwc
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+        fluentbit.io/parser: spgwc
+    spec:
+      serviceAccountName: spgwc
+      initContainers:
+      - name: spgwc-coredump-init
+        image: "omecproject/busybox:stable"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        command: ["sh", "-xc"]
+        args:
+          - echo '/tmp/coredump/core.%h.%e.%t' > /mnt/host-rootfs/proc/sys/kernel/core_pattern
+        volumeMounts:
+          - name: host-rootfs
+            mountPath: /mnt/host-rootfs
+      containers:
+      - name: spgwc
+        image: registry.opennetworking.org/docker.io/omecproject/spgw:master-e419062
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        stdin: true
+        tty: true
+        command: ["bash", "-xc"]
+        args: 
+        - /opt/cp/scripts/spgwc-run.sh ngic_controlplane
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        startupProbe:
+          #looks like available only in 1.16 K8s version and above
+          httpGet:
+            path: /startup
+            port: 8080
+          initialDelaySeconds: 20
+          failureThreshold: 30
+          periodSeconds: 10
+        env:
+        - name: MEM_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: spgwc
+              resource: limits.memory
+              divisor: 1Mi
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/cp/scripts
+        - name: configs
+          mountPath: /etc/cp/config
+        - name: shared-app
+          mountPath: /tmp
+        - name: coredump
+          mountPath: /tmp/coredump
+      - name: gx-app
+        image: registry.opennetworking.org/docker.io/omecproject/spgw:master-e419062
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        stdin: true
+        tty: true
+        command: ["bash", "-xc"]
+        args:
+        - /opt/cp/scripts/spgwc-run.sh gx-app
+        volumeMounts:
+        - name: scripts
+          mountPath: /opt/cp/scripts
+        - name: configs
+          mountPath: /etc/cp/config
+        - name: shared-app
+          mountPath: /tmp
+        - name: coredump
+          mountPath: /tmp/coredump
+      volumes:
+      - name: scripts
+        configMap:
+          name: spgwc-scripts
+          defaultMode: 493
+      - name: configs
+        configMap:
+          name: spgwc-configs
+          defaultMode: 420
+      - name: shared-app
+        emptyDir: {}
+      - name: host-rootfs
+        hostPath:
+          path: /
+      - name: coredump
+        hostPath:
+          path: /tmp/coredump
+---
+# Source: sd-core/charts/omec-user-plane/templates/statefulset-upf.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: upf
+  labels:
+    release: test1
+    app: upf
+spec:
+  replicas: 1
+  serviceName: upf-headless
+  selector:
+    matchLabels:
+      release: test1
+      app: upf
+  template:
+    metadata:
+      labels:
+        release: test1
+        app: upf
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+          {
+            "name": "access-net",
+            "interface": "access",
+            "ips": ["192.168.252.3/24"]
+          },
+          {
+            "name": "core-net",
+            "interface": "core",
+            "ips": ["192.168.250.3/24"]
+          }
+        ]'
+    spec:
+      shareProcessNamespace: true
+      imagePullSecrets:
+        - name: aether.registry
+      initContainers:
+      - name: bess-init
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["sh", "-xec"]
+        args:
+        - ip route replace 192.168.251.0/24 via 192.168.252.1;
+          ip route replace default via 192.168.250.1 metric 110;
+          ip route replace 10.0.2.15 via 169.254.1.1;
+          iptables -I OUTPUT -p icmp --icmp-type port-unreachable -j DROP;
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+          limits:
+            cpu: 128m
+            memory: 64Mi
+          requests:
+            cpu: 128m
+            memory: 64Mi
+      containers:
+      - name: bessd
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        securityContext:
+          capabilities:
+            add:
+            - IPC_LOCK
+        stdin: true
+        tty: true
+        command: ["/bin/bash", "-xc"]
+        args:
+          - bessd -m 0 -f -grpc-url=0.0.0.0:10514
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/etc/bess/conf/bessd-poststart.sh"]
+        livenessProbe:
+          tcpSocket:
+            port: 10514
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+          limits:
+        env:
+          - name: CONF_FILE
+            value: /etc/bess/conf/upf.json
+        volumeMounts:
+          - name: shared-app
+            mountPath: /pod-share
+          - name: configs
+            mountPath: /etc/bess/conf
+      - name: routectl
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+        command: ["/opt/bess/bessctl/conf/route_control.py"]
+        args:
+          - -i
+          - access
+          - core
+      - name: web
+        image: "omecproject/upf-epc-bess:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["/bin/bash", "-xc", "bessctl http 0.0.0.0 8000"]
+      - name: pfcp-agent
+        image: "omecproject/upf-epc-pfcpiface:master-9a4d86c"
+        imagePullPolicy: "IfNotPresent"
+        command: ["pfcpiface"]
+        args:
+          - -config
+          - /tmp/conf/upf.json
+        volumeMounts:
+          - name: shared-app
+            mountPath: /pod-share
+          - name: configs
+            mountPath: /tmp/conf
+      - name: arping
+        image: "registry.aetherproject.org/tools/busybox:stable"
+        imagePullPolicy: "IfNotPresent"
+        command: ["sh", "-xc"]
+        args:
+          - |
+            while true; do
+              # arping does not work - BESS graph is still disconnected
+              #arping -c 2 -I access 192.168.252.1
+              #arping -c 2 -I core 192.168.250.1
+              ping -c 2 192.168.252.1
+              ping -c 2 192.168.250.1
+              sleep 10
+            done
+        resources:
+          limits:
+            cpu: 128m
+            memory: 64Mi
+          requests:
+            cpu: 128m
+            memory: 64Mi
+      volumes:
+      - name: configs
+        configMap:
+          name: upf
+          defaultMode: 493
+      - name: shared-app
+        emptyDir: {}
+---
+# Source: sd-core/charts/omec-user-plane/templates/networks.yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: access-net
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "type": "macvlan",
+    "master": "data",
+    "ipam": {
+        "type": "static"
+    },
+    "capabilities": { "mac": true}
+  }'
+---
+# Source: sd-core/charts/omec-user-plane/templates/networks.yaml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: core-net
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "type": "macvlan",
+    "master": "data",
+    "ipam": {
+        "type": "static"
+    },
+    "capabilities": { "mac": true}
+  }'
