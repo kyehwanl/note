@@ -75,3 +75,25 @@ VIM quick setup with color scheme - soloarized
 
     - copy the following line into .bashrc or .bash_profile
     export TERM=screen-256color
+
+
+
+FYI, change text color
+=======================
+  :hi --> show all hilight
+  :hi Normal ctermfg=248 (default) --> 253 more thick white
+
+
+
+
+Quick Setup 2nd way
+====================
+
+1. copy solarizead.vim or solarized8.vim under the directory .vim/colors/
+2. command following settings in vim or put into .vimrc file
+
+    set background=dark
+    let g:solarized_termcolors=256
+    colorscheme solarized
+
+
