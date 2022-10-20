@@ -115,6 +115,12 @@ python import sys; print(sys.version)
     will be executed (args, print)
 
 
+3.8 pprint for dict object
+    pp (vars(object)) == pprint(vars(object))
+
+    (c.f.) class object --> dir() instead of vars()
+
+
 
 
 4. pack & unpack exmaples
