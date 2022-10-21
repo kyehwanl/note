@@ -1,0 +1,1073 @@
+
+
+
+
+How to upgrade to Python 3.9.0 on Ubuntu 18.04 LTS
+==================================================
+(https://www.itsupportwale.com/blog/how-to-upgrade-to-python-3-9-0-on-ubuntu-18-04-lts/)
+
+Install Python 3.9.0
+Follow the simple steps to install and configure Python 3.9.0
+
+Step 1: Add the repository and update
+  Latest Python 3.9 not available in Ubuntu’s default repositories. So, we have to add an additional repository. 
+  On launchpad repository named deadsnakes is available for Python Packages.
+
+  Add the deadsnakes repository using the below commands.
+
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt-get update
+
+
+  Update the package list using the below command.
+
+    apt-get update
+
+  Verify the updated Python packages list using this command.
+
+    apt list | grep python3.9
+
+  As seen in the image above, Now we have Python 3.9.0 available for installation.
+
+Step 2: Install the Python 3.9.0 package using apt-get
+  install Python 3.9.0 by using the below command :
+
+    sudo apt-get install python3.9
+
+Step 3: Add Python 3.6 & Python 3.9 to update-alternatives
+  Add both old and new versions of Python to Update Alternatives.
+
+
+    sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+    sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2
+
+Step 4: Update Python 3 for point to Python 3.9
+  By default, Python 3 is pointed to Python 3.6. That means when we run python3 it will execute as python3.6 
+  but we want to execute this as python3.9.
+
+  Type this command to configure python3:
+
+    sudo update-alternatives --config python3
+
+  You should get the above output. Now type 2 and hit enter for Python 3.9. 
+  Remember the selected number may differ so choose the selection number which is for Python 3.9.
+
+Step 5: Test the version of python
+  Finally, test the current version of python by typing this :
+
+    python3 -V
+
+  You should get Python 3.9 as output.
+
+
+In this article, we learn how to upgrade python to the latest version that is 3.9.0 in Ubuntu 18.10.
+
+Share your thoughts in the comment section. Happy Learning …!!
+
+
+
+
+
+
+==================
+ Installation Logs
+==================
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -V
+    Python 3.6.9
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt update
+    Hit:1 http://us.archive.ubuntu.com/ubuntu bionic InRelease
+    Get:2 http://us.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+    Get:3 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease [83.3 kB]
+    Get:4 http://us.archive.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+    Get:5 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [2,785 kB]
+    Get:6 http://us.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1,853 kB]
+    Get:7 http://us.archive.ubuntu.com/ubuntu bionic-security/main amd64 Packages [2,445 kB]
+    Get:8 http://us.archive.ubuntu.com/ubuntu bionic-security/universe amd64 Packages [1,239 kB]
+    Fetched 8,582 kB in 1s (5,745 kB/s)
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    3 packages can be upgraded. Run 'apt list --upgradable' to see them.
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo add-apt-repository ppa:deadsnakes/ppa
+     This PPA contains more recent Python versions packaged for Ubuntu.
+
+    Disclaimer: there's no guarantee of timely updates in case of security problems or other issues. If you want to use them in a security-or-otherwise-critical environment (say, on a production server), you do so at your own risk.
+
+    Update Note
+    ===========
+    Please use this repository instead of ppa:fkrull/deadsnakes.
+
+    Reporting Issues
+    ================
+
+    Issues can be reported in the master issue tracker at:
+    https://github.com/deadsnakes/issues/issues
+
+    Supported Ubuntu and Python Versions
+    ====================================
+
+    - Ubuntu 18.04 (bionic) Python2.3 - Python 2.6, Python 3.1 - Python 3.5, Python3.7 - Python3.11
+    - Ubuntu 20.04 (focal) Python3.5 - Python3.7, Python3.9 - Python3.11
+    - Ubuntu 22.04 (jammy) Python3.7 - Python3.9, Python3.11
+    - Note: Python2.7 (all), Python 3.6 (bionic), Python 3.8 (focal), Python 3.10 (jammy) are not provided by deadsnakes as upstream ubuntu provides those packages.
+
+    Why some packages aren't built:
+    - Note: for focal, older python versions require libssl<1.1 so they are not currently built
+    - Note: for jammy, older python versions requre libssl<3 so they are not currently built
+    - If you need these, reach out to asottile to set up a private ppa
+
+    The packages may also work on other versions of Ubuntu or Debian, but that is not tested or supported.
+
+    Packages
+    ========
+
+    The packages provided here are loosely based on the debian upstream packages with some modifications to make them more usable as non-default pythons and on ubuntu.  As such, the packages follow debian's patterns and often do not include a full python distribution with just `apt install python#.#`.  Here is a list of packages that may be useful along with the default install:
+
+    - `python#.#-dev`: includes development headers for building C extensions
+    - `python#.#-venv`: provides the standard library `venv` module
+    - `python#.#-distutils`: provides the standard library `distutils` module
+    - `python#.#-lib2to3`: provides the `2to3-#.#` utility as well as the standard library `lib2to3` module
+    - `python#.#-gdbm`: provides the standard library `dbm.gnu` module
+    - `python#.#-tk`: provides the standard library `tkinter` module
+
+    Third-Party Python Modules
+    ==========================
+
+    Python modules in the official Ubuntu repositories are packaged to work with the Python interpreters from the official repositories. Accordingly, they generally won't work with the Python interpreters from this PPA. As an exception, pure-Python modules for Python 3 will work, but any compiled extension modules won't.
+
+    To install 3rd-party Python modules, you should use the common Python packaging tools.  For an introduction into the Python packaging ecosystem and its tools, refer to the Python Packaging User Guide:
+    https://packaging.python.org/installing/
+
+    Sources
+    =======
+    The package sources are available at:
+    https://github.com/deadsnakes/
+
+    Nightly Builds
+    ==============
+
+    For nightly builds, see ppa:deadsnakes/nightly https://launchpad.net/~deadsnakes/+archive/ubuntu/nightly
+     More info: https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa
+    Press [ENTER] to continue or Ctrl-c to cancel adding it.
+
+    Hit:1 http://us.archive.ubuntu.com/ubuntu bionic InRelease
+    Hit:2 http://us.archive.ubuntu.com/ubuntu bionic-updates InRelease
+    Hit:3 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease
+    Hit:4 http://us.archive.ubuntu.com/ubuntu bionic-security InRelease
+    Get:5 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic InRelease [15.9 kB]
+    Get:6 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 Packages [36.8 kB]
+    Get:7 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main Translation-en [8,296 B]
+    Fetched 61.0 kB in 1s (75.6 kB/s)
+    Reading package lists... Done
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt update
+    Hit:1 http://us.archive.ubuntu.com/ubuntu bionic InRelease
+    Hit:2 http://us.archive.ubuntu.com/ubuntu bionic-updates InRelease
+    Hit:3 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease
+    Hit:4 http://us.archive.ubuntu.com/ubuntu bionic-security InRelease
+    Hit:5 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic InRelease
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    3 packages can be upgraded. Run 'apt list --upgradable' to see them.
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt-get update
+    Hit:1 http://us.archive.ubuntu.com/ubuntu bionic InRelease
+    Hit:2 http://us.archive.ubuntu.com/ubuntu bionic-updates InRelease
+    Hit:3 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease
+    Hit:4 http://us.archive.ubuntu.com/ubuntu bionic-security InRelease
+    Hit:5 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic InRelease
+    Reading package lists... Done
+    onfadmin@5g1-mrtr:~/infra/ansible$ apt-get update
+    Reading package lists... Done
+    E: Could not open lock file /var/lib/apt/lists/lock - open (13: Permission denied)
+    E: Unable to lock directory /var/lib/apt/lists/
+    W: Problem unlinking the file /var/cache/apt/pkgcache.bin - RemoveCaches (13: Permission denied)
+    W: Problem unlinking the file /var/cache/apt/srcpkgcache.bin - RemoveCaches (13: Permission denied)
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt list | grep python3.9
+
+    WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+    idle-python3.9/bionic 3.9.15-1+bionic1 all
+    libpython3.9/bionic 3.9.15-1+bionic1 amd64
+    libpython3.9-dbg/bionic 3.9.15-1+bionic1 amd64
+    libpython3.9-dev/bionic 3.9.15-1+bionic1 amd64
+    libpython3.9-minimal/bionic 3.9.15-1+bionic1 amd64
+    libpython3.9-stdlib/bionic 3.9.15-1+bionic1 amd64
+    libpython3.9-testsuite/bionic 3.9.15-1+bionic1 all
+    python3.9/bionic 3.9.15-1+bionic1 amd64
+    python3.9-dbg/bionic 3.9.15-1+bionic1 amd64
+    python3.9-dev/bionic 3.9.15-1+bionic1 amd64
+    python3.9-distutils/bionic 3.9.15-1+bionic1 all
+    python3.9-examples/bionic 3.9.15-1+bionic1 all
+    python3.9-full/bionic 3.9.15-1+bionic1 amd64
+    python3.9-gdbm/bionic 3.9.15-1+bionic1 amd64
+    python3.9-gdbm-dbg/bionic 3.9.15-1+bionic1 amd64
+    python3.9-lib2to3/bionic 3.9.15-1+bionic1 all
+    python3.9-minimal/bionic 3.9.15-1+bionic1 amd64
+    python3.9-tk/bionic 3.9.15-1+bionic1 amd64
+    python3.9-tk-dbg/bionic 3.9.15-1+bionic1 amd64
+    python3.9-venv/bionic 3.9.15-1+bionic1 amd64
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt-get install python3.9
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+      libpython3.9-minimal libpython3.9-stdlib python3.9-minimal
+    Suggested packages:
+      python3.9-venv binfmt-support
+    The following NEW packages will be installed:
+      libpython3.9-minimal libpython3.9-stdlib python3.9 python3.9-minimal
+    0 upgraded, 4 newly installed, 0 to remove and 3 not upgraded.
+    Need to get 4,917 kB of archives.
+    After this operation, 19.1 MB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 libpython3.9-minimal amd64 3.9.15-1+bionic1 [805 kB]
+    Get:2 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9-minimal amd64 3.9.15-1+bionic1 [1,938 kB]
+    Get:3 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 libpython3.9-stdlib amd64 3.9.15-1+bionic1 [1,680 kB]
+    Get:4 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9 amd64 3.9.15-1+bionic1 [494 kB]
+    Fetched 4,917 kB in 3s (1,802 kB/s)
+    Selecting previously unselected package libpython3.9-minimal:amd64.
+    (Reading database ... 137217 files and directories currently installed.)
+    Preparing to unpack .../libpython3.9-minimal_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking libpython3.9-minimal:amd64 (3.9.15-1+bionic1) ...
+    Selecting previously unselected package python3.9-minimal.
+    Preparing to unpack .../python3.9-minimal_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking python3.9-minimal (3.9.15-1+bionic1) ...
+    Selecting previously unselected package libpython3.9-stdlib:amd64.
+    Preparing to unpack .../libpython3.9-stdlib_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking libpython3.9-stdlib:amd64 (3.9.15-1+bionic1) ...
+    Selecting previously unselected package python3.9.
+    Preparing to unpack .../python3.9_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking python3.9 (3.9.15-1+bionic1) ...
+    Setting up libpython3.9-minimal:amd64 (3.9.15-1+bionic1) ...
+    Setting up libpython3.9-stdlib:amd64 (3.9.15-1+bionic1) ...
+    Setting up python3.9-minimal (3.9.15-1+bionic1) ...
+    Setting up python3.9 (3.9.15-1+bionic1) ...
+    Processing triggers for mime-support (3.60ubuntu1) ...
+    Processing triggers for desktop-file-utils (0.23-1ubuntu3.18.04.2) ...
+    Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ ll /usr/bin/python*
+    lrwxrwxrwx 1 root root       9 Sep 12 14:20 /usr/bin/python -> python2.7*
+    lrwxrwxrwx 1 root root       9 Apr 16  2018 /usr/bin/python2 -> python2.7*
+    -rwxr-xr-x 1 root root 3624880 Jul  1 11:56 /usr/bin/python2.7*
+    lrwxrwxrwx 1 root root      33 Jul  1 11:56 /usr/bin/python2.7-config -> x86_64-linux-gnu-python2.7-config*
+    lrwxrwxrwx 1 root root      16 Apr 16  2018 /usr/bin/python2-config -> python2.7-config*
+    lrwxrwxrwx 1 root root       9 Oct 25  2018 /usr/bin/python3 -> python3.6*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6*
+    lrwxrwxrwx 1 root root      33 Jun 29 07:45 /usr/bin/python3.6-config -> x86_64-linux-gnu-python3.6-config*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6m*
+    lrwxrwxrwx 1 root root      34 Jun 29 07:45 /usr/bin/python3.6m-config -> x86_64-linux-gnu-python3.6m-config*
+    -rwxr-xr-x 1 root root 5405520 Oct 12 15:15 /usr/bin/python3.9*
+    lrwxrwxrwx 1 root root      16 Oct 25  2018 /usr/bin/python3-config -> python3.6-config*
+    -rwxr-xr-x 1 root root    1018 Oct 28  2017 /usr/bin/python3-jsondiff*
+    -rwxr-xr-x 1 root root    3661 Oct 28  2017 /usr/bin/python3-jsonpatch*
+    -rwxr-xr-x 1 root root    1342 May  1  2016 /usr/bin/python3-jsonpointer*
+    -rwxr-xr-x 1 root root     398 Nov 15  2017 /usr/bin/python3-jsonschema*
+    lrwxrwxrwx 1 root root      10 Oct 25  2018 /usr/bin/python3m -> python3.6m*
+    lrwxrwxrwx 1 root root      17 Oct 25  2018 /usr/bin/python3m-config -> python3.6m-config*
+    lrwxrwxrwx 1 root root      16 Apr 16  2018 /usr/bin/python-config -> python2.7-config*
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9
+    update-alternatives: --install needs <link> <name> <path> <priority>
+
+    Use 'update-alternatives --help' for program usage information.
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1^C
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+    update-alternatives: using /usr/bin/python3.6 to provide /usr/bin/python3 (python3) in auto mode
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 2
+    update-alternatives: using /usr/bin/python3.9 to provide /usr/bin/python3 (python3) in auto mode
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo update-alternatives --config python3
+    There are 2 choices for the alternative python3 (providing /usr/bin/python3).
+
+      Selection    Path                Priority   Status
+    ------------------------------------------------------------
+    * 0            /usr/bin/python3.9   2         auto mode
+      1            /usr/bin/python3.6   1         manual mode
+      2            /usr/bin/python3.9   2         manual mode
+
+    Press <enter> to keep the current choice[*], or type selection number: 2
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -V
+    Python 3.9.15
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ ll /usr/bin/python*
+    lrwxrwxrwx 1 root root       9 Sep 12 14:20 /usr/bin/python -> python2.7*
+    lrwxrwxrwx 1 root root       9 Apr 16  2018 /usr/bin/python2 -> python2.7*
+    -rwxr-xr-x 1 root root 3624880 Jul  1 11:56 /usr/bin/python2.7*
+    lrwxrwxrwx 1 root root      33 Jul  1 11:56 /usr/bin/python2.7-config -> x86_64-linux-gnu-python2.7-config*
+    lrwxrwxrwx 1 root root      16 Apr 16  2018 /usr/bin/python2-config -> python2.7-config*
+    lrwxrwxrwx 1 root root      25 Oct 20 17:06 /usr/bin/python3 -> /etc/alternatives/python3*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6*
+    lrwxrwxrwx 1 root root      33 Jun 29 07:45 /usr/bin/python3.6-config -> x86_64-linux-gnu-python3.6-config*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6m*
+    lrwxrwxrwx 1 root root      34 Jun 29 07:45 /usr/bin/python3.6m-config -> x86_64-linux-gnu-python3.6m-config*
+    -rwxr-xr-x 1 root root 5405520 Oct 12 15:15 /usr/bin/python3.9*
+    lrwxrwxrwx 1 root root      16 Oct 25  2018 /usr/bin/python3-config -> python3.6-config*
+    -rwxr-xr-x 1 root root    1018 Oct 28  2017 /usr/bin/python3-jsondiff*
+    -rwxr-xr-x 1 root root    3661 Oct 28  2017 /usr/bin/python3-jsonpatch*
+    -rwxr-xr-x 1 root root    1342 May  1  2016 /usr/bin/python3-jsonpointer*
+    -rwxr-xr-x 1 root root     398 Nov 15  2017 /usr/bin/python3-jsonschema*
+    lrwxrwxrwx 1 root root      10 Oct 25  2018 /usr/bin/python3m -> python3.6m*
+    lrwxrwxrwx 1 root root      17 Oct 25  2018 /usr/bin/python3m-config -> python3.6m-config*
+    lrwxrwxrwx 1 root root      16 Apr 16  2018 /usr/bin/python-config -> python2.7-config*
+    onfadmin@5g1-mrtr:~/infra/ansible$ ll /usr/bin/python3*
+    lrwxrwxrwx 1 root root      25 Oct 20 17:06 /usr/bin/python3 -> /etc/alternatives/python3*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6*
+    lrwxrwxrwx 1 root root      33 Jun 29 07:45 /usr/bin/python3.6-config -> x86_64-linux-gnu-python3.6-config*
+    -rwxr-xr-x 2 root root 4530520 Jun 29 07:45 /usr/bin/python3.6m*
+    lrwxrwxrwx 1 root root      34 Jun 29 07:45 /usr/bin/python3.6m-config -> x86_64-linux-gnu-python3.6m-config*
+    -rwxr-xr-x 1 root root 5405520 Oct 12 15:15 /usr/bin/python3.9*
+    lrwxrwxrwx 1 root root      16 Oct 25  2018 /usr/bin/python3-config -> python3.6-config*
+    -rwxr-xr-x 1 root root    1018 Oct 28  2017 /usr/bin/python3-jsondiff*
+    -rwxr-xr-x 1 root root    3661 Oct 28  2017 /usr/bin/python3-jsonpatch*
+    -rwxr-xr-x 1 root root    1342 May  1  2016 /usr/bin/python3-jsonpointer*
+    -rwxr-xr-x 1 root root     398 Nov 15  2017 /usr/bin/python3-jsonschema*
+    lrwxrwxrwx 1 root root      10 Oct 25  2018 /usr/bin/python3m -> python3.6m*
+    lrwxrwxrwx 1 root root      17 Oct 25  2018 /usr/bin/python3m-config -> python3.6m-config*
+    (failed reverse-i-search)`': cat /etc/lsb-releas e^C
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pdb scripts/edgeconfig.py inventory/example-netbox-copy.yml
+    > /home/onfadmin/infra/ansible/scripts/edgeconfig.py(11)<module>()
+    -> from __future__ import absolute_import
+    (Pdb) c
+    Traceback (most recent call last):
+      File "/usr/lib/python3.9/pdb.py", line 1726, in main
+        pdb._runscript(mainpyfile)
+      File "/usr/lib/python3.9/pdb.py", line 1586, in _runscript
+        self.run(statement)
+      File "/usr/lib/python3.9/bdb.py", line 580, in run
+        exec(cmd, globals, locals)
+      File "<string>", line 1, in <module>
+      File "/home/onfadmin/infra/ansible/scripts/edgeconfig.py", line 11, in <module>
+        from __future__ import absolute_import
+      File "/home/onfadmin/infra/ansible/scripts/nbhelper/__init__.py", line 4, in <module>
+        from .utils import initialize
+      File "/home/onfadmin/infra/ansible/scripts/nbhelper/utils.py", line 15, in <module>
+        import pynetbox
+    ModuleNotFoundError: No module named 'pynetbox'
+    Uncaught exception. Entering post mortem debugging
+    Running 'cont' or 'step' will restart the program
+    > /home/onfadmin/infra/ansible/scripts/nbhelper/utils.py(15)<module>()
+    -> import pynetbox
+    (Pdb) quit
+    Post mortem debugger finished. The /home/onfadmin/infra/ansible/scripts/edgeconfig.py will be restarted
+    > /home/onfadmin/infra/ansible/scripts/edgeconfig.py(11)<module>()
+    -> from __future__ import absolute_import
+    (Pdb) q
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip3 install pynetbox
+    Traceback (most recent call last):
+      File "/home/onfadmin/.local/bin/pip3", line 7, in <module>
+        from pip._internal.cli.main import main
+      File "/usr/lib/python3/dist-packages/pip/__init__.py", line 29, in <module>
+        from pip.utils import get_installed_distributions, get_prog
+      File "/usr/lib/python3/dist-packages/pip/utils/__init__.py", line 23, in <module>
+        from pip.locations import (
+      File "/usr/lib/python3/dist-packages/pip/locations.py", line 9, in <module>
+        from distutils import sysconfig
+    ImportError: cannot import name 'sysconfig' from 'distutils' (/usr/lib/python3.9/distutils/__init__.py)
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pdb scripts/edgeconfig.py inventory/example-netbox-copy.yml ^C
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade pip
+    Traceback (most recent call last):
+      File "/usr/lib/python3.9/runpy.py", line 188, in _run_module_as_main
+        mod_name, mod_spec, code = _get_module_details(mod_name, _Error)
+      File "/usr/lib/python3.9/runpy.py", line 147, in _get_module_details
+        return _get_module_details(pkg_main_name, error)
+      File "/usr/lib/python3.9/runpy.py", line 111, in _get_module_details
+        __import__(pkg_name)
+      File "/usr/lib/python3/dist-packages/pip/__init__.py", line 29, in <module>
+        from pip.utils import get_installed_distributions, get_prog
+      File "/usr/lib/python3/dist-packages/pip/utils/__init__.py", line 23, in <module>
+        from pip.locations import (
+      File "/usr/lib/python3/dist-packages/pip/locations.py", line 9, in <module>
+        from distutils import sysconfig
+    ImportError: cannot import name 'sysconfig' from 'distutils' (/usr/lib/python3.9/distutils/__init__.py)
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt install python3.9-distutils
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+      python3.9-lib2to3
+    The following NEW packages will be installed:
+      python3.9-distutils python3.9-lib2to3
+    0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+    Need to get 315 kB of archives.
+    After this operation, 1,234 kB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9-lib2to3 all 3.9.15-1+bionic1 [125 kB]
+    Get:2 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9-distutils all 3.9.15-1+bionic1 [190 kB]
+    Fetched 315 kB in 1s (271 kB/s)
+    Selecting previously unselected package python3.9-lib2to3.
+    (Reading database ... 137856 files and directories currently installed.)
+    Preparing to unpack .../python3.9-lib2to3_3.9.15-1+bionic1_all.deb ...
+    Unpacking python3.9-lib2to3 (3.9.15-1+bionic1) ...
+    Selecting previously unselected package python3.9-distutils.
+    Preparing to unpack .../python3.9-distutils_3.9.15-1+bionic1_all.deb ...
+    Unpacking python3.9-distutils (3.9.15-1+bionic1) ...
+    Setting up python3.9-lib2to3 (3.9.15-1+bionic1) ...
+    Setting up python3.9-distutils (3.9.15-1+bionic1) ...
+
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip3 install pynetbox
+    Traceback (most recent call last):
+      File "/home/onfadmin/.local/bin/pip3", line 7, in <module>
+        from pip._internal.cli.main import main
+    ModuleNotFoundError: No module named 'pip._internal'
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install pynetbox
+    Collecting pynetbox
+      Using cached https://files.pythonhosted.org/packages/e4/37/26597a92264be38bc2ae0f55cef3bd9009e3529a2fb3ceb5f283bb32c5e7/pynetbox-6.6.2-py3-none-any.whl
+    Collecting six==1.* (from pynetbox)
+      Using cached https://files.pythonhosted.org/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl
+    Collecting requests<3.0,>=2.20.0 (from pynetbox)
+      Downloading https://files.pythonhosted.org/packages/ca/91/6d9b8ccacd0412c08820f72cebaa4f0c0441b5cda699c90f618b6f8a1b42/requests-2.28.1-py3-none-any.whl (62kB)
+        100% |████████████████████████████████| 71kB 10.1MB/s
+    Collecting certifi>=2017.4.17 (from requests<3.0,>=2.20.0->pynetbox)
+      Using cached https://files.pythonhosted.org/packages/1d/38/fa96a426e0c0e68aabc68e896584b83ad1eec779265a028e156ce509630e/certifi-2022.9.24-py3-none-any.whl
+    Collecting charset-normalizer<3,>=2 (from requests<3.0,>=2.20.0->pynetbox)
+      Downloading https://files.pythonhosted.org/packages/db/51/a507c856293ab05cdc1db77ff4bc1268ddd39f29e7dc4919aa497f0adbec/charset_normalizer-2.1.1-py3-none-any.whl
+    Collecting urllib3<1.27,>=1.21.1 (from requests<3.0,>=2.20.0->pynetbox)
+      Using cached https://files.pythonhosted.org/packages/6f/de/5be2e3eed8426f871b170663333a0f627fc2924cc386cd41be065e7ea870/urllib3-1.26.12-py2.py3-none-any.whl
+    Collecting idna<4,>=2.5 (from requests<3.0,>=2.20.0->pynetbox)
+      Using cached https://files.pythonhosted.org/packages/fc/34/3030de6f1370931b9dbb4dad48f6ab1015ab1d32447850b9fc94e60097be/idna-3.4-py3-none-any.whl
+    Installing collected packages: six, certifi, charset-normalizer, urllib3, idna, requests, pynetbox
+    Successfully installed certifi-2022.9.24 charset-normalizer-2.1.1 idna-3.4 pynetbox-6.6.2 requests-2.28.1 six-1.16.0 urllib3-1.26.12
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip3 freeze
+    Traceback (most recent call last):
+      File "/home/onfadmin/.local/bin/pip3", line 7, in <module>
+        from pip._internal.cli.main import main
+    ModuleNotFoundError: No module named 'pip._internal'
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade pip
+    Collecting pip
+      Cache entry deserialization failed, entry ignored
+      Downloading https://files.pythonhosted.org/packages/47/ef/8b5470b5b94b36231ed9c0bde90caa71c0d4322d4a15f009b2b7f4287fe0/pip-22.3-py3-none-any.whl (2.1MB)
+        100% |████████████████████████████████| 2.1MB 696kB/s
+    Installing collected packages: pip
+    Successfully installed pip-22.3
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip -V
+    pip 22.3 from /home/onfadmin/.local/lib/python3.9/site-packages/pip (python 3.9)
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip3 -V
+    pip 22.3 from /home/onfadmin/.local/lib/python3.9/site-packages/pip (python 3.9)
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip freeze
+    asn1crypto==0.24.0
+    attrs==17.4.0
+    Automat==0.6.0
+    blinker==1.4
+    certifi==2022.9.24
+    chardet==3.0.4
+    charset-normalizer==2.1.1
+    click==6.7
+    cloud-init==22.2
+    colorama==0.3.7
+    command-not-found==0.3
+    configobj==5.0.6
+    constantly==15.1.0
+    cryptography==2.1.4
+    distro-info===0.18ubuntu0.18.04.1
+    httplib2==0.9.2
+    hyperlink==17.3.1
+    idna==3.4
+    incremental==16.10.1
+    Jinja2==2.10
+    jsonpatch==1.16
+    jsonpointer==1.10
+    jsonschema==2.6.0
+    keyring==10.6.0
+    keyrings.alt==3.0
+    language-selector==0.1
+    MarkupSafe==1.0
+    netifaces==0.10.4
+    oauthlib==2.0.6
+    PAM==0.4.2
+    pexpect==4.2.1
+    pyasn1==0.4.2
+    pyasn1-modules==0.2.1
+    pycrypto==2.6.1
+    PyGObject==3.26.1
+    PyJWT==1.5.3
+    pynetbox==6.6.2
+    pyOpenSSL==17.5.0
+    pyserial==3.4
+    python-apt==1.6.5+ubuntu0.7
+    python-debian==0.1.32
+    pyxdg==0.25
+    PyYAML==3.12
+    requests==2.28.1
+    requests-unixsocket==0.1.5
+    SecretStorage==2.3.1
+    service-identity==16.0.0
+    six==1.16.0
+    sos==4.3
+    ssh-import-id==5.7
+    systemd-python==234
+    Twisted==17.9.0
+    ubuntu-advantage-tools==27.10
+    ufw==0.36
+    unattended-upgrades==0.1
+    urllib3==1.26.12
+    zope.interface==4.3.2
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip install pynetbox
+    Defaulting to user installation because normal site-packages is not writeable
+    Requirement already satisfied: pynetbox in /home/onfadmin/.local/lib/python3.9/site-packages (6.6.2)
+    Requirement already satisfied: six==1.* in /home/onfadmin/.local/lib/python3.9/site-packages (from pynetbox) (1.16.0)
+    Requirement already satisfied: requests<3.0,>=2.20.0 in /home/onfadmin/.local/lib/python3.9/site-packages (from pynetbox) (2.28.1)
+    Requirement already satisfied: certifi>=2017.4.17 in /home/onfadmin/.local/lib/python3.9/site-packages (from requests<3.0,>=2.20.0->pynetbox) (2022.9.24)
+    Requirement already satisfied: charset-normalizer<3,>=2 in /home/onfadmin/.local/lib/python3.9/site-packages (from requests<3.0,>=2.20.0->pynetbox) (2.1.1)
+    Requirement already satisfied: urllib3<1.27,>=1.21.1 in /home/onfadmin/.local/lib/python3.9/site-packages (from requests<3.0,>=2.20.0->pynetbox) (1.26.12)
+    Requirement already satisfied: idna<4,>=2.5 in /home/onfadmin/.local/lib/python3.9/site-packages (from requests<3.0,>=2.20.0->pynetbox) (3.4)
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python
+    Python 2.7.17 (default, Jul  1 2022, 15:56:32)
+    [GCC 7.5.0] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3
+    Python 3.9.15 (main, Oct 12 2022, 19:15:11)
+    [GCC 7.5.0] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade --user ansible
+    Collecting ansible
+      Downloading ansible-6.5.0-py3-none-any.whl (44.9 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.9/44.9 MB 53.3 MB/s eta 0:00:00
+    Collecting ansible-core~=2.13.5
+      Downloading ansible_core-2.13.5-py3-none-any.whl (2.1 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 101.7 MB/s eta 0:00:00
+    Requirement already satisfied: cryptography in /usr/lib/python3/dist-packages (from ansible-core~=2.13.5->ansible) (2.1.4)
+    Collecting resolvelib<0.9.0,>=0.5.3
+      Downloading resolvelib-0.8.1-py2.py3-none-any.whl (16 kB)
+    Collecting jinja2>=3.0.0
+      Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 46.9 MB/s eta 0:00:00
+    Collecting packaging
+      Using cached packaging-21.3-py3-none-any.whl (40 kB)
+    Collecting PyYAML>=5.1
+      Downloading PyYAML-6.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (661 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 661.8/661.8 kB 104.2 MB/s eta 0:00:00
+    Collecting MarkupSafe>=2.0
+      Downloading MarkupSafe-2.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+    Collecting pyparsing!=3.0.5,>=2.0.2
+      Using cached pyparsing-3.0.9-py3-none-any.whl (98 kB)
+    Installing collected packages: resolvelib, PyYAML, pyparsing, MarkupSafe, packaging, jinja2, ansible-core, ansible
+    ^CERROR: Operation cancelled by user
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade --user ansible=5.3.0
+    ERROR: Invalid requirement: 'ansible=5.3.0'
+    Hint: = is not a valid operator. Did you mean == ?
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade --user ansible==5.3.0
+    Collecting ansible==5.3.0
+      Downloading ansible-5.3.0.tar.gz (38.0 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 38.0/38.0 MB 56.4 MB/s eta 0:00:00
+      Preparing metadata (setup.py) ... error
+      error: subprocess-exited-with-error
+
+      × python setup.py egg_info did not run successfully.
+      │ exit code: 1
+      ╰─> [12 lines of output]
+          Traceback (most recent call last):
+            File "<string>", line 2, in <module>
+            File "<pip-setuptools-caller>", line 14, in <module>
+            File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 14, in <module>
+              from setuptools.dist import Distribution, Feature
+            File "/usr/lib/python3/dist-packages/setuptools/dist.py", line 24, in <module>
+              from setuptools.depends import Require
+            File "/usr/lib/python3/dist-packages/setuptools/depends.py", line 7, in <module>
+              from .py33compat import Bytecode
+            File "/usr/lib/python3/dist-packages/setuptools/py33compat.py", line 54, in <module>
+              unescape = getattr(html, 'unescape', html_parser.HTMLParser().unescape)
+          AttributeError: 'HTMLParser' object has no attribute 'unescape'
+          [end of output]
+
+      note: This error originates from a subprocess, and is likely not a problem with pip.
+    error: metadata-generation-failed
+
+    × Encountered error while generating package metadata.
+    ╰─> See above for output.
+
+    note: This is an issue with the package mentioned above, not pip.
+    hint: See above for details.
+    
+  
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip install -U setuptools
+    Defaulting to user installation because normal site-packages is not writeable
+    Requirement already satisfied: setuptools in /usr/lib/python3/dist-packages (39.0.1)
+    Collecting setuptools
+      Downloading setuptools-65.5.0-py3-none-any.whl (1.2 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 53.5 MB/s eta 0:00:00
+    Installing collected packages: setuptools
+    Successfully installed setuptools-65.5.0
+
+
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install --upgrade --user ansible~=5.3.0
+    Collecting ansible~=5.3.0
+      Using cached ansible-5.3.0.tar.gz (38.0 MB)
+      Preparing metadata (setup.py) ... done
+    Collecting ansible-core~=2.12.2
+      Downloading ansible-core-2.12.10.tar.gz (7.8 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.8/7.8 MB 85.7 MB/s eta 0:00:00
+      Preparing metadata (setup.py) ... done
+    Requirement already satisfied: jinja2 in /home/onfadmin/.local/lib/python3.9/site-packages (from ansible-core~=2.12.2->ansible~=5.3.0) (3.1.2)
+    Requirement already satisfied: PyYAML in /home/onfadmin/.local/lib/python3.9/site-packages (from ansible-core~=2.12.2->ansible~=5.3.0) (6.0)
+    Requirement already satisfied: cryptography in /usr/lib/python3/dist-packages (from ansible-core~=2.12.2->ansible~=5.3.0) (2.1.4)
+    Requirement already satisfied: packaging in /home/onfadmin/.local/lib/python3.9/site-packages (from ansible-core~=2.12.2->ansible~=5.3.0) (21.3)
+    Collecting resolvelib<0.6.0,>=0.5.3
+      Using cached resolvelib-0.5.4-py2.py3-none-any.whl (12 kB)
+    Requirement already satisfied: MarkupSafe>=2.0 in /home/onfadmin/.local/lib/python3.9/site-packages (from jinja2->ansible-core~=2.12.2->ansible~=5.3.0) (2.1.1)
+    Requirement already satisfied: pyparsing!=3.0.5,>=2.0.2 in /home/onfadmin/.local/lib/python3.9/site-packages (from packaging->ansible-core~=2.12.2->ansible~=5.3.0) (3.0.9)
+    Building wheels for collected packages: ansible, ansible-core
+      Building wheel for ansible (setup.py) ... done
+      Created wheel for ansible: filename=ansible-5.3.0-py3-none-any.whl size=63185919 sha256=ad08c21eacded54082212e5caa8150b2d9a15c381baca55f6b851d9fd6387389
+      Stored in directory: /home/onfadmin/.cache/pip/wheels/bd/4e/b9/4625eecba717ead8550bdb5665d8965424c6b08a2d9a57cc98
+      Building wheel for ansible-core (setup.py) ... done
+      Created wheel for ansible-core: filename=ansible_core-2.12.10-py3-none-any.whl size=2070124 sha256=40452eee618e3e14f1a9a9da655dacba8487ed90c37f1f9bbaf3178cf2e08e04
+      Stored in directory: /home/onfadmin/.cache/pip/wheels/99/0e/90/3d9be732b1a0b38714224688e0078b8a0e456eba1af5463e52
+    Successfully built ansible ansible-core
+    Installing collected packages: resolvelib, ansible-core, ansible
+      Attempting uninstall: resolvelib
+        Found existing installation: resolvelib 0.8.1
+        Uninstalling resolvelib-0.8.1:
+          Successfully uninstalled resolvelib-0.8.1
+      Attempting uninstall: ansible-core
+        Found existing installation: ansible-core 2.13.5
+        Uninstalling ansible-core-2.13.5:
+          Successfully uninstalled ansible-core-2.13.5
+      Attempting uninstall: ansible
+        Found existing installation: ansible 6.5.0
+        Uninstalling ansible-6.5.0:
+          Successfully uninstalled ansible-6.5.0
+    Successfully installed ansible-5.3.0 ansible-core-2.12.10 resolvelib-0.5.4
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ sudo apt install python3.9-dev python3.9-venv
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+      libpython3.9 libpython3.9-dev
+    The following NEW packages will be installed:
+      libpython3.9 libpython3.9-dev python3.9-dev python3.9-venv
+    0 upgraded, 4 newly installed, 0 to remove and 3 not upgraded.
+    Need to get 55.6 MB of archives.
+    After this operation, 81.7 MB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 libpython3.9 amd64 3.9.15-1+bionic1 [1,753 kB]
+    Get:2 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 libpython3.9-dev amd64 3.9.15-1+bionic1 [50.6 MB]
+    Get:3 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9-dev amd64 3.9.15-1+bionic1 [501 kB]
+    Get:4 http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic/main amd64 python3.9-venv amd64 3.9.15-1+bionic1 [2,733 kB]
+    Fetched 55.6 MB in 4s (13.5 MB/s)
+    Selecting previously unselected package libpython3.9:amd64.
+    (Reading database ... 137995 files and directories currently installed.)
+    Preparing to unpack .../libpython3.9_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking libpython3.9:amd64 (3.9.15-1+bionic1) ...
+    Selecting previously unselected package libpython3.9-dev:amd64.
+    Preparing to unpack .../libpython3.9-dev_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking libpython3.9-dev:amd64 (3.9.15-1+bionic1) ...
+    Selecting previously unselected package python3.9-dev.
+    Preparing to unpack .../python3.9-dev_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking python3.9-dev (3.9.15-1+bionic1) ...
+    Selecting previously unselected package python3.9-venv.
+    Preparing to unpack .../python3.9-venv_3.9.15-1+bionic1_amd64.deb ...
+    Unpacking python3.9-venv (3.9.15-1+bionic1) ...
+    Setting up libpython3.9:amd64 (3.9.15-1+bionic1) ...
+    Setting up libpython3.9-dev:amd64 (3.9.15-1+bionic1) ...
+    Setting up python3.9-venv (3.9.15-1+bionic1) ...
+    Setting up python3.9-dev (3.9.15-1+bionic1) ...
+    Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$
+    onfadmin@5g1-mrtr:~/infra/ansible$ ll
+    total 112
+    drwxr-xr-x 10 onfadmin onfadmin  4096 Oct 20 18:38  ./
+    drwxr-xr-x  6 onfadmin onfadmin  4096 Sep 12 14:48  ../
+    -rw-rw-r--  1 onfadmin onfadmin  7115 Oct 20 16:37 '=1.48.0'
+    -rw-r--r--  1 onfadmin onfadmin   356 Sep 12 14:48  ansible.cfg
+    drwxr-xr-x  3 onfadmin onfadmin  4096 Sep 12 14:48  cookiecutters/
+    -rw-r--r--  1 onfadmin onfadmin   296 Sep 12 14:48  galaxy.yml
+    lrwxrwxrwx  1 onfadmin onfadmin    29 Sep 12 14:48  .git -> ../.repo/projects/ansible.git/
+    -rw-r--r--  1 onfadmin onfadmin   284 Sep 12 14:48  .gitignore
+    -rw-r--r--  1 onfadmin onfadmin    98 Sep 12 14:48  .gitreview
+    drwxr-xr-x  4 onfadmin onfadmin  4096 Oct 19 18:50  inventory/
+    drwxr-xr-x  2 onfadmin onfadmin  4096 Sep 12 14:48  lint_rules/
+    -rw-r--r--  1 onfadmin onfadmin  3006 Sep 12 14:48  Makefile
+    drwxr-xr-x  3 onfadmin onfadmin  4096 Oct 18 10:17  playbooks/
+    -rw-r--r--  1 onfadmin onfadmin   490 Sep 12 14:48  pylint.ini
+    -rw-r--r--  1 onfadmin onfadmin 15654 Sep 12 14:48  README.md
+    -rw-r--r--  1 onfadmin onfadmin   736 Oct 20 16:28  requirements-copy.txt
+    -rw-r--r--  1 onfadmin onfadmin 12288 Oct 20 16:29  .requirements-copy.txt.swp
+    -rw-r--r--  1 onfadmin onfadmin   736 Sep 12 14:48  requirements.txt
+    drwxr-xr-x  2 onfadmin onfadmin  4096 Sep 12 14:48  .reuse/
+    drwxr-xr-x 42 onfadmin onfadmin  4096 Sep 12 14:48  roles/
+    drwxr-xr-x  3 onfadmin onfadmin  4096 Oct 19 16:05  scripts/
+    drwxrwxr-x  5 onfadmin onfadmin  4096 Oct 20 18:38  venv/
+    -rw-r--r--  1 onfadmin onfadmin    10 Sep 12 14:48  VERSION
+    onfadmin@5g1-mrtr:~/infra/ansible$ rm -rf venv/
+    onfadmin@5g1-mrtr:~/infra/ansible$
+
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m venv venv
+    onfadmin@5g1-mrtr:~/infra/ansible$ source venv/bin/activate
+    (venv) onfadmin@5g1-mrtr:~/infra/ansible$
+    (venv) onfadmin@5g1-mrtr:~/infra/ansible$
+    (venv) onfadmin@5g1-mrtr:~/infra/ansible$
+    (venv) onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install -r requirements.txt
+    Collecting ansible~=5.3.0
+      Using cached ansible-5.3.0.tar.gz (38.0 MB)
+      Preparing metadata (setup.py) ... done
+    Collecting netaddr~=0.8.0
+      Using cached netaddr-0.8.0-py2.py3-none-any.whl (1.9 MB)
+    Collecting ansible-lint~=5.4.0
+      Downloading ansible_lint-5.4.0-py3-none-any.whl (119 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 119.0/119.0 KB 15.7 MB/s eta 0:00:00
+    Collecting rich~=10.16.2
+      Downloading rich-10.16.2-py3-none-any.whl (214 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 214.4/214.4 KB 42.6 MB/s eta 0:00:00
+    Collecting molecule~=3.5.2
+      Downloading molecule-3.5.2-py3-none-any.whl (240 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 240.2/240.2 KB 108.8 MB/s eta 0:00:00
+    Collecting molecule-vagrant~=1.0.0
+      Downloading molecule_vagrant-1.0.0-py3-none-any.whl (31 kB)
+    Collecting python-vagrant~=0.5.15
+      Downloading python-vagrant-0.5.15.tar.gz (29 kB)
+      Preparing metadata (setup.py) ... done
+    Collecting molecule-docker~=1.1.0
+      Downloading molecule_docker-1.1.0-py3-none-any.whl (16 kB)
+    Collecting docker~=5.0.3
+      Downloading docker-5.0.3-py2.py3-none-any.whl (146 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 146.2/146.2 KB 69.0 MB/s eta 0:00:00
+    Collecting black~=22.1.0
+      Downloading black-22.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.5 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 99.4 MB/s eta 0:00:00
+    Collecting flake8~=4.0.1
+      Downloading flake8-4.0.1-py2.py3-none-any.whl (64 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.1/64.1 KB 45.2 MB/s eta 0:00:00
+    Collecting pylint~=2.11.1
+      Downloading pylint-2.11.1-py3-none-any.whl (392 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 392.1/392.1 KB 138.0 MB/s eta 0:00:00
+    Collecting reuse~=0.14.0
+      Downloading reuse-0.14.0-py3-none-any.whl (144 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.3/144.3 KB 87.1 MB/s eta 0:00:00
+    Collecting yamllint~=1.26.3
+      Downloading yamllint-1.26.3.tar.gz (126 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.7/126.7 KB 76.7 MB/s eta 0:00:00
+      Preparing metadata (setup.py) ... done
+    Collecting python-debian==0.1.40
+      Downloading python_debian-0.1.40-py3-none-any.whl (73 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 KB 46.3 MB/s eta 0:00:00
+    Collecting pynetbox~=6.6.0
+      Using cached pynetbox-6.6.2-py3-none-any.whl (32 kB)
+    Collecting cookiecutter~=1.7.3
+      Downloading cookiecutter-1.7.3-py2.py3-none-any.whl (34 kB)
+    Collecting passlib~=1.7.4
+      Downloading passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 525.6/525.6 KB 137.5 MB/s eta 0:00:00
+    Collecting bcrypt~=3.2.0
+      Downloading bcrypt-3.2.2-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (62 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.3/62.3 KB 47.2 MB/s eta 0:00:00
+    Collecting zxcvbn~=4.4.28
+      Downloading zxcvbn-4.4.28.tar.gz (407 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 407.9/407.9 KB 136.6 MB/s eta 0:00:00
+      Preparing metadata (setup.py) ... done
+    Collecting chardet
+      Downloading chardet-5.0.0-py3-none-any.whl (193 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 193.6/193.6 KB 96.6 MB/s eta 0:00:00
+    Collecting six
+      Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+    Collecting ansible-core~=2.12.2
+      Using cached ansible-core-2.12.10.tar.gz (7.8 MB)
+      Preparing metadata (setup.py) ... done
+    Collecting wcmatch>=7.0
+      Downloading wcmatch-8.4.1-py3-none-any.whl (39 kB)
+    Collecting pyyaml
+      Using cached PyYAML-6.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (661 kB)
+    Collecting packaging
+      Using cached packaging-21.3-py3-none-any.whl (40 kB)
+    Collecting enrich>=1.2.6
+      Downloading enrich-1.2.7-py3-none-any.whl (8.7 kB)
+    Collecting tenacity
+      Downloading tenacity-8.1.0-py3-none-any.whl (23 kB)
+    Collecting ruamel.yaml<1,>=0.15.37
+      Using cached ruamel.yaml-0.17.21-py3-none-any.whl (109 kB)
+    Collecting commonmark<0.10.0,>=0.9.0
+      Downloading commonmark-0.9.1-py2.py3-none-any.whl (51 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 51.1/51.1 KB 34.9 MB/s eta 0:00:00
+    Collecting colorama<0.5.0,>=0.4.0
+      Downloading colorama-0.4.5-py2.py3-none-any.whl (16 kB)
+    Collecting pygments<3.0.0,>=2.6.0
+      Downloading Pygments-2.13.0-py3-none-any.whl (1.1 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 104.6 MB/s eta 0:00:00
+    Collecting cerberus!=1.3.3,!=1.3.4,>=1.3.1
+      Downloading Cerberus-1.3.2.tar.gz (52 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.5/52.5 KB 35.4 MB/s eta 0:00:00
+      Preparing metadata (setup.py) ... done
+    Collecting subprocess-tee>=0.3.5
+      Downloading subprocess_tee-0.3.5-py3-none-any.whl (8.0 kB)
+    Collecting pluggy<2.0,>=0.7.1
+      Downloading pluggy-1.0.0-py2.py3-none-any.whl (13 kB)
+    Collecting paramiko<3,>=2.5.0
+      Downloading paramiko-2.11.0-py2.py3-none-any.whl (212 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 212.9/212.9 KB 100.5 MB/s eta 0:00:00
+    Collecting ansible-compat>=0.5.0
+      Downloading ansible_compat-2.2.1-py3-none-any.whl (19 kB)
+    Collecting pyyaml
+      Downloading PyYAML-5.4.1-cp39-cp39-manylinux1_x86_64.whl (630 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 630.1/630.1 KB 126.3 MB/s eta 0:00:00
+    Collecting click<9,>=8.0
+      Downloading click-8.1.3-py3-none-any.whl (96 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 KB 65.6 MB/s eta 0:00:00
+    Collecting click-help-colors>=0.9
+      Downloading click_help_colors-0.9.1-py3-none-any.whl (5.5 kB)
+    Collecting selinux
+      Downloading selinux-0.2.1-py2.py3-none-any.whl (4.3 kB)
+    Collecting Jinja2>=2.11.3
+      Using cached Jinja2-3.1.2-py3-none-any.whl (133 kB)
+    Collecting requests
+      Using cached requests-2.28.1-py3-none-any.whl (62 kB)
+    Collecting websocket-client>=0.32.0
+      Downloading websocket_client-1.4.1-py3-none-any.whl (55 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.0/55.0 KB 40.7 MB/s eta 0:00:00
+    Collecting platformdirs>=2
+      Downloading platformdirs-2.5.2-py3-none-any.whl (14 kB)
+    Collecting pathspec>=0.9.0
+      Downloading pathspec-0.10.1-py3-none-any.whl (27 kB)
+    Collecting mypy-extensions>=0.4.3
+      Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+    Collecting typing-extensions>=3.10.0.0
+      Downloading typing_extensions-4.4.0-py3-none-any.whl (26 kB)
+    Collecting tomli>=1.1.0
+      Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
+    Collecting pycodestyle<2.9.0,>=2.8.0
+      Downloading pycodestyle-2.8.0-py2.py3-none-any.whl (42 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.1/42.1 KB 29.1 MB/s eta 0:00:00
+    Collecting pyflakes<2.5.0,>=2.4.0
+      Downloading pyflakes-2.4.0-py2.py3-none-any.whl (69 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 69.7/69.7 KB 48.2 MB/s eta 0:00:00
+    Collecting mccabe<0.7.0,>=0.6.0
+      Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+    Collecting astroid<2.9,>=2.8.0
+      Downloading astroid-2.8.6-py3-none-any.whl (248 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 248.7/248.7 KB 114.0 MB/s eta 0:00:00
+    Collecting isort<6,>=4.2.5
+      Downloading isort-5.10.1-py3-none-any.whl (103 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.4/103.4 KB 68.6 MB/s eta 0:00:00
+    Collecting toml>=0.7.1
+      Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+    Collecting binaryornot
+      Downloading binaryornot-0.4.4-py2.py3-none-any.whl (9.0 kB)
+    Requirement already satisfied: setuptools in ./venv/lib/python3.9/site-packages (from reuse~=0.14.0->-r requirements.txt (line 23)) (58.1.0)
+    Collecting boolean.py
+      Downloading boolean.py-4.0-py3-none-any.whl (25 kB)
+    Collecting license-expression
+      Downloading license_expression-30.0.0-py3-none-any.whl (86 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.4/86.4 KB 58.6 MB/s eta 0:00:00
+    Collecting python-slugify>=4.0.0
+      Downloading python_slugify-6.1.2-py2.py3-none-any.whl (9.4 kB)
+    Collecting poyo>=0.5.0
+      Downloading poyo-0.5.0-py2.py3-none-any.whl (10 kB)
+    Collecting jinja2-time>=0.2.0
+      Downloading jinja2_time-0.2.0-py2.py3-none-any.whl (6.4 kB)
+    Collecting cffi>=1.1
+      Downloading cffi-1.15.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (441 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 441.2/441.2 KB 133.5 MB/s eta 0:00:00
+    Collecting jsonschema>=4.6.0
+      Downloading jsonschema-4.16.0-py3-none-any.whl (83 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.1/83.1 KB 52.8 MB/s eta 0:00:00
+    Collecting cryptography
+      Downloading cryptography-38.0.1-cp36-abi3-manylinux_2_24_x86_64.whl (4.0 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.0/4.0 MB 94.5 MB/s eta 0:00:00
+    Collecting resolvelib<0.6.0,>=0.5.3
+      Using cached resolvelib-0.5.4-py2.py3-none-any.whl (12 kB)
+    Collecting lazy-object-proxy>=1.4.0
+      Downloading lazy_object_proxy-1.7.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (61 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.1/61.1 KB 43.4 MB/s eta 0:00:00
+    Collecting wrapt<1.14,>=1.11
+      Downloading wrapt-1.13.3-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (81 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 81.3/81.3 KB 53.3 MB/s eta 0:00:00
+    Collecting pycparser
+      Using cached pycparser-2.21-py2.py3-none-any.whl (118 kB)
+    Collecting MarkupSafe>=2.0
+      Using cached MarkupSafe-2.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+    Collecting arrow
+      Downloading arrow-1.2.3-py3-none-any.whl (66 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66.4/66.4 KB 44.7 MB/s eta 0:00:00
+    Collecting pynacl>=1.0.1
+      Downloading PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (856 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 856.7/856.7 KB 124.4 MB/s eta 0:00:00
+    Collecting text-unidecode>=1.3
+      Downloading text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 KB 50.4 MB/s eta 0:00:00
+    Collecting charset-normalizer<3,>=2
+      Using cached charset_normalizer-2.1.1-py3-none-any.whl (39 kB)
+    Collecting certifi>=2017.4.17
+      Using cached certifi-2022.9.24-py3-none-any.whl (161 kB)
+    Collecting urllib3<1.27,>=1.21.1
+      Using cached urllib3-1.26.12-py2.py3-none-any.whl (140 kB)
+    Collecting idna<4,>=2.5
+      Using cached idna-3.4-py3-none-any.whl (61 kB)
+    Collecting ruamel.yaml.clib>=0.2.6
+      Downloading ruamel.yaml.clib-0.2.7-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (519 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 519.4/519.4 KB 146.5 MB/s eta 0:00:00
+    Collecting bracex>=2.1.1
+      Downloading bracex-2.3.post1-py3-none-any.whl (12 kB)
+    Collecting pyparsing!=3.0.5,>=2.0.2
+      Using cached pyparsing-3.0.9-py3-none-any.whl (98 kB)
+    Collecting distro>=1.3.0
+      Downloading distro-1.8.0-py3-none-any.whl (20 kB)
+    Collecting pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0
+      Downloading pyrsistent-0.18.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (115 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.6/115.6 KB 74.0 MB/s eta 0:00:00
+    Collecting attrs>=17.4.0
+      Downloading attrs-22.1.0-py2.py3-none-any.whl (58 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.8/58.8 KB 41.7 MB/s eta 0:00:00
+    Collecting python-dateutil>=2.7.0
+      Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 KB 101.1 MB/s eta 0:00:00
+    Using legacy 'setup.py install' for ansible, since package 'wheel' is not installed.
+    Using legacy 'setup.py install' for python-vagrant, since package 'wheel' is not installed.
+    Using legacy 'setup.py install' for yamllint, since package 'wheel' is not installed.
+    Using legacy 'setup.py install' for zxcvbn, since package 'wheel' is not installed.
+    Using legacy 'setup.py install' for ansible-core, since package 'wheel' is not installed.
+    Using legacy 'setup.py install' for cerberus, since package 'wheel' is not installed.
+    Installing collected packages: zxcvbn, text-unidecode, resolvelib, python-vagrant, passlib, netaddr, mypy-extensions, mccabe, commonmark, boolean.py, wrapt, websocket-client, urllib3, typing-extensions, tomli, toml, tenacity, subprocess-tee, six, ruamel.yaml.clib, pyyaml, python-slugify, pyrsistent, pyparsing, pygments, pyflakes, pycparser, pycodestyle, poyo, pluggy, platformdirs, pathspec, MarkupSafe, license-expression, lazy-object-proxy, isort, idna, distro, colorama, click, charset-normalizer, chardet, certifi, cerberus, bracex, attrs, yamllint, wcmatch, selinux, ruamel.yaml, rich, requests, python-debian, python-dateutil, packaging, jsonschema, Jinja2, flake8, click-help-colors, cffi, black, binaryornot, astroid, reuse, pynetbox, pynacl, pylint, enrich, docker, cryptography, bcrypt, arrow, ansible-compat, paramiko, jinja2-time, ansible-lint, ansible-core, cookiecutter, ansible, molecule, molecule-vagrant, molecule-docker
+      Running setup.py install for zxcvbn ... done
+      Running setup.py install for python-vagrant ... done
+      Running setup.py install for cerberus ... done
+      Running setup.py install for yamllint ... done
+      Running setup.py install for ansible-core ... done
+      Running setup.py install for ansible ... done
+    Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.1 ansible-5.3.0 ansible-compat-2.2.1 ansible-core-2.12.10 ansible-lint-5.4.0 arrow-1.2.3 astroid-2.8.6 attrs-22.1.0 bcrypt-3.2.2 binaryornot-0.4.4 black-22.1.0 boolean.py-4.0 bracex-2.3.post1 cerberus-1.3.2 certifi-2022.9.24 cffi-1.15.1 chardet-5.0.0 charset-normalizer-2.1.1 click-8.1.3 click-help-colors-0.9.1 colorama-0.4.5 commonmark-0.9.1 cookiecutter-1.7.3 cryptography-38.0.1 distro-1.8.0 docker-5.0.3 enrich-1.2.7 flake8-4.0.1 idna-3.4 isort-5.10.1 jinja2-time-0.2.0 jsonschema-4.16.0 lazy-object-proxy-1.7.1 license-expression-30.0.0 mccabe-0.6.1 molecule-3.5.2 molecule-docker-1.1.0 molecule-vagrant-1.0.0 mypy-extensions-0.4.3 netaddr-0.8.0 packaging-21.3 paramiko-2.11.0 passlib-1.7.4 pathspec-0.10.1 platformdirs-2.5.2 pluggy-1.0.0 poyo-0.5.0 pycodestyle-2.8.0 pycparser-2.21 pyflakes-2.4.0 pygments-2.13.0 pylint-2.11.1 pynacl-1.5.0 pynetbox-6.6.2 pyparsing-3.0.9 pyrsistent-0.18.1 python-dateutil-2.8.2 python-debian-0.1.40 python-slugify-6.1.2 python-vagrant-0.5.15 pyyaml-5.4.1 requests-2.28.1 resolvelib-0.5.4 reuse-0.14.0 rich-10.16.2 ruamel.yaml-0.17.21 ruamel.yaml.clib-0.2.7 selinux-0.2.1 six-1.16.0 subprocess-tee-0.3.5 tenacity-8.1.0 text-unidecode-1.3 toml-0.10.2 tomli-2.0.1 typing-extensions-4.4.0 urllib3-1.26.12 wcmatch-8.4.1 websocket-client-1.4.1 wrapt-1.13.3 yamllint-1.26.3 zxcvbn-4.4.28
+
+
+
+    onfadmin@5g1-mrtr:~/infra/ansible$ pip freeze -l
+    ansible==5.3.0
+    ansible-compat==2.2.1
+    ansible-core==2.12.10
+    ansible-lint==5.4.0
+    arrow==1.2.3
+    astroid==2.8.6
+    attrs==22.1.0
+    bcrypt==3.2.2
+    binaryornot==0.4.4
+    black==22.1.0
+    boolean.py==4.0
+    bracex==2.3.post1
+    Cerberus==1.3.2
+    certifi==2022.9.24
+    cffi==1.15.1
+    chardet==5.0.0
+    charset-normalizer==2.1.1
+    click==8.1.3
+    click-help-colors==0.9.1
+    colorama==0.4.5
+    commonmark==0.9.1
+    cookiecutter==1.7.3
+    cryptography==38.0.1
+    distro==1.8.0
+    docker==5.0.3
+    enrich==1.2.7
+    flake8==4.0.1
+    idna==3.4
+    isort==5.10.1
+    Jinja2==3.1.2
+    jinja2-time==0.2.0
+    jsonschema==4.16.0
+    lazy-object-proxy==1.7.1
+    license-expression==30.0.0
+    MarkupSafe==2.1.1
+    mccabe==0.6.1
+    molecule==3.5.2
+    molecule-docker==1.1.0
+    molecule-vagrant==1.0.0
+    mypy-extensions==0.4.3
+    netaddr==0.8.0
+    packaging==21.3
+    paramiko==2.11.0
+    passlib==1.7.4
+    pathspec==0.10.1
+    platformdirs==2.5.2
+    pluggy==1.0.0
+    poyo==0.5.0
+    pycodestyle==2.8.0
+    pycparser==2.21
+    pyflakes==2.4.0
+    Pygments==2.13.0
+    pylint==2.11.1
+    PyNaCl==1.5.0
+    pynetbox==6.6.2
+    pyparsing==3.0.9
+    pyrsistent==0.18.1
+    python-dateutil==2.8.2
+    python-debian==0.1.40
+    python-slugify==6.1.2
+    python-vagrant==0.5.15
+    PyYAML==5.4.1
+    requests==2.28.1
+    resolvelib==0.5.4
+    reuse==0.14.0
+    rich==10.16.2
+    ruamel.yaml==0.17.21
+    ruamel.yaml.clib==0.2.7
+    selinux==0.2.1
+    six==1.16.0
+    subprocess-tee==0.3.5
+    tenacity==8.1.0
+    text-unidecode==1.3
+    toml==0.10.2
+    tomli==2.0.1
+    typing_extensions==4.4.0
+    urllib3==1.26.12
+    wcmatch==8.4.1
+    websocket-client==1.4.1
+    wrapt==1.13.3
+    yamllint==1.26.3
+    zxcvbn==4.4.28
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
