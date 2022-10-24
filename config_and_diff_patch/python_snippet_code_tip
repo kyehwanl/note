@@ -233,7 +233,21 @@ addr.ipV4 = struct.unpack("!L", socket.inet_aton("10.1.1.2"))[0]
 
 
 
+9. Ignore warnings 
+===================
+(https://stackoverflow.com/questions/9031783/hide-all-warnings-in-ipython)
 
+- Also applicable to pdb
+- at the top of source code 
+- inside ~/.ipython/profile_default/startup/disable-warnings.py  --> not working
+
+  import warnings
+  warnings.filterwarnings('ignore')
+  
+
+  Quite often it is useful to see a warning once
+
+  warnings.filterwarnings(action='once')
 
 
 
