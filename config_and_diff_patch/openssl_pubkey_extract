@@ -1,4 +1,12 @@
 
+--------------------
+RSA key genenration
+--------------------
+
+openssl genrsa -out rsa.private 1024
+openssl rsa -in rsa.private -out rsa.public -pubout -outform PEM
+
+
 
 
 Public Key extraction from X.509 Certificatte
