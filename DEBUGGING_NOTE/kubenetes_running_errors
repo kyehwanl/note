@@ -332,12 +332,17 @@ Getting rid of taint, add '-' at the end of command argument
   FATA[0000] unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial unix /var/run/cri-dockerd.sock: connect: no such file or directory"
 
 
-  < Solution >
+  < Solution.1 >
     (https://kubernetes.io/docs/tasks/debug/debug-cluster/crictl/)
 
   vagrant@vagrant:~$ sudo crictl config --set runtime-endpoint=unix:///var/run/containerd/containerd.sock
   vagrant@vagrant:~$ sudo crictl exec -it 3b69b6959a156 /bin/bash
   [root@private-reg ~]#
 
+
+  < Solution.2 >
+  sudo -s (root account)
+  export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
+  /var/lib/rancher/rke2/bin/crictl ps
 
 
