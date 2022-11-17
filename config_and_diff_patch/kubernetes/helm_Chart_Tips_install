@@ -295,6 +295,7 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 (1) Use Helm Template
+    -- show all the resource manifests
 
   $ helm template [NAME] [CHART] [flags]
     helm template my-test1 aether/sd-core
