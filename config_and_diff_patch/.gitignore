@@ -1,6 +1,7 @@
 *~
 *.diff
 *.swp
+*.sw*
 *.Po
 *.o
 *.lo
