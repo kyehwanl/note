@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM1 = "aether-vm09"
+#ServerIP  = "192.168.50.55"
+
+$script = <<-SCRIPT
+apt update
+apt install -y make
+SCRIPT
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define VM1 do |server|
+    server.vm.box = "bento/ubuntu-18.04"
+    server.vm.hostname = "smomo"
+    #server.vm.network "private_network", ip: "192.168.50.55"
+    server.vm.network "forwarded_port",  guest: 31194, host: 31194
+    server.vm.synced_folder ".", "/vagrant"
+
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "12288"
+      vb.cpus = "4"
+    end
+
+    server.vm.provision "shell", inline: $script, privileged: true
+  end 
+end
