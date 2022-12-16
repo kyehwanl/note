@@ -318,7 +318,7 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
     helm list -A 
-    helm get all sd-core -n omec  --> similar to helm template
+    helm get all sd-core -n omec  --> similar to helm template command, (sd-core: release name)
 
 
     (example)
