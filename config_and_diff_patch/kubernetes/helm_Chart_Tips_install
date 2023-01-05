@@ -45,6 +45,25 @@ Helm Tips
       ...
 
 
+    (another examples)
+
+      onfadmin@5g1-comp1:~$ helm repo list
+      NAME            URL
+      aether          https://charts.aetherproject.org
+      incubator       https://charts.helm.sh/incubator
+      rancher-stable  https://releases.rancher.com/server-charts/stable
+      jetstack        https://charts.jetstack.io
+
+      onfadmin@5g1-comp1:~$ helm search repo upf
+      NAME                            CHART VERSION   APP VERSION     DESCRIPTION
+      aether/bess-upf                 0.1.3                           OMEC user plane based on BESS
+      aether/omec-upf-cni             0.1.4                           CNI setup for OMEC data plane
+      aether/omec-upf-pfcp-agent      0.3.0                           OMEC pfcp agent based on BESS
+      aether/pfcp-agent               0.0.14                          PFCP Agent for SD-Fabric's P4 UPF
+      aether/router                   0.1.1                           Route Data plane packets from Gnb to UPF to Int...
+
+
+
 5. showing values inside charts
 
     helm show values aether/bess-upf
@@ -307,6 +326,8 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 
+    another example with values
+        helm template test1 aether/sd-core --values ~/aether-configs/app/sd-core-5g/values.yaml | less
 
 
 
