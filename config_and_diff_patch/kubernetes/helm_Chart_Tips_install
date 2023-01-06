@@ -383,7 +383,23 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 
+(4) Use --dry-run
 
+  kubectl apply --dry-run=client -f app-sdcore-5g.yaml -o yaml
+
+    Or
+
+  helm upgrade --dry-run   ( --> refer to O'Reilly ebook, Learning Helm, p.41)
+
+    (ex.) helm install mysite bitnami/drupal --values values.yaml --set \ 
+            drupalEmail=foo@example.com --dry-run
+
+    Commands like helm install and helm upgrade provide a flag named --dry-run.
+    When you supply this flag, it will cause Helm to step through the first four phases
+    (load the chart, determine the values, render the templates, format to YAML). But
+    when the fourth phase is finished, Helm will dump a trove of information to standard
+    output, including all of the rendered templates. Then it will exit without sending the
+    objects to Kubernetes and without creating any release records.
 
 
 
