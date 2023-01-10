@@ -1,7 +1,9 @@
 Helm Tips 
 =============
 
+----------------------------
 1. Installation from script 
+----------------------------
 
 (https://helm.sh/docs/intro/install/)
 -- same as Aether uses
@@ -11,7 +13,9 @@ Helm Tips
   sudo [DESIRED_VERSION="v3.6.3"] ./get_helm.sh
 
 
+----------------------------
 2. by manager: Apt (Ubuntu)
+----------------------------
 
   curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
   sudo apt-get install apt-transport-https --yes
@@ -24,15 +28,18 @@ Helm Tips
 
 
 
+------------------
 3. Add repository
+------------------
 
 
     helm repo add aether https://charts.aetherproject.org
 
     helm repo up[date]
 
-
+--------------------------------------
 4. searching charts inside repository
+--------------------------------------
 
     helm search repo aether
 
@@ -64,7 +71,9 @@ Helm Tips
 
 
 
+--------------------------------
 5. showing values inside charts
+--------------------------------
 
     helm show values aether/bess-upf
 
@@ -96,7 +105,9 @@ Helm Tips
  
 
 
+-----------------------------------------------------------------
 6. Similar to #5, get manifests which is already installed chart
+-----------------------------------------------------------------
 
 
   helm upgrade --install --wait --values ~/aether-in-a-box/roc-values.yaml atomix-controller atomix/atomix-controller
@@ -405,9 +416,19 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
 
+--------------------------------------------
+9. Download Chart from a repository locally
+    https://helm.sh/docs/helm/helm_pull/
+--------------------------------------------
+Retrieve a package from a package repository, and download it locally
+
+    helm pull [chart URL | repo/chartname] [...] [flags]
+
+        --> chartname-appVersion.tgz will be downloaded from the helm repo
 
 
-
+  - Then, helm upgrade --install <release> <path> ...
+            where, <path> might be '.' --> current directory or untarred directory
 
 
 
