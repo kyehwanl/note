@@ -41,3 +41,87 @@ if [ -f /etc/profile.d/bash_completion.sh ]; then # in case not exist, apt or yu
   alias k=kubectl
   source <(kubectl completion bash | sed s/kubectl/k/g)
 fi 
+
+
+
+--------------
+8. ETCD access
+--------------
+https://sysdig.com/blog/monitor-etcd/
+https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
+https://blog.palark.com/how-to-modify-etcd-data-of-your-kubernetes-directly-without-k8s-api/
+
+(1) install
+sudo apt install etcd-client
+
+
+(2) commands
+  node0 [904]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt version
+  etcdctl version: 3.2.17
+  API version: 3.2
+
+  node0 [905]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt member list
+  a699090a75570c08, started, node0.kyehwanl-144261.bgpsec.emulab.net, https://155.98.36.92:2380, https://155.98.36.92:2379
+
+	where, endpoints ip address is derived from 'kubeadmin join'
+	  kubeadm join 155.98.36.92:6443 --token s0w9b6.090zxeo626zdzixb \
+			  --discovery-token-ca-cert-hash sha256:bf4879c843bd6d4485f6e723b43aca109b6cf601237753ef582a42e32343d729
+
+
+
+-- in version 2, --> BUT not working
+  node0 [910]{~/kubernetes}$ sudo etcdctl --endpoints https://155.98.36.92:2379  --cert-file=/etc/kubernetes/pki/etcd/server.crt  --key-file=/etc/kubernetes/pki/etcd/server.key  --ca-file=/etc/kubernetes/pki/etcd/ca.crt ls
+  Error:  client: response is invalid json. The endpoint is probably not valid etcd cluster endpoint.
+
+
+
+(3) useful commands
+
+node0 [924]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt endpoint status --write-out=table
++---------------------------+------------------+---------+---------+-----------+-----------+------------+
+|         ENDPOINT          |        ID        | VERSION | DB SIZE | IS LEADER | RAFT TERM | RAFT INDEX |
++---------------------------+------------------+---------+---------+-----------+-----------+------------+
+| https://155.98.36.92:2379 | a699090a75570c08 |   3.5.6 |   28 MB |      true |         2 |      43117 |
++---------------------------+------------------+---------+---------+-----------+-----------+------------+
+
+
+node0 [925]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt get / --prefix --keys-only
+/registry/apiextensions.k8s.io/customresourcedefinitions/alertmanagers.monitoring.coreos.com
+...
+/registry/services/endpoints/kube-system/kube-dns
+/registry/services/specs/cattle-fleet-system/gitjob
+/registry/services/specs/cattle-system/rancher
+/registry/services/specs/cattle-system/rancher-webhook
+/registry/services/specs/cattle-system/webhook-service
+/registry/services/specs/cert-manager/cert-manager
+/registry/services/specs/cert-manager/cert-manager-webhook
+/registry/services/specs/default/kubernetes
+/registry/services/specs/kube-system/kube-dns
+...(truncated)..
+
+
+(4) if '--keys-only' is not specified, all the data can be shown in forms of JSON
+  node0 [932]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt get / --prefix  > etcd_data
+
+...
+/registry/management.cattle.io/nodes/local/machine-zqzkq                                                                                                                                                                                                                    {"apiVersion":"management.cattle.io/v3","kind":"Node","metadata":{"annotations":{"cleanup.cattle.io/user-node-remove":"true","lifecycle.cattle.io/create.node-controller":"true","management.cattle.io/nodesyncer":"true"},"creationTimestamp":"2023-01-10T16:00:32Z","finalizers":["controller.cattle.io/node-controller"],"generateName":"machine-","generation":35,"labels":{"cattle.io/creator":"norman","management.cattle.io/nodename":"node0.kyehwanl-144261.bgpsec.emulab.net"},"managedFields":[{"apiVersion":"management.cattle.io/v3","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{".":{},"f:cleanup.cattle.io/user-node-remove":{},"f:lifecycle.cattle.io/create.node-controller":{},"f:management.cattle.io/nodesyncer":{}},"f:finalizers":{".":{},"v:\"controller.cattle.io/node-controller\"":{}},"f:generateName":{},"f:labels":{".":{},"f:cattle.io/creator":{},"f:management.cattle.io/nodename":{}}},"f:spec":{".":{},"f:controlPlane":{},"f:customConfig":{},"f:desiredNodeTaints":{},"f:displayName":{},"f:etcd":{},"f:imported":{},"f:internalNodeSpec":{".":{},"f:podCIDR":{},"f:podCIDRs":{}},"f:metadataUpdate":{".":{},"f:annotations":{},"f:labels":{}},"f:nodePoolName":{},"f:requestedHostname":{},"f:worker":{}},"f:status":{".":{},"f:conditions":{},"f:internalNodeStatus":{".":{},"f:addresses":{},"f:allocatable":{".":{},"f:cpu":{},"f:ephemeral-storage":{},"f:hugepages-1Gi":{},"f:hugepages-2Mi":{},"f:memory":{},"f:pods":{}},"f:capacity":{".":{},"f:cpu":{},"f:ephemeral-storage":{},"f:hugepages-1Gi":{},"f:hugepages-2Mi":{},"f:memory":{},"f:pods":{}},"f:conditions":{},"f:daemonEndpoints":{".":{},"f:kubeletEndpoint":{".":{},"f:Port":{}}},"f:nodeInfo":{".":{},"f:architecture":{},"f:bootID":{},"f:containerRuntimeVersion":{},"f:kernelVersion":{},"f:kubeProxyVersion":{},"f:kubeletVersion":{},"f:machineID":{},"f:operatingSystem":{},"f:osImage":{},"f:systemUUID":{}}},"f:limits":{".":{},"f:memory":{}},"f:nodeAnnotations":{".":{},"f:kubeadm.alpha.kubernetes.io/cri-socket":{},"f:node.alpha.kubernetes.io/ttl":{},"f:projectcalico.org/IPv4Address":{},"f:projectcalico.org/IPv4IPIPTunnelAddr":{},"f:volumes.kubernetes.io/controller-managed-attach-detach":{}},"f:nodeLabels":{".":{},"f:beta.kubernetes.io/arch":{},"f:beta.kubernetes.io/os":{},"f:kubernetes.io/arch":{},"f:kubernetes.io/hostname":{},"f:kubernetes.io/os":{},"f:node-role.kubernetes.io/control-plane":{},"f:node.kubernetes.io/exclude-from-external-load-balancers":{}},"f:nodeName":{},"f:requested":{".":{},"f:cpu":{},"f:memory":{},"f:pods":{}}}},"manager":"rancher","operation":"Update","time":"2023-01-10T16:00:32Z"}],"name":"machine-zqzkq","namespace":"local","uid":"9c360f3d-1551-457a-a952-58641b65f904"},"spec":{"controlPlane":false,"customConfig":null,"desiredNodeTaints":null,"displayName":"","etcd":false,"imported":false,"internalNodeSpec":{"podCIDR":"192.168.0.0/24","podCIDRs":["192.168.0.0/24"]},"metadataUpdate":{"annotations":{},"labels":{}},"nodePoolName":"","requestedHostname":"node0.kyehwanl-144261.bgpsec.emulab.net","worker":true},"status":{"conditions":[{"lastTransitionTime":"2023-01-10 15:55:19 +0000 UTC","lastUpdateTime":"2023-01-10 18:01:18 +0000 UTC","message":"kubelet is posting ready status. AppArmor enabled","reason":"KubeletReady","status":"True","type":"Ready"},{"lastUpdateTime":"2023-01-10T16:00:49Z","message":"registered with kubernetes","status":"True","type":"Registered"},{"lastUpdateTime":"2023-01-10T16:00:32Z","status":"True","type":"Provisioned"}],"internalNodeStatus":{"addresses":[{"address":"155.98.36.92","type":"InternalIP"},{"address":"node0.kyehwanl-144261.bgpsec.emulab.net","type":"Hostname"}],"allocatable":{"cpu":"32","ephemeral-storage":"15098469556","hugepages-1Gi":"0","hugepages-2Mi":"0","memory":"65767036Ki","pods":"110"},"capacity":{"cpu":"32","ephemeral-storage":"16382888Ki","hugepages-1Gi":"0","hugepages-2Mi":"0","memory":"65869436Ki","pods":"110"},"conditions":[{"lastHeartbeatTime":"2023-01-10T18:01:18Z","lastTransitionTime":"2023-01-10T15:55:19Z","message":"kubelet is posting ready status. AppArmor enabled","reason":"KubeletReady","status":"True","type":"Ready"}],"daemonEndpoints":{"kubeletEndpoint":{"Port":10250}},"nodeInfo":{"architecture":"amd64","bootID":"886647ff-bacb-49e9-b60c-d7a8f40074cb","containerRuntimeVersion":"containerd://1.5.9","kernelVersion":"4.15.0-169-generic","kubeProxyVersion":"v1.24.9","kubeletVersion":"v1.24.9","machineID":"01a16d77f3024ba2a01a2b0e2ffd560d","operatingSystem":"linux","osImage":"Ubuntu 18.04.1 LTS","systemUUID":"4C4C4544-0056-4710-8052-B6C04F313832"}},"limits":{"memory":"340Mi"},"nodeAnnotations":{"kubeadm.alpha.kubernetes.io/cri-socket":"unix:///var/run/containerd/containerd.sock","node.alpha.kubernetes.io/ttl":"0","projectcalico.org/IPv4Address":"10.10.1.1/24","projectcalico.org/IPv4IPIPTunnelAddr":"192.168.243.64","volumes.kubernetes.io/controller-managed-attach-detach":"true"},"nodeLabels":{"beta.kubernetes.io/arch":"amd64","beta.kubernetes.io/os":"linux","kubernetes.io/arch":"amd64","kubernetes.io/hostname":"node0.kyehwanl-144261.bgpsec.emulab.net","kubernetes.io/os":"linux","node-role.kubernetes.io/control-plane":"","node.kubernetes.io/exclude-from-external-load-balancers":""},"nodeName":"node0.kyehwanl-144261.bgpsec.emulab.net","requested":{"cpu":"1100m","memory":"240Mi","pods":"19"}}}                                                                                                                                                     
+
+
+ Then, you can try to find /registry/configmaps, deployments, events, pods ...
+
+  node0 [944]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98.36.92:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc/kubernetes/pki/etcd/ca.crt get /registry/pods/kube-system/ --prefix 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
