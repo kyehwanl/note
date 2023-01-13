@@ -433,11 +433,38 @@ Retrieve a package from a package repository, and download it locally
 
 
 
+---------------------------------------------------            
+10. Helm Install with the local repository 
+	https://phoenixnap.com/kb/helm-install-command
+---------------------------------------------------            
+  a packaged chart from being pulled (downloaded) or unpacked chart
+
+
+  - The path to a packaged chart:
+	helm install jenkins ./jenkins-1.2.3.tgz
+
+  -	The path to a directory containing an unpacked chart:
+	helm install jenkins-deployment ./jenkins-archive
+
+  - The absolute URL:
+	helm install jenkins https://example.com/charts/jenkins-1.2.3.tgz
+
+  - The chart reference and the URL of the repository:
+	helm install --repo https://example.com/charts/ jenkins-deployment jenkins
 
 
 
 
+--------------------
+11. check the status
+--------------------
+  To check the status of a release, use the following command:
 
+	helm status [release-name]
+
+  The output is similar to the output of the helm install command. It provides information on the last deployment time, 
+  the namespace of the release, its status, number of revisions, and other applicable details.
+  If the STATUS section of the report says deployed, the release has been successfully deployed and is ready for use.
 
 
 
