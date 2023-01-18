@@ -536,6 +536,14 @@ sudo useradd -s /usr/bin/bash username
 
 
 
+(37) download from web, curl
+=============================
+normally, following curl options are used
+    curl -OLv <address>
+
+
+
+
 
 (ETC)
 =================================
