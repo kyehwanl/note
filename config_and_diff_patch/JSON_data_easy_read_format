@@ -1,0 +1,84 @@
+
+--------------------------------------------------------------
+If json data messed with carriage return, it's hard to parse.
+Following is the python functions to re-format to easily read.
+--------------------------------------------------------------
+
+-----------------
+1. Origianl Data
+-----------------
+
+>>> import json
+>>> with open ('/etc/cni/net.d/00-multus.conf', 'r') as fcc_file:
+...   fcc_data = json.load(fcc_file)
+...   print(fcc_data)
+...
+{u'cniVersion': u'0.3.1', u'name': u'multus-cni-network', u'delegates': [{u'cniVersion': u'0.3.1', u'name': u'k8s-pod-network', u'plugins': [{u'log_level': u'Info', u'kubernetes': {u'k8s_api_root': u'https://192.168.85.1:443', u'kubeconfig': u'/etc/cni/net.d/calico-kubeconfig'}, u'log_file_path': u'/var/log/calico/cni/cni.log', u'ipam': {u'assign_ipv4': u'true', u'assign_ipv6': u'false', u'type': u'calico-ipam'}, u'mtu': 0, u'policy': {u'type': u'k8s'}, u'container_settings': {u'allow_ip_forwarding': False}, u'nodename_file_optional': False, u'datastore_type': u'kubernetes', u'type': u'calico'}, {u'type': u'bandwidth', u'capabilities': {u'bandwidth': True}}, {u'snat': True, u'type': u'portmap', u'capabilities': {u'portMappings': True}}]}], u'capabilities': {u'portMappings': True, u'bandwidth': True}, u'kubeconfig': u'/etc/cni/net.d/multus.d/multus.kubeconfig', u'type': u'multus'}
+
+
+
+------------
+2. re-format
+------------
+
+>>> import json
+>>> with open ('/etc/cni/net.d/00-multus.conf', 'r') as fcc_file:
+...   fcc_data = json.load(fcc_file)
+...   print(json.dumps(fcc_data, indent=4))
+...
+{
+    "cniVersion": "0.3.1",
+    "name": "multus-cni-network",
+    "delegates": [
+        {
+            "cniVersion": "0.3.1",
+            "name": "k8s-pod-network",
+            "plugins": [
+                {
+                    "log_level": "Info",
+                    "kubernetes": {
+                        "k8s_api_root": "https://192.168.85.1:443",
+                        "kubeconfig": "/etc/cni/net.d/calico-kubeconfig"
+                    },
+                    "log_file_path": "/var/log/calico/cni/cni.log",
+                    "ipam": {
+                        "assign_ipv4": "true",
+                        "assign_ipv6": "false",
+                        "type": "calico-ipam"
+                    },
+                    "mtu": 0,
+                    "policy": {
+                        "type": "k8s"
+                    },
+                    "container_settings": {
+                        "allow_ip_forwarding": false
+                    },
+                    "nodename_file_optional": false,
+                    "datastore_type": "kubernetes",
+                    "type": "calico"
+                },
+                {
+                    "type": "bandwidth",
+                    "capabilities": {
+                        "bandwidth": true
+                    }
+                },
+                {
+                    "snat": true,
+                    "type": "portmap",
+                    "capabilities": {
+                        "portMappings": true
+                    }
+                }
+            ]
+        }
+    ],
+    "capabilities": {
+        "portMappings": true,
+        "bandwidth": true
+    },
+    "kubeconfig": "/etc/cni/net.d/multus.d/multus.kubeconfig",
+    "type": "multus"
+}
+>>>
+
