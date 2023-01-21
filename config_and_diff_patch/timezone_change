@@ -1,0 +1,24 @@
+
+------------------------
+Change Timezone to EST
+------------------------
+https://linuxize.com/post/how-to-set-or-change-timezone-in-linux/#:~:text=To%20change%20the%20time%20zone,zone%20you%20want%20to%20set.
+
+1. Change to EST 
+	$ sudo timedatectl set-timezone America/New_York
+
+2. To verify the change, invoke the timedatectl command again:
+
+	$ timedatectl
+							Local time: Tue 2019-12-03 13:55:09 EST
+						Universal time: Tue 2019-12-03 18:55:09 UTC
+							  RTC time: Tue 2019-12-03 18:02:16
+							 Time zone: America/New_York (EST, -0500)
+			 System clock synchronized: no
+	  systemd-timesyncd.service active: yes
+					   RTC in local TZ: no
+
+3. 
+Changing the Time Zone by Creating a Symlink
+If you are running an older Linux distribution and the timedatectl utility is not present on your system, 
+you can change the timezone by symlinking /etc/localtime to the time zone in the /usr/share/zoneinfo directory.

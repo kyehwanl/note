@@ -89,6 +89,29 @@ tmux tips
  
 
 
+    < case 3 > tmux 소켓이 다른경우
+
+	(1) tmux ls를 실행했지만 no server
+	open5g@open5g-18:/opt/phoenix$ tmux ls
+	no server running on /tmp/tmux-1000/default
+
+	(2) 하지만 process에서는 확인가능하다
+	open5g@open5g-18:/opt/phoenix$ ps aux | grep tmux
+	root       42104  0.4  0.0  12528  8960 ?        Ss   06:24   0:05 tmux -S /opt/phoenix-tmux new-session -d -s ph_netns -n root
+
+	--> -S (socket option) 만들때 tmp/tmux-xxx소켓을 쓰지않고 /opt/phoenix-tmux 를 썼다
+		-s (session name) 
+
+	(3) 따러서 -S 로 소켓을 지정하고 ls를 하면 볼수 있다
+	open5g@open5g-18:/opt/phoenix$ tmux -S /opt/phoenix-tmux ls
+	ph_netns: 17 windows (created Fri Jan 20 06:24:19 2023)
+
+	(4) attach 하기 위한 command
+	open5g@open5g-18:/opt/phoenix$ tmux -S /opt/phoenix-tmux a -t ph_netns
+		(where, -t : target session)
+
+
+
 2. split panes into windows or move a pane to another window
 ------------------------------------------------------------
 

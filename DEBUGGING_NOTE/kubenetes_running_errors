@@ -392,10 +392,10 @@ Getting rid of taint, add '-' at the end of command argument
 
 		  wget https://github.com/containerd/containerd/releases/download/v1.6.12/containerd-1.6.12-linux-amd64.tar.gz
 		  tar xvf containerd-1.6.12-linux-amd64.tar.gz
-		  systemctl stop containerd
+		  sudo systemctl stop containerd
 		  cd bin
-		  cp * /usr/bin/
-		  systemctl start containerd
+		  sudo cp * /usr/bin/
+		  sudo systemctl start containerd
 
 
 	C. In the Docker repos, there are packages for containerd 1.6 and above. 
@@ -405,5 +405,5 @@ Getting rid of taint, add '-' at the end of command argument
 		  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 		  echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg]  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 		  sudo apt update
-		  sudo apt install containerd.io
+		  sudo apt install containerd.io -y
 

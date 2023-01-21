@@ -42,7 +42,7 @@ VIM quick setup with color scheme - soloarized
 	set history=50      " keep 50 lines of command line history
 	set ruler           " show the cursor position all the time
 	set showcmd         " display incomplete commands
-    set incsearch       " do incremental searching"
+	set incsearch       " do incremental searching"
 
 
 	set shiftwidth=4
@@ -95,5 +95,113 @@ Quick Setup 2nd way
     set background=dark
     let g:solarized_termcolors=256
     colorscheme solarized
+
+
+
+
+3. Other way of installation (Official)
+(https://vimawesome.com/plugin/solarized-8)
+
+  If your Vim supports packages (echo has('packages') prints 1), I strongly recommend that you use them. 
+  Just clone this repo inside pack/*/opt, e.g.:
+
+	git clone https://github.com/lifepillar/vim-solarized8.git \
+		~/.vim/pack/themes/opt/solarized8
+
+
+
+
+----------------------
+Auto Background Change
+----------------------
+https://www.vim.org/scripts/script.php?script_id=5210
+autoSolarize : Automatically switches between light and dark background for solarized
+
+<in .vimrc>
+
+" Auto Background change {
+  function! AutoSetSolarized()"
+  " Auto change by time
+  " https://www.vim.org/scripts/script.php?script_id=5210
+
+    let current_time = strftime("%H:%M")
+      ""echo current_time
+    if current_time > "17:00"
+      set background=dark
+    elseif current_time < "07:00"
+      set background=dark
+    else
+      set background=light
+    endif
+    colorscheme solarized
+  endfunction"
+
+
+  let g:solarized_termtrans=0
+
+  if exists("g:loaded_autoSolarized_autoloader")
+    finish
+  endif
+  let g:loaded_autoSolarized_autoload = 1
+
+  noremap <Leader>sc :call AutoSetSolarized()<CR>
+  autocmd VimEnter * call AutoSetSolarized()
+"}
+
+
+
+----------------------
+Solarized8
+----------------------
+If your Vim supports packages (echo has('packages') prints 1), I strongly recommend that you use them. 
+Just clone this repo inside pack/*/opt, e.g.:
+
+  git clone https://github.com/lifepillar/vim-solarized8.git \
+	  ~/.vim/pack/themes/opt/solarized8
+
+
+  <in .vimrc>
+  " Solarized8 {
+  " https://github.com/lifepillar/vim-solarized8
+	if filereadable(expand("~/.vim/pack/themes/opt/solarized8/colors/solarized8.vim"))
+	  "colorscheme solarized8
+	  colorscheme solarized8_high
+	endif
+  "}
+
+
+
+
+
+
+
+
+
+
+
+
+TroubleShoot
+=============
+(1) background=dark|light change doesn't work
+
+let g:solarized_termtrans=1 --> this option prevents from "set background=light"
+
+
+  let g:solarized_termtrans=1
+
+  (https://github.com/altercation/vim-colors-solarized)
+  If you use a terminal emulator with a transparent background and Solarized isn't displaying the background color transparently, 
+  set this to 1 and Solarized will use the default (transparent) background of the terminal emulator. 
+  urxvt required this in my testing; iTerm2 did not.
+
+
+
+(2) When colorscheme only applied to letters, not entire screen
+
+	check $TERM is set to screen-256color, otherwise xterm-256color doesn't work
+
+	(Solution) export TERM=screen-256color
+
+
 
 
