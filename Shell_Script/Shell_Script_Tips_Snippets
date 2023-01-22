@@ -1,0 +1,16 @@
+
+Shell Script Tips
+=================
+
+-------------
+1. sudo check 
+-------------
+
+  if [ "$EUID" -eq 0 ]; then
+    SUDO=""
+  fi
+
+  (cf.) EUID will be 0 with root, otherwise some values with users
+
+  Then, in other function or code,
+  ${SUDO} iptables -t nat -A o5gc-postrouting -o ${OUT_IF} -s ${SUBNET} ${EXTRA} -p tcp -j MASQUERADE --to-ports 10000-31000
