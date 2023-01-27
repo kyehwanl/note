@@ -320,6 +320,10 @@ Unlike the shell form, the exec form does not invoke a command shell. This means
         docker rm $(docker ps --filter "status=exited" -q)
 
 
+    - Stop Multiple IDs
+    # docker ps | awk '{ print $1 }' | grep -v CONTAINER | xargs docker stop
+
+
 
 17. IP address of the running docker container
 
