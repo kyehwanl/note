@@ -1,0 +1,396 @@
+
+
+RKE2 installation (method 1)
+============================
+(https://docs.rke2.io/install/quickstart/)
+
+
+------------------------
+Server Node Installation
+------------------------
+
+1. Run the installer
+    curl -sfL https://get.rke2.io | sh -
+
+	This will install the rke2-server service and the rke2 binary onto your machine. 
+	Due to its nature, It will fail unless it runs as the root user or through sudo.
+
+
+2. Enable the rke2-server service
+  	systemctl enable rke2-server.service
+
+3. Start the service
+  	systemctl start rke2-server.service
+
+4. Follow the logs, if you like
+	journalctl -u rke2-server -f
+
+
+
+* After running this installation:
+  - The rke2-server service will be installed. The rke2-server service will be configured to automatically restart after node reboots or if the process crashes or is killed.
+  - Additional utilities will be installed at /var/lib/rancher/rke2/bin/. They include: kubectl, crictl, and ctr. Note that these are not on your path by default.
+  - Two cleanup scripts will be installed to the path at /usr/local/bin/rke2. They are: rke2-killall.sh and rke2-uninstall.sh.
+  - A kubeconfig file will be written to /etc/rancher/rke2/rke2.yaml.
+  - A token that can be used to register other server or agent nodes will be created at /var/lib/rancher/rke2/server/node-token
+
+
+
+
+
+---------------------------------------
+Linux Agent (Worker) Node Installation
+---------------------------------------
+The steps on this section requires root level access or sudo to work.
+
+1. Run the installer
+	curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
+
+  This will install the rke2-agent service and the rke2 binary onto your machine. 
+  Due to its nature, It will fail unless it runs as the root user or through sudo.
+
+
+2. Enable the rke2-agent service
+	systemctl enable rke2-agent.service
+
+
+3. Configure the rke2-agent service
+	mkdir -p /etc/rancher/rke2/
+	vim /etc/rancher/rke2/config.yaml
+
+  Content for config.yaml:
+
+  server: https://<server>:9345
+  token: <token from server node>
+
+	Note: The rke2 server process listens on port 9345 for new nodes to register. 
+		  The Kubernetes API is still served on port 6443, as normal.
+
+4. Start the service
+	systemctl start rke2-agent.service
+
+  Follow the logs, if you like
+
+    journalctl -u rke2-agent -f
+
+	Note: Each machine must have a unique hostname. 
+			If your machines do not have unique hostnames, 
+			set the node-name parameter in the config.yaml file and provide a value with a valid 
+			and unique hostname for each node.
+
+
+
+
+
+Install RKE2 manually
+=====================
+(source: from ONF Self-managed Aether Deployment document)
+
+
+Read the official RKE2 installation guide in https://docs.rke2.io/install/quickstart/ before start. 
+For HA enabled installation with 3 or more nodes, see https://docs.rke2.io/install/ha/. 
+Note that you might need to login as superuser or have the sudo permission during the installation.
+
+
+1. Launch the first node. (Replace node IP and shared token)
+  This guide assumes that you are creating a HA enabled cluster with 3 nodes. 
+
+	$ curl -sfL https://get.rke2.io | sudo sh -
+	$ cat >> config.yaml << EOF
+	token: my-shared-secret
+	tls-san:
+	- node1.ip
+	- node2.ip
+	- node3.ip
+	- my-k8s-domain.com
+	cni: multus,calico
+	kubelet-arg:
+	- --allowed-unsafe-sysctls=net.*
+	- --feature-gates=CPUManager=true
+	- --topology-manager-policy=best-effort
+	- --cpu-manager-policy=static
+	pause-image: k8s.gcr.io/pause:3.3
+	kube-proxy-arg:
+	- --metrics-bind-address=0.0.0.0:10249
+	- --proxy-mode=ipvs
+	EOF
+	$ sudo mkdir -p /etc/rancher/rke2 && sudo mv config.yaml /etc/rancher/rke2/
+	$ cd 
+	$ sudo systemctl enable rke2-server.service
+	$ sudo systemctl start rke2-server.service
+
+
+2. Launch the additional server nodes. (Replace node IP and shared token)
+	$ cat >> config.yaml << EOF
+	server: https://node1.ip:9345
+	token: my-shared-secret
+	tls-san:
+	- node1.ip
+	- node2.ip
+	- node3.ip
+	- my-k8s-domain.com
+	cni: multus,calico
+	kubelet-arg:
+	- --allowed-unsafe-sysctls=net.*
+	pause-image: k8s.gcr.io/pause:3.3
+	kube-proxy-arg:
+	- --metrics-bind-address=0.0.0.0:10249
+	- --proxy-mode=ipvs
+	EOF
+	$ sudo mkdir -p /etc/rancher/rke2 && sudo mv config.yaml /etc/rancher/rke2/
+	$ curl -sfL https://get.rke2.io | sudo sh -
+	$ sudo systemctl enable rke2-server.service
+	$ sudo systemctl start rke2-server.service
+
+
+3. Copy /etc/rancher/rke2/rke2.yaml from one of the cluster nodes to your workstation. 
+Open the file and replace the server address “127.0.0.1” to one of the “tls-san” addresses in the RKE2 configuration. 
+And run the following command to confirm the cluster is functional.
+
+	$ kubectl --kubeconfig rke2.yaml get nodes
+ 	# make sure that all 3 nodes are READY
+
+
+
+
+
+
+RKE2 Install by ONF Self-managed Aether Deployment
+---------------------------------------------------
+
+<command running logs>
+
+< Server side >
+
+	root@rke-server:~# curl -sfL https://get.rke2.io | sudo sh -
+	[INFO]  finding release for channel stable
+	[INFO]  using v1.24.7+rke2r1 as release
+	[INFO]  downloading checksums at https://github.com/rancher/rke2/releases/download/v1.24.7+rke2r1/sha256sum-amd64.txt
+	[INFO]  downloading tarball at https://github.com/rancher/rke2/releases/download/v1.24.7+rke2r1/rke2.linux-amd64.tar.gz
+	[INFO]  verifying tarball
+	[INFO]  unpacking tarball file to /usr/local
+
+	root@rke-server:~# ll /var/lib/rancher/rke2/server/
+	total 32
+	drwx------ 7 root root 4096 Nov  8 18:21 ./
+	drwxr-xr-x 5 root root 4096 Nov  8 18:21 ../
+	lrwxrwxrwx 1 root root   34 Nov  8 18:21 agent-token -> /var/lib/rancher/rke2/server/token
+	drwx------ 2 root root 4096 Nov  8 18:21 cred/
+	drwx------ 3 root root 4096 Nov  8 18:21 db/
+	drwx------ 2 root root 4096 Nov  8 18:21 etc/
+	drwxr-xr-x 2 root root 4096 Nov  8 18:21 manifests/
+	lrwxrwxrwx 1 root root   34 Nov  8 18:21 node-token -> /var/lib/rancher/rke2/server/token
+	drwx------ 4 root root 4096 Nov  8 18:21 tls/
+	-rw------- 1 root root  109 Nov  8 18:21 token
+
+	root@rke-server:~# cat /var/lib/rancher/rke2/server/token
+	K107cd497997141adf7087372986689344cef49370b286a7e8fd4f9f414a0ea6f0e::server:ef8e62895c2a433131886b14c3f8d07d
+
+	root@rke-server:~# cat >> config.yaml << EOF
+	> token: my-shared-secret
+	> tls-san:
+	> - node1.ip
+	> - node2.ip
+	> - node3.ip
+	> - my-k8s-domain.com
+	> cni: multus,calico
+	> kubelet-arg:
+	> - --allowed-unsafe-sysctls=net.*
+	> - --feature-gates=CPUManager=true
+	> - --topology-manager-policy=best-effort
+	> - --cpu-manager-policy=static
+	> pause-image: k8s.gcr.io/pause:3.3
+	> kube-proxy-arg:
+	> - --metrics-bind-address=0.0.0.0:10249
+	> - --proxy-mode=ipvs
+	> EOF
+
+	root@rke-server:~# ll
+	total 24
+	drwx------  3 root root 4096 Nov  8 18:23 ./
+	drwxr-xr-x 24 root root 4096 Nov  8 18:00 ../
+	-rw-r--r--  1 root root 3106 Apr  9  2018 .bashrc
+	-rw-r--r--  1 root root  148 Aug 17  2015 .profile
+	drwx------  2 root root 4096 Nov  8 18:00 .ssh/
+	-rw-r--r--  1 root root  364 Nov  8 18:23 config.yaml
+
+	root@rke-server:~# cat config.yaml
+	token: K107cd497997141adf7087372986689344cef49370b286a7e8fd4f9f414a0ea6f0e::server:ef8e62895c2a433131886b14c3f8d07d
+	tls-san:
+	- 192.168.10.20
+	- 192.168.10.21
+	cni: multus,calico
+	kubelet-arg:
+	- --allowed-unsafe-sysctls=net.*
+	- --feature-gates=CPUManager=true
+	- --topology-manager-policy=best-effort
+	pause-image: k8s.gcr.io/pause:3.3
+	kube-proxy-arg:
+	- --metrics-bind-address=0.0.0.0:10249
+	- --proxy-mode=ipvs
+
+
+
+	root@rke-server:~# mkdir -p /etc/rancher/rke2 && mv config.yaml /etc/rancher/rke2/
+	root@rke-server:~# systemctl enable rke2-server.service
+	Created symlink /etc/systemd/system/multi-user.target.wants/rke2-server.service → /usr/local/lib/systemd/system/rke2-server.service.
+	root@rke-server:~# systemctl start rke2-server.service
+	root@rke-server:~# cp /etc/rancher/rke2/rke2.yaml ~/
+
+
+	root@rke-server:~# cat rke2.yaml
+	apiVersion: v1
+	clusters:
+	- cluster:
+	    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlVENDQVIrZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWtNU0l3SUFZRFZRUUREQmx5YTJVeUxYTmwKY25abGNpMWpZVUF4TmpZM09UTXhOamszTUI0WERUSXlNVEV3T0RFNE1qRXpOMW9YRFRNeU1URXdOVEU0TWpFegpOMW93SkRFaU1DQUdBMVVFQXd3WmNtdGxNaTF6WlhKMlpYSXRZMkZBTVRZMk56a3pNVFk1TnpCWk1CTUdCeXFHClNNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJKYldGdUdaT0tEdFlPMldYTE83SmgvT1VSTWp2a3d2aFF1L0lUeHMKcThSdjhmRnltQnJvY0JJVlhhcWw4N01WVjhJWnVmSm9EMTZzaGRYcWpmbkJnMTJqUWpCQU1BNEdBMVVkRHdFQgovd1FFQXdJQ3BEQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01CMEdBMVVkRGdRV0JCVHhVcXlHZ0l2aEdDdHJIcnhtCkpPZ0ZwbitxNFRBS0JnZ3Foa2pPUFFRREFnTklBREJGQWlCWnRwejFGV2dZL0lvV1hCbFF6aUpCWUVFM3BtOEgKR0Z0bU00TFZLS2ZGaVFJaEFOajVROTRZb1pHTkErclVLSnBXL25pTDVhbkYrTU5aMWIydXVpb2VqUmJwCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+	    server: https://127.0.0.1:6443
+	  name: default
+	contexts:
+	- context:
+	    cluster: default
+	    user: default
+	  name: default
+	current-context: default
+	kind: Config
+	preferences: {}
+	users:
+	- name: default
+	  user:
+	    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrekNDQVRpZ0F3SUJBZ0lJVkxMc0dPNi9wTHd3Q2dZSUtvWkl6ajBFQXdJd0pERWlNQ0FHQTFVRUF3d1oKY210bE1pMWpiR2xsYm5RdFkyRkFNVFkyTnprek1UWTVOekFlRncweU1qRXhNRGd4T0RJeE16ZGFGdzB5TXpFeApNRGd4T0RJeE16ZGFNREF4RnpBVkJnTlZCQW9URG5ONWMzUmxiVHB0WVhOMFpYSnpNUlV3RXdZRFZRUURFd3h6CmVYTjBaVzA2WVdSdGFXNHdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBVGlBSnFuVEIzUURHS3cKazYrRHVpd0hySTg5QTh4eENuL2ZWQk5UMDBCTGE1ZDU3bFNiVkhsSkNHQnA4M3hrSUZObGYxUGlkVGlOQU1tNgpnTVJCcys2TG8wZ3dSakFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3Ckh3WURWUjBqQkJnd0ZvQVU5MFRQcjE2b0k4eERKVXo5bUNaMWk1RmpXNlF3Q2dZSUtvWkl6ajBFQXdJRFNRQXcKUmdJaEFQRjFvQW1xa0lkdmhwNGVpQnVXajZCZ2JqMDhKWmRHcmNzWFhmbnJ0alpjQWlFQTJvb0xVVWh4QjY4SQpZQ3hUTEY3QlNFRm9QNlA2VGZBSWNnRmFTbjFPcXhrPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlCZURDQ0FSK2dBd0lCQWdJQkFEQUtCZ2dxaGtqT1BRUURBakFrTVNJd0lBWURWUVFEREJseWEyVXlMV05zCmFXVnVkQzFqWVVBeE5qWTNPVE14TmprM01CNFhEVEl5TVRFd09ERTRNakV6TjFvWERUTXlNVEV3TlRFNE1qRXoKTjFvd0pERWlNQ0FHQTFVRUF3d1pjbXRsTWkxamJHbGxiblF0WTJGQU1UWTJOemt6TVRZNU56QlpNQk1HQnlxRwpTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCTWxIcnNCc0tKVEwvZlR1eWxsNUI3N0ZOVHBKZG94TFU4ZkJEeVhxCnY2Yk1KeEtMM1I0VCtjbWZmN3hMZnAyMEdtc3JXd1JJQ0hRYUJ1TWQ1cDcxVmV5alFqQkFNQTRHQTFVZER3RUIKL3dRRUF3SUNwREFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlQzUk0rdlhxZ2p6RU1sVFAyWQpKbldMa1dOYnBEQUtCZ2dxaGtqT1BRUURBZ05IQURCRUFpQjdEaG82N0FObXpPdDNOR2QweXJXQXMvdkY4UlNuCk5PVEplN2JBQlFpbml3SWdmKzNTV2NIK1hnZ1JPWCs1NnFQOEpVYUhXVk9qRGJyR25nRDZpMFJkaFdVPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+	    client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUd2V3QvQkZPRXRuOFJFK1kzcWJ2cVdmOXZmVGl2Mkw1b1ZycmxKVEkzek1vQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFNGdDYXAwd2QwQXhpc0pPdmc3b3NCNnlQUFFQTWNRcC8zMVFUVTlOQVMydVhlZTVVbTFSNQpTUWhnYWZOOFpDQlRaWDlUNG5VNGpRREp1b0RFUWJQdWl3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+
+
+
+	root@rke-server:~# alias k='/var/lib/rancher/rke2/bin/kubectl --kubeconfig ~/rke2.yaml'
+	root@rke-server:~# k get po -A
+	NAMESPACE         NAME                                                    READY   STATUS      RESTARTS        AGE
+	calico-system     calico-kube-controllers-858bd946f6-h8tb8                1/1     Running     0               4m53s
+	calico-system     calico-node-kl9wv                                       1/1     Running     0               4m53s
+	calico-system     calico-typha-5ffdc85c74-2mk2f                           1/1     Running     0               4m53s
+	kube-system       cloud-controller-manager-rke-server                     1/1     Running     0               5m31s
+	kube-system       etcd-rke-server                                         1/1     Running     1 (6m15s ago)   5m12s
+	kube-system       helm-install-rke2-calico-crd-qnkh2                      0/1     Completed   0               5m28s
+	kube-system       helm-install-rke2-calico-wxxqt                          0/1     Completed   2               5m28s
+	kube-system       helm-install-rke2-coredns-hsln9                         0/1     Completed   0               5m28s
+	kube-system       helm-install-rke2-ingress-nginx-h96n6                   0/1     Completed   0               5m28s
+	kube-system       helm-install-rke2-metrics-server-rvkmg                  0/1     Completed   0               5m28s
+	kube-system       helm-install-rke2-multus-6jmgd                          0/1     Completed   0               5m28s
+	kube-system       kube-apiserver-rke-server                               1/1     Running     0               5m28s
+	kube-system       kube-controller-manager-rke-server                      1/1     Running     0               5m23s
+	kube-system       kube-proxy-rke-server                                   1/1     Running     0               5m24s
+	kube-system       kube-scheduler-rke-server                               1/1     Running     0               5m23s
+	kube-system       rke2-coredns-rke2-coredns-58fd75f64b-2mh7h              1/1     Running     0               5m18s
+	kube-system       rke2-coredns-rke2-coredns-autoscaler-768bfc5985-7j4bg   1/1     Running     0               5m18s
+	kube-system       rke2-ingress-nginx-controller-trwc5                     1/1     Running     0               4m15s
+	kube-system       rke2-metrics-server-67697454f8-h2w7g                    1/1     Running     0               4m23s
+	kube-system       rke2-multus-ds-g8jpx                                    1/1     Running     0               5m18s
+	tigera-operator   tigera-operator-5dd8cf7c89-7mzv9                        1/1     Running     0               5m
+
+
+
+	root@rke-server:~# k get node
+	NAME         STATUS   ROLES                       AGE     VERSION
+	rke-server   Ready    control-plane,etcd,master   6m19s   v1.24.7+rke2r1
+
+
+	root@rke-server:~# cat /var/lib/rancher/rke2/server/
+	agent-token  cred/        db/          etc/         logs/        manifests/   node-token   tls/         token
+	root@rke-server:~# cat /var/lib/rancher/rke2/server/token
+	K107cd497997141adf7087372986689344cef49370b286a7e8fd4f9f414a0ea6f0e::server:ef8e62895c2a433131886b14c3f8d07d
+
+
+	root@rke-server:~# k get node -w
+	NAME         STATUS   ROLES                       AGE   VERSION
+	rke-server   Ready    control-plane,etcd,master   11m   v1.24.7+rke2r1
+	rke-server   Ready    control-plane,etcd,master   12m   v1.24.7+rke2r1
+
+
+
+
+
+
+<client side>
+
+	kyehwanl@pwct1:~/vagrant-test/rke-test$ vagrant ssh client1
+	Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 4.15.0-180-generic x86_64)
+
+	 * Documentation:  https://help.ubuntu.com
+	 * Management:     https://landscape.canonical.com
+	 * Support:        https://ubuntu.com/advantage
+
+	  System information as of Tue Nov  8 15:59:01 UTC 2022
+
+	  System load:  0.0               Processes:             110
+	  Usage of /:   2.9% of 38.71GB   Users logged in:       0
+	  Memory usage: 1%                IP address for enp0s3: 10.0.2.15
+	  Swap usage:   0%                IP address for enp0s8: 192.168.10.21
+
+
+	0 updates can be applied immediately.
+
+	New release '20.04.5 LTS' available.
+	Run 'do-release-upgrade' to upgrade to it.
+
+
+	Last login: Tue Nov  8 15:43:24 2022 from 192.168.10.20
+	vagrant@rke-cli1:~$
+
+
+	root@rke-cli1:~# curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
+	[INFO]  finding release for channel stable
+	[INFO]  using v1.24.7+rke2r1 as release
+	[INFO]  downloading checksums at https://github.com/rancher/rke2/releases/download/v1.24.7+rke2r1/sha256sum-amd64.txt
+	[INFO]  downloading tarball at https://github.com/rancher/rke2/releases/download/v1.24.7+rke2r1/rke2.linux-amd64.tar.gz
+	[INFO]  verifying tarball
+	[INFO]  unpacking tarball file to /usr/local
+
+
+	root@rke-cli1:~# systemctl enable rke2-agent.service
+	Created symlink /etc/systemd/system/multi-user.target.wants/rke2-agent.service → /usr/local/lib/systemd/system/rke2-agent.service.
+	root@rke-cli1:~# mkdir -p /etc/rancher/rke2/
+	root@rke-cli1:~# vim /etc/rancher/rke2/config.yaml
+	server: https://192.168.10.20:9345
+	token: K101064c29fe69ad2c2e08b1a8915c4e74a2f8ebabb9497926fe9f8803831831716::server:45d478e1d744b5edcfbd8de4210dcba4
+
+
+	root@rke-cli1:~# ping 192.168.10.20
+	PING 192.168.10.20 (192.168.10.20) 56(84) bytes of data.
+	64 bytes from 192.168.10.20: icmp_seq=1 ttl=64 time=0.399 ms
+	64 bytes from 192.168.10.20: icmp_seq=2 ttl=64 time=0.469 ms
+	^C
+	--- 192.168.10.20 ping statistics ---
+	2 packets transmitted, 2 received, 0% packet loss, time 1034ms
+	rtt min/avg/max/mdev = 0.399/0.434/0.469/0.035 ms
+
+
+
+	root@rke-cli1:~# systemctl start rke2-agent.service
+
+
+	root@rke-cli1:~# journalctl -u rke2-agent
+	-- Logs begin at Tue 2022-11-08 15:34:05 UTC, end at Tue 2022-11-08 16:03:03 UTC. --
+	Nov 08 16:02:52 rke-cli1 systemd[1]: Starting Rancher Kubernetes Engine v2 (agent)...
+	Nov 08 16:02:52 rke-cli1 sh[3226]: + /usr/bin/systemctl is-enabled --quiet nm-cloud-setup.service
+	Nov 08 16:02:52 rke-cli1 sh[3226]: /bin/sh: 1: /usr/bin/systemctl: not found
+	Nov 08 16:02:53 rke-cli1 rke2[3243]: time="2022-11-08T16:02:53Z" level=warning msg="not running in CIS mode"
+	Nov 08 16:02:53 rke-cli1 rke2[3243]: time="2022-11-08T16:02:53Z" level=info msg="Starting rke2 agent v1.24.7+rke2r1 (5fd5150f752a663ef
+	...
+
+	Nov 08 16:03:03 rke-cli1 rke2[3243]: time="2022-11-08T16:03:03Z" level=info msg="Waiting to retrieve kube-proxy configuration; server
+
+
+
+	root@rke-cli1:~# export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
+	root@rke-cli1:~# /var/lib/rancher/rke2/bin/crictl ps
+	CONTAINER           IMAGE               CREATED             STATE               NAME                ATTEMPT             POD ID              POD
+
+
+
+	root@rke-cli1:~# /var/lib/rancher/rke2/bin/crictl pods
+	POD ID              CREATED             STATE               NAME                NAMESPACE           ATTEMPT             RUNTIME
+	1671f63f40a59       7 minutes ago       Ready               rke2-canal-zc4vj    kube-system         0                   (default)
+	root@rke-cli1:~# exit
+	exit
+
+
+

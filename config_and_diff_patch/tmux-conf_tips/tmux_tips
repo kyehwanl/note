@@ -207,9 +207,21 @@ tmux tips
 
     
     # these below are favorate colors personally
+    set -g status-bg colour3 --> yellow
+    set -g status-bg colour20 --> dark blue
     set -g status-bg colour53 --> dark purple                                                                                               set -g status-bg colour17 --> dark blue
+    set -g status-bg colour97 --> light purple 
     set -g status-bg colour94 --> dark orange
+    set -g status-bg colour136 --> dark orange
     set -g status-bg colour240 --> dark gray
+
+
+    (c.f) colors.sh  -- print all 8 bit colors
+
+	  #!/usr/bin/env bash
+	  for i in {0..255} ; do
+		  printf "\x1b[38;5;${i}mcolour${i}\n"
+	  done
 
 
 
