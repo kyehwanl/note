@@ -5,7 +5,7 @@ Emulab 에서 Vagrant 실행하기
 (https://docs.google.com/document/d/1L5vDsc8sbRkP1fGgeimd4vPa0gXZvhwEG42Muygq0Ig/edit#)
 
 1. Emulab instance 실행 (emulab.net) with Ubuntu 18 image
-type : d430
+type : d430 or d820
 
 
 2. 먼저 Vagrant 와 VirtualBox install
@@ -39,3 +39,20 @@ vagrant up
 Vagrant up후 아래와 같이 에러가 날수 있는데 vagrant ssh하면 정상적으로 연결된다
 default: Warning: Remote connection disconnect. Retrying..
 
+
+
+
+6. shell script
+
+	#! /bin/bash -x
+	sudo apt install -y vagrant virtualbox
+	vboxmanage setproperty machinefolder /proj/BGPSec/vagrant-work/VirtualBoxVMs
+
+	if [ $VAGRANT_HOME == "" ]; then
+	  echo env missing ..
+	  echo "export VAGRANT_HOME=/proj/BGPSec/vagrant-work/.vagrant.d/" >> ~/.bash_profile
+	  export VAGRANT_HOME=/proj/BGPSec/vagrant-work/.vagrant.d/
+	fi
+
+	#cd /proj/BGPSec/vagrant-work/vagrant-images/ && mkdir -p test1 && vagrant init bento/ubuntu-18.04
+	vagrant global-status

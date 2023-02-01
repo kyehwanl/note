@@ -6,6 +6,7 @@ Shell Script Tips
 1. sudo check 
 -------------
 
+  SUDO="sudo"
   if [ "$EUID" -eq 0 ]; then
     SUDO=""
   fi
