@@ -1,0 +1,463 @@
+
+------------------
+Kind Cluster Logs
+------------------
+
+1. config file
+--------------
+  $ cat $HOME/sdfabric-helm-charts/configs/3-node-cfg.yaml
+  # SPDX-FileCopyrightText: 2020-present Open Networking Foundation <info@opennetworking.org>
+  #
+  # SPDX-License-Identifier: Apache-2.0
+
+  # Port Mappings are for the ONOS REST, CLI and UI,
+  kind: Cluster
+  apiVersion: kind.x-k8s.io/v1alpha4
+  nodes:
+	- role: worker
+	- role: worker
+	- role: control-plane
+	  kubeadmConfigPatches:
+		- |
+		  kind: InitConfiguration
+		  nodeRegistration:
+			kubeletExtraArgs:
+			  node-labels: "ingress-ready=true"
+	  extraPortMappings:
+		- containerPort: 30115
+		  hostPort: 30115
+		- containerPort: 30120
+		  hostPort: 30120
+
+
+
+2. create cluster
+-----------------
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ sudo kind create cluster --config $HOME/sdfabric-helm-charts/configs/3-node-cfg.yaml
+  Creating cluster "kind" ...
+   ✓ Ensuring node image (kindest/node:v1.25.3) �
+   ✓ Preparing nodes � � �
+   ✓ Writing configuration �
+   ✓ Starting control-plane �
+   ✓ Installing CNI �
+   ✓ Installing StorageClass �
+   ✓ Joining worker nodes �
+  Set kubectl context to "kind-kind"
+  You can now use your cluster with:
+
+  kubectl cluster-info --context kind-kind
+
+  Thanks for using kind! �
+
+
+3. check out
+-------------
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl cluster-info --context kind-kind
+  Kubernetes control plane is running at https://127.0.0.1:39547
+  CoreDNS is running at https://127.0.0.1:39547/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+  To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl get nodes
+  NAME                 STATUS   ROLES           AGE   VERSION
+  kind-control-plane   Ready    control-plane   50m   v1.25.3
+  kind-worker          Ready    <none>          49m   v1.25.3
+  kind-worker2         Ready    <none>          49m   v1.25.3
+
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl get svc -A
+  NAMESPACE     NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+  default       kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  51m
+  kube-system   kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   51m
+
+
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl get po -A
+  NAMESPACE            NAME                                         READY   STATUS    RESTARTS        AGE
+  kube-system          coredns-565d847f94-4gg8m                     1/1     Running   0               8m
+  kube-system          coredns-565d847f94-jqd5w                     1/1     Running   0               8m
+  kube-system          etcd-kind-control-plane                      1/1     Running   0               8m25s
+  kube-system          kindnet-gb27m                                1/1     Running   0               7m39s
+  kube-system          kindnet-nzl2r                                1/1     Running   0               7m39s
+  kube-system          kindnet-v5r6w                                1/1     Running   0               8m
+  kube-system          kube-apiserver-kind-control-plane            1/1     Running   0               8m21s
+  kube-system          kube-controller-manager-kind-control-plane   1/1     Running   1 (7m18s ago)   8m21s
+  kube-system          kube-proxy-5v9sb                             1/1     Running   0               7m39s
+  kube-system          kube-proxy-dtxzg                             1/1     Running   0               8m
+  kube-system          kube-proxy-ttq8x                             1/1     Running   0               7m39s
+  kube-system          kube-scheduler-kind-control-plane            1/1     Running   1 (7m19s ago)   8m21s
+  local-path-storage   local-path-provisioner-684f458cdd-q4p8r      1/1     Running   0               8m
+
+
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ sudo docker ps
+  CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                                                           NAMES
+  7566a728eeb6   kindest/node:v1.25.3   "/usr/local/bin/entr…"   49 minutes ago   Up 48 minutes                                                                                   kind-worker2
+  335d34f9231f   kindest/node:v1.25.3   "/usr/local/bin/entr…"   49 minutes ago   Up 48 minutes                                                                                   kind-worker
+  04fbd9f3a4a3   kindest/node:v1.25.3   "/usr/local/bin/entr…"   49 minutes ago   Up 48 minutes   0.0.0.0:30115->30115/tcp, 0.0.0.0:30120->30120/tcp, 127.0.0.1:39547->6443/tcp   kind-control-plane
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$
+
+
+
+
+4. Internals - kubectl connections behind scene 
+
+(1) host's kubeconfig
+
+ (Anaylsis)
+ Host port, 39547 is mapped into 6443 on the docker container which is used for kubectl.
+ so, command kubectl on host will be directed into the container's internal kubectl.
+
+
+
+
+  vagrant@sakura:~$ cat .kube/config
+  apiVersion: v1
+  clusters:
+  - cluster:
+	  certificate-authority-data: LS0tLS1CR...BDRVJUSUZJQ0FURS0tLS0tCg==
+	  server: https://127.0.0.1:39547
+	name: kind-kind
+  contexts:
+  - context:
+	  cluster: kind-kind
+	  user: kind-kind
+	name: kind-kind
+  current-context: kind-kind
+  kind: Config
+  preferences: {}
+  users:
+  - name: kind-kind
+	user:
+	  client-certificate-data: LS0tLS1CRUdJTiB...SBQUklWQVRFIEtFWS0tLS0tCg==
+
+
+
+  vagrant@sakura:~$ ifconfig
+  br-fe52dee399dd: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+		  inet 172.18.0.1  netmask 255.255.0.0  broadcast 172.18.255.255
+		  inet6 fe80::1  prefixlen 64  scopeid 0x20<link>
+		  inet6 fc00:f853:ccd:e793::1  prefixlen 64  scopeid 0x0<global>
+		  inet6 fe80::42:b9ff:fe67:8bcb  prefixlen 64  scopeid 0x20<link>
+		  ether 02:42:b9:67:8b:cb  txqueuelen 0  (Ethernet)
+		  TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+  docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+		  inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+		  ether 02:42:71:43:36:e7  txqueuelen 0  (Ethernet)
+
+  eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+		  inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
+		  inet6 fe80::a00:27ff:fe92:9bf9  prefixlen 64  scopeid 0x20<link>
+		  ether 08:00:27:92:9b:f9  txqueuelen 1000  (Ethernet)
+
+  lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+		  inet 127.0.0.1  netmask 255.0.0.0
+		  inet6 ::1  prefixlen 128  scopeid 0x10<host>
+		  loop  txqueuelen 1000  (Local Loopback)
+
+  veth29d0f29: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+		  inet6 fe80::f464:6dff:fe5b:b98b  prefixlen 64  scopeid 0x20<link>
+		  ether f6:64:6d:5b:b9:8b  txqueuelen 0  (Ethernet)
+
+  veth43a8e6e: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+		  inet6 fe80::28c6:d7ff:fe10:4ccc  prefixlen 64  scopeid 0x20<link>
+		  ether 2a:c6:d7:10:4c:cc  txqueuelen 0  (Ethernet)
+
+  veth7cd9c8d: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+		  inet6 fe80::183e:1fff:fed8:69a8  prefixlen 64  scopeid 0x20<link>
+		  ether 1a:3e:1f:d8:69:a8  txqueuelen 0  (Ethernet)
+
+
+
+
+
+
+
+
+
+(2) docker container's 
+
+  vagrant@sakura:~$ brctl show
+  bridge name     		bridge id               STP enabled     interfaces
+  br-fe52dee399dd         8000.0242b9678bcb       no              veth29d0f29
+																  veth43a8e6e
+																  veth7cd9c8d
+  docker0         		8000.0242714336e7       no
+
+
+  vagrant@sakura:~$ brctl showmacs br-fe52dee399dd
+  port no mac addr                is local?       ageing timer
+	1     02:42:ac:12:00:02       no                 1.82
+	2     02:42:ac:12:00:03       no                 2.35
+	3     02:42:ac:12:00:04       no                 1.82
+	1     1a:3e:1f:d8:69:a8       yes                0.00
+	1     1a:3e:1f:d8:69:a8       yes                0.00
+	3     2a:c6:d7:10:4c:cc       yes                0.00
+	3     2a:c6:d7:10:4c:cc       yes                0.00
+	2     f6:64:6d:5b:b9:8b       yes                0.00
+	2     f6:64:6d:5b:b9:8b       yes                0.00
+
+
+
+  root@sakura:~# docker ps
+  CONTAINER ID   IMAGE                  COMMAND                  CREATED             STATUS             PORTS     NAMES  
+  7566a728eeb6   kindest/node:v1.25.3   "/usr/local/bin/entr…"   About an hour ago   Up About an hour   			kind-worker2  
+  335d34f9231f   kindest/node:v1.25.3   "/usr/local/bin/entr…"   About an hour ago   Up About an hour             kind-worker  
+  04fbd9f3a4a3   kindest/node:v1.25.3   "/usr/local/bin/entr…"   About an hour ago   Up About an hour   0.0.0.0:30115->30115/tcp, 0.0.0.0:30120->30120/tcp, 127.0.0.1:39547->6443/tcp   kind-control-plane 
+
+  root@sakura:~# docker exec -it 04fb bash  
+
+  root@kind-control-plane:/# ip addr
+  1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+	  link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+	  inet 127.0.0.1/8 scope host lo
+		 valid_lft forever preferred_lft forever
+	  inet6 ::1/128 scope host
+		 valid_lft forever preferred_lft forever
+  2: veth4e6a3537@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+	  link/ether f2:68:f7:62:9c:90 brd ff:ff:ff:ff:ff:ff link-netns cni-11860f46-6944-baa2-9f83-714b203441a9
+	  inet 10.244.0.1/32 scope global veth4e6a3537
+		 valid_lft forever preferred_lft forever
+  3: veth7b7c4836@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+	  link/ether 4e:e5:b7:c9:83:c2 brd ff:ff:ff:ff:ff:ff link-netns cni-03f816eb-c95f-dc2a-c562-c4f2e30d4b06
+	  inet 10.244.0.1/32 scope global veth7b7c4836
+		 valid_lft forever preferred_lft forever
+  4: veth82219377@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+	  link/ether 5a:95:d8:90:ba:26 brd ff:ff:ff:ff:ff:ff link-netns cni-9ff81dd3-f75c-7972-e8c1-b196fbc66b68
+	  inet 10.244.0.1/32 scope global veth82219377
+		 valid_lft forever preferred_lft forever
+  9: eth0@if10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+	  link/ether 02:42:ac:12:00:04 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+	  inet 172.18.0.4/16 brd 172.18.255.255 scope global eth0
+		 valid_lft forever preferred_lft forever
+	  inet6 fc00:f853:ccd:e793::4/64 scope global nodad
+		 valid_lft forever preferred_lft forever
+	  inet6 fe80::42:acff:fe12:4/64 scope link
+		 valid_lft forever preferred_lft forever
+
+
+
+  root@kind-control-plane:/# cat /etc/kubernetes/admin.conf
+  apiVersion: v1
+  clusters:
+  - cluster:
+	  certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ...DRVJUSUZJQ0FURS0tLS0tCg==
+	  server: https://kind-control-plane:6443
+	name: kind
+  contexts:
+  - context:
+	  cluster: kind
+	  user: kubernetes-admin
+	name: kubernetes-admin@kind
+  current-context: kubernetes-admin@kind
+  kind: Config
+  preferences: {}
+  users:
+  - name: kubernetes-admin
+	user:
+	  client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS...Ci0tLS0tRU5klWQVRFIEtFWS0tLS0tCg==
+
+
+
+
+  root@kind-control-plane:/# kubectl get po -A
+  NAMESPACE            NAME                                         READY   STATUS    RESTARTS      AGE
+  kube-system          coredns-565d847f94-4gg8m                     1/1     Running   0             62m
+  kube-system          coredns-565d847f94-jqd5w                     1/1     Running   0             62m
+  kube-system          etcd-kind-control-plane                      1/1     Running   0             62m
+  kube-system          kindnet-gb27m                                1/1     Running   0             62m
+  kube-system          kindnet-nzl2r                                1/1     Running   0             62m
+  kube-system          kindnet-v5r6w                                1/1     Running   0             62m
+  kube-system          kube-apiserver-kind-control-plane            1/1     Running   0             62m
+  kube-system          kube-controller-manager-kind-control-plane   1/1     Running   1 (61m ago)   62m
+  kube-system          kube-proxy-5v9sb                             1/1     Running   0             62m
+  kube-system          kube-proxy-dtxzg                             1/1     Running   0             62m
+  kube-system          kube-proxy-ttq8x                             1/1     Running   0             62m
+  kube-system          kube-scheduler-kind-control-plane            1/1     Running   1 (61m ago)   62m
+  local-path-storage   local-path-provisioner-684f458cdd-q4p8r      1/1     Running   0             62m
+
+
+
+
+
+5. Running Mininet and sdfabric & Erros TroubleShooting
+-------------------------------------------------------
+
+(1) from <helm-template-sdfabric-dev_values.yaml>, vim editing and extracted PodDisruptionBudget, 
+	because it has errors, 
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ helm install -n sdfabric --create-namespace -f dev-values.yaml sdfabric .
+  Error: unable to build kubernetes objects from release manifest: unable to recognize "": 
+	no matches for kind "PodDisruptionBudget" in version "policy/v1beta1"
+
+
+(2) Made template files to apply each resources from file 
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ helm template -n sdfabric --create-namespace -f dev-values.yaml sdfabric . \
+	   > helm-template-sdfabric-dev_values.yaml
+
+
+(3) modify PodDisruptionBudget resource to see whether this is the one occurred errors
+-- first extract this resource from one big file, helm-template-sdfabric-dev_values.yaml, 
+	into a new small file, sdfabric-atomix-pdb.yaml
+
+
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ vim sdfabric-atomix-pdb.yaml
+  ---
+  # Source: sdfabric/charts/onos-classic/charts/atomix/templates/pdb.yaml
+  apiVersion: policy/v1  <-- (previously v1beta1, now modified)
+  kind: PodDisruptionBudget
+  metadata:
+	name: sdfabric-atomix-pdb
+  spec:
+	maxUnavailable: 1
+	selector:
+	  matchLabels:
+		app: sdfabric-atomix
+		chart: "atomix-0.1.9"
+		release: "sdfabric"
+
+
+(4) apply this one first
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl apply -f sdfabric-atomix-pdb.yaml -n sdfabric
+  poddisruptionbudget.policy/sdfabric-atomix-pdb created
+
+
+(5) checking
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl get PodDisruptionBudget -A
+  NAMESPACE   NAME                  MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+  sdfabric    sdfabric-atomix-pdb   N/A             1                 0                     68s
+
+
+
+(6) apply all resources
+  vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl apply -f helm-template-sdfabric-dev_values.yaml -n sdfabric
+  serviceaccount/onos-config-loader created
+  configmap/sdfabric-atomix-config created
+  configmap/sdfabric-atomix-init-scripts created
+  configmap/sdfabric-onos-classic-init-scripts created
+  configmap/sdfabric-onos-classic-logging created
+  configmap/sdfabric-onos-classic-probe-scripts created
+  configmap/sdfabric-onos-configs-data created
+  configmap/sdfabric-onos-configs-loader created
+  role.rbac.authorization.k8s.io/list-pods created
+  rolebinding.rbac.authorization.k8s.io/list-pods-to-sa created
+  service/sdfabric-atomix-hs created
+  service/sdfabric-atomix-api created
+  service/sdfabric-onos-classic-hs created
+  deployment.apps/sdfabric-onos-classic-onos-config-loader created
+  statefulset.apps/sdfabric-atomix created
+  statefulset.apps/sdfabric-onos-classic created
+  error: resource mapping not found for name: "sdfabric-atomix-pdb" namespace: "" from "helm-template-sdfabric-dev_values.yaml": no matches for kind "PodDisruptionBudget" in version "policy/v1beta1"
+  ensure CRDs are installed first
+
+	-- error happened, but it's already applied on (4), so it should be ok and disregard the last error message
+
+
+
+(7) final status
+
+vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl get po -A
+NAMESPACE            NAME                                                       READY   STATUS    RESTARTS      AGE
+kube-system          coredns-565d847f94-4gg8m                                   1/1     Running   0             127m
+kube-system          coredns-565d847f94-jqd5w                                   1/1     Running   0             127m
+kube-system          etcd-kind-control-plane                                    1/1     Running   0             128m
+kube-system          kindnet-gb27m                                              1/1     Running   1 (10m ago)   127m
+kube-system          kindnet-nzl2r                                              1/1     Running   1 (10m ago)   127m
+kube-system          kindnet-v5r6w                                              1/1     Running   1 (10m ago)   127m
+kube-system          kube-apiserver-kind-control-plane                          1/1     Running   1 (10m ago)   128m
+kube-system          kube-controller-manager-kind-control-plane                 1/1     Running   3 (11m ago)   128m
+kube-system          kube-proxy-5v9sb                                           1/1     Running   0             127m
+kube-system          kube-proxy-dtxzg                                           1/1     Running   0             127m
+kube-system          kube-proxy-ttq8x                                           1/1     Running   0             127m
+kube-system          kube-scheduler-kind-control-plane                          1/1     Running   3 (11m ago)   128m
+local-path-storage   local-path-provisioner-684f458cdd-q4p8r                    1/1     Running   0             127m
+sdfabric             mininet-8548cf7659-vjb8r                                   1/1     Running   0             16m
+sdfabric             sdfabric-atomix-0                                          1/1     Running   0             5m4s
+sdfabric             sdfabric-onos-classic-0                                    1/1     Running   0             5m4s
+sdfabric             sdfabric-onos-classic-onos-config-loader-c576867fb-j88n7   1/1     Running   0             5m5s
+
+
+
+(8-1) check instances 
+
+vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl -n sdfabric exec -it sdfabric-onos-classic-0 -- bash /root/onos/apache-karaf-4.2.14/bin/client
+Defaulted container "onos-classic" out of: onos-classic, onos-classic-init (init), onos-classic-logging (init)
+Logging in as karaf
+Welcome to Open Network Operating System (ONOS)!
+     ____  _  ______  ____
+    / __ \/ |/ / __ \/ __/
+   / /_/ /    / /_/ /\ \
+   \____/_/|_/\____/___/
+
+Documentation: wiki.onosproject.org
+Tutorials:     tutorials.onosproject.org
+Mailing lists: lists.onosproject.org
+
+Come help out! Find out how at: contribute.onosproject.org
+
+Hit '<tab>' for a list of available commands
+and '[cmd] --help' for help on a specific command.
+Hit '<ctrl-d>' or type 'logout' to exit ONOS session.
+
+karaf@root > help
+
+
+
+
+
+(8-2) check instances 
+
+vagrant@sakura:~/sdfabric-helm-charts/sdfabric$ kubectl attach -it -n sdfabric mininet-8548cf7659-vjb8r
+If you don't see a command prompt, try pressing enter.
+
+mininet> links
+h1a-eth0<->leaf1-eth3 (OK OK)
+h1b-eth0<->leaf1-eth4 (OK OK)
+h1c-eth0.100<->leaf1-eth5 (OK OK)
+h2-eth0.200<->leaf1-eth6 (OK OK)
+h3-eth0.300<->leaf2-eth3 (OK OK)
+h4-eth0<->leaf2-eth4 (OK OK)
+spine1-eth1<->leaf1-eth1 (OK OK)
+spine1-eth2<->leaf2-eth1 (OK OK)
+spine2-eth1<->leaf1-eth2 (OK OK)
+spine2-eth2<->leaf2-eth2 (OK OK)
+mininet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
