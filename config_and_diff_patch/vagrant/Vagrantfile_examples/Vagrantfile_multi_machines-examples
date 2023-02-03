@@ -1,0 +1,65 @@
+# https://gist.github.com/roblayton/c629683ca74658412487
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+cluster = {
+  "master" => { :ip => "192.168.33.10", :cpus => 1, :mem => 1024 },
+  "slave" => { :ip => "192.168.33.11", :cpus => 1, :mem => 1024 }
+}
+ 
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  cluster.each_with_index do |(hostname, info), index|
+
+    config.vm.define hostname do |cfg|
+      cfg.vm.provider :virtualbox do |vb, override|
+        config.vm.box = "ubuntu/trusty64"
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+        override.vm.hostname = hostname
+        vb.name = hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on"]
+      end # end provider
+    end # end config
+
+  end # end cluster
+end
+
+
+  
+---
+
+# https://stackoverflow.com/questions/58271215/using-a-loop-in-vagrantfile-to-create-x-number-of-disks
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+servers = [
+  { :hostname => "node01", :ip => "192.168.1.10", :memory => "2048", :disks => 2 },
+  { :hostname => "node02", :ip => "192.168.1.20", :memory => "2048", :disks => 2 },
+  { :hostname => "node03", :ip => "192.168.1.30", :memory => "2048", :disks => 2 },
+]
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  servers.each do |conf|
+	config.vm.define conf[:hostname] do |node|
+	  node.vm.hostname = conf[:hostname]
+	  node.vm.network "private_network", ip: conf[:ip]
+	  node.vm.provider "virtualbox" do |vb|
+		vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--portcount', conf[:disks]+1]
+		(1..conf[:disks]).each do |x|
+		  file_to_disk = './disk_'+conf[:hostname]+'_'+x.to_s()+'.vdi'
+		  unless File.exist?(file_to_disk)
+			vb.customize ['createhd', '--filename', file_to_disk, '--size', 20 * 1024]
+		  end
+		  vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', x, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+		end
+		vb.memory = conf[:memory]
+	  end
+	end
+  end
+end

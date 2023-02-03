@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+# Vagrant file for gnbsim StandAlone Test (https://docs.sd-core.opennetworking.org/master/deployment/deploymentgnbsim.html) 
+
+servers = [
+  { :hostname => "aiab-5g", :ip => "192.168.10.111", :memory => "12288", :vm => "aether-sdcore", :cpu => 4},
+  { :hostname => "gnbsim1", :ip => "192.168.10.112", :memory => "4096", :vm => "aether-gnbsim", :cpu => 2 },
+]
+
+$script = <<-SCRIPT
+apt update
+apt install -y make vifm
+SCRIPT
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "bento/ubuntu-18.04"
+
+  servers.each do |conf|
+    config.vm.define conf[:vm] do |node|
+      node.vm.hostname = conf[:hostname]
+      node.vm.network "private_network", ip: conf[:ip]
+      node.vm.synced_folder ".", "/vagrant"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = conf[:memory]
+        vb.cpus = conf[:cpu]
+      end
+
+      node.vm.provision "shell", inline: $script, privileged: true
+    end 
+
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+  
