@@ -2,10 +2,19 @@
 # vi: set ft=ruby :
 #
 # Vagrant file for gnbsim StandAlone Test (https://docs.sd-core.opennetworking.org/master/deployment/deploymentgnbsim.html) 
+VM1 = "aether-sdcore"       
+VM2 = "aether-gnbsim"       
+                            
+HostName1 = "aiab"          
+HostName2 = "gnbsim1"       
+                            
+#ServerIP  = "192.168.50.55"
+IP1 = "192.168.10.101"      
+IP2 = "192.168.10.102"      
 
 servers = [
-  { :hostname => "aiab-5g", :ip => "192.168.10.111", :memory => "12288", :vm => "aether-sdcore", :cpu => 4},
-  { :hostname => "gnbsim1", :ip => "192.168.10.112", :memory => "4096", :vm => "aether-gnbsim", :cpu => 2 },
+  { :hostname => "aiab-5g", :ip => "192.168.10.111", :memory => "12288", :vm => VM1, :cpu => 4},
+  { :hostname => "gnbsim1", :ip => "192.168.10.112", :memory => "4096", :vm => VM2, :cpu => 2 },
 ]
 
 $script = <<-SCRIPT

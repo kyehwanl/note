@@ -510,6 +510,19 @@ Git Submodule
 
 
 
+----------------------
+Git dowload raw file
+----------------------
+
+if github link is 
+	"https://github.com/kyehwanl/config_ready_to_use/blob/master/_.vim_2021_1016.tar.gz"
+
+Then, change "blob" with "raw"
+ 	$ wget https://github.com/kyehwanl/config_ready_to_use/raw/master/_.vim_2021_1016.tar.gz
+
+
+
+
 
 
 
