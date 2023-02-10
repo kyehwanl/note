@@ -149,6 +149,13 @@ tmux tips
     :join-pane -s 6:1.1 -t 4:0 
 
 
+  (5) my example 2 
+  	- make a new session:  $ tmux 
+	- split pane: <prefix> + !
+	- go to that splitted pane and command to move to a new session: 
+		":join-pane -t 1:0"
+
+
 
 
 3. get and change focus to a certain window or panae 
@@ -409,9 +416,44 @@ tmux tips
 
 
 
+11. kill session or window
+-----------------
+:kill-session
+:kill-window --> <prefix> + &
 
+
+
+
+
+12. attach to the session with different socket
+------------------------------------------------
+
+  (1) no socket exists
+  vagrant@gnbsim1:/opt/phoenix$ tmux ls
+  error connecting to /tmp/tmux-1000/default (No such file or directory)
+
+
+  (2) check out the tmux process with 'ps'
+  vagrant@gnbsim1:/opt/phoenix$ ps aux | grep tmux
+  root     27309  0.0  0.1  30800  4680 ?        Ss   15:17   0:00 tmux -S /opt/phoenix-tmux new-session -d -s ph_netns -n root
+  vagrant  30930  0.0  0.0  14432  1024 pts/0    S+   15:25   0:00 grep --color=auto tmux
+
+
+  (3) list to find the socket name
+  vagrant@gnbsim1:/opt/phoenix$ tmux -S /opt/phoenix-tmux ls
+  ph_netns: 17 windows (created Thu Feb  9 15:17:15 2023) [277x91]
+
+
+  (4) attach with the socket
+  vagrant@gnbsim1:/opt/phoenix$ tmux -S /opt/phoenix-tmux a
+
+
+
+
+
+-----------------------------
 ** Other Useful config tips
-----------------------------
+-----------------------------
     # Switching tmux zoom between panes without zooming out
         bind -r a select-pane -t .+2 \;  resize-pane -Z
 
@@ -426,6 +468,8 @@ tmux tips
 
     # send-keys
     tmux send-keys -t {session}:{window}.{pane} C-m
+
+
 
 
 
