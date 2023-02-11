@@ -209,6 +209,25 @@ find ./ -type f \( -name '*.[ch]' -o -name 'Makefile.am' \) -exec file {} \; | l
 
 
 
+---------------------
+11. choose location 
+---------------------
+
+  find /*/systemd/network -maxdepth 1 -not -type d -name '*network' -print
+
+         --> "/*/" indicates every folder under the root (/)
+
+
+	vagrant@aiab:~$ find /*/systemd/network -maxdepth 1 -not -type d -name '*network' -print
+	/etc/systemd/network/20-aiab-access.network
+	/etc/systemd/network/20-aiab-core.network  
+	/lib/systemd/network/80-container-ve.network
+	/lib/systemd/network/80-container-vz.network
+	/lib/systemd/network/80-container-host0.network
+	/run/systemd/network/10-netplan-eth1.network
+	/run/systemd/network/10-netplan-eth0.network
+
+
 
 
 
