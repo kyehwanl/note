@@ -19,7 +19,7 @@ servers = [
 
 $script = <<-SCRIPT
 apt update
-apt install -y make vifm
+apt install -y make vifm bash-completion
 SCRIPT
 
 Vagrant.configure("2") do |config|

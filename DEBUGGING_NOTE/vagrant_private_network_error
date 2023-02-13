@@ -1,0 +1,52 @@
+
+---------------------------------------
+Vagrant Private Network setting error
+---------------------------------------
+
+
+1. when vagrant up with >= ubuntu 20.04 
+        config.vm.box = "bento/ubuntu-20.04"
+        config.vm.box = "ubuntu/focal64"
+
+
+2. errors 
+
+  $ vagrant up --> this will crash
+  ...
+  ==> ueransim: Configuring and enabling network interfaces...
+  #<Thread:0x00005644162649d0@/usr/share/rubygems-integration/all/gems/vagrant-2.0.2/lib/vagrant/batch_action.rb:71 run> terminated with exception (report_on_exception is true):
+  Traceback (most recent call last):
+		  117: from /usr/share/rubygems-integration/all/gems/vagrant-2.0.2/lib/vagrant/batch_action.rb:82:in `block (2 levels) in run'
+		  116: from /usr/share/rubygems-integration/all/gems/vagrant-2.0.2/lib/vagrant/machine.rb:188:in `action'
+		  ...
+  bash: line 4: /sbin/ifdown: No such file or directory
+  sed: can't read /etc/network/interfaces: No such file or directory
+  sed: can't read /etc/network/interfaces: No such file or directory
+  bash: line 18: /sbin/ifup: No such file or directory
+
+
+
+3. main cause
+
+	Known issues,
+	https://github.com/hashicorp/vagrant/issues/9134
+	https://github.com/hashicorp/vagrant/issues/9428
+
+
+	--> somehow ubuntu 20 images didnt' include ifupdown
+
+
+4. Solution
+
+	(1) vagrant ssh into the machine and run:
+
+	  sudo apt-get update
+	  sudo apt-get install -y ifupdown
+
+	  Exit out and run vagrant reload. 
+	  Then, Network configured. A bit messy, but I guess it's doable for now.
+
+
+5. Etc
+	- happens < vagrant 2.0.2
+	- vagrant v2.0.3 or higher version seems working fine (confirmed with v2.2.7)

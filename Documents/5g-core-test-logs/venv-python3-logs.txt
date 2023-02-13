@@ -1,0 +1,359 @@
+
+
+onfadmin@5g1-mrtr:~/infra/ansible$ python3 --version
+Python 3.9.15
+onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m venv venv
+onfadmin@5g1-mrtr:~/infra/ansible$ source venv/bin/activate
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$ python3 -m pip install -r requirements.txt
+Collecting ansible~=5.3.0
+  Using cached ansible-5.3.0.tar.gz (38.0 MB)
+  Preparing metadata (setup.py) ... done
+Collecting netaddr~=0.8.0
+  Using cached netaddr-0.8.0-py2.py3-none-any.whl (1.9 MB)
+Collecting ansible-lint~=5.4.0
+  Downloading ansible_lint-5.4.0-py3-none-any.whl (119 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 119.0/119.0 KB 15.7 MB/s eta 0:00:00
+Collecting rich~=10.16.2
+  Downloading rich-10.16.2-py3-none-any.whl (214 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 214.4/214.4 KB 42.6 MB/s eta 0:00:00
+Collecting molecule~=3.5.2
+  Downloading molecule-3.5.2-py3-none-any.whl (240 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 240.2/240.2 KB 108.8 MB/s eta 0:00:00
+Collecting molecule-vagrant~=1.0.0
+  Downloading molecule_vagrant-1.0.0-py3-none-any.whl (31 kB)
+Collecting python-vagrant~=0.5.15
+  Downloading python-vagrant-0.5.15.tar.gz (29 kB)
+  Preparing metadata (setup.py) ... done
+Collecting molecule-docker~=1.1.0
+  Downloading molecule_docker-1.1.0-py3-none-any.whl (16 kB)
+Collecting docker~=5.0.3
+  Downloading docker-5.0.3-py2.py3-none-any.whl (146 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 146.2/146.2 KB 69.0 MB/s eta 0:00:00
+Collecting black~=22.1.0
+  Downloading black-22.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 99.4 MB/s eta 0:00:00
+Collecting flake8~=4.0.1
+  Downloading flake8-4.0.1-py2.py3-none-any.whl (64 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.1/64.1 KB 45.2 MB/s eta 0:00:00
+Collecting pylint~=2.11.1
+  Downloading pylint-2.11.1-py3-none-any.whl (392 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 392.1/392.1 KB 138.0 MB/s eta 0:00:00
+Collecting reuse~=0.14.0
+  Downloading reuse-0.14.0-py3-none-any.whl (144 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.3/144.3 KB 87.1 MB/s eta 0:00:00
+Collecting yamllint~=1.26.3
+  Downloading yamllint-1.26.3.tar.gz (126 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.7/126.7 KB 76.7 MB/s eta 0:00:00
+  Preparing metadata (setup.py) ... done
+Collecting python-debian==0.1.40
+  Downloading python_debian-0.1.40-py3-none-any.whl (73 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 KB 46.3 MB/s eta 0:00:00
+Collecting pynetbox~=6.6.0
+  Using cached pynetbox-6.6.2-py3-none-any.whl (32 kB)
+Collecting cookiecutter~=1.7.3
+  Downloading cookiecutter-1.7.3-py2.py3-none-any.whl (34 kB)
+Collecting passlib~=1.7.4
+  Downloading passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 525.6/525.6 KB 137.5 MB/s eta 0:00:00
+Collecting bcrypt~=3.2.0
+  Downloading bcrypt-3.2.2-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.3/62.3 KB 47.2 MB/s eta 0:00:00
+Collecting zxcvbn~=4.4.28
+  Downloading zxcvbn-4.4.28.tar.gz (407 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 407.9/407.9 KB 136.6 MB/s eta 0:00:00
+  Preparing metadata (setup.py) ... done
+Collecting chardet
+  Downloading chardet-5.0.0-py3-none-any.whl (193 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 193.6/193.6 KB 96.6 MB/s eta 0:00:00
+Collecting six
+  Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+Collecting ansible-core~=2.12.2
+  Using cached ansible-core-2.12.10.tar.gz (7.8 MB)
+  Preparing metadata (setup.py) ... done
+Collecting wcmatch>=7.0
+  Downloading wcmatch-8.4.1-py3-none-any.whl (39 kB)
+Collecting pyyaml
+  Using cached PyYAML-6.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (661 kB)
+Collecting packaging
+  Using cached packaging-21.3-py3-none-any.whl (40 kB)
+Collecting enrich>=1.2.6
+  Downloading enrich-1.2.7-py3-none-any.whl (8.7 kB)
+Collecting tenacity
+  Downloading tenacity-8.1.0-py3-none-any.whl (23 kB)
+Collecting ruamel.yaml<1,>=0.15.37
+  Using cached ruamel.yaml-0.17.21-py3-none-any.whl (109 kB)
+Collecting commonmark<0.10.0,>=0.9.0
+  Downloading commonmark-0.9.1-py2.py3-none-any.whl (51 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 51.1/51.1 KB 34.9 MB/s eta 0:00:00
+Collecting colorama<0.5.0,>=0.4.0
+  Downloading colorama-0.4.5-py2.py3-none-any.whl (16 kB)
+Collecting pygments<3.0.0,>=2.6.0
+  Downloading Pygments-2.13.0-py3-none-any.whl (1.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 104.6 MB/s eta 0:00:00
+Collecting cerberus!=1.3.3,!=1.3.4,>=1.3.1
+  Downloading Cerberus-1.3.2.tar.gz (52 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.5/52.5 KB 35.4 MB/s eta 0:00:00
+  Preparing metadata (setup.py) ... done
+Collecting subprocess-tee>=0.3.5
+  Downloading subprocess_tee-0.3.5-py3-none-any.whl (8.0 kB)
+Collecting pluggy<2.0,>=0.7.1
+  Downloading pluggy-1.0.0-py2.py3-none-any.whl (13 kB)
+Collecting paramiko<3,>=2.5.0
+  Downloading paramiko-2.11.0-py2.py3-none-any.whl (212 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 212.9/212.9 KB 100.5 MB/s eta 0:00:00
+Collecting ansible-compat>=0.5.0
+  Downloading ansible_compat-2.2.1-py3-none-any.whl (19 kB)
+Collecting pyyaml
+  Downloading PyYAML-5.4.1-cp39-cp39-manylinux1_x86_64.whl (630 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 630.1/630.1 KB 126.3 MB/s eta 0:00:00
+Collecting click<9,>=8.0
+  Downloading click-8.1.3-py3-none-any.whl (96 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 KB 65.6 MB/s eta 0:00:00
+Collecting click-help-colors>=0.9
+  Downloading click_help_colors-0.9.1-py3-none-any.whl (5.5 kB)
+Collecting selinux
+  Downloading selinux-0.2.1-py2.py3-none-any.whl (4.3 kB)
+Collecting Jinja2>=2.11.3
+  Using cached Jinja2-3.1.2-py3-none-any.whl (133 kB)
+Collecting requests
+  Using cached requests-2.28.1-py3-none-any.whl (62 kB)
+Collecting websocket-client>=0.32.0
+  Downloading websocket_client-1.4.1-py3-none-any.whl (55 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.0/55.0 KB 40.7 MB/s eta 0:00:00
+Collecting platformdirs>=2
+  Downloading platformdirs-2.5.2-py3-none-any.whl (14 kB)
+Collecting pathspec>=0.9.0
+  Downloading pathspec-0.10.1-py3-none-any.whl (27 kB)
+Collecting mypy-extensions>=0.4.3
+  Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Collecting typing-extensions>=3.10.0.0
+  Downloading typing_extensions-4.4.0-py3-none-any.whl (26 kB)
+Collecting tomli>=1.1.0
+  Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
+Collecting pycodestyle<2.9.0,>=2.8.0
+  Downloading pycodestyle-2.8.0-py2.py3-none-any.whl (42 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.1/42.1 KB 29.1 MB/s eta 0:00:00
+Collecting pyflakes<2.5.0,>=2.4.0
+  Downloading pyflakes-2.4.0-py2.py3-none-any.whl (69 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 69.7/69.7 KB 48.2 MB/s eta 0:00:00
+Collecting mccabe<0.7.0,>=0.6.0
+  Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Collecting astroid<2.9,>=2.8.0
+  Downloading astroid-2.8.6-py3-none-any.whl (248 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 248.7/248.7 KB 114.0 MB/s eta 0:00:00
+Collecting isort<6,>=4.2.5
+  Downloading isort-5.10.1-py3-none-any.whl (103 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.4/103.4 KB 68.6 MB/s eta 0:00:00
+Collecting toml>=0.7.1
+  Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Collecting binaryornot
+  Downloading binaryornot-0.4.4-py2.py3-none-any.whl (9.0 kB)
+Requirement already satisfied: setuptools in ./venv/lib/python3.9/site-packages (from reuse~=0.14.0->-r requirements.txt (line 23)) (58.1.0)
+Collecting boolean.py
+  Downloading boolean.py-4.0-py3-none-any.whl (25 kB)
+Collecting license-expression
+  Downloading license_expression-30.0.0-py3-none-any.whl (86 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.4/86.4 KB 58.6 MB/s eta 0:00:00
+Collecting python-slugify>=4.0.0
+  Downloading python_slugify-6.1.2-py2.py3-none-any.whl (9.4 kB)
+Collecting poyo>=0.5.0
+  Downloading poyo-0.5.0-py2.py3-none-any.whl (10 kB)
+Collecting jinja2-time>=0.2.0
+  Downloading jinja2_time-0.2.0-py2.py3-none-any.whl (6.4 kB)
+Collecting cffi>=1.1
+  Downloading cffi-1.15.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (441 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 441.2/441.2 KB 133.5 MB/s eta 0:00:00
+Collecting jsonschema>=4.6.0
+  Downloading jsonschema-4.16.0-py3-none-any.whl (83 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.1/83.1 KB 52.8 MB/s eta 0:00:00
+Collecting cryptography
+  Downloading cryptography-38.0.1-cp36-abi3-manylinux_2_24_x86_64.whl (4.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.0/4.0 MB 94.5 MB/s eta 0:00:00
+Collecting resolvelib<0.6.0,>=0.5.3
+  Using cached resolvelib-0.5.4-py2.py3-none-any.whl (12 kB)
+Collecting lazy-object-proxy>=1.4.0
+  Downloading lazy_object_proxy-1.7.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (61 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.1/61.1 KB 43.4 MB/s eta 0:00:00
+Collecting wrapt<1.14,>=1.11
+  Downloading wrapt-1.13.3-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (81 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 81.3/81.3 KB 53.3 MB/s eta 0:00:00
+Collecting pycparser
+  Using cached pycparser-2.21-py2.py3-none-any.whl (118 kB)
+Collecting MarkupSafe>=2.0
+  Using cached MarkupSafe-2.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+Collecting arrow
+  Downloading arrow-1.2.3-py3-none-any.whl (66 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66.4/66.4 KB 44.7 MB/s eta 0:00:00
+Collecting pynacl>=1.0.1
+  Downloading PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (856 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 856.7/856.7 KB 124.4 MB/s eta 0:00:00
+Collecting text-unidecode>=1.3
+  Downloading text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 KB 50.4 MB/s eta 0:00:00
+Collecting charset-normalizer<3,>=2
+  Using cached charset_normalizer-2.1.1-py3-none-any.whl (39 kB)
+Collecting certifi>=2017.4.17
+  Using cached certifi-2022.9.24-py3-none-any.whl (161 kB)
+Collecting urllib3<1.27,>=1.21.1
+  Using cached urllib3-1.26.12-py2.py3-none-any.whl (140 kB)
+Collecting idna<4,>=2.5
+  Using cached idna-3.4-py3-none-any.whl (61 kB)
+Collecting ruamel.yaml.clib>=0.2.6
+  Downloading ruamel.yaml.clib-0.2.7-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (519 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 519.4/519.4 KB 146.5 MB/s eta 0:00:00
+Collecting bracex>=2.1.1
+  Downloading bracex-2.3.post1-py3-none-any.whl (12 kB)
+Collecting pyparsing!=3.0.5,>=2.0.2
+  Using cached pyparsing-3.0.9-py3-none-any.whl (98 kB)
+Collecting distro>=1.3.0
+  Downloading distro-1.8.0-py3-none-any.whl (20 kB)
+Collecting pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0
+  Downloading pyrsistent-0.18.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (115 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.6/115.6 KB 74.0 MB/s eta 0:00:00
+Collecting attrs>=17.4.0
+  Downloading attrs-22.1.0-py2.py3-none-any.whl (58 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.8/58.8 KB 41.7 MB/s eta 0:00:00
+Collecting python-dateutil>=2.7.0
+  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 KB 101.1 MB/s eta 0:00:00
+Using legacy 'setup.py install' for ansible, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for python-vagrant, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for yamllint, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for zxcvbn, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for ansible-core, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for cerberus, since package 'wheel' is not installed.
+Installing collected packages: zxcvbn, text-unidecode, resolvelib, python-vagrant, passlib, netaddr, mypy-extensions, mccabe, commonmark, boolean.py, wrapt, websocket-client, urllib3, typing-extensions, tomli, toml, tenacity, subprocess-tee, six, ruamel.yaml.clib, pyyaml, python-slugify, pyrsistent, pyparsing, pygments, pyflakes, pycparser, pycodestyle, poyo, pluggy, platformdirs, pathspec, MarkupSafe, license-expression, lazy-object-proxy, isort, idna, distro, colorama, click, charset-normalizer, chardet, certifi, cerberus, bracex, attrs, yamllint, wcmatch, selinux, ruamel.yaml, rich, requests, python-debian, python-dateutil, packaging, jsonschema, Jinja2, flake8, click-help-colors, cffi, black, binaryornot, astroid, reuse, pynetbox, pynacl, pylint, enrich, docker, cryptography, bcrypt, arrow, ansible-compat, paramiko, jinja2-time, ansible-lint, ansible-core, cookiecutter, ansible, molecule, molecule-vagrant, molecule-docker
+  Running setup.py install for zxcvbn ... done
+  Running setup.py install for python-vagrant ... done
+  Running setup.py install for cerberus ... done
+  Running setup.py install for yamllint ... done
+  Running setup.py install for ansible-core ... done
+  Running setup.py install for ansible ... done
+Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.1 ansible-5.3.0 ansible-compat-2.2.1 ansible-core-2.12.10 ansible-lint-5.4.0 arrow-1.2.3 astroid-2.8.6 attrs-22.1.0 bcrypt-3.2.2 binaryornot-0.4.4 black-22.1.0 boolean.py-4.0 bracex-2.3.post1 cerberus-1.3.2 certifi-2022.9.24 cffi-1.15.1 chardet-5.0.0 charset-normalizer-2.1.1 click-8.1.3 click-help-colors-0.9.1 colorama-0.4.5 commonmark-0.9.1 cookiecutter-1.7.3 cryptography-38.0.1 distro-1.8.0 docker-5.0.3 enrich-1.2.7 flake8-4.0.1 idna-3.4 isort-5.10.1 jinja2-time-0.2.0 jsonschema-4.16.0 lazy-object-proxy-1.7.1 license-expression-30.0.0 mccabe-0.6.1 molecule-3.5.2 molecule-docker-1.1.0 molecule-vagrant-1.0.0 mypy-extensions-0.4.3 netaddr-0.8.0 packaging-21.3 paramiko-2.11.0 passlib-1.7.4 pathspec-0.10.1 platformdirs-2.5.2 pluggy-1.0.0 poyo-0.5.0 pycodestyle-2.8.0 pycparser-2.21 pyflakes-2.4.0 pygments-2.13.0 pylint-2.11.1 pynacl-1.5.0 pynetbox-6.6.2 pyparsing-3.0.9 pyrsistent-0.18.1 python-dateutil-2.8.2 python-debian-0.1.40 python-slugify-6.1.2 python-vagrant-0.5.15 pyyaml-5.4.1 requests-2.28.1 resolvelib-0.5.4 reuse-0.14.0 rich-10.16.2 ruamel.yaml-0.17.21 ruamel.yaml.clib-0.2.7 selinux-0.2.1 six-1.16.0 subprocess-tee-0.3.5 tenacity-8.1.0 text-unidecode-1.3 toml-0.10.2 tomli-2.0.1 typing-extensions-4.4.0 urllib3-1.26.12 wcmatch-8.4.1 websocket-client-1.4.1 wrapt-1.13.3 yamllint-1.26.3 zxcvbn-4.4.28
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$ python3 scripts/tenant_validator.py inventory/5gtb1-netbox.yml
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra/ansible/venv/lib/python3.9/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/onfadmin/infra/ansible/scripts/tenant_validator.py", line 410, in <module>
+    validate_func(netbox_data[key])
+  File "/home/onfadmin/infra/ansible/scripts/tenant_validator.py", line 93, in validate_prefixes
+    device = netboxapi.dcim.devices.filter(tenant_id=prefix.tenant.id)[0]
+TypeError: 'RecordSet' object is not subscriptable
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$
+
+
+
+
+
+
+
+
+
+(venv) onfadmin@5g1-mrtr:~/infra/ansible$ pip freeze -l
+ansible==5.3.0
+ansible-compat==2.2.1
+ansible-core==2.12.10
+ansible-lint==5.4.0
+arrow==1.2.3
+astroid==2.8.6
+attrs==22.1.0
+bcrypt==3.2.2
+binaryornot==0.4.4
+black==22.1.0
+boolean.py==4.0
+bracex==2.3.post1
+Cerberus==1.3.2
+certifi==2022.9.24
+cffi==1.15.1
+chardet==5.0.0
+charset-normalizer==2.1.1
+click==8.1.3
+click-help-colors==0.9.1
+colorama==0.4.5
+commonmark==0.9.1
+cookiecutter==1.7.3
+cryptography==38.0.1
+distro==1.8.0
+docker==5.0.3
+enrich==1.2.7
+flake8==4.0.1
+idna==3.4
+isort==5.10.1
+Jinja2==3.1.2
+jinja2-time==0.2.0
+jsonschema==4.16.0
+lazy-object-proxy==1.7.1
+license-expression==30.0.0
+MarkupSafe==2.1.1
+mccabe==0.6.1
+molecule==3.5.2
+molecule-docker==1.1.0
+molecule-vagrant==1.0.0
+mypy-extensions==0.4.3
+netaddr==0.8.0
+packaging==21.3
+paramiko==2.11.0
+passlib==1.7.4
+pathspec==0.10.1
+platformdirs==2.5.2
+pluggy==1.0.0
+poyo==0.5.0
+pycodestyle==2.8.0
+pycparser==2.21
+pyflakes==2.4.0
+Pygments==2.13.0
+pylint==2.11.1
+PyNaCl==1.5.0
+pynetbox==6.6.2
+pyparsing==3.0.9
+pyrsistent==0.18.1
+python-dateutil==2.8.2
+python-debian==0.1.40
+python-slugify==6.1.2
+python-vagrant==0.5.15
+PyYAML==5.4.1
+requests==2.28.1
+resolvelib==0.5.4
+reuse==0.14.0
+rich==10.16.2
+ruamel.yaml==0.17.21
+ruamel.yaml.clib==0.2.7
+selinux==0.2.1
+six==1.16.0
+subprocess-tee==0.3.5
+tenacity==8.1.0
+text-unidecode==1.3
+toml==0.10.2
+tomli==2.0.1
+typing_extensions==4.4.0
+urllib3==1.26.12
+wcmatch==8.4.1
+websocket-client==1.4.1
+wrapt==1.13.3
+yamllint==1.26.3
+zxcvbn==4.4.28

@@ -1,0 +1,388 @@
+
+ UERANSIM + Aather SD-Core
+===========================
+ Links
+  https://docs.sd-core.opennetworking.org/master/deployment/deploymentueransim.html
+  https://www.free5gc.org/installations/stage-3-sim-install/
+  https://github.com/aligungr/UERANSIM/wiki/Configuration
+  https://docs.sd-core.opennetworking.org/master/deployment/deploymentgnbsim.html (gnbsim stand-alone)
+  https://docs.aetherproject.org/master/developer/troubleshooting.html#make-fails-immediately (Aether-in-a-Box FAQs and Troubleshooting)
+  https://github.com/dot-1q/AiaB-UERANSIM#adding-the-new-upfs-and-slices (customized upf)
+
+
+0. system preparation
+----------------------
+(1) vagrant sd-core: eth1-10.10.1.3
+(2) vagrant ue-ramsim : eth1-10.10.1.2
+
+
+
+1. SD-Core VM Preparation
+-------------------------
+
+(1) download aether in a box (aiab) from github
+    git clone "https://gerrit.opencord.org/aether-in-a-box"
+
+
+(2) edit sd-core-5g-values.yaml file
+
+    amf:
+      # use externalIP if you need to access your AMF from remote setup and you don't
+      # want setup NodePort Service Type
+      ngapp:
+        externalIp: "10.10.1.3"
+        port: 38412
+
+
+(3) Deploy 5g core with options DATA_IFACE=eth1 and ENABLE_GNBSIM=false, sample command
+    $ ENABLE_GNBSIM=false DATA_IFACE=eth1 make 5g-core
+    ...
+    ...
+    NODE_IP=10.0.2.15 DATA_IFACE=eth1 RAN_SUBNET=10.10.1.0/24 ENABLE_GNBSIM=false envsubst < /home/vagrant/aether-in-a-box//sd-core-5g-values.yaml | \
+    helm upgrade --create-namespace --install --wait  \
+            --namespace omec \
+            --values - \
+            sd-core \
+            /home/vagrant/cord/sdcore-helm-charts/sdcore-helm-charts
+    Release "sd-core" does not exist. Installing it now.
+    coalesce.go:175: warning: skipped value for kafka.config: Not a table.
+    NAME: sd-core
+    LAST DEPLOYED: Sun Feb 12 20:21:29 2023
+    NAMESPACE: omec
+    STATUS: deployed
+    REVISION: 1
+    TEST SUITE: None
+    NOTES:
+    Notes - Instructions to use SD-Core application helm charts
+    touch /home/vagrant/aether-in-a-box//build/milestones/5g-core
+
+
+
+(4) ip route rules ( VERY IMPORTANT !! )
+
+    A.  In case packets are not forwarded from DATA_IFACE to acccess interface, 
+        the following command can be used to forward the traffic which is destined to 192.168.252.3:
+
+        iptables -A FORWARD -d 192.168.252.3 -i <data-iface> -o access -j ACCEPT
+
+        < in my case >
+            $ sudo iptables -A FORWARD -d 192.168.252.3 -i eth1 -o access -j ACCEPT
+
+        < result >
+            vagrant@5g-sdcore:~/aether-in-a-box$ sudo tcpdump -i core -n net 172.250.0.0/16
+            tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+            listening on core, link-type EN10MB (Ethernet), capture size 262144 bytes
+            21:24:24.497570 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 37, seq 1, length 64
+            21:24:24.504420 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 37, seq 1, length 64
+            21:24:25.498276 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 37, seq 2, length 64
+            21:24:25.503779 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 37, seq 2, length 64
+            21:24:26.498949 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 37, seq 3, length 64
+            21:24:26.504415 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 37, seq 3, length 64
+            21:24:27.500070 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 37, seq 4, length 64
+            21:24:27.505807 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 37, seq 4, length 64
+            ^C
+            8 packets captured
+            8 packets received by filter
+            0 packets dropped by kernel
+
+
+        <cf.> upf routing table
+            vagrant@5g-sdcore:~/aether-in-a-box$ kubectl exec -it -n omec upf-0 -- ip route
+            Defaulted container "bessd" out of: bessd, routectl, web, pfcp-agent, arping, bess-init (init)
+            default via 169.254.1.1 dev eth0
+            default via 192.168.250.1 dev core metric 110
+            10.0.2.15 via 169.254.1.1 dev eth0
+            10.10.1.0/24 via 192.168.252.1 dev access
+            169.254.1.1 dev eth0 scope link
+            192.168.250.0/24 dev core proto kernel scope link src 192.168.250.3
+            192.168.252.0/24 dev access proto kernel scope link src 192.168.252.3
+
+
+
+
+    B.  Testing UERANSIM against free5GC 
+        (https://www.free5gc.org/installations/stage-3-sim-install/)
+
+        SSH into free5gc. If you have rebooted free5gc, remember to do:
+          sudo sysctl -w net.ipv4.ip_forward=1
+          sudo iptables -t nat -A POSTROUTING -o <data-iface> -j MASQUERADE
+          sudo systemctl stop ufw
+
+        In addition, execute the following command:
+          sudo iptables -I FORWARD 1 -j ACCEPT
+
+          < My case >
+
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo sysctl -w net.ipv4.ip_forward=1
+          net.ipv4.ip_forward = 1
+          vagrant@5g-sdcore:~/aether-in-a-box$ ifconfig eth0
+          eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+                  inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
+                    ...
+
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo systemctl stop ufw
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -I FORWARD 1 -j ACCEPT <-- ??
+                --> As soon as this option executed, "ping 8.8.8.8 -I uesimtun0" at ueransim vm worked !!
+                    I guess, it allows first line (1) forwarding to be accepted
+
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo tcpdump -i core -n net 172.250.0.0/16
+          tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+          listening on core, link-type EN10MB (Ethernet), capture size 262144 bytes
+          21:23:36.589650 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 35, seq 1, length 64
+          21:23:36.596211 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 35, seq 1, length 64
+          21:23:37.590764 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 35, seq 2, length 64
+          21:23:37.597134 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 35, seq 2, length 64
+          21:23:38.591785 IP 172.250.237.122 > 8.8.8.8: ICMP echo request, id 35, seq 3, length 64
+          21:23:38.597709 IP 8.8.8.8 > 172.250.237.122: ICMP echo reply, id 35, seq 3, length 64
+          ^C
+          6 packets captured
+          6 packets received by filter
+          0 packets dropped by kernel
+
+
+
+2. UERANSIM VM Preparation
+--------------------------
+(0) Download and Install
+
+A. download
+    git clone https://github.com/aligungr/UERANSIM
+
+    (optional)
+    sudo apt update
+    sudo apt upgrade
+
+B. Dependencies
+    sudo apt install make
+    sudo apt install gcc
+    sudo apt install g++
+    sudo apt install libsctp-dev lksctp-tools
+    sudo apt install iproute2
+    sudo snap install cmake --classic
+
+C. Building
+    cd ~/UERANSIM
+    make
+
+
+(1) Configuration
+
+    Single interface is used for user plane traffic towards UPF and also control plane traffic towards AMF
+    Add following route in routing table for sending traffic over DATA_IFACE interface
+
+        $ ip route add 192.168.252.3 via <DATA-IFACE-IP-IN-SD-CORE-VM>
+
+    Just to Make sure the data connectivity, ping UPF IP from DATA_IFACE:
+
+        $ ping 192.168.252.3 -I <DATA_IFACE>
+
+
+    < my case >
+
+      vagrant@ue-ransim:~$ sudo ip route add 192.168.252.3 via 10.10.1.3
+
+      vagrant@ue-ransim:~$ route -n
+      Kernel IP routing table
+      Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+      0.0.0.0         10.0.2.2        0.0.0.0         UG    100    0        0 eth0
+      10.0.2.0        0.0.0.0         255.255.255.0   U     0      0        0 eth0
+      10.0.2.2        0.0.0.0         255.255.255.255 UH    100    0        0 eth0
+      10.10.1.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1
+      192.168.252.3   10.10.1.3       255.255.255.255 UGH   0      0        0 eth1
+
+
+    <!!> if "ping 192.168.252.3 -I eth1" doesn't work, 
+          check ip route rule, 1.(4).A --> iptables -A FORWARD -d 192.168.252.3 -i eth1 -o access -j ACCEPT
+
+
+(2) configuration file change
+ 
+A. free5gc-gnb.yaml
+
+    diff --git a/config/free5gc-gnb.yaml b/config/free5gc-gnb.yaml
+    index 81bb13b..452ccad 100644
+    --- a/config/free5gc-gnb.yaml
+    +++ b/config/free5gc-gnb.yaml
+    @@ -5,13 +5,13 @@ nci: '0x000000010'  # NR Cell Identity (36-bit)
+     idLength: 32        # NR gNB ID length in bits [22...32]
+     tac: 1              # Tracking Area Code
+
+    -linkIp: 127.0.0.1   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+    -ngapIp: 127.0.0.1   # gNB's local IP address for N2 Interface (Usually same with local IP)
+    -gtpIp: 127.0.0.1    # gNB's local IP address for N3 Interface (Usually same with local IP)
+    +linkIp: 10.10.1.2   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+    +ngapIp: 10.10.1.2   # gNB's local IP address for N2 Interface (Usually same with local IP)
+    +gtpIp: 10.10.1.2    # gNB's local IP address for N3 Interface (Usually same with local IP)
+
+     # List of AMF address information
+     amfConfigs:
+    -  - address: 127.0.0.1
+    +  - address: 10.10.1.1
+         port: 38412
+
+     # List of supported S-NSSAIs by this gNB
+
+
+B. free5gc-ue.yaml
+
+    diff --git a/config/free5gc-ue.yaml b/config/free5gc-ue.yaml
+    index 9089ba0..aa0df2e 100644
+    --- a/config/free5gc-ue.yaml
+    +++ b/config/free5gc-ue.yaml
+    @@ -1,14 +1,14 @@
+     # IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 digits)
+    -supi: 'imsi-208930000000003'
+    +supi: 'imsi-208930100007509'
+     # Mobile Country Code value of HPLMN
+     mcc: '208'
+     # Mobile Network Code value of HPLMN (2 or 3 digits)
+     mnc: '93'
+
+     # Permanent subscription key
+    -key: '8baf473f2f8fd09487cccbd7097c6862'
+    +key: '5122250214c33e723a5dd523fc145fc0'
+     # Operator code (OP or OPC) of the UE
+    -op: '8e27b6af0e692e750f32667a3b14605d'
+    +op: '981d464c7c52eb6e5036234984ad0bcf'
+     # This value specifies the OP type and it can be either 'OP' or 'OPC'
+     opType: 'OPC'
+     # Authentication Management Field (AMF) value
+    @@ -20,7 +20,7 @@ imeiSv: '4370816125816151'
+
+     # List of gNB IP addresses for Radio Link Simulation
+     gnbSearchList:
+    -  - 127.0.0.1
+    +  - 10.10.1.2
+
+     # UAC Access Identities Configuration
+     uacAic:
+    @@ -57,14 +57,14 @@ default-nssai:
+     # Supported integrity algorithms by this UE
+     integrity:
+       IA1: true
+    -  IA2: true
+    -  IA3: true
+    +  IA2: false
+    +  IA3: false
+
+     # Supported encryption algorithms by this UE
+     ciphering:
+    -  EA1: true
+    -  EA2: true
+    -  EA3: true
+    +  EA1: false
+    +  EA2: false
+    +  EA3: false
+
+
+
+(3) Running UERANSIM
+
+A. In terminal 1: SSH into ueransim, make sure UERANSIM is built, and configuration files have been changed correctly, 
+    then execute nr-gnb
+
+    cd ~/UERANSIM
+    build/nr-gnb -c config/free5gc-gnb.yaml
+
+B. In terminal 2, SSH into ueransim, and execute nr-gnb with admin right:
+
+    cd ~/UERANSIM
+    sudo build/nr-ue -c config/free5gc-ue.yaml
+
+C. In terminal 3, SSH into ueransim, and ping 192.168.56.101 to see free5gc is alive. 
+Then, use ifconfig to see if the tunnel uesimtun0 has been created (by nr-ue):
+
+    vagrant@ue-ransim:~$ ifconfig
+    eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
+
+    eth1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 10.10.1.2  netmask 255.255.255.0  broadcast 10.10.1.255
+
+    lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+            inet 127.0.0.1  netmask 255.0.0.0
+     
+    uesimtun0: flags=369<UP,POINTOPOINT,NOTRAILERS,RUNNING,PROMISC>  mtu 1400
+            inet 172.250.237.122  netmask 255.255.255.255  destination 172.250.237.122
+            inet6 fe80::a5d5:5cd5:3427:6e6b  prefixlen 64  scopeid 0x20<link>
+            unspec 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00  txqueuelen 500  (UNSPEC)
+            RX packets 25  bytes 2100 (2.1 KB)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 980  bytes 81892 (81.8 KB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+(4) test with tunnel interface
+
+    vagrant@ue-ransim:~$ ping 8.8.8.8  -I uesimtun0
+    PING 8.8.8.8 (8.8.8.8) from 172.250.237.122 uesimtun0: 56(84) bytes of data.
+    64 bytes from 8.8.8.8: icmp_seq=1 ttl=61 time=8.02 ms
+    64 bytes from 8.8.8.8: icmp_seq=2 ttl=61 time=6.62 ms
+    64 bytes from 8.8.8.8: icmp_seq=3 ttl=61 time=6.44 ms
+    64 bytes from 8.8.8.8: icmp_seq=4 ttl=61 time=6.56 ms
+    ^C
+    --- 8.8.8.8 ping statistics ---
+    4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+    rtt min/avg/max/mdev = 6.444/6.909/8.015/0.641 ms
+
+
+    vagrant@ue-ransim:~$ ping google.com -I uesimtun0
+    PING google.com (142.250.72.78) from 172.250.237.122 uesimtun0: 56(84) bytes of data.
+    64 bytes from den16s09-in-f14.1e100.net (142.250.72.78): icmp_seq=1 ttl=61 time=38.7 ms
+    64 bytes from den16s09-in-f14.1e100.net (142.250.72.78): icmp_seq=2 ttl=61 time=37.7 ms
+    64 bytes from den16s09-in-f14.1e100.net (142.250.72.78): icmp_seq=3 ttl=61 time=37.6 ms
+    ^C
+    --- google.com ping statistics ---
+    3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+    rtt min/avg/max/mdev = 37.640/38.024/38.696/0.476 ms
+
+
+
+
+
+3. TroubleShoot
+----------------
+
+Data plane is not working
+
+The first step is to read Understanding AiaB networking`_understanding_aiab_networking, which gives a high level picture of the AiaB data plane and how the pieces fit together. 
+In order to debug the problem you will need to figure out where data plane packets from the eNodeB are dropped. 
+One way to do this is to run ``tcpdump` on 
+    (1) DATA_IFACE to ensure that the data plane packets are arriving, 
+    (2) the access interface to see that they make it to the UPF, and 
+    (3) the core to check that they are forwarded upstream.
+
+
+A. 
+If the upstream packets don’t make it to DATA_IFACE, you probably need to add the static route on the eNodeB so packets to the UPF 
+have a next hop of DATA_IFACE.  You can see these upstream packets by running:
+
+    tcpdump -i <data-iface> -n udp port 2152
+
+
+B. 
+If they don’t make it to access you should check that the kernel routing table is forwarding a packet with destination 
+192.158.252.3 to the access interface.  You can see them by running:
+
+    tcpdump -i access -n udp port 2152
+
+
+C. 
+In case packets are not forwarded from DATA_IFACE to acccess interface, 
+the following command can be used to forward the traffic which is destined to 192.168.252.3:
+
+    iptables -A FORWARD -d 192.168.252.3 -i <data-iface> -o access -j ACCEPT
+
+D.
+If they don’t make it to core then they are being dropped by the UPF for some reason. 
+This may be a configuration issue with the state loaded in the ROC / SD-CORE – the UPF is being told 
+to discard these packets. You should check that the device’s IMSI is part of a slice and that the slice’s policy 
+settings allow traffic to that destination. You can view them via the following:
+
+    tcpdump -i core -n net 172.250.0.0/16
+
+That command will capture all packets to/from the UE subnet.
+
+
+

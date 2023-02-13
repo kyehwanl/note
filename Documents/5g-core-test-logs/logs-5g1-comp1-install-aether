@@ -1,0 +1,70 @@
+
+1. 
+alias k='/var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml'
+alias kubectl='/var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml'
+
+root@5g1-comp1:~# k get node
+NAME        STATUS   ROLES                       AGE   VERSION
+5g1-comp1   Ready    control-plane,etcd,master   87m   v1.22.13+rke2r1
+5g1-comp2   Ready    worker                      85m   v1.22.13+rke2r1
+5g1-comp3   Ready    worker                      85m   v1.22.13+rke2r1
+
+
+
+2. 
+root@5g1-comp1:~# helm repo add aether https://charts.aetherproject.org
+root@5g1-comp1:~# helm repo add incubator https://charts.helm.sh/incubator
+root@5g1-comp1:~# helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "aether" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
+
+
+3.
+root@5g1-comp1:~# wget https://raw.githubusercontent.com/opennetworkinglab/aether-configs/main/sys/sriov-device-plugin/sriov-device-plugin-config.yaml
+root@5g1-comp1:~# kubectl apply -f ./sriov-device-plugin-config.yaml
+root@5g1-comp1:~# wget https://raw.githubusercontent.com/opennetworkinglab/aether-configs/main/sys/sriov-device-plugin/sriov-device-plugin.yaml
+root@5g1-comp1:~# kubectl apply -f ./sriov-device-plugin.yaml
+serviceaccount/sriov-device-plugin created
+
+
+
+4. 
+root@5g1-comp1:~# apt install -y jq
+root@5g1-comp1:~# kubectl get nodes -o json | jq '.items[].status.allocatable'
+{
+  "cpu": "48",
+  "ephemeral-storage": "199729482391",
+  "hugepages-1Gi": "32Gi",
+  "memory": "32093800Ki",
+  "pods": "110"
+}
+{
+  "cpu": "48",
+  "ephemeral-storage": "199729482391",
+  "hugepages-1Gi": "32Gi",
+  "memory": "32093800Ki",
+  "pods": "110"
+}
+{
+  "cpu": "48",
+  "ephemeral-storage": "199729482391",
+  "hugepages-1Gi": "32Gi",
+  "memory": "32093800Ki",
+  "pods": "110"
+}
+
+
+
+5. 
+root@5g1-comp1:~# kubectl get po -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP         NODE        NOMINATED NODE   READINESS GATES
+kube-sriov-device-plugin-amd64-pqcxx   1/1     Running   0          28m   10.5.0.3   5g1-comp2   <none>           <none>
+kube-sriov-device-plugin-amd64-q5jbg   1/1     Running   0          28m   10.5.0.4   5g1-comp3   <none>           <none>
+
+
+root@5g1-comp1:~# kubectl get daemonset
+NAME                             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                   AGE
+kube-sriov-device-plugin-amd64   2         2         2       2            2           beta.kubernetes.io/arch=amd64   24m

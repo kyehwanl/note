@@ -1,0 +1,14 @@
+helm repo add projectcalico https://docs.projectcalico.org/charts
+helm repo add aether https://charts.aetherproject.org
+helm repo add incubator https://charts.helm.sh/incubator
+helm repo update
+helm install calico projectcalico/tigera-operator --version v3.23.3
+wget https://github.com/k8snetworkplumbingwg/multus-cni/archive/refs/tags/v3.7.1.zip
+unzip v3.7.1.zip
+kubectl apply -f ./multus-cni-3.7.1/images/multus-daemonset.yml
+helm install -n kube-system atomix-controller https://github.com/atomix/atomix-helm-charts/releases/download/atomix-controller-0.6.9/atomix-controller-0.6.9.tgz
+helm install -n kube-system atomix-raft-storage https://github.com/atomix/atomix-helm-charts/releases/download/atomix-raft-storage-0.1.25/atomix-raft-storage-0.1.25.tgz
+helm install -n kube-system onos-operator https://charts.onosproject.org/onos-helm-charts/onos-operator/onos-operator-0.5.1.tgz
+helm install -n aether-roc roc aether/aether-roc-umbrella --create-namespace --values templates/roc-values.yaml --version=2.1.31
+helm install -n omec sdcore-5g aether/sd-core --create-namespace --set omec-control-plane.enable4G=false --values configs/sd-core.yaml --version=0.11.12
+reboot

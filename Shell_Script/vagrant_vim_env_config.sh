@@ -1,5 +1,7 @@
 #! /bin/bash -x
 
+cd $HOME
+
 # download vim files
 wget https://github.com/kyehwanl/config_ready_to_use/raw/master/.vimrc
 wget https://github.com/kyehwanl/config_ready_to_use/raw/master/_.vim_2023_0203.tar.gz 

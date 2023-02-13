@@ -111,9 +111,19 @@ sudo apt-get install virtualbox
 
   2.1 Ubuntu / Debian
 
-    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-    sudo apt update && sudo apt install vagrant
+    (1) Install with repository
+
+	  wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+	  echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+	  sudo apt update && sudo apt install vagrant
+
+    (2) Manually install
+		(https://developer.hashicorp.com/vagrant/downloads)
+
+	  curl https://releases.hashicorp.com/vagrant/2.2.7/vagrant_2.2.7_x86_64.deb -O
+	  sudo dpkg -i vagrant_2.2.7_x86_64.deb
+	  rm vagrant_2.2.7_x86_64.deb
+	  vagrant -v 
 
 
   2.2 on CentOS / RHEL

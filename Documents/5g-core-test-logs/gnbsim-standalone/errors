@@ -1,0 +1,103 @@
+
+https://app.slack.com/client/T095Z193Q/search/search-eyJkIjoiZ05CU2ltJTIwU3RhbmRhbG9uZSUyMEFwcGxpY2F0aW9uIiwicSI6IlUwM0RMUlQ2RjNOIiwiciI6ImdOQlNpbSUyMFN0YW5kYWxvbmUlMjBBcHBsaWNhdGlvbiJ9/thread/C02TGUWTC93-1670433958.847349
+
+
+First, I went trought our default installation (Daniel's) method, using helm, 
+modified the yaml file that specifies what to install and set it to include the gnbsim. 
+Wait all the process to finish and see the status as "Init:0/1" and the pod error below:
+
+Failed to create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container 
+"d1a4eb0b62fd813178a3f7a3286022d23e9a445572190fab007dca8e4941868e" network for pod "gnbsim-0": networkPlugin cni 
+failed to set up pod "gnbsim-0_omec" 
+network: [omec/gnbsim-0:k8s-pod-network]: error adding container to network "k8s-pod-network": stat /var/lib/calico/nodename: no such file or directory: check that the calico/node container is running and has mounted /var/lib/calico/
+
+Then I went to run it trought Docker, I cloned the gnbsim's repository, ran "go build" and "make-docker-build", 
+"docker images", got the image name and "docker run" and "docker create"/"docker start". 
+The container kept exiting with no logs nor outputs.
+So I went down another level, tried to run it directly over the OS, 
+"./gnbsim" returned a file missing problem over the /gnbsim/config/gnbsim.conf , 
+I believe it was meant to run only inside a docker container, also, at the "gnbsim/config/" folder 
+there was only one file called "gnbsim.yaml". Nothing acomplished here. (edited) 
+
+
+If that helps, here are listed all the pods and services running on the kubernetes:
+
+NAMESPACE          NAME                                              READY   STATUS     RESTARTS   AGE
+aether-roc         aether-mock-exporter-86b6b97cd-l584v              1/1     Running    0          132m
+aether-roc         aether-roc-api-6d99475967-c8snf                   1/1     Running    0          132m
+aether-roc         aether-roc-gui-v2-1-f68b9f999-7cx9g               1/1     Running    0          132m
+aether-roc         onos-cli-6855cd6d58-8l7gg                         1/1     Running    0          132m
+aether-roc         onos-config-67559d4df-lbqfk                       3/4     Running    23         131m
+aether-roc         onos-consensus-store-0                            1/1     Running    0          116m
+aether-roc         onos-topo-96fd44f9f-kqvwn                         0/1     Running    24         131m
+aether-roc         roc-grafana-69b6b9b585-tn4td                      2/2     Running    0          131m
+aether-roc         sdcore-adapter-v2-1-6dc564f796-5f7z2              1/1     Running    0          132m
+calico-apiserver   calico-apiserver-6bcc598679-7jx68                 1/1     Running    0          126m
+calico-apiserver   calico-apiserver-6bcc598679-ln94j                 1/1     Running    0          126m
+calico-system      calico-kube-controllers-6f875db9f6-dnxfd          1/1     Running    0          133m
+calico-system      calico-node-j58s5                                 1/1     Running    0          133m
+calico-system      calico-typha-6b8987dbb6-s9vtv                     1/1     Running    2          133m
+kube-system        atomix-controller-5b48c4c596-jrc9p                1/1     Running    0          133m
+kube-system        atomix-raft-storage-controller-796b49c8f4-sgpjv   1/1     Running    0          133m
+kube-system        coredns-558bd4d5db-vkmfc                          1/1     Running    0          135m
+kube-system        coredns-558bd4d5db-w7kw8                          1/1     Running    0          135m
+kube-system        etcd-aether                                       1/1     Running    1          135m
+kube-system        kube-apiserver-aether                             1/1     Running    1          135m
+kube-system        kube-controller-manager-aether                    1/1     Running    1          135m
+kube-system        kube-multus-ds-amd64-chrd8                        1/1     Running    1          133m
+kube-system        kube-proxy-lkjm4                                  1/1     Running    1          135m
+kube-system        kube-scheduler-aether                             1/1     Running    1          135m
+kube-system        onos-operator-app-6f9fdc785d-5trbh                1/1     Running    0          132m
+kube-system        onos-operator-topo-57b8fb79b5-dw849               1/1     Running    0          132m
+kube-system        tigera-operator-57b5454687-77tw8                  1/1     Running    1          133m
+omec               amf-68bcb94d78-xfhlg                              1/1     Running    0          127m
+omec               ausf-5ccf7fb79-vwglr                              1/1     Running    0          127m
+omec               gnbsim-0                                          0/1     Init:0/1   0          12m
+omec               mongodb-5d5b95d9db-5w95d                          1/1     Running    0          127m
+omec               nrf-7469bffdc6-4cgvm                              1/1     Running    0          127m
+omec               nssf-85f94dcc9b-t7mjc                             1/1     Running    0          127m
+omec               pcf-67b57cc8c9-dcpmz                              1/1     Running    0          127m
+omec               simapp-76467db7d7-88jnx                           1/1     Running    0          127m
+omec               smf-9d9696b88-fg6z6                               1/1     Running    0          127m
+omec               udm-5f546c467-rmg84                               1/1     Running    0          127m
+omec               udr-66c67f556c-wdzrl                              1/1     Running    0          127m
+omec               upf-0                                             5/5     Running    0          127m
+omec               webui-77b798f77f-vsnn6                            1/1     Running    0          127m
+
+
+
+NAMESPACE          NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP    PORT(S)                                  AGE
+aether-roc         aether-mock-exporter              ClusterIP   10.98.69.198     <none>         2112/TCP,8081/TCP                        132m
+aether-roc         aether-roc-api                    ClusterIP   10.110.9.221     <none>         8181/TCP                                 132m
+aether-roc         aether-roc-gui-v2-1               NodePort    10.96.86.90      <none>         80:31953/TCP                             132m
+aether-roc         aether-roc-gui-v2-1-external      NodePort    10.99.241.89     <none>         80:31194/TCP                             132m
+aether-roc         onos-config                       ClusterIP   10.97.14.154     <none>         5150/TCP,5151/TCP                        132m
+aether-roc         onos-consensus-store              ClusterIP   10.111.225.7     <none>         5678/TCP,5679/TCP                        116m
+aether-roc         onos-consensus-store-hs           ClusterIP   None             <none>         5678/TCP,5679/TCP                        116m
+aether-roc         onos-topo                         ClusterIP   10.99.201.145    <none>         5150/TCP                                 132m
+aether-roc         roc-grafana                       ClusterIP   10.111.135.166   <none>         80/TCP                                   132m
+aether-roc         sdcore-adapter-v2-1               ClusterIP   10.98.53.121     <none>         5150/TCP,9851/TCP,8080/TCP               132m
+calico-apiserver   calico-api                        ClusterIP   10.111.246.251   <none>         443/TCP                                  126m
+calico-system      calico-kube-controllers-metrics   ClusterIP   10.111.36.38     <none>         9094/TCP                                 126m
+calico-system      calico-typha                      ClusterIP   10.111.52.11     <none>         5473/TCP                                 133m
+default            kubernetes                        ClusterIP   10.96.0.1        <none>         443/TCP                                  136m
+kube-system        atomix-controller                 ClusterIP   10.98.199.11     <none>         5679/TCP,443/TCP                         133m
+kube-system        kube-dns                          ClusterIP   10.96.0.10       <none>         53/UDP,53/TCP,9153/TCP                   136m
+kube-system        onos-operator-app                 ClusterIP   10.108.7.78      <none>         443/TCP                                  133m
+omec               amf                               ClusterIP   10.104.55.33     192.168.0.93   9089/TCP,29518/TCP,38412/SCTP,9000/TCP   131m
+omec               amf-headless                      ClusterIP   None             <none>         9000/TCP                                 131m
+omec               ausf                              ClusterIP   10.111.252.113   <none>         29509/TCP                                131m
+omec               gnbsim                            ClusterIP   10.104.61.204    <none>         38412/SCTP,6000/TCP,5000/TCP             131m
+omec               mongodb                           ClusterIP   10.102.5.164     <none>         27017/TCP                                131m
+omec               nrf                               ClusterIP   10.96.227.144    <none>         29510/TCP                                131m
+omec               nssf                              ClusterIP   10.97.206.216    <none>         29531/TCP                                131m
+omec               pcf                               ClusterIP   10.104.169.83    <none>         29507/TCP                                131m
+omec               simapp                            ClusterIP   10.110.60.187    <none>         9089/TCP,8080/TCP                        131m
+omec               smf                               ClusterIP   10.98.187.226    <none>         8805/UDP,9089/TCP,29502/TCP              131m
+omec               udm                               ClusterIP   10.102.236.196   <none>         29503/TCP                                131m
+omec               udr                               ClusterIP   10.98.119.168    <none>         29504/TCP                                131m
+omec               upf                               ClusterIP   10.97.248.85     <none>         8805/UDP                                 131m
+omec               upf-http                          ClusterIP   10.107.254.152   <none>         8000/TCP,8080/TCP                        131m
+omec               webui                             ClusterIP   10.109.115.51    <none>         5000/TCP,9876/TCP                        131m
+
+

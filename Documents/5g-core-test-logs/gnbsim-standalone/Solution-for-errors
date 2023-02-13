@@ -1,0 +1,19 @@
+solution may be
+1. checkout git clone "https://gerrit.opencord.org/aether-in-a-box"
+2. modify Makefile, sharing git diffs here
+root@node0:~/cord/aether-in-a-box# git diff Makefile
+diff --git a/Makefile b/Makefile
+index 85e7d93..d4b87b6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -285,6 +285,12 @@ $(M)/router-pod: $(ROUTER_POD_NETCONF)
+        kubectl wait pod -n default --for=condition=Ready -l app=router --timeout=300s
+        @touch $@
++router-pod: $(ROUTER_POD_NETCONF)
++       sudo systemctl restart systemd-networkd
++       DATA_IFACE=$(DATA_IFACE) envsubst < $(RESOURCEDIR)/router.yaml | kubectl apply -f -
++       kubectl wait pod -n default --for=condition=Ready -l app=router --timeout=300s
++       @touch $@
+3. Run 'make router-pod'
+4. install sd-core helm
+Above steps might solve the issue. Thanks!

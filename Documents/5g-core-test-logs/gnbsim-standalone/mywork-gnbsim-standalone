@@ -1,0 +1,172 @@
+5G - gNBsim StandAlone Application
+Running gNBSim Standalone Application in or out of a Docker
+
+https://docs.sd-core.opennetworking.org/master/deployment/deploymentgnbsim.html
+
+
+ - Vagrant two VMs setting, with the private network, 192.168.10.0/24, instead of having 10.10.1.0/ in the above picture.
+
+
+A. SD-Core vm :  (eth1: 192.168.10.101)
+
+
+  1. Add amf aether-in-a-box/sd-core-5g-values.yaml 
+    amf:
+      # use externalIP if you need to access your AMF from remote setup and you don't
+      # want setup NodePort Service Type
+      ngapp:
+        externalIp: <DATA_IFACE_IP> ← 192.168.10.101
+        nodePort: 38412
+
+
+    -- after deployed, the values config above resulted in the amf-service resource shown below
+      ---
+      # Source: sd-core/charts/5g-control-plane/templates/service-amf.yaml
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: amf
+        labels:
+          release: sd-core
+          app: amf
+      spec:
+        type: ClusterIP
+        externalIPs:
+          - 192.168.10.101
+        selector:
+          release: sd-core
+          app: amf
+        ports:
+        - name: prometheus-exporter
+          port: 9089
+          protocol: TCP
+        - name: sbi
+          port: 29518
+          protocol: TCP
+        - name: ngapp
+          port: 38412
+          protocol: SCTP
+
+
+          
+  2. download Aether, and run sd-core with 
+     “$ ENABLE_GNBSIM=false DATA_IFACE=ens1f0 CHARTS=release-2.0 make 5g-core” --> written on the web page
+
+     <my case>
+     $ ENABLE_GNBSIM=false DATA_IFACE=eth1 CHARTS=release-2.0 make 5g-core
+     -- 위의 command를 실행시켰을 경우 실제 실행되는 command는 아래와 같다(the preceding command actually runs the following command below)
+      vagrant:~/aether-in-a-box$ NODE_IP=192.168.10.101 DATA_IFACE=eth1 RAN_SUBNET=192.168.10.0/24 ENABLE_GNBSIM=false envsubst < /home/vagrant/aether-in-a-box/sd-core-5g-values.yaml | helm upgrade --create-namespace --install --wait          --namespace omec
+        --values -         sd-core aether/sd-core --version 0.10.20
+
+        (경로주의: ather-in-a-box/aether-2.0이 더 붙을경우가 있음, make에서  CHARTS=release-2.0 옵션때문에)
+        즉, make 에서 CHARTS=release-2.0 옵션은 ~/aether-in-a-box/aether-2.0/sd-core-5g-values.yaml을 참조한다(!! 주의!!)
+    
+
+    -- Result
+
+      vagrant:~/aether-in-a-box$ k get svc -n omec
+      NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP      PORT(S)                         AGE
+      amf                        ClusterIP   192.168.85.101   192.168.10.101   9089/TCP,29518/TCP,38412/SCTP   7h26m
+      ausf                       ClusterIP   192.168.85.173   <none>           29509/TCP                       7h26m
+      mongodb-arbiter-headless   ClusterIP   None             <none>           27017/TCP                       77s
+
+
+B. Simulator VM: (eth1: 192.168.10.102)
+
+  1. Download from $ git clone https://github.com/omec-project/gnbsim.git
+  2. Install ‘go’ if you want to run with local executable
+
+      $ wget  https://go.dev/dl/go1.19.linux-amd64.tar.gz
+      $ sudo tar -xvf go1.19.linux-amd64.tar.gz
+      $ mv go /usr/local
+      $ export PATH=$PATH:/usr/local/go/bin
+      $ cd gnbsim
+      $ go build
+
+      $ ip route add 192.168.252.3 via <DATA-IFACE-IP-IN-SD-CORE-VM>  ← 192.168.10.101
+
+      vagrant@gnbsim1:~/gnbsim$ route -n
+      Kernel IP routing table
+      Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+      0.0.0.0         10.0.2.2        0.0.0.0         UG    100    0        0 eth0
+      10.0.2.0        0.0.0.0         255.255.255.0   U     0      0        0 eth0
+      10.0.2.2        0.0.0.0         255.255.255.255 UH    100    0        0 eth0
+      192.168.10.0    0.0.0.0         255.255.255.0   U     0      0        0 eth1
+      192.168.252.3   192.168.10.101  255.255.255.255 UGH   0      0        0 eth1
+
+  3. test connection
+      vagrant@gnbsim1:~/gnbsim$ ping 192.168.252.3 -I eth1
+      PING 192.168.252.3 (192.168.252.3) from 192.168.10.102 eth1: 56(84) bytes of data.
+      64 bytes from 192.168.252.3: icmp_seq=1 ttl=63 time=0.553 ms
+      64 bytes from 192.168.252.3: icmp_seq=2 ttl=63 time=0.417 ms
+      ^C
+      --- 192.168.252.3 ping statistics ---
+      2 packets transmitted, 2 received, 0% packet loss, time 1021ms
+      rtt min/avg/max/mdev = 0.417/0.485/0.553/0.068 ms
+
+
+      < cf.> Even though ping doesn't reach 192.168.252.3, running gnbsim in #4 was ok 
+
+
+
+  4. modify “config/gnbsim.yaml”
+
+    configuration:
+      singleInterface: false #default value
+      execInParallel: false #run all profiles in parallel
+      httpServer: # Serves APIs to create/control profiles on the go
+        enable: false
+        ipAddr: "POD_IP"
+        port: 8080
+      gnbs: # pool of gNodeBs
+        gnb1:
+          n2IpAddr: 192.168.10.102 # gNB N2 interface IP address used to connect to AMF
+          n2Port: 9487 # gNB N2 Port used to connect to AMF
+          n3IpAddr: 192.168.10.102 # gNB N3 interface IP address used to connect to UPF. when singleInterface mode is false
+          #n3IpAddr: "POD_IP" # when gnb is deployed in singleInterface mode
+          n3Port: 2152 # gNB N3 Port used to connect to UPF
+          name: gnb1 # gNB name that uniquely identify a gNB within application
+     ...
+            defaultAmf:
+              hostName: amf # Host name of AMF
+              ipAddr: 192.168.10.101 # AMF IP address
+              port: 38412 # AMF port
+
+
+    *(updated) Run config profile was missing !!! it's BUG
+        (https://app.slack.com/client/T095Z193Q/C01E4HMLBNV/thread/C01E4HMLBNV-1667251307.719319)
+      ...
+      runConfigProfilesAtStart: true
+      gnbs: # pool of gNodeBs
+      ...
+
+
+  5. Run gnbsim application using the following command:
+      ./gnbsim -cfg config/gnbsim.yaml
+      2022-12-13T01:55:27Z [INFO][GNBSIM][App] App Name: GNBSIM
+      2022-12-13T01:55:27Z [INFO][GNBSIM][App] Setting log level to: info
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][gnb1] GNodeB IP: 192.168.10.102 GNodeB Port: 9487
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][UserPlaneTransport] User Plane transport listening on: 192.168.10.102:2152
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB] Current range selector value: 25
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB] Current ID range start: 419430400 end: 436207615
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Connected to AMF, AMF IP: 192.168.10.101 AMF Port: 38412
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Wrote 61 bytes
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][ControlPlaneTransport] Read 48 bytes from 192.168.10.101:38412
+      2022-12-13T01:55:27Z [INFO][GNBSIM][GNodeB][gnb1] NG Setup Successful: true
+
+
+
+
+
+
+
+  6. Using Docker
+    sudo docker run --privileged --rm -it -v ~/gnbsim/config:/gnbsim/config --net=host omecproject/5gc-gnbsim:main-latest bash
+
+    Note: gnbsim docker images found at https://hub.docker.com/r/omecproject/5gc-gnbsim/tags
+
+
+
+
+
+

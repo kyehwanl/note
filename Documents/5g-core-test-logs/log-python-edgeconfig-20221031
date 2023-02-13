@@ -1,0 +1,456 @@
+
+
+onfadmin@5g1-mrtr:/tmp/infra$ git config --global user.email "kyehwanl@nist.gov"
+onfadmin@5g1-mrtr:/tmp/infra$
+onfadmin@5g1-mrtr:/tmp/infra$
+onfadmin@5g1-mrtr:/tmp/infra$ repo init -u ssh://kyehwanl@gerrit.opencord.org:29418/infra-manifest
+repo: reusing existing repo client checkout in /tmp
+
+Testing colorized output (for 'repo diff', 'repo status'):
+  black    red      green    yellow   blue     magenta   cyan     white
+  bold     dim      ul       reverse
+Enable color display in this user account (y/N)? y
+
+repo has been initialized in /tmp
+If this is not the directory in which you want to initialize repo, please run:
+   rm -r /tmp/.repo
+and try again.
+onfadmin@5g1-mrtr:/tmp/infra$ rm -rf /tmp/.repo/
+onfadmin@5g1-mrtr:/tmp/infra$ repo init -u ssh://kyehwanl@gerrit.opencord.org:29418/infra-manifest
+Downloading Repo source from https://gerrit.googlesource.com/git-repo
+
+Your identity is: onfadmin <kyehwanl@nist.gov>
+If you want to change this, please re-run 'repo init' with --config-name
+
+repo has been initialized in /tmp/infra
+onfadmin@5g1-mrtr:/tmp/infra$ repo sync
+Fetching: 100% (48/48), done in 23.111s
+Garbage collecting: 100% (48/48), done in 0.226s
+repo sync has finished successfully.
+onfadmin@5g1-mrtr:/tmp/infra$
+onfadmin@5g1-mrtr:/tmp/infra$
+onfadmin@5g1-mrtr:/tmp/infra$ ll
+total 24
+drwxrwxr-x  6 onfadmin onfadmin 4096 Oct 31 19:19 ./
+drwxrwxrwt 14 root     root     4096 Oct 31 19:19 ../
+drwxrwxr-x  9 onfadmin onfadmin 4096 Oct 31 19:19 ansible/
+drwxrwxr-x  2 onfadmin onfadmin 4096 Oct 31 19:19 infra-manifest/
+drwxrwxr-x  7 onfadmin onfadmin 4096 Oct 31 19:19 .repo/
+drwxrwxr-x  8 onfadmin onfadmin 4096 Oct 31 19:19 tools/
+onfadmin@5g1-mrtr:/tmp/infra$ cd ../
+onfadmin@5g1-mrtr:/tmp$ ll
+total 316
+drwxrwxrwt 14 root     root       4096 Oct 31 19:19 ./
+drwxr-xr-x 24 root     root       4096 Oct 12 06:47 ../
+drwxrwxrwt  2 root     root       4096 Oct 24 16:31 .font-unix/
+drwxrwxrwt  2 root     root       4096 Oct 24 16:31 .ICE-unix/
+drwxrwxr-x  6 onfadmin onfadmin   4096 Oct 31 19:19 infra/
+drwx------  2 onfadmin onfadmin   4096 Oct 31 14:00 ssh-mh8qohak/
+drwx------  2 onfadmin onfadmin   4096 Oct 28 16:16 ssh-_xc2d1ko/
+drwx------  3 root     root       4096 Oct 24 16:33 systemd-private-6d6cda2fc9dd48329b74339ec55b4348-apache2.service-AGAiZX/
+drwx------  3 root     root       4096 Oct 24 16:31 systemd-private-6d6cda2fc9dd48329b74339ec55b4348-systemd-resolved.service-ufBslK/
+drwx------  3 root     root       4096 Oct 24 16:31 systemd-private-6d6cda2fc9dd48329b74339ec55b4348-systemd-timesyncd.service-g3xOPr/
+drwxrwxrwt  2 root     root       4096 Oct 24 16:31 .Test-unix/
+-rw-------  1 onfadmin onfadmin 265969 Oct 31 16:12 tmpmuhbfaee
+drwx------  2 onfadmin onfadmin   4096 Oct 25 14:28 tmux-1000/
+prw-------  1 onfadmin onfadmin      0 Oct 25 14:28 vifm-ipc-vifm|
+drwxrwxrwt  2 root     root       4096 Oct 24 16:31 .X11-unix/
+drwxrwxrwt  2 root     root       4096 Oct 24 16:31 .XIM-unix/
+onfadmin@5g1-mrtr:/tmp$ cd infra/
+onfadmin@5g1-mrtr:/tmp/infra$ ll
+total 24
+drwxrwxr-x  6 onfadmin onfadmin 4096 Oct 31 19:19 ./
+drwxrwxrwt 14 root     root     4096 Oct 31 19:21 ../
+drwxrwxr-x  9 onfadmin onfadmin 4096 Oct 31 19:19 ansible/
+drwxrwxr-x  2 onfadmin onfadmin 4096 Oct 31 19:19 infra-manifest/
+drwxrwxr-x  7 onfadmin onfadmin 4096 Oct 31 19:19 .repo/
+drwxrwxr-x  8 onfadmin onfadmin 4096 Oct 31 19:19 tools/
+onfadmin@5g1-mrtr:/tmp/infra$ cd ../
+onfadmin@5g1-mrtr:/tmp$ mv infra/ ~/infra-202210
+onfadmin@5g1-mrtr:/tmp$ pst
+
+Command 'pst' not found, but there are 17 similar ones.
+
+onfadmin@5g1-mrtr:/tmp$ pstree -hup | grep `echo $$`
+           |                              |-bash(30091)-+-grep(6001)
+onfadmin@5g1-mrtr:/tmp$ cd
+onfadmin@5g1-mrtr:~$ ll
+total 468348
+drwxr-xr-x 15 onfadmin onfadmin      4096 Oct 31 19:22 ./
+drwxr-xr-x  4 root     root          4096 Sep 12 14:42 ../
+drwx------  4 onfadmin onfadmin      4096 Oct  6 14:08 .ansible/
+-rw-------  1 onfadmin onfadmin         0 Oct 11 15:00 .ansible_galaxy
+-rw-------  1 onfadmin onfadmin     13654 Oct 31 19:20 .bash_history
+-rw-r--r--  1 onfadmin onfadmin       220 Apr  4  2018 .bash_logout
+-rw-r--r--  1 onfadmin onfadmin      3771 Apr  4  2018 .bashrc
+drwxrwxr-x  2 onfadmin onfadmin      4096 Sep 12 14:34 bin/
+drwx------  3 onfadmin onfadmin      4096 Oct 12 10:47 .cache/
+-rw-rw-r--  1 onfadmin onfadmin       156 Oct  4 15:19 doit
+-rw-rw-r--  1 onfadmin onfadmin        70 Oct 31 19:17 .gitconfig
+drwx------  3 onfadmin onfadmin      4096 Sep  9 16:19 .gnupg/
+drwxr-xr-x  6 onfadmin onfadmin      4096 Sep 12 14:48 infra/
+drwxr-xr-x  3 onfadmin onfadmin      4096 Oct 31 16:12 infra2/
+drwxrwxr-x  6 onfadmin onfadmin      4096 Oct 31 19:19 infra-20221031/
+-rw-rw-r--  1 onfadmin onfadmin 108807729 Oct 28 16:15 infra-bkup-2022-1028.tgz
+-rw-rw-r--  1 onfadmin onfadmin  27719680 Oct  4 13:54 infra.tar
+drwx------  5 onfadmin onfadmin      4096 Oct 12 10:48 .local/
+-rw-rw-r--  1 onfadmin onfadmin 342850232 Dec  6  2021 ONL-onf-ONLPv2_ONL-OS_2021-07-16.2159-5195444_AMD64_INSTALLED_INSTALLER
+-rw-r--r--  1 onfadmin onfadmin       807 Apr  4  2018 .profile
+-rw-------  1 onfadmin onfadmin      1052 Oct 20 18:22 .python_history
+drwxrwxr-x  3 onfadmin onfadmin      4096 Sep 12 14:39 .repoconfig/
+-rw-rw-r--  1 onfadmin onfadmin       118 Oct 31 19:18 .repo_.gitconfig.json
+drwx------  2 onfadmin onfadmin      4096 Sep 27 14:49 .ssh/
+-rw-r--r--  1 onfadmin onfadmin         0 Sep  9 16:19 .sudo_as_admin_successful
+-rw-rw-r--  1 onfadmin onfadmin        97 Oct  6 10:51 .tmux.conf
+drwx------  4 onfadmin onfadmin      4096 Oct 21 12:09 .vifm/
+drwxrwxr-x  3 onfadmin onfadmin      4096 Oct 18 13:15 .vim/
+-rw-------  1 onfadmin onfadmin     38175 Oct 27 14:35 .viminfo
+-rw-rw-r--  1 onfadmin onfadmin      1080 Oct 18 13:54 .vimrc
+-rw-r-----  1 onfadmin onfadmin     35469 Oct 18 13:23 .vimrc-kyehwanl
+-rw-rw-r--  1 onfadmin onfadmin       165 Oct  4 15:19 .wget-hsts
+drwxrwxr-x  2 onfadmin onfadmin      4096 Oct 27 14:35 workdata/
+-rw-------  1 onfadmin onfadmin       108 Oct 31 10:42 .Xauthority
+onfadmin@5g1-mrtr:~$ cd infra-20221031/
+onfadmin@5g1-mrtr:~/infra-20221031$ cd ansible/
+onfadmin@5g1-mrtr:~/infra-20221031/ansible$ ll
+total 84
+drwxrwxr-x  9 onfadmin onfadmin  4096 Oct 31 19:19 ./
+drwxrwxr-x  6 onfadmin onfadmin  4096 Oct 31 19:19 ../
+-rw-rw-r--  1 onfadmin onfadmin   356 Oct 31 19:19 ansible.cfg
+drwxrwxr-x  3 onfadmin onfadmin  4096 Oct 31 19:19 cookiecutters/
+-rw-rw-r--  1 onfadmin onfadmin   296 Oct 31 19:19 galaxy.yml
+lrwxrwxrwx  1 onfadmin onfadmin    29 Oct 31 19:19 .git -> ../.repo/projects/ansible.git/
+-rw-rw-r--  1 onfadmin onfadmin   284 Oct 31 19:19 .gitignore
+-rw-rw-r--  1 onfadmin onfadmin    98 Oct 31 19:19 .gitreview
+drwxrwxr-x  4 onfadmin onfadmin  4096 Oct 31 19:19 inventory/
+drwxrwxr-x  2 onfadmin onfadmin  4096 Oct 31 19:19 lint_rules/
+-rw-rw-r--  1 onfadmin onfadmin  3006 Oct 31 19:19 Makefile
+drwxrwxr-x  3 onfadmin onfadmin  4096 Oct 31 19:19 playbooks/
+-rw-rw-r--  1 onfadmin onfadmin   490 Oct 31 19:19 pylint.ini
+-rw-rw-r--  1 onfadmin onfadmin 15654 Oct 31 19:19 README.md
+-rw-rw-r--  1 onfadmin onfadmin   736 Oct 31 19:19 requirements.txt
+drwxrwxr-x  2 onfadmin onfadmin  4096 Oct 31 19:19 .reuse/
+drwxrwxr-x 42 onfadmin onfadmin  4096 Oct 31 19:19 roles/
+drwxrwxr-x  3 onfadmin onfadmin  4096 Oct 31 19:19 scripts/
+-rw-rw-r--  1 onfadmin onfadmin    10 Oct 31 19:19 VERSION
+onfadmin@5g1-mrtr:~/infra-20221031/ansible$ make galaxy
+python3 -m venv venv_onfansible ;\
+  source ./venv_onfansible/bin/activate ; set -u ;\
+  python -m pip install --upgrade pip;\
+  python -m pip install -r requirements.txt
+Requirement already satisfied: pip in ./venv_onfansible/lib/python3.8/site-packages (22.0.4)
+Collecting pip
+  Using cached pip-22.3-py3-none-any.whl (2.1 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 22.0.4
+    Uninstalling pip-22.0.4:
+      Successfully uninstalled pip-22.0.4
+Successfully installed pip-22.3
+Collecting ansible~=5.3.0
+  Using cached ansible-5.3.0.tar.gz (38.0 MB)
+  Preparing metadata (setup.py) ... done
+Collecting netaddr~=0.8.0
+  Using cached netaddr-0.8.0-py2.py3-none-any.whl (1.9 MB)
+Collecting ansible-lint~=5.4.0
+  Using cached ansible_lint-5.4.0-py3-none-any.whl (119 kB)
+Collecting rich~=10.16.2
+  Using cached rich-10.16.2-py3-none-any.whl (214 kB)
+Collecting molecule~=3.5.2
+  Using cached molecule-3.5.2-py3-none-any.whl (240 kB)
+Collecting molecule-vagrant~=1.0.0
+  Using cached molecule_vagrant-1.0.0-py3-none-any.whl (31 kB)
+Collecting python-vagrant~=0.5.15
+  Using cached python-vagrant-0.5.15.tar.gz (29 kB)
+  Preparing metadata (setup.py) ... done
+Collecting molecule-docker~=1.1.0
+  Using cached molecule_docker-1.1.0-py3-none-any.whl (16 kB)
+Collecting docker~=5.0.3
+  Using cached docker-5.0.3-py2.py3-none-any.whl (146 kB)
+Collecting black~=22.1.0
+  Downloading black-22.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 66.1 MB/s eta 0:00:00
+Collecting flake8~=4.0.1
+  Using cached flake8-4.0.1-py2.py3-none-any.whl (64 kB)
+Collecting pylint~=2.11.1
+  Using cached pylint-2.11.1-py3-none-any.whl (392 kB)
+Collecting reuse~=0.14.0
+  Using cached reuse-0.14.0-py3-none-any.whl (144 kB)
+Collecting yamllint~=1.26.3
+  Using cached yamllint-1.26.3.tar.gz (126 kB)
+  Preparing metadata (setup.py) ... done
+Collecting python-debian==0.1.40
+  Using cached python_debian-0.1.40-py3-none-any.whl (73 kB)
+Collecting pynetbox~=6.6.0
+  Using cached pynetbox-6.6.2-py3-none-any.whl (32 kB)
+Collecting cookiecutter~=1.7.3
+  Using cached cookiecutter-1.7.3-py2.py3-none-any.whl (34 kB)
+Collecting passlib~=1.7.4
+  Using cached passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+Collecting bcrypt~=3.2.0
+  Using cached bcrypt-3.2.2-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (62 kB)
+Collecting zxcvbn~=4.4.28
+  Using cached zxcvbn-4.4.28.tar.gz (407 kB)
+  Preparing metadata (setup.py) ... done
+Collecting six
+  Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+Collecting chardet
+  Using cached chardet-5.0.0-py3-none-any.whl (193 kB)
+Collecting ansible-core~=2.12.2
+  Using cached ansible-core-2.12.10.tar.gz (7.8 MB)
+  Preparing metadata (setup.py) ... done
+Collecting packaging
+  Using cached packaging-21.3-py3-none-any.whl (40 kB)
+Collecting wcmatch>=7.0
+  Using cached wcmatch-8.4.1-py3-none-any.whl (39 kB)
+Collecting enrich>=1.2.6
+  Using cached enrich-1.2.7-py3-none-any.whl (8.7 kB)
+Collecting pyyaml
+  Downloading PyYAML-6.0-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (701 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 701.2/701.2 kB 127.2 MB/s eta 0:00:00
+Collecting ruamel.yaml<1,>=0.15.37
+  Using cached ruamel.yaml-0.17.21-py3-none-any.whl (109 kB)
+Collecting tenacity
+  Using cached tenacity-8.1.0-py3-none-any.whl (23 kB)
+Collecting commonmark<0.10.0,>=0.9.0
+  Using cached commonmark-0.9.1-py2.py3-none-any.whl (51 kB)
+Collecting colorama<0.5.0,>=0.4.0
+  Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Collecting pygments<3.0.0,>=2.6.0
+  Using cached Pygments-2.13.0-py3-none-any.whl (1.1 MB)
+Collecting paramiko<3,>=2.5.0
+  Using cached paramiko-2.11.0-py2.py3-none-any.whl (212 kB)
+Collecting Jinja2>=2.11.3
+  Using cached Jinja2-3.1.2-py3-none-any.whl (133 kB)
+Collecting click<9,>=8.0
+  Using cached click-8.1.3-py3-none-any.whl (96 kB)
+Collecting click-help-colors>=0.9
+  Using cached click_help_colors-0.9.1-py3-none-any.whl (5.5 kB)
+Collecting pyyaml
+  Downloading PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl (662 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 662.4/662.4 kB 141.2 MB/s eta 0:00:00
+Collecting selinux
+  Using cached selinux-0.2.1-py2.py3-none-any.whl (4.3 kB)
+Collecting pluggy<2.0,>=0.7.1
+  Using cached pluggy-1.0.0-py2.py3-none-any.whl (13 kB)
+Collecting subprocess-tee>=0.3.5
+  Using cached subprocess_tee-0.3.5-py3-none-any.whl (8.0 kB)
+Collecting cerberus!=1.3.3,!=1.3.4,>=1.3.1
+  Using cached Cerberus-1.3.2.tar.gz (52 kB)
+  Preparing metadata (setup.py) ... done
+Collecting ansible-compat>=0.5.0
+  Downloading ansible_compat-2.2.3-py3-none-any.whl (19 kB)
+Collecting requests
+  Using cached requests-2.28.1-py3-none-any.whl (62 kB)
+Collecting websocket-client>=0.32.0
+  Using cached websocket_client-1.4.1-py3-none-any.whl (55 kB)
+Collecting mypy-extensions>=0.4.3
+  Using cached mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Collecting tomli>=1.1.0
+  Using cached tomli-2.0.1-py3-none-any.whl (12 kB)
+Collecting typing-extensions>=3.10.0.0
+  Using cached typing_extensions-4.4.0-py3-none-any.whl (26 kB)
+Collecting pathspec>=0.9.0
+  Using cached pathspec-0.10.1-py3-none-any.whl (27 kB)
+Collecting platformdirs>=2
+  Using cached platformdirs-2.5.2-py3-none-any.whl (14 kB)
+Collecting pyflakes<2.5.0,>=2.4.0
+  Using cached pyflakes-2.4.0-py2.py3-none-any.whl (69 kB)
+Collecting pycodestyle<2.9.0,>=2.8.0
+  Using cached pycodestyle-2.8.0-py2.py3-none-any.whl (42 kB)
+Collecting mccabe<0.7.0,>=0.6.0
+  Using cached mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Collecting isort<6,>=4.2.5
+  Using cached isort-5.10.1-py3-none-any.whl (103 kB)
+Collecting astroid<2.9,>=2.8.0
+  Using cached astroid-2.8.6-py3-none-any.whl (248 kB)
+Collecting toml>=0.7.1
+  Using cached toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Collecting license-expression
+  Using cached license_expression-30.0.0-py3-none-any.whl (86 kB)
+Collecting boolean.py
+  Using cached boolean.py-4.0-py3-none-any.whl (25 kB)
+Requirement already satisfied: setuptools in ./venv_onfansible/lib/python3.8/site-packages (from reuse~=0.14.0->-r requirements.txt (line 23)) (56.0.0)
+Collecting binaryornot
+  Using cached binaryornot-0.4.4-py2.py3-none-any.whl (9.0 kB)
+Collecting poyo>=0.5.0
+  Using cached poyo-0.5.0-py2.py3-none-any.whl (10 kB)
+Collecting jinja2-time>=0.2.0
+  Using cached jinja2_time-0.2.0-py2.py3-none-any.whl (6.4 kB)
+Collecting python-slugify>=4.0.0
+  Using cached python_slugify-6.1.2-py2.py3-none-any.whl (9.4 kB)
+Collecting cffi>=1.1
+  Downloading cffi-1.15.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (442 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 442.7/442.7 kB 127.6 MB/s eta 0:00:00
+Collecting jsonschema>=4.6.0
+  Using cached jsonschema-4.16.0-py3-none-any.whl (83 kB)
+Collecting cryptography
+  Using cached cryptography-38.0.1-cp36-abi3-manylinux_2_24_x86_64.whl (4.0 MB)
+Collecting resolvelib<0.6.0,>=0.5.3
+  Using cached resolvelib-0.5.4-py2.py3-none-any.whl (12 kB)
+Collecting lazy-object-proxy>=1.4.0
+  Downloading lazy-object-proxy-1.8.0.tar.gz (41 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.9/41.9 kB 25.7 MB/s eta 0:00:00
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting wrapt<1.14,>=1.11
+  Downloading wrapt-1.13.3-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (84 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.6/84.6 kB 47.6 MB/s eta 0:00:00
+Collecting pycparser
+  Using cached pycparser-2.21-py2.py3-none-any.whl (118 kB)
+Collecting MarkupSafe>=2.0
+  Downloading MarkupSafe-2.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+Collecting arrow
+  Using cached arrow-1.2.3-py3-none-any.whl (66 kB)
+Collecting pynacl>=1.0.1
+  Using cached PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (856 kB)
+Collecting text-unidecode>=1.3
+  Using cached text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+Collecting idna<4,>=2.5
+  Using cached idna-3.4-py3-none-any.whl (61 kB)
+Collecting urllib3<1.27,>=1.21.1
+  Using cached urllib3-1.26.12-py2.py3-none-any.whl (140 kB)
+Collecting charset-normalizer<3,>=2
+  Using cached charset_normalizer-2.1.1-py3-none-any.whl (39 kB)
+Collecting certifi>=2017.4.17
+  Using cached certifi-2022.9.24-py3-none-any.whl (161 kB)
+Collecting ruamel.yaml.clib>=0.2.6
+  Downloading ruamel.yaml.clib-0.2.7-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (555 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 555.3/555.3 kB 134.3 MB/s eta 0:00:00
+Collecting bracex>=2.1.1
+  Using cached bracex-2.3.post1-py3-none-any.whl (12 kB)
+Collecting pyparsing!=3.0.5,>=2.0.2
+  Using cached pyparsing-3.0.9-py3-none-any.whl (98 kB)
+Collecting distro>=1.3.0
+  Using cached distro-1.8.0-py3-none-any.whl (20 kB)
+Collecting importlib-resources>=1.4.0
+  Downloading importlib_resources-5.10.0-py3-none-any.whl (34 kB)
+Collecting pkgutil-resolve-name>=1.3.10
+  Downloading pkgutil_resolve_name-1.3.10-py3-none-any.whl (4.7 kB)
+Collecting attrs>=17.4.0
+  Using cached attrs-22.1.0-py2.py3-none-any.whl (58 kB)
+Collecting pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0
+  Downloading pyrsistent-0.19.1-py3-none-any.whl (57 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.3/57.3 kB 29.4 MB/s eta 0:00:00
+Collecting python-dateutil>=2.7.0
+  Using cached python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+Collecting zipp>=3.1.0
+  Downloading zipp-3.10.0-py3-none-any.whl (6.2 kB)
+Building wheels for collected packages: lazy-object-proxy
+  Building wheel for lazy-object-proxy (pyproject.toml) ... done
+  Created wheel for lazy-object-proxy: filename=lazy_object_proxy-1.8.0-cp38-cp38-linux_x86_64.whl size=11295 sha256=72d52e608ecfe0e3732e43d54483953afd162c9bf2f012fb45e6a360a5d50d00
+  Stored in directory: /home/onfadmin/.cache/pip/wheels/da/6f/4f/457d54ffa8342ef8d8ef90d640d902b6a5e7bad874ea004681
+Successfully built lazy-object-proxy
+Installing collected packages: zxcvbn, text-unidecode, resolvelib, python-vagrant, passlib, netaddr, mypy-extensions, mccabe, commonmark, boolean.py, zipp, wrapt, websocket-client, urllib3, typing-extensions, tomli, toml, tenacity, subprocess-tee, six, ruamel.yaml.clib, pyyaml, python-slugify, pyrsistent, pyparsing, pygments, pyflakes, pycparser, pycodestyle, poyo, pluggy, platformdirs, pkgutil-resolve-name, pathspec, MarkupSafe, license-expression, lazy-object-proxy, isort, idna, distro, colorama, click, charset-normalizer, chardet, certifi, cerberus, bracex, attrs, yamllint, wcmatch, selinux, ruamel.yaml, rich, requests, python-debian, python-dateutil, packaging, Jinja2, importlib-resources, flake8, click-help-colors, cffi, black, binaryornot, astroid, reuse, pynetbox, pynacl, pylint, jsonschema, enrich, docker, cryptography, bcrypt, arrow, paramiko, jinja2-time, ansible-lint, ansible-core, ansible-compat, cookiecutter, ansible, molecule, molecule-vagrant, molecule-docker
+  DEPRECATION: zxcvbn is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for zxcvbn ... done
+  DEPRECATION: python-vagrant is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for python-vagrant ... done
+  DEPRECATION: cerberus is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for cerberus ... done
+  DEPRECATION: yamllint is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for yamllint ... done
+  DEPRECATION: ansible-core is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for ansible-core ... done
+  DEPRECATION: ansible is being installed using the legacy 'setup.py install' method, because it does not have a 'pyproject.toml' and the 'wheel' package is not installed. pip 23.1 will enforce this behaviour change. A possible replacement is to enable the '--use-pep517' option. Discussion can be found at https://github.com/pypa/pip/issues/8559
+  Running setup.py install for ansible ... done
+Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.1 ansible-5.3.0 ansible-compat-2.2.3 ansible-core-2.12.10 ansible-lint-5.4.0 arrow-1.2.3 astroid-2.8.6 attrs-22.1.0 bcrypt-3.2.2 binaryornot-0.4.4 black-22.1.0 boolean.py-4.0 bracex-2.3.post1 cerberus-1.3.2 certifi-2022.9.24 cffi-1.15.1 chardet-5.0.0 charset-normalizer-2.1.1 click-8.1.3 click-help-colors-0.9.1 colorama-0.4.6 commonmark-0.9.1 cookiecutter-1.7.3 cryptography-38.0.1 distro-1.8.0 docker-5.0.3 enrich-1.2.7 flake8-4.0.1 idna-3.4 importlib-resources-5.10.0 isort-5.10.1 jinja2-time-0.2.0 jsonschema-4.16.0 lazy-object-proxy-1.8.0 license-expression-30.0.0 mccabe-0.6.1 molecule-3.5.2 molecule-docker-1.1.0 molecule-vagrant-1.0.0 mypy-extensions-0.4.3 netaddr-0.8.0 packaging-21.3 paramiko-2.11.0 passlib-1.7.4 pathspec-0.10.1 pkgutil-resolve-name-1.3.10 platformdirs-2.5.2 pluggy-1.0.0 poyo-0.5.0 pycodestyle-2.8.0 pycparser-2.21 pyflakes-2.4.0 pygments-2.13.0 pylint-2.11.1 pynacl-1.5.0 pynetbox-6.6.2 pyparsing-3.0.9 pyrsistent-0.19.1 python-dateutil-2.8.2 python-debian-0.1.40 python-slugify-6.1.2 python-vagrant-0.5.15 pyyaml-5.4.1 requests-2.28.1 resolvelib-0.5.4 reuse-0.14.0 rich-10.16.2 ruamel.yaml-0.17.21 ruamel.yaml.clib-0.2.7 selinux-0.2.1 six-1.16.0 subprocess-tee-0.3.5 tenacity-8.1.0 text-unidecode-1.3 toml-0.10.2 tomli-2.0.1 typing-extensions-4.4.0 urllib3-1.26.12 wcmatch-8.4.1 websocket-client-1.4.1 wrapt-1.13.3 yamllint-1.26.3 zipp-3.10.0 zxcvbn-4.4.28
+echo "To enter virtualenv, run 'source venv_onfansible/bin/activate'"
+To enter virtualenv, run 'source venv_onfansible/bin/activate'
+source ./venv_onfansible/bin/activate ; set -u ;\
+ansible-galaxy collection install -r galaxy.yml
+Starting galaxy collection install process
+Process install dependency map
+Starting collection install process
+Downloading https://galaxy.ansible.com/download/netbox-netbox-1.1.0.tar.gz to /home/onfadmin/.ansible/tmp/ansible-local-6126v5i2fxo1/tmpbe9bl52d/netbox-netbox-1.1.0-5bkq6zo6
+Installing 'netbox.netbox:1.1.0' to '/home/onfadmin/infra-20221031/ansible/ansible_collections/netbox/netbox'
+Downloading https://galaxy.ansible.com/download/community-mysql-1.1.0.tar.gz to /home/onfadmin/.ansible/tmp/ansible-local-6126v5i2fxo1/tmpbe9bl52d/community-mysql-1.1.0-2vh5cir5
+netbox.netbox:1.1.0 was installed successfully
+Downloading https://galaxy.ansible.com/download/ansible-netcommon-4.0.0.tar.gz to /home/onfadmin/.ansible/tmp/ansible-local-6126v5i2fxo1/tmpbe9bl52d/ansible-netcommon-4.0.0-53twkgxk
+Installing 'community.mysql:1.1.0' to '/home/onfadmin/infra-20221031/ansible/ansible_collections/community/mysql'
+community.mysql:1.1.0 was installed successfully
+Installing 'ansible.netcommon:4.0.0' to '/home/onfadmin/infra-20221031/ansible/ansible_collections/ansible/netcommon'
+Downloading https://galaxy.ansible.com/download/ansible-utils-2.6.1.tar.gz to /home/onfadmin/.ansible/tmp/ansible-local-6126v5i2fxo1/tmpbe9bl52d/ansible-utils-2.6.1-pcw_uu8y
+ansible.netcommon:4.0.0 was installed successfully
+Installing 'ansible.utils:2.6.1' to '/home/onfadmin/infra-20221031/ansible/ansible_collections/ansible/utils'
+Downloading https://galaxy.ansible.com/download/community-general-5.8.0.tar.gz to /home/onfadmin/.ansible/tmp/ansible-local-6126v5i2fxo1/tmpbe9bl52d/community-general-5.8.0-ww2y99cg
+ansible.utils:2.6.1 was installed successfully
+Installing 'community.general:5.8.0' to '/home/onfadmin/infra-20221031/ansible/ansible_collections/community/general'
+community.general:5.8.0 was installed successfully
+onfadmin@5g1-mrtr:~/infra-20221031/ansible$ source venv_onfansible/bin/activate
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$ python scripts/edgeconfig.py inventory/5gtb1-netbox.yml
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+/home/onfadmin/infra-20221031/ansible/venv_onfansible/lib/python3.8/site-packages/urllib3/connectionpool.py:1045: InsecureRequestWarning: Unverified HTTPS request is being made to host 'p4-server1.antd.nist.gov'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+  warnings.warn(
+Traceback (most recent call last):
+  File "scripts/edgeconfig.py", line 46, in <module>
+    dns_forward_zones = nbhelper.service.dnsFowardZoneConfigGenerator()
+  File "/home/onfadmin/infra-20221031/ansible/scripts/nbhelper/service.py", line 71, in dnsFowardZoneConfigGenerator
+    serviceInfoContainer.initialize()
+  File "/home/onfadmin/infra-20221031/ansible/scripts/nbhelper/container.py", line 177, in initialize
+    for interface in device.interfaces.values():
+AttributeError: 'NoneType' object has no attribute 'interfaces'
+(venv_onfansible) onfadmin@5g1-mrtr:~/infra-20221031/ansible$
+
