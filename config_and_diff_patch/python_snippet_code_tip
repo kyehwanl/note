@@ -252,7 +252,14 @@ addr.ipV4 = struct.unpack("!L", socket.inet_aton("10.1.1.2"))[0]
 
 
 
+10. JSON data rearrange
+========================
 
+>>> import json
+>>> with open ('/etc/cni/net.d/00-multus.conf', 'r') as fcc_file:
+...   fcc_data = json.load(fcc_file)
+...   print(json.dumps(fcc_data, indent=4))
+...
 
 
 
