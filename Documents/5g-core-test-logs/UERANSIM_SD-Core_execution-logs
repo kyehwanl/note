@@ -23,6 +23,11 @@
 (1) download aether in a box (aiab) from github
     git clone "https://gerrit.opencord.org/aether-in-a-box"
 
+	-- download sdcore-helm-charts
+	mkdir -p ~/cord
+	cd ~/cord
+	git clone "https://gerrit.opencord.org/sdcore-helm-charts"
+
 
 (2) edit sd-core-5g-values.yaml file
 

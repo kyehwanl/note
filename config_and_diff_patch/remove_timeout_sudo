@@ -5,6 +5,15 @@ Remove Timeout from using sudo
 1. sudo visudo or edit vim /etc/sudoers
 
 
-2. add this line to somewhere inside 
+2. add this line to somewhere inside  (AFTER sudo group rule)
 
     kyehwanl        ALL=(ALL)       NOPASSWD: ALL
+
+
+ -- 
+	(https://askubuntu.com/questions/100051/why-is-sudoers-nopasswd-option-not-working)
+	You should put that line after the line with the rule for the sudo group, because, as the sudoers man page states:
+
+	  When multiple entries match for a user, they are applied in order.
+	 Where there are multiple matches, the last match is used (which is not
+	 necessarily the most specific match).

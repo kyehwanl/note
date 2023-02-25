@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "source /etc/profile.d/bash_completion.sh" >> ${HOME}/.bashrc
+echo "source <(kubectl completion bash)" >> ${HOME}/.bashrc
+echo "alias k=kubectl" >> ${HOME}/.bashrc
+echo "source <(kubectl completion bash | sed s/kubectl/k/g)" >> ${HOME}/.bashrc
