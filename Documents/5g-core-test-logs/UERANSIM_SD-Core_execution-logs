@@ -110,7 +110,7 @@
 
         SSH into free5gc. If you have rebooted free5gc, remember to do:
           sudo sysctl -w net.ipv4.ip_forward=1
-          sudo iptables -t nat -A POSTROUTING -o <data-iface> -j MASQUERADE
+          sudo iptables -t nat -A POSTROUTING -o <INTERNET_IFACE> -j MASQUERADE <-- (NOT DATA_IFACE)
           sudo systemctl stop ufw
 
         In addition, execute the following command:
@@ -125,9 +125,9 @@
                   inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
                     ...
 
-          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE <-- eth0: 10.0.2.15
           vagrant@5g-sdcore:~/aether-in-a-box$ sudo systemctl stop ufw
-          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -I FORWARD 1 -j ACCEPT <-- ??
+          vagrant@5g-sdcore:~/aether-in-a-box$ sudo iptables -I FORWARD 1 -j ACCEPT 
                 --> As soon as this option executed, "ping 8.8.8.8 -I uesimtun0" at ueransim vm worked !!
                     I guess, it allows first line (1) forwarding to be accepted
 
