@@ -90,8 +90,115 @@ bgpd peering
 
 
 
+list network namespace
+=======================
+https://unix.stackexchange.com/questions/444892/what-does-if1if2-mean-in-interface-name-in-output-of-ip-address-command-on
+https://unix.stackexchange.com/questions/441876/how-to-find-the-network-namespace-of-a-veth-peer-ifindex
 
 
+vagrant@aiab:~/aether-in-a-box$ lsns --help
 
+Usage:
+ lsns [options] [<namespace>]
+
+List system namespaces.
+
+Options:
+ -J, --json             use JSON output format
+ -l, --list             use list format output
+ -n, --noheadings       don't print headings
+ -o, --output <list>    define which output columns to use
+ -p, --task <pid>       print process namespaces
+ -r, --raw              use the raw output format
+ -u, --notruncate       don't truncate text in columns
+ -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)
+
+ -h, --help             display this help
+ -V, --version          display version
+
+Available output columns:
+          NS  namespace identifier (inode number)
+        TYPE  kind of namespace
+        PATH  path to the namespace
+      NPROCS  number of processes in the namespace
+         PID  lowest PID in the namespace
+        PPID  PPID of the PID
+     COMMAND  command line of the PID
+         UID  UID of the PID
+        USER  username of the PID
+
+For more details see lsns(8).
+
+vagrant@aiab:~/aether-in-a-box$ sudo lsns -t net
+        NS TYPE NPROCS   PID USER    COMMAND
+4026531993 net     222     1 root    /sbin/init
+4026532244 net       3  1485 root    /bin/sh /free5gc/script/ausf-run.sh
+4026532323 net       3  1374 root    /bin/sh /free5gc/script/smf-run.sh
+4026532327 net       2 26346 root    /pause
+4026532396 net       2 26502 root    /pause
+4026532528 net       3 30095 root    /pause
+4026532536 net       2 26663 root    /pause
+4026532686 net       3  1641 root    /bin/sh /free5gc/script/udr-run.sh
+4026532700 net       2 27401 root    /pause
+4026532830 net       3  2967 root    /bin/sh /simapp/script/simapp-run.sh
+4026532897 net       2 29951 root    /pause
+4026532964 net       3  5446 root    /bin/sh /free5gc/script/amf-run.sh
+4026533031 net       7  1180 root    bessd -m 0 -f -grpc-url=0.0.0.0:10514
+4026533098 net       3  1541 root    /bin/sh /free5gc/script/nssf-run.sh
+4026533165 net       3  1685 root    /bin/sh /free5gc/script/udm-run.sh
+4026533232 net       3  1520 root    /bin/sh /free5gc/script/webui-run.sh
+4026533299 net       3  1589 root    /bin/sh /free5gc/script/pcf-run.sh
+4026533442 net       2 31419 root    /pause
+4026533636 net       2 11656 nobody  /pause
+4026533708 net       2 11863 root    /pause
+4026533780 net       2 11816 nobody  /pause
+4026533862 net      11 12022 472     /pause
+4026533955 net       3 12521 vagrant /pause
+4026534027 net       9 12670 vagrant /pause
+
+
+vagrant@aiab:~/aether-in-a-box$ sudo nsenter -t 1180 -n ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+3: eth0@if25: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP mode DEFAULT group default
+    link/ether e2:62:f1:98:1c:27 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+4: access@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 5e:d5:c6:38:8c:95 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+5: core@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 9e:fd:ad:f8:f9:83 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+
+vagrant@aiab:~/aether-in-a-box$ lsns --help
+
+Usage:
+ lsns [options] [<namespace>]
+
+List system namespaces.
+
+Options:
+ -J, --json             use JSON output format
+ -l, --list             use list format output
+ -n, --noheadings       don't print headings
+ -o, --output <list>    define which output columns to use
+ -p, --task <pid>       print process namespaces
+ -r, --raw              use the raw output format
+ -u, --notruncate       don't truncate text in columns
+ -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)
+
+ -h, --help             display this help
+ -V, --version          display version
+
+Available output columns:
+          NS  namespace identifier (inode number)
+        TYPE  kind of namespace
+        PATH  path to the namespace
+      NPROCS  number of processes in the namespace
+         PID  lowest PID in the namespace
+        PPID  PPID of the PID
+     COMMAND  command line of the PID
+         UID  UID of the PID
+        USER  username of the PID
+
+For more details see lsns(8).
 
 

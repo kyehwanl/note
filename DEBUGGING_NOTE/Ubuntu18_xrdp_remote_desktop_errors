@@ -93,3 +93,50 @@ Ubuntu 18 Xrdp errors
 
     3.1 cause: wrong id/ password
 
+
+
+
+
+
+
+
+---------------------------------------
+4.  Another desktop environment (xfce4) 
+---------------------------------------
+
+(Cause) XRDP disconnects immediately after login with the correct credentials
+
+(Solution) use alternatives
+  https://askubuntu.com/questions/1308551/xrdp-disconnects-immediately-after-correct-credentials
+  https://github.com/neutrinolabs/xrdp/issues/2293
+
+  To install:
+	  sudo apt install xfce4
+
+  and then to switch to it:
+
+	  sudo update-alternatives --config x-session-manager
+
+  And choose /usr/bin/startxfce4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,141 @@
+
+How to find veth or interface pair on netns, docker, kubernetes
+================================================================
+
+What does "if1@if2" mean in interface name in output of "ip address" command on Ubuntu
+(https://unix.stackexchange.com/questions/444892/what-does-if1if2-mean-in-interface-name-in-output-of-ip-address-command-on)
+
+
+1. what is @if3 and link-netnsid 1
+
+vagrant@aiab:~/aether-in-a-box$ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:0a:e2:82 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 46351sec preferred_lft 46351sec
+    inet6 fe80::a00:27ff:fe0a:e282/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:9b:e9:6c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.10.11/24 brd 192.168.10.255 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe9b:e96c/64 scope link
+       valid_lft forever preferred_lft forever
+4: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+    link/ether 02:42:88:f6:46:2b brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+6: caliedcf00c8334@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 1
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+
+
+
+--> link-netnsid can be found below
+
+vagrant@aiab:~/aether-in-a-box$ sudo ip netns
+cni-0e769137-36e8-07bc-3758-502b2ac85ae4 (id: 22)
+cni-bff1c85d-20cf-7466-1afe-77cb2b173078 (id: 21)
+cni-4557e826-10ae-4b51-6242-c7438551d940 (id: 20)
+cni-49f19ee8-a3ac-780e-c2cf-daac1e88d061 (id: 18)
+cni-ac5dccca-699a-a600-16a3-d74531dd2ea1 (id: 19)
+cni-f9f930fe-9c49-d6c2-ef24-810a74415e4b (id: 17)
+cni-1fb1b705-2587-5dff-6b1f-78e61ef4ef68 (id: 16)
+cni-b4765fa1-b951-5145-fd34-2879b181fc4d (id: 12)
+cni-914267d4-74d7-37b8-cff2-3c79132127e0 (id: 15)
+cni-0f5e2f67-4a39-2184-7950-83742d865b99 (id: 13)
+cni-bffbaf42-92fb-65fe-840f-7a9971684601 (id: 14)
+cni-7f95fa57-e090-1659-203c-2b9fe51b056c (id: 11)
+cni-c7124df7-6c1e-5a4f-9d66-b506fc1653d2 (id: 8)
+cni-c8cca282-b06b-c735-199d-32835a5ac9a6 (id: 0)
+cni-626d24dc-af64-52b9-840e-477ab6c078dc (id: 10)
+cni-d353cade-2c84-5e64-bb9b-4f069c8a8ad6 (id: 5)
+cni-5635533f-0bc8-a57b-a870-0c1301e57f26 (id: 7)
+cni-a5045901-2870-9512-4c43-f5c7cb4dc0d5 (id: 3)
+cni-c9421615-9ca9-b4a3-8d93-11686e5a5ea2 (id: 9)
+cni-93d563d6-16cc-e1fb-a471-8b90694e1d48 (id: 6)
+cni-99521808-dafa-961c-f44e-6b85bbc6c3b9 (id: 4)
+cni-a9bb98fc-97cb-1ef7-341e-a4ad9cf9164c (id: 2)
+cni-5357c0f3-438a-c742-6e3c-37191bba4f2d (id: 1)
+
+
+
+
+
+2. For ifindex, iflink
+
+ifindex is just the order in local network interfaces, 
+iflink is important to know, this is link to the other network namesapce.
+
+if 'ip addr' has core@if3 .. link-netnsid 0, 
+And if3 doesn't exist in its own network (which means link-netnsid 0)
+then, it indicates the other network, 
+
+	in this case, host network ifindex 3,
+	3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+		link/ether 08:00:27:9b:e9:6c brd ff:ff:ff:ff:ff:ff
+		inet 192.168.10.11/24 brd 192.168.10.255 scope global eth1
+
+
+
+vagrant@aiab:~/aether-in-a-box$ k exec -n omec upf-0 -- ip addr
+Defaulted container "bessd" out of: bessd, routectl, web, pfcp-agent, arping, bess-init (init)
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo                                                                                                                                                                                                                                                 valid_lft forever preferred_lft forever                                                                                                                                                                                                                                  inet6 ::1/128 scope host                                                                                                                                                                                                                                                       valid_lft forever preferred_lft forever                                                                                                                                                                                                                              3: eth0@if25: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default                                                                                                                                                                                   link/ether e2:62:f1:98:1c:27 brd ff:ff:ff:ff:ff:ff link-netnsid 0                                                                                                                                                                                                           inet 192.168.84.16/32 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e062:f1ff:fe98:1c27/64 scope link
+       valid_lft forever preferred_lft forever
+4: access@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether 5e:d5:c6:38:8c:95 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.252.3/24 brd 192.168.252.255 scope global access
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5cd5:c6ff:fe38:8c95/64 scope link
+       valid_lft forever preferred_lft forever
+5: core@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether 9e:fd:ad:f8:f9:83 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.250.3/24 brd 192.168.250.255 scope global core
+       valid_lft forever preferred_lft forever
+    inet6 fe80::9cfd:adff:fef8:f983/64 scope link
+       valid_lft forever preferred_lft forever
+
+
+vagrant@aiab:~/aether-in-a-box$ k exec -it -n omec upf-0 -- bash
+Defaulted container "bessd" out of: bessd, routectl, web, pfcp-agent, arping, bess-init (init)
+root@upf-0:/opt/bess/bessctl# ll /sys/class/net/eth0/
+bash: ll: command not found
+root@upf-0:/opt/bess/bessctl# ls /sys/class/net/eth0/
+addr_assign_type  carrier_changes     dormant            ifindex           netdev_group    power       subsystem
+addr_len          carrier_down_count  duplex             iflink            operstate       proto_down  tx_queue_len
+address           carrier_up_count    flags              link_mode         phys_port_id    queues      type
+broadcast         dev_id              gro_flush_timeout  mtu               phys_port_name  speed       uevent
+carrier           dev_port            ifalias            name_assign_type  phys_switch_id  statistics
+
+root@upf-0:/opt/bess/bessctl# cat /sys/class/net/eth0/iflink
+25
+root@upf-0:/opt/bess/bessctl# cat /sys/class/net/eth0/ifindex
+3
+root@upf-0:/opt/bess/bessctl# cat /sys/class/net/access/ifindex
+4
+root@upf-0:/opt/bess/bessctl# cat /sys/class/net/core/ifindex
+5
+root@upf-0:/opt/bess/bessctl# cat /sys/class/net/core/iflink
+3
+
+
+
+
+
+
+
+
+
+
+
