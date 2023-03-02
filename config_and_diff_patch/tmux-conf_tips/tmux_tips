@@ -451,6 +451,26 @@ tmux tips
 
 
 
+
+
+
+13. window reorder 
+-----------------------
+(1) with swap
+ :swap-window -s 3 -t 0  --> source-window number 3 and target-window number 1 swap their position
+
+ :swap-window -t 0 		--> To swap the current window with the top window
+  
+
+(2) move
+   :move-window -t 7  	--> move the current window to #7
+
+
+
+
+
+
+
 -----------------------------
 ** Other Useful config tips
 -----------------------------
