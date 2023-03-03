@@ -253,14 +253,71 @@ Only the initial boot-up will take longer time than the succeeding boots.
  Save with Sanpshot
 --------------------
 
-root@pwct1:~# vagrant snapshot save aiab-4g                              
-==> default: Snapshotting the machine as 'aiab-4g'...                    
-==> default: Snapshot saved! You can restore the snapshot at any time by 
-==> default: using `vagrant snapshot restore`. You can delete it using   
-==> default: `vagrant snapshot delete`.                                  
+(1) Usage: vagrant snapshot save [options] [vm-name] <name>
+	Usage: vagrant snapshot restore [options] [vm-name] <name>
 
-root@pwct1:~# vagrant snapshot list 
-aiab-4g
+  If no vm-name is given, Vagrant will take a snapshot of
+  the entire environment with the same snapshot name
+
+
+	< Options >
+	--[no-]provision - Force the provisioners to run (or prevent them from doing so).
+	--no-delete - Prevents deletion of the snapshot after restoring (so that you can restore to the same point again later).
+	--no-start - Prevents the guest from being started after restore
+
+	** When "restore", --no-delete will be useful
+
+
+(2) example.1
+  root@pwct1:~# vagrant snapshot save aiab-4g                              
+  ==> default: Snapshotting the machine as 'aiab-4g'...                    
+  ==> default: Snapshot saved! You can restore the snapshot at any time by 
+  ==> default: using `vagrant snapshot restore`. You can delete it using   
+  ==> default: `vagrant snapshot delete`.                                  
+
+  root@pwct1:~# vagrant snapshot list 
+  aiab-4g
+
+
+
+(3) example.2
+	kyehwanl@pwct1:~/vagrant-test/aiab-ueransim-s1$ vagrant status
+	Current machine states:
+
+	sdcore                    running (virtualbox)
+	ran                       running (virtualbox)
+
+	This environment represents multiple VMs. The VMs are all listed
+	above with their current state. For more information about a specific
+	VM, run `vagrant status NAME`.
+
+	kyehwanl@pwct1:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot save sdcore sdcore-upf2
+	==> sdcore: Snapshotting the machine as 'sdcore-upf2'...
+	==> sdcore: Snapshot saved! You can restore the snapshot at any time by
+	==> sdcore: using `vagrant snapshot restore`. You can delete it using
+	==> sdcore: `vagrant snapshot delete`.
+
+	kyehwanl@pwct1:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot list
+	==> sdcore:
+	sdcore-upf2
+	==> ran: No snapshots have been taken yet!                             
+		ran: You can take a snapshot using `vagrant snapshot save`. Note that
+		ran: not all providers support this yet. Once a snapshot is taken, you
+		ran: can list them using this command, and use commands such as
+		ran: `vagrant snapshot restore` to go back to a certain snapshot.
+
+
+	kyehwanl@pwct1:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot save ran ran-upf2
+	==> ran: Snapshotting the machine as 'ran-upf2'...
+	==> ran: Snapshot saved! You can restore the snapshot at any time by
+	==> ran: using `vagrant snapshot restore`. You can delete it using
+	==> ran: `vagrant snapshot delete`.
+
+	kyehwanl@pwct1:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot list 
+	==> sdcore:
+	sdcore-upf2        
+	==> ran:
+	ran-upf2
 
 
 
