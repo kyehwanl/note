@@ -1,0 +1,114 @@
+
+
+How to isntall or use sniff plugin with wireshark
+==================================================
+
+
+-----------------------
+1. install krew plugin
+-----------------------
+https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+
+macOS/Linux
+Bash or ZSH shells
+  Make sure that git is installed.
+
+  Run this command to download and install krew:
+
+  (
+	set -x; cd "$(mktemp -d)" &&
+	OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+	ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+	KREW="krew-${OS}_${ARCH}" &&
+	curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+	tar zxvf "${KREW}.tar.gz" &&
+	./"${KREW}" install krew
+  )
+
+  Add the $HOME/.krew/bin directory to your PATH environment variable. 
+  To do this, update your .bashrc or .zshrc file and append the following line:
+
+  	export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+  and restart your shell. --> source will be ok
+	source ~/.bashrc 
+
+  Run kubectl krew to check the installation.
+
+
+----------------------------------
+2. krew - quick start, how to use
+----------------------------------
+https://krew.sigs.k8s.io/docs/user-guide/quickstart/
+(1) update 
+	kubectl krew update
+
+
+
+-----------------------
+3. sniff plugin install
+-----------------------
+https://github.com/eldadru/ksniff
+
+A kubectl plugin that utilize tcpdump and Wireshark to start a remote capture on any pod in your Kubernetes cluster.
+ksniff use kubectl to upload a statically compiled tcpdump binary to your pod and 
+redirecting it's output to your local Wireshark for smooth network debugging experience.
+
+(1) install sniff
+kubectl krew install sniff
+
+
+(2) wireshark version
+Wireshark
+If you are using Wireshark with ksniff you must use at least version 3.4.0. 
+Using older versions may result in issues reading captures
+
+
+	* Troubleshooting
+	if there is a permission error of non-root user's capture in wireshark like following,
+	"Couldn't run /usr/bin/dumpcap in child process: Permission denied"
+
+	(Solution)
+
+		* sudo dpkg-reconfigure wireshark-common
+			--> select Yes for non-root user to capture
+
+		* sudo chmod +x /usr/bin/dumpcap
+			--> permission clear
+
+		you should now be able to run it without root and you will be able to capture.	
+
+
+
+
+(3) execution logs
+
+  onf@onf-01:~/Desktop$ k sniff -n omec upf-0
+  INFO[0000] using tcpdump path at: '/home/onf/.krew/store/sniff/v1.6.2/static-tcpdump’ 
+  INFO[0000] no container specified, taking first container we found in pod. 
+  INFO[0000] selected container: 'bessd'                  
+  INFO[0000] sniffing method: upload static tcpdump       
+  INFO[0000] sniffing on pod: 'upf-0' [namespace: 'omec', container: 'bessd', filter: '', interface: 'any’] 
+  INFO[0000] uploading static tcpdump binary from: '/home/onf/.krew/store/sniff/v1.6.2/static-tcpdump' to: '/tmp/static-tcpdump’ 
+  INFO[0000] uploading file: '/home/onf/.krew/store/sniff/v1.6.2/static-tcpdump' to '/tmp/static-tcpdump' on container: 'bessd’ 
+  INFO[0000] executing command: '[/bin/sh -c test -f /tmp/static-tcpdump]' on container: 'bessd', pod: 'upf-0', namespace: 'omec’ 
+  INFO[0000] command: '[/bin/sh -c test -f /tmp/static-tcpdump]' executing successfully exitCode: '0', stdErr :'' INFO[0000] file found: ''                               INFO[0000] file was already found on remote pod         
+  INFO[0000] tcpdump uploaded successfully                
+  INFO[0000] spawning wireshark!                          
+  INFO[0000] start sniffing on remote container           
+  INFO[0000] executing command: '[/tmp/static-tcpdump -i any -U -w - ]' on container: 'bessd', pod: 'upf-0', namespace: 'omec'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -120,6 +120,17 @@ Ubuntu 18 Xrdp errors
   And choose /usr/bin/startxfce4
 
 
+ ** TroubleShoot
+ https://askubuntu.com/questions/215632/restart-xfce-from-tty1
+
+ xfce4 doesn't work --> 
+ 
+ Try killing user by
+ 	pkill -KILL -u yourusername 
+
+ Then, logout all logged in users, This will bring you back to login screen though
+
+
 
 
 

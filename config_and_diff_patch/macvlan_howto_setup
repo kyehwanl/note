@@ -1,0 +1,151 @@
+
+
+How to create MACVLAN interfaces with systemd-networkd?
+-------------------------------------------------------
+https://www.reddit.com/r/systemd/comments/k17jcf/how_to_create_macvlan_interfaces_with/
+https://sreeninet.wordpress.com/2016/05/29/docker-macvlan-and-ipvlan-network-plugins/
+
+Hello!
+
+Currently, I run the Linux command ip to create the MACVLAN interfaces. It's simple and stupid!
+
+As follows:
+
+ip link add mymacvlan0 link eth0 type macvlan mode bridge
+ip link add mymacvlan1 link eth0 type macvlan mode bridge
+Here is my question: how to do this with systemd-networkd?
+
+NOTE: My intention is to use those MACVLAN interfaces with Libvirt for QEMU VMs and also, for LXD Containers. 
+But, I'm not sure if those ip link ... are compatible with this. Anyway, here, I would like to better understand systemd itself...
+
+So far, I'm trying to do this:
+
+File /etc/systemd/network/eth0.network with:
+
+[Match]
+Name=eth0
+
+[Network]
+MACVLAN=mymacvlan0
+MACVLAN=mymacvlan1
+File /etc/systemd/network/mymacvlan0.netdev with:
+
+[NetDev]
+Name=mymacvlan0
+Kind=macvlan
+
+[MACVLAN]
+Mode=bridge
+And file /etc/systemd/network/mymacvlan1.netdev with:
+
+[NetDev]
+Name=mymacvlan1
+Kind=macvlan
+
+[MACVLAN]
+Mode=bridge
+…doesn’t work, even after a reboot.
+
+Then, I also tried to add mymacvlan0.network and mymacvlan1.network files, with no success.
+
+Here is mymacvlan0.network:
+
+[Match]
+Name=mymacvlan0
+
+[Network]
+DHCP=no
+The file mymacvlan1.network is basically the same.
+
+…still nothing.
+
+What am I doing wrong?
+
+And since Netplan on Ubuntu also doesn't support MACVLAN, as a workaround, 
+I'm putting the first two ip link add mymacvlan* ... commands in a Bash script 
+at /etc/networkd-dispatcher/routable.d/10-macvlan-interfaces.sh.
+
+
+
+(Answer)
+
+
+
+If you haven't looked at the netplan issue tracker lately, 
+there are a couple of replies that build on your use of networkd-dispatcher 
+which allows most of the macvlan interface configuration to be done within netplan. 
+Until moving to this solution (which is much cleaner), 
+I used to use pure systemd-networkd configuration to achieve the same thing.
+
+The content of your various .network and .netdev files was pretty much bang on. 
+You were just being screwed over by systemd-networkd's configuration parsing and netplan's intentionally opaque nature. 
+Specifically:
+
+netplan takes the declarative yaml and writes configuration files 
+to /run/systemd/network/ with the prefix 10-netplan- (which has been the case for quite some time)
+
+the configuration files systemd-networkd finds in its various search paths are sorted and processed in lexical order
+
+For example, assume your eth0 is configured like this in /etc/netplan/01-netcfg.yaml
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      addresses: [10.10.10.10/24]
+      nameservers:
+        addresses: [10.10.10.1]
+
+netplan apply will create /run/systemd/network/10-netplan-eth0.network. You can then
+
+create your macvlan interface in /etc/systemd/network/00-mymacvlan0.netdev, and
+
+define its networking in /etc/systemd/network/00-mymacvlan0.network.
+
+E.g.
+
+# /etc/systemd/network/00-mymacvlan0.netdev
+[NetDev]
+Name=mymacvlan0
+Kind=macvlan
+# Optional MAC address, or other options
+MACAddress=33:44:55:66:77:88
+
+[MACVLAN]
+Mode=bridge
+
+# /etc/systemd/network/00-mymacvlan0.network
+[Match]
+Name=mymacvlan0
+
+[Network]
+Address=10.10.10.33/32
+IPForward=yes
+ConfigureWithoutCarrier=yes
+
+[Route]
+Destination=10.10.10.32/27
+
+They key here is the 00- prefix which systemd-networkd's lexical order parses before 10-netplan-*. 
+This ensures the macvlan interface exists before configuring eth0.
+
+The last piece of the puzzle is to make the association betweek eth0 and mymacvlan0 with a drop-in file 
+(also discussed on the man page) that effectively tacks on more configuration.
+
+# /etc/systemd/network/10-netplan-eth0.network.d/10-macvlan.conf
+[Network]
+MACVLAN=mymacvlan0
+
+Although it works, the whole thing is a bit of a mess and is contingent on Canonical not changing the 10-netplan-* 
+prefix of netplan-generated config. 
+If you're intending to stick with netplan, the use of networkd-dispatcher and defining macvlan config in yaml 
+is a much cleaner solution. In any case, having official support for macvlan interfaces directly 
+in netplan would make this whole thing significantly easier.
+
+
+
+
+
+
+
