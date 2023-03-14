@@ -116,6 +116,8 @@
         In addition, execute the following command:
           sudo iptables -I FORWARD 1 -j ACCEPT
 
+		(addtionally, sudo iptables -A FORWARD -d 192.168.252.3 -i ens192 -o access -j ACCEPT might be required)
+
           < My case >
 
           vagrant@5g-sdcore:~/aether-in-a-box$ sudo sysctl -w net.ipv4.ip_forward=1
