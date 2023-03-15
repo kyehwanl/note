@@ -57,8 +57,68 @@ redirecting it's output to your local Wireshark for smooth network debugging exp
 (1) install sniff
 kubectl krew install sniff
 
+  (https://computingforgeeks.com/capture-kubernetes-pods-packets-using-tcpdump/)
+  A. Step 1 – Instal Krew on Your System
+	Ksniff can be easily installed using Krew. We will begin by installing Krew using the command below.
+	(
+	  set -x; cd "$(mktemp -d)" &&
+	  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+	  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+	  KREW="krew-${OS}_${ARCH}" &&
+	  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+	  tar zxvf "${KREW}.tar.gz" &&
+	  ./"${KREW}" install krew
+	)
 
-(2) wireshark version
+
+	Export the Krew PATH environment variable by adding the below lines to your .bashrc or .zshrc file
+	  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+	source the profile.
+	  source ~/.bashrc
+
+  B. Step 2 – Install Ksniff plugin using krew
+	Once Krew has been installed, use it to install Ksniff with the command:
+	  kubectl krew install sniff
+
+  C. Step 3 – Install Wireshark Application
+
+	On CentOS/Rocky Linux/Alma Linux
+	  sudo yum install wireshark wireshark-gnome
+	or
+
+	Install Wireshark on Ubuntu 22.04|20.04|18.04:
+	  sudo apt update
+	  sudo apt install software-properties-common apt-transport-https
+	  sudo add-apt-repository ppa:wireshark-dev/stable 
+	  sudo apt -y install wireshark
+
+
+  D. Configuration
+	need to make configurations for Wireshark to be able to capture the packets as a normal user.
+
+	First, add the user to the Wireshark group.
+	  sudo usermod -a -G wireshark $USER
+
+	Set the right permission for the dumpcap binary file.
+
+	  sudo chgrp wireshark /usr/bin/dumpcap
+	  sudo chmod 750 /usr/bin/dumpcap
+	  sudo setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
+
+	Verify the changes made.
+	  $ sudo getcap /usr/bin/dumpcap
+	  /usr/bin/dumpcap cap_net_admin,cap_net_raw=eip
+
+
+  E. Step 4 – Capture Kubernetes pods packets
+	To be able to capture the Kubernetes pods packets using tcpdump and Wireshark, a command with the syntax below is used.
+
+	kubectl plugin sniff <POD_NAME> [-n <NAMESPACE_NAME>] [-c <CONTAINER_NAME>] --image <PRIVATE_REPO>/docker --tcpdump-image <PRIVATE_REPO>/tcpdump
+
+
+
+(2) wireshark version -- same as (D) above
 Wireshark
 If you are using Wireshark with ksniff you must use at least version 3.4.0. 
 Using older versions may result in issues reading captures
