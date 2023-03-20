@@ -264,6 +264,19 @@ press '-' on gdb running (tui enable|disable)
     grep -lr --include='*.[ch]' search-pattern ./
 2. exclude leading # or empty lines in file
     grep -v -E ‘^\#|^$’ /etc/squid/squid.conf
+3. show lines surrounding each match : -B num (Before), -A num (After) num: number of lines
+	(example)
+		$ cat sd-core/Chart.lock | grep bess-upf -B 3 -A 3
+		- name: 5g-control-plane
+		  repository: https://charts.aetherproject.org
+		  version: 0.6.20
+		- name: bess-upf
+		  repository: https://charts.aetherproject.org
+		  version: 0.0.6
+		- name: 5g-ran-sim
+
+
+
 
 
 (16) ssh tunnel

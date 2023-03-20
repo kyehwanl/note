@@ -243,7 +243,78 @@ Helm Tips
 
 
 -----------------------------------------
- 7. Helm Chart and docker image relation
+ 7-1. Helm Chart veresion check and Pull
+-----------------------------------------
+
+A. Check out version
+
+  $ helm ls -n omec
+  NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+  sd-core omec            1               2023-02-27 16:40:12.564667782 -0500 EST deployed        sd-core-0.10.20
+
+  --> sd-core-0.10.20 
+ 
+
+B. find repository 
+
+  $ helm search repo sd-core
+  NAME                            CHART VERSION   APP VERSION     DESCRIPTION
+  aether/sd-core                  0.12.5                          SD-Core control plane services
+
+	--> aether/sd-core
+
+
+C. pull with the desired version(0.10.20) without tls key checking
+
+  $ helm pull --insecure-skip-tls-verify aether/sd-core --version 0.10.20
+
+
+D. untar the downloaded sd-core-0.10.20.tgz and check bess-upf chart and version
+
+  $ cat sd-core/Chart.lock | grep bess-upf -A 2
+  - name: bess-upf
+	repository: https://charts.aetherproject.org
+	version: 0.0.6
+
+  $ helm pull aether/bess-upf --version 0.0.6
+ 
+
+E. find the associated github source 
+
+	$ cat bess-upf/values.yaml | grep image -A 3
+	images:
+	  tags:
+		bess: "omecproject/upf-epc-bess:master-9a4d86c"
+		pfcpiface: "omecproject/upf-epc-pfcpiface:master-9a4d86c"	
+
+	--> image is upf-epc-bess:master-9a4d86c ( 9486c means git index )
+
+	--> let's check out
+	$ git clone https://github.com/omec-project/upf
+	$ cd upf 
+	$ git ll | grep 9a4d86c
+	* 9a4d86c (HEAD) Fix flow description parsing for uplink (#556)
+
+	$ git checkout 9a4d86c
+	Note: checking out '9a4d86c'.
+
+	$ git st
+	HEAD detached at 9a4d86c
+	nothing to commit, working tree clean
+
+
+F. Now modify sources and make docker image again
+	$ docker build -t upf-9a4d86c ./
+
+
+G. upload this image into my own docker repo
+H. modify repository value in Value.yaml file (from either sd-core or bess-upf)
+I. helm upgrade to apply
+
+
+
+-----------------------------------------
+ 7-2. Helm Chart and docker image relation
 -----------------------------------------
 
 (1) Verifying Helm templating to Kubernetes resources  
@@ -287,14 +358,23 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
   - name: bess-init                                  
     image: "omecproject/upf-epc-bess:master-9a4d86c" 
 
-    --> This means that image location is from hub.docker.com
-        (https://hub.docker.com/r/omecproject/upf-epc-bess/)
+    --> This means that image location is from hub.docker.com under omecproject/upf-epc-bess/
+	    ( https://hub.docker.com/r/omecproject/upf-epc-bess/tags?page=1&name=9a4d86c,
+		 it can be used with "docker pull omecproject/upf-epc-bess:master-9a4d86c" )
 
         Also every image layers can be seen at https://hub.docker.com/r/omecproject/upf-epc-bess/tags
         for individual layers to view their corresponding instruction(s)
 
         For example, excerpt from the image layers web site,
+		  (https://hub.docker.com/layers/omecproject/upf-epc-bess/master-9a4d86c/images/sha256-7338c3b3bd6b4f72bbfbef78ae5c16f4579f5a6979365dabab869d0ae3ed0de6?context=explore)
+		  1 ADD file ... in / 
+		  2 CMD ["bash"] 
+		  3 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin 
+		  4 ENV LANG=C.UTF-8
           ...
+		  20 COPY conf /opt/bess/bessctl/conf # buildkit 
+		  21 RUN /bin/sh -c ln -s 
+		  22 ENV PYTHONPATH=/opt/bess
           23 WORKDIR /opt/bess/bessctl
           24 ENTRYPOINT ["bessd" "-f"]
 
@@ -430,6 +510,8 @@ Retrieve a package from a package repository, and download it locally
   - Then, helm upgrade --install <release> <path> ...
             where, <path> might be '.' --> current directory or untarred directory
 
+	(my example)
+	  helm pull aether/bess-upf --insecure-skip-tls-verify --version 0.0.6 
 
 
 

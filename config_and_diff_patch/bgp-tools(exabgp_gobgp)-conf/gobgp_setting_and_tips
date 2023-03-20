@@ -352,6 +352,13 @@ MISC
   (1) gotags
     * install
     go get -u github.com/jstemmer/gotags
+    -- 
+	  'go get' is no longer supported outside a module.
+	  To build and install a command, use 'go install' with a version,
+	  like 'go install example.com/cmd@latest'
+
+	--> so, go install github.com/jstemmer/gotags@latest
+
 
     * configure in vim
     :set tags+=../gotags

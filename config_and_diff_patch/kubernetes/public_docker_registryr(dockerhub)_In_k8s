@@ -1,0 +1,71 @@
+
+-----------------------------------------------------
+How to Create a Secret based on existing credentials
+-----------------------------------------------------
+https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+
+
+1. login to docker hub
+
+    docker login 
+
+    --> The login process creates or updates a config.json file that holds an authorization token
+    cat ~/.docker/config.json
+
+
+2.  copy that credential into Kubernetes
+
+	kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
+    --type=kubernetes.io/dockerconfigjson
+
+
+
+3. If you need more control (for example, to set a namespace or a label on the new secret) 
+	then you can customise the Secret before storing it
+
+	- set the name of the data item to .dockerconfigjson
+	- base64 encode the Docker configuration file and then paste that string, 
+		unbroken as the value for field data[".dockerconfigjson"]
+	- set type to kubernetes.io/dockerconfigjson
+
+
+	$ base64 -w 0 .docker/config.json
+	ewoJImF1dGhzIjogewoJCSJodHRwczovL2l...RnPSIKCQl9Cgl9Cn0=on
+
+
+	< example >
+	apiVersion: v1
+	kind: Secret
+	metadata:
+	  name: myregistrykey
+	  namespace: awesomeapps
+	data:
+	  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJodHRwczovL2l...RnPSIKCQl9Cgl9Cn0=on
+	type: kubernetes.io/dockerconfigjson
+
+
+
+
+
+4. Inspecting the Secret regcred
+
+	kubectl get secret regcred --output=yaml
+
+	*c.f.
+	echo "c3R...zE2" | base64 --decode
+
+
+
+5. Create a Pod that uses your Secret
+
+	apiVersion: v1
+	kind: Pod
+	metadata:
+	  name: private-reg
+	spec:
+	  containers:
+	  - name: private-reg-container
+		image: <your-private-image>
+	  imagePullSecrets:
+	  - name: regcred
