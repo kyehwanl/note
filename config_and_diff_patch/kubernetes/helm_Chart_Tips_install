@@ -288,6 +288,7 @@ E. find the associated github source
 		pfcpiface: "omecproject/upf-epc-pfcpiface:master-9a4d86c"	
 
 	--> image is upf-epc-bess:master-9a4d86c ( 9486c means git index )
+		(https://hub.docker.com/layers/omecproject/upf-epc-bess/master-9a4d86c/images/sha256-7338c3b3bd6b4f72bbfbef78ae5c16f4579f5a6979365dabab869d0ae3ed0de6?context=explore)
 
 	--> let's check out
 	$ git clone https://github.com/omec-project/upf
