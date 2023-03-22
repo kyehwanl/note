@@ -1,0 +1,59 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM1 = "sdcore"
+VM2 = "ueransim"
+
+HostName1 = "5g-sdcore"
+HostName2 = "ue-ransim"
+
+IP1 = "10.10.1.3"
+IP2 = "10.10.1.2"
+
+
+servers = [
+  { :hostname => HostName1, :ip => IP1, :memory => "12288", :vm => VM1, :cpu => 4},
+  { :hostname => HostName2, :ip => IP2, :memory => "4096", :vm => VM2, :cpu => 2 },
+]
+
+$script = <<-SCRIPT
+apt update
+apt install -y make vifm bash-completion
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-18.04"
+  #config.vm.box = "ubuntu/bionic64"
+  #config.vm.box = "bento/ubuntu-20.04"
+  #config.vm.box = "ubuntu/focal64"
+  #config.vm.box = "generic/ubuntu2004"
+
+  servers.each do |conf|
+    config.vm.define conf[:vm] do |node|
+      node.vm.hostname = conf[:hostname]
+      node.vm.network "private_network", ip: conf[:ip]
+      node.vm.synced_folder ".", "/vagrant"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = conf[:memory]
+        vb.cpus = conf[:cpu]
+        #vb.gui = true
+      end
+
+      node.vm.provision "shell", inline: $script, privileged: true
+    end 
+
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+  

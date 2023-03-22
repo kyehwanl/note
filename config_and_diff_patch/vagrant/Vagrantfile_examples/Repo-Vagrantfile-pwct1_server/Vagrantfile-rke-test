@@ -1,0 +1,55 @@
+# Start Configuration
+# Declare VARIABLES 
+$installK8s = <<SCRIPT
+bash -c /home/vagrant/installk8s.sh
+SCRIPT
+
+VM1 = "rke2-test"
+ServerIP  = "192.168.10.20"
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define VM1 do |server|
+
+    # creating a vm from base image
+    server.vm.box = "ubuntu/bionic64"
+    server.vm.hostname = "rke-server"
+    server.vm.network "private_network", ip: ServerIP, hostname: true
+    server.vm.synced_folder ".", "/vagrant"
+
+    #server.vm.provision "file", source: "./install-docker-kubernetes-ubuntu-v2.sh", destination: "/home/vagrant/"
+    #server.vm.provision "file", source: "./install-docker-kubernetes-ubuntu-v2.1.sh", destination: "installk8s.sh"
+    #server.vm.provision "InstallK8s", type: "shell", run: "once", inline: $installK8s
+     #server.vm.provision "InstallK8s", type: "shell", run: "once", inline: <<-SCRIPT
+     #bash -c installk8s.sh
+     #SCRIPT
+
+    server.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+      #vb.gui = true
+    # Customize the amount of memory on the VM:
+      vb.memory = "8192"
+      vb.cpus = "4"
+    end
+    
+  end
+
+  (1..2).each do |i|
+    config.vm.define "client#{i}" do |node|
+
+      node.vm.box = "ubuntu/bionic64"
+      node.vm.hostname = "rke-cli#{i}"
+      node.vm.network "private_network", ip: "192.168.10.2#{i}", hostname: true
+
+
+      node.vm.provider "virtualbox" do |vb|
+	vb.memory = "8192"
+	vb.cpus = "4"
+      end
+
+    end
+  end
+
+
+end

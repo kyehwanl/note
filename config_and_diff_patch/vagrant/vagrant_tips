@@ -320,6 +320,48 @@ Only the initial boot-up will take longer time than the succeeding boots.
 	ran-upf2
 
 
+(4) push, pop
+
+	-- push
+	$ vagrant snapshot push --help
+	Usage: vagrant snapshot push [options] [vm-name]
+
+	Take a snapshot of the current state of the machine and 'push'
+	it onto the stack of states. You can use `vagrant snapshot pop`
+	to restore back to this state at any time.
+
+	If you use `vagrant snapshot save` or restore at any point after
+	a push, pop will still bring you back to this pushed state.
+		-h, --help                       Print this help
+
+	-- pop 
+	$ vagrant snapshot pop --help
+	Usage: vagrant snapshot pop [options] [vm-name]
+
+	Restore state that was pushed onto the snapshot stack
+	with `vagrant snapshot push`.
+
+			--[no-]provision             Enable or disable provisioning
+			--provision-with x,y,z       Enable only certain provisioners, by type or by name.
+			--no-delete                  Don't delete the snapshot after the restore
+			--no-start                   Don't start the snapshot after the restore
+		-h, --help                       Print this help
+
+
+
+	< example >
+
+	  kyehwanl@pwct1:~/vagrant-test/aiab-5g-1$ vagrant snapshot push
+	  ==> default: Snapshotting the machine as 'push_1679442862_1610'...
+	  ==> default: Snapshot saved! You can restore the snapshot at any time by
+	  ==> default: using `vagrant snapshot restore`. You can delete it using
+	  ==> default: `vagrant snapshot delete`.
+
+	  kyehwanl@pwct1:~/vagrant-test/aiab-5g-1$ vagrant snapshot list
+	  ==> default:
+	  push_1679442862_1610
+
+
 
 
 

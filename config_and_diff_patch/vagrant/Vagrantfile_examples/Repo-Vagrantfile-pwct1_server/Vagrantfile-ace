@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM1 = "aiab"
+VM2 = "ran"
+
+HostName1 = "aiab"
+HostName2 = "ran"
+
+#ServerIP  = "192.168.50.55"
+IP1 = "10.10.1.11"
+IP2 = "10.10.1.3"
+
+
+servers = [
+  { :hostname => HostName1, :ip => IP1, :memory => "12288", :vm => VM1, :cpu => 4},
+  { :hostname => HostName2, :ip => IP2, :memory => "12288", :vm => VM2, :cpu => 4 },
+]
+
+$script = <<-SCRIPT
+apt update
+apt install -y make vifm bash-completion
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-18.04"
+
+  servers.each do |conf|
+    config.vm.define conf[:vm] do |node|
+      node.vm.hostname = conf[:hostname]
+      node.vm.network "private_network", ip: conf[:ip]
+      node.vm.synced_folder ".", "/vagrant"
+
+      node.vm.provider "virtualbox" do |vb|
+	vb.memory = conf[:memory]
+	vb.cpus = conf[:cpu]
+      end
+
+      node.vm.provision "shell", inline: $script, privileged: true
+    end 
+
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,0 +1,21 @@
+# Start Configuration
+
+# Declare VARIABLES 
+
+VM1 = "server"
+
+ServerIP  = "192.168.10.2"
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define VM1 do |server|
+
+    # creating a vm from base image
+    server.vm.box = "ubuntu/bionic64"
+    server.vm.hostname = VM1
+    server.vm.network "private_network", ip: ServerIP, hostname: true
+    
+  end
+  
+end
