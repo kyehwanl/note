@@ -1,0 +1,150 @@
+-------------------------------
+gobgpsec installation command
+-------------------------------
+
+# Vagrant file init
+sudo -s
+yum install -y git make
+git clone https://github.com/kyehwanl/config_ready_to_use.git
+config_ready_to_use/install.sh
+
+
+# SrxCryptoAPI install
+ yum -y install epel-release
+ yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* telnet less gcc
+ yum -y install uthash-devel net-snmp readline-devel patch git net-snmp-config net-snmp-devel automake rpm-build autoconf libtool
+
+ WORKDIR /root/srx-crypto-api
+ RUN autoreconf -i
+ RUN ./configure --prefix=/usr CFLAGS="-O0 -g"
+ RUN make all install && ldconfig
+
+
+# go grpc plugin installation required
+(2-2) gobgp Compilation ( in case copied from another place)
+    (A) Check go version first ( need to be > go1.10)
+    (B) if lower than go version 1.10, there will be cgo error
+    (C) then version up with > go1.10.2
+    (D) recommend to install protoc and grpc again ( high chance of some errors with protocol buffer issues)
+        go get -u github.com/golang/protobuf/protoc-gen-go
+        go get -u google.golang.org/grpc
+
+    (E) protocol buffer compile with grpc plugins in api directory
+        gobgp/api}-> protoc -I=. --go_out=plugins=grpc:. ./gobgp.proto
+
+    (F) build
+        osrg/gobgp}-> go build -ldflags="-r /opt/project/srx_test1/srxcryptoapi-0.3.0.0/_inst/lib64/srx" -gcflags='-N -l' ./...
+
+
+
+
+ (*) UPDATED
+  A. gobgp version 2.13
+      - need go version > 1.13
+      - need protoc version == 3.7.1
+
+  B. go install
+    - go get github.com/osrg/gobgp/cmd/gobgpd
+    - go get github.com/osrg/gobgp/cmd/gobgp
+
+
+
+
+# gobgp install history 
+
+  srxTest [19]{.../vagrant/gobgpsrx}$ history
+
+    4  export GOPATH=/root
+    5  ll /usr/local/go
+    6  which go
+    7  go version
+    8  export PATH=$PATH:$GOPATH/bin:/usr/lib/golang/bin
+    9  export CGO_CFLAGS="-I/usr/include/srx -I/include/srx"
+   10  ll /usr/include/srx/
+   11  export CGO_LDFLAGS="-L/usr/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/usr/lib64/srx"
+   12  ll /usr/lib64/srx/
+   13  echo $GOPATH
+   14  echo $PATH
+   15  go install ./...
+   16  go get golang.org/x/crypto/ssh/terminal@v0.0.0-20211108221036-ceb1ce70b4fa
+   17  go get github.com/kr/pretty@v0.3.0
+   18  go install ./...
+   19  history
+   ./gobgpd -p -f ./gobgpd.conf --log-level=debug
+
+
+
+
+
+--------------------
+ gobgp Dockerfile
+--------------------
+
+
+ckerfile_gobgpsec_src                                                                                                                                                                             -rw-------   kyehwanl:antdadmin           2.2 K          05/18 13:50
+############################################################                                                                                                                                                                                                          10/27
+# Dockerfile to build gobgp QuaggaSRx container images
+# Based on CentOS 7
+############################################################
+#FROM centos:latest
+FROM srxcryptoapi_src:latest
+MAINTAINER "Kyehwan Lee".
+ENV container docker
+
+
+################## BEGIN INSTALLATION ######################
+
+RUN yum -y install git less gcc
+
+#RUN yum -y install go
+# gobgp 2.13 version needs go > 1.13
+#                   protoc version == 3.7.1
+WORKDIR /root
+RUN curl -kO https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz \
+    && tar zxvf ./go1.14.2.linux-amd64.tar.gz -C /usr/local \
+    && export GOPATH=/root \
+    && export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin \
+    && rm -rf ./go1.14.2.linux-amd64.tar.gz
+
+RUN mkdir -p ./src/github.com/osrg \
+    && git clone --single-branch --branch bgpsec https://github.com/kyehwanl/gobgpsec_priv.git gobgp \
+    && mv gobgp ./src/github.com/osrg/
+
+
+# gobgp configuration
+WORKDIR /root/src/github.com/osrg/gobgp
+RUN export CGO_CFLAGS="-I/usr/include/srx -I/include/srx" \
+    && export CGO_LDFLAGS="-L/usr/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/usr/lib64/srx" \
+    && export GOPATH=/root \
+    && export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin \
+    && go install ./...
+
+
+################## BEGIN CONFIGURATION ######################
+# Use the sample configurations as our production configs
+EXPOSE 179
+
+WORKDIR /root/bin
+#COPY gobgpd.conf gobgpd.conf
+VOLUME ["/root/bin"]
+
+ENV PATH /root/bin:/usr/local/go/bin:$PATH
+#ENTRYPOINT ["gobgpd", "-p"]
+CMD ["gobgpd", "-p", "-f", "/etc/gobgpd.conf", "--log-level=info"]
+#CMD ["sleep", "infinity"]
+
+
+############# DOCKER RUN command example #####################################
+# docker run --rm -ti -p 179:179 \
+#       -v $PWD/gobgpd.ns1.conf.bgpsec:/etc/gobgpd.conf \
+#       -v $PWD/keys/:/var/lib/bgpsec-keys/ \
+#       gobgpsec /bin/bash
+#
+#(example)
+# docker run --rm -it -p 179:179 [--network=host] \
+#       -v /opt/project/TestBgpsecImple/gobgpd.ns1.conf.bgpsec:/etc/gobgpd.conf \
+#       -v /opt/project/srx_test1/keys:/var/lib/bgpsec-keys \
+#       gobgpsec \
+#       [./gobgpd -f ./gobgpd.conf -p --log-level=info]
+##############################################################################
+#

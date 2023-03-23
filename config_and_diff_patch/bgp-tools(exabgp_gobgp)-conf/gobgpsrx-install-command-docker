@@ -1,0 +1,66 @@
+
+gobgpsec install command in Docker centos7
+------------------------------------------
+
+  # Centos 7 running in Docker container
+	docker run --rm -it -v $PWD/gobgpsrx.conf:/etc/gobgpdsrx.conf --name gobgpsrx centos:7
+	cd $HOME
+
+  # Required libraries 
+	yum -y install epel-release
+	yum -y install git gcc make automake wget uthash-devel libconfig libconfig-devel openssl openssl-devel libcrypto.so.* telnet less gcc net-tools -y
+
+
+  # Build srx-crypto-api and install for SRxCryptoAPI library
+	git clone https://github.com/usnistgov/NIST-BGP-SRx.git
+	git clone https://github.com/usnistgov/gobgpsrx.git
+
+	cd NIST-BGP-SRx/srx-crypto-api/
+
+	./configure --prefix=/usr CFLAGS="-O0 -g"  ## default prefix : /usr/local
+	make all install
+
+
+  # go lang install
+	cd $HOME
+	wget https://go.dev/dl/go1.19.5.linux-amd64.tar.gz
+	rm -rf /usr/local/go && tar -C /usr/local -xzf go1.19.5.linux-amd64.tar.gz
+	export PATH=$PATH:/usr/local/go/bin
+	## export GOPATH=/root --> if omitted, GOPATH will be $HOME/go
+	go version
+
+  # gobgpsrx build & install
+	export CGO_CFLAGS="-I/usr/include/srx/"
+	export CGO_LDFLAGS="-L/usr/lib64/srx/ -Wl,-rpath -Wl,/usr/lib64/srx/"
+	cd gobgpsrx
+	## go build ./...
+	go install ./...
+
+
+
+  # gobgpsrx execution 
+	-- gobgpd server
+     cd go/bin/
+     ./gobgpd -p -f <config-file> -l=debug
+
+
+	-- gobgp client
+
+	  [root@ceeef029ca93 bin]# ./gobgp global rib
+	  Network not in table
+
+	  [root@ceeef029ca93 bin]# ./gobgp global rib add -a ipv4 100.1.1.0/24
+	  [root@ceeef029ca93 bin]# ./gobgp global rib
+		   Network              Next Hop             AS_PATH              Age        Attrs
+	  N,N*>100.1.1.0/24         0.0.0.0                                   00:00:06   [{Origin: ?}]
+
+	  [root@ceeef029ca93 bin]# ./gobgp global rib add bgpsec -a ipv4 15.18.20.0/24 nexthop 10.0.50.5
+	  +++ bgpsec configuration found
+	  +++++++++ BGPSec called +++++++++++++
+	  [root@ceeef029ca93 bin]# ./gobgp global rib
+		   Network              Next Hop             AS_PATH              Age        Attrs
+	  N,N*>15.18.20.0/24        10.0.50.5                                 00:00:13   [{Origin: ?} {bgpsecs}]
+	  N,N*>100.1.1.0/24         0.0.0.0                                   00:00:43   [{Origin: ?}]
+
+
+
