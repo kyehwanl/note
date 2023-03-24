@@ -341,6 +341,11 @@ press '-' on gdb running (tui enable|disable)
 4. gcc -print-search-dirs | sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | tr \; \\012
 5. gcc -m64 -Xlinker --verbose  2>/dev/null | grep SEARCH | sed 's/SEARCH_DIR("=\?\([^""]\+\)"); */\1\n/g'  | grep -vE '^$'
 
+6. To add library into ldconfig's Cache (ld.so.cache)
+	create a file in /etc/ld.so.conf.d/<filename.conf>, which includes the library path, e.g., /usr/local/lib64/srx/
+	And then, call 'ldconfig' command to update ld.so.cache
+
+
 
 (22) perform consecutive history commands
 =========================================
@@ -560,6 +565,19 @@ normally, following curl options are used
 
 
 
+(38) Writing Text with Cat command
+===================================
+A. 
+	cat >> file1
+	111
+	222
+	<Ctl-D>
+
+B. 
+	cat > file2 << EOF
+	1111
+	2222
+	EOF
 
 
 (ETC)

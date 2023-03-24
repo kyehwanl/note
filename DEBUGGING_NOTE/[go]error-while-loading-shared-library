@@ -1,0 +1,30 @@
+
+1. Issue 
+    [root@ceeef029ca93 gobgpd]# ./gobgpd 
+    ./gobgpd: error while loading shared libraries: libSRxBGPSecOpenSSL.so.3: cannot open shared object file: No such file or directory
+
+
+2. Reason. 
+    dynamic loader was not able to find the library when running
+
+
+
+3. Solution
+
+    (1) ldconfig, ld.so.cache update
+	# cd /etc/ld.so.conf.d/
+    # cat > srxbgpsecopenssl.conf << EOF
+	/usr/local/lib64/srx 
+	EOF
+
+	(2) LD_LIBRARY_PATH env variable
+	# export LD_LIBRARY_PATH=/usr/local/lib64/srx
+
+
+	(3) CGO_LDFLAGS env variable
+	# export CGO_LDFLAGS="-L/path/to/lib -Wl,-rpath -Wl,/path/to/lib"
+
+
+	(4) "LDFLAGS:" with "-Wl..." in go source file header
+	#cgo LDFLAGS: -L/usr/local/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/usr/local/lib64/srx 
+

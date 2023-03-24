@@ -574,6 +574,64 @@ with Vagrant commands from any directory. For example:
 
 
 
+---------------------------
+8. Provisioning for user
+---------------------------
+(https://stackoverflow.com/questions/22547575/execute-commands-as-user-after-vagrant-provisioning)
+The key is to specify privileged: false so that it will use the default user and not root.
+
+  Vagrant.configure("2") do |config|
+	$script = <<-SCRIPT
+	rbenv install 2.0.0-p353
+	rbenv global 2.0.0-p353
+	gem update --system
+	yes | gem update
+	gem install rdoc
+	gem install rails pg
+	SCRIPT
+
+	config.vm.provision "shell", inline: $script, privileged: false
+  end
+
+
+  ***********< My example >*************
+  $script = <<-SCRIPT
+  apt update
+  apt install -y make vifm bash-completion git
+  SCRIPT
+
+  $script_user = <<-SCRIPT_USER
+  git clone https://github.com/kyehwanl/config_ready_to_use.git
+  config_ready_to_use/vagrant_vim_env_config.sh
+  SCRIPT_USER
+
+
+  Vagrant.configure("2") do |config|
+	servers.each do |conf|
+	  config.vm.define conf[:vm] do |node|
+	  ...
+
+		node.vm.provision "shell", inline: $script, privileged: true
+		node.vm.provision "shell", inline: $script_user, privileged: false
+	  end
+	end
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

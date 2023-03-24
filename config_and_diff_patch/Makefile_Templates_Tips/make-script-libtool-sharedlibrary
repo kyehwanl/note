@@ -150,7 +150,7 @@ Making Shared Library (using gcc)
     매크로는 결국 내부적으로 “ld: cannot find -l<library>”에러로 인해 실패하게 된다.
 
     ⇒ 즉, 요약하면 ldconfig는 링커(collect2, ld)를 위한 것이 아니라 동적로더(dynamic loader, ld-linux.so.2)를 
-      위한 설정 ld를 위한 설정은 LDFLAGS에서 -L<path> 추가 해야된다. → AC_SEARCH_LIBS - tweak 참조
+      위한 설정. 따라서 ld를 위한 설정은 LDFLAGS에서 -L<path> 추가 해야된다. → AC_SEARCH_LIBS - tweak 참조
 
 
 
