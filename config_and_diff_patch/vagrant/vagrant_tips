@@ -621,7 +621,111 @@ The key is to specify privileged: false so that it will use the default user and
 
 
 
+-----------------------------------------
+9. Moving vagrant VM image with snapshot
+-----------------------------------------
 
+vagrant-test/ace : working directory which include Vagrantfile
+
+(1) moving vagrant working directory 
+
+	All files under vagrant-test/ace/ --> move to new machine
+
+(2) moving VirtualBox VM image
+
+	all files under ~/VirtualBox VMs/ace_aiab_1677857454721_5507/ --> move to new machine
+
+
+(3) if it has snapshot
+	vagrant-test/ace/.vagrant/machines/aiab/virtualbox/ is not empty
+	vagrant-test/ace/.vagrant/machines/ran/virtualbox/ is not empty
+
+	A. VirtualBox GUI (VirtualBox Manager), 
+		Machine -> Add -> select and open ace_aiab_1677857***_5507/ace_aiab_....vbox 
+		-> 
+
+	B. status file copy
+
+	  go to 
+		  vagrant-test/ace/.vagrant/machines/aiab/virtualbox/
+		  vagrant-test/ace/.vagrant/machines/rn/virtualbox/
+
+	  --> files:  action_provision  action_set_name  box_meta  creator_uid  id  index_uuid  
+				  private_key  synced_folders  vagrant_cwd
+
+	  So, move these files into the same location in a new machine
+
+
+	C. if vboxnet3 error occurrs, when it has only vboxnet0
+
+		go to GUI, VirtualBox Manager, Tools -> Network --> create interface until reachs to vboxnet3
+		and then remove vboxnet1,2(however, it's fine not to remove them) 
+		go to the individual setting, -> Network -> Adaptor2 -> Name -> vboxnet0 and Ok
+
+
+	D. Check out in vagrant status and snapshot list
+
+		kyehwanl@pwct2:~/vagrant-test/aiab-ueransim-s1$ vagrant status
+		Current machine states:
+
+		sdcore                    poweroff (virtualbox)
+		ran                       poweroff (virtualbox)
+
+
+		kyehwanl@pwct2:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot list
+		==> sdcore:
+		push_1679443121_1357
+		sdcore-upf2
+		==> ran:
+		push_1679443155_8030
+		ran-upf2
+
+
+	E. testing 
+		vagrant snapshot pop --no-delete ran (or aiab, or both - without vm-name)
+	
+		kyehwanl@pwct2:~/vagrant-test/aiab-ueransim-s1$ vagrant snapshot pop --no-delete
+		==> sdcore: Restoring the snapshot 'push_1679443121_1357'...
+		==> sdcore: You assigned a static IP ending in ".1" to this machine.
+		==> sdcore: This is very often used by the router and can cause the
+		==> sdcore: network to not work properly. If the network doesn't work
+		==> sdcore: properly, try changing this IP.
+		==> sdcore: Checking if box 'bento/ubuntu-18.04' version '202212.11.0' is up to date...
+		==> sdcore: A newer version of the box 'bento/ubuntu-18.04' is available and already
+		==> sdcore: installed, but your Vagrant machine is running against
+		==> sdcore: version '202212.11.0'. To update to version '202303.13.0',
+		==> sdcore: destroy and recreate your machine.
+		==> sdcore: Resuming suspended VM...
+		==> sdcore: Booting VM...
+		==> sdcore: Waiting for machine to boot. This may take a few minutes...
+			sdcore: SSH address: 127.0.0.1:2203
+			sdcore: SSH username: vagrant
+			sdcore: SSH auth method: private key
+		==> sdcore: Machine booted and ready!
+		==> sdcore: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+		==> sdcore: flag to force provisioning. Provisioners marked to run always will still run.
+		==> ran: Restoring the snapshot 'push_1679443155_8030'...
+		==> ran: Checking if box 'bento/ubuntu-18.04' version '202212.11.0' is up to date...
+		==> ran: A newer version of the box 'bento/ubuntu-18.04' is available and already
+		==> ran: installed, but your Vagrant machine is running against
+		==> ran: version '202212.11.0'. To update to version '202303.13.0',
+		==> ran: destroy and recreate your machine.
+		==> ran: Resuming suspended VM...
+		==> ran: Booting VM...
+		==> ran: Waiting for machine to boot. This may take a few minutes...
+			ran: SSH address: 127.0.0.1:2205
+			ran: SSH username: vagrant
+			ran: SSH auth method: private key
+		==> ran: Machine booted and ready!
+		==> ran: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+		==> ran: flag to force provisioning. Provisioners marked to run always will still run.
+
+
+		kyehwanl@pwct2:~/vagrant-test/aiab-ueransim-s1$ vagrant status
+		Current machine states:
+
+		sdcore                    running (virtualbox)
+		ran                       running (virtualbox)
 
 
 
