@@ -580,6 +580,27 @@ B.
 	EOF
 
 
+
+
+
+(39) journalctl to see error status
+===================================
+journalctl <service>
+	$ sudo journalctl -u xrdp.service -f
+		-u: sepcified unit,  -f: follow
+
+
+
+
+
+
+
+
+
+
+
+
+
 (ETC)
 =================================
 A. show file types except source files in project directory
