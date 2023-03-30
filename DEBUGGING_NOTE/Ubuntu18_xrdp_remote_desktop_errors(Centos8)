@@ -133,10 +133,19 @@ Ubuntu 18 Xrdp errors
 
 
 
+=================================
+5. Centos 8, Desktop Environment 
+=================================
 
+Error: in xrdp log,  
+  Window manager exited quickly (1 secs). This could indicate a window manager config problem
 
+- Reason:
+    Seems Centos 8 Server version install without GUI environment 
 
-
+- Solution
+    install Desktop Environment with the following command, or xfce
+        sudo yum groupinstall "Server with GUI"
 
 
 
