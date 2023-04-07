@@ -126,13 +126,20 @@ Where does Vagrant download its .box files
     ~/.vagrant.d/tmp
 
 
--------------------
+-------------------------
 To change the Path, 
--------------------
+-------------------------
 you can set a new Path to an Enviroment-Variable named: VAGRANT_HOME
 
 export VAGRANT_HOME=my/new/path/goes/here/
 
+
+
+(1) VirtualBox 실행폴더 바꾸기
+vboxmanage setproperty machinefolder /path/to/directory/ → /opt/VirtualBoxVMs
+
+(2) Vagrant Home directory 바꾸기
+    .bash_profile에 export VAGRANT_HOME=/opt/.vagrant.d/
 
 
 
@@ -662,6 +669,9 @@ vagrant-test/ace : working directory which include Vagrantfile
 		and then remove vboxnet1,2(however, it's fine not to remove them) 
 		go to the individual setting, -> Network -> Adaptor2 -> Name -> vboxnet0 and Ok
 
+		** When Error: Host Only Network- Failed to save host network interface parameter - E_ACCESSDENIED
+		--> see TroubleShooting
+
 
 	D. Check out in vagrant status and snapshot list
 
@@ -729,6 +739,8 @@ vagrant-test/ace : working directory which include Vagrantfile
 
 
 
+  	F. one by one, by using "vagrant status", check out vagrant running status and register into "global" record.
+		Otherwise, "vagrant global-status" command doesn't show all the instances
 
 
 
@@ -737,9 +749,69 @@ vagrant-test/ace : working directory which include Vagrantfile
 
 
 
+(4) ---- TroubleShooting -----
+
+A. When adding vboxnet0,1,2,3,
+	Error: Host Only Network- Failed to save host network interface parameter - E_ACCESSDENIED
+	(https://forums.virtualbox.org/viewtopic.php?t=104357)
+
+
+	On Linux, Mac OS X and Solaris Oracle VM VirtualBox will only allow IP addresses in 192.68.56.0/21 range to be assigned 
+	to host-only adapters. For IPv6 only link-local addresses are allowed. 
+	If other ranges are desired, they can be enabled by creating /etc/vbox/networks.conf and specifying allowed ranges there. 
+
+	For example, to allow 10.0.0.0/8 and 192.168.0.0/16 IPv4 ranges as well as 2001::/64 range 
+	put the following lines into /etc/vbox/networks.conf:
+
+	  * 10.0.0.0/8 192.168.0.0/16
+	  * 2001::/64
+
+	Lines starting with the hash # are ignored. Next example allows any addresses, effectively disabling range control:
+
+	* 0.0.0.0/0 ::/0
+
+	If the file exists, but no ranges are specified in it, no addresses will be assigned to host-only adapters. 
+	The following example effectively disables all ranges:
+
+    # No addresses are allowed for host-only adapters
 
 
 
+
+
+B.  When uid is different
+  kyehwanl@pwct1:~/vagrant-test/ace$ vagrant status 
+
+  The VirtualBox VM was created with a user that doesn't match the
+  current user running Vagrant. VirtualBox requires that the same user
+  be used to manage the VM that was created. Please re-run Vagrant with
+  that user. This is not a Vagrant issue.
+
+  The UID used to create the VM was: 1003
+  Your UID is: 40835
+
+  --> where, id can be found by hittimg a command, "id"
+  kyehwanl@pwct1:~$ id
+  uid=40835(kyehwanl) gid=40835(kyehwanl) groups=40835(kyehwanl),27(sudo)
+
+
+  (Solution)
+	https://github.com/hashicorp/vagrant/issues/8630
+
+	  You need to update the creator_uid file in .vagrant/
+	  The file should be in: .vagrant/machines/web/virtualbox/creator_uid
+	  You may also need to assign the ownership for .vagrant/machines/web to the new uid as well.
+
+	  Read this for more information:
+	  http://albertech.blogspot.com/2016/11/fix-vagrant-error-virtualbox-vm-was.html
+
+	  In addition you may need to change ownership of other files in your VM install such as:
+	  provisioning/site.retry
+
+
+	--> my case,
+	change the uid in  ~/vagrant-test/ace/.vagrant/machines/ran/virtualbox/creator_uid
+	1003 --> 40835
 
 
 

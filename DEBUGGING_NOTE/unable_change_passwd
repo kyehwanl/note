@@ -1,0 +1,55 @@
+
+Error Message:
+---------------
+"You must wait longer to change your password"
+
+https://www.linvirtshell.com/2016/03/getting-error-as-you-must-wait-longer.html
+
+
+
+
+Resolution
+
+    First check password aging policies/information for user as follows:
+
+  # chage -l user 
+  Last password change: Feb 07, 2011 
+  Password expires: May 08, 2011 
+  Password inactive: never 
+  Account expires: never 
+  Minimum number of days between password change: 7       <---
+  Maximum number of days between password change: 90 
+  Number of days of warning before password expires: 28
+
+
+(1)
+Make following changes to "/etc/shadow" file as root user:
+
+user:$1$rmOPqlKQ$DMS2VsQuV/LNh8it5jT.N0:15012:0:99999:7:::     <---
+
+OR
+
+(2)
+Expire the user's password using root account:
+
+# chage -d 0 user
+
+
+
+  * # chage -l user 
+  Last password change: Feb 07, 2011 
+  Password expires: May 08, 2011 
+  Password inactive: never 
+  Account expires: never 
+  Minimum number of days between password change: 0    <--- 
+  Maximum number of days between password change: 90 
+  Number of days of warning before password expires: 28
+   
+  Try to change the password and it should work now.
+
+
+Root Cause
+
+    The issue mentioned above seems to be due to user password expiry settings are too restrictive.
+    Minimum number of days between password change was set to 7 days so password change was not allowed before 7 days. 
+	The error You must wait longer to change your password was suggesting the same.
