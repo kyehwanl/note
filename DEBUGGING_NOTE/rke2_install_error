@@ -1,0 +1,32 @@
+
+When Install rke2 
+==================
+
+
+1. curl error
+
+	curl -sfL https://get.rke2.io | INSTALL_RKE2_CHANNEL=latest sh -
+
+	[INFO]  finding release for channel latest
+	curl: (56) OpenSSL SSL_read: SSL_ERROR_SYSCALL, errno 104
+	[INFO]  using latest as release
+	[INFO]  downloading checksums at https://github.com/rancher/rke2/releases/download/latest/sha256sum-amd64.txt
+	curl: (22) The requested URL returned error: 404 Not Found
+
+
+
+  (Solution)
+	stop firewall  --> systemctl stop ufw
+
+	https://github.com/rancher/rke2/issues/623
+
+
+	Do you need to run the installation through a proxy? Is your proxy or firewall blocking the conneciton? 
+	It appears that you're not able to access the channel server:
+
+	[INFO]  finding release for channel latest
+	curl: (56) OpenSSL SSL_read: SSL_ERROR_SYSCALL, errno 104
+	[INFO]  using latest as release
+
+	Unfortunately latest is not a valid GitHub release, so it's not really a sane default. 
+	Failure to look up the release should probably be a terminal error.
