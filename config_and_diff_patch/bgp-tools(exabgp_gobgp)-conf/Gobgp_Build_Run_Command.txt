@@ -1,0 +1,66 @@
+
+
+Build Command (v2)
+==================
+
+1. compile & build
+    go install -ldflags="-r /home/kyehwanl/project/tools/go_srx_test" -gcflags='-N -l' ./...
+
+2. protocol buffer compile
+    protoc -I./api -I /usr/local/include/ --go_out=plugins=grpc:./api ./api/*.proto
+
+
+3. Running
+    sudo /home/kyehwanl/project/gobgp_v2_running_test/bin/gobgpd -f /home/kyehwanl/project/gobgp_v2_running_test/bin/gobgpd.ns1.conf.bgpsec -p -l info
+
+
+4. Running with delve
+    sudo /home/kyehwanl/project/gobgp_v2_running_test/bin/dlv exec /home/kyehwanl/project/gobgp_v2_running_test/bin/gobgpd -- -f /home/kyehwanl/project/gobgp_v2_running_test/bin/gobgpd.ns1.conf.bgpsec -p -l info
+
+
+
+5. Build without cgo LDFLAGS in source code
+    
+    $ export CGO_LDFLAGS="-L/home/kyehwanl/project/srx_test1/_inst/lib64/srx -lSRxBGPSecOpenSSL -lSRxCryptoAPI -Wl,-rpath -Wl,/home/kyehwanl/project/srx_test1/_inst/lib64/srx"
+    $ export CGO_CFLAGS="-I/home/kyehwanl/project/srx_test1/_inst/include/srx"
+    $ go install ./...
+
+
+
+
+
+How to Build and Run (old)
+==========================
+
+(1) at gobgp root
+
+    go install -ldflags="-r /opt/project/gobgp_test/tools/go_srx_test" -gcflags='-N -l' ./...
+    go install -ldflags="-r /opt/project/gobgp_test/tools/go_srx_test" -gcflags='-N -l' ./...
+    go install -ldflags="-r /opt/project/srx_test1/_inst/lib64/srx" -gcflags='-N -l' ./...
+
+    go build -ldflags="-r /opt/project/gobgp_test/tools/go_srx_test" -gcflags='-N -l'
+
+        where, -ldflags, -r means rpath in binary
+               -gcflags, '-N -l' : gives additional debugging information in binary
+
+               '...' ellipsis (three dots): all packages in the current directory and its subdirectories on go command
+
+(2) at gobgpd
+    build without "./..."
+
+
+
+(3) ETC
+    go build.
+        -x : -x, print the commands (show all detailed compile information)
+        -d : dry run, print the commands but do not run them
+        -v : print the names of packages as they are compiled
+
+
+(4) Run
+    A. gobgpd (grpc server)
+        gowork/bin}-> sudo ./gobgpd --log-level=debug -f ./gobgpd.conf.bgpsec -p
+
+    B. gobgp (grpc client)
+        gowork/bin}-> gobgp global rib add bgpsec origin igp -a ipv4 25.18.22.0/24 nexthop 10.0.50.5
+
