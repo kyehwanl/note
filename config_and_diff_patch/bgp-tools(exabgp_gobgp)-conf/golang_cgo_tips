@@ -3,6 +3,7 @@ CGO Tips
 ========
 
 1. unresolved symbols
+---------------------
 
     if  this fails with:
     ./plugin.go:8: undefined reference to `main_program_other_function'
@@ -21,5 +22,47 @@ CGO Tips
 
 
 2. cleaning cache
+------------------
 
     go clean -cache
+
+
+
+3. go install - where the binary will be generated 
+-----------------------------------------------------
+(https://stackoverflow.com/questions/24069664/what-does-go-install-do)
+
+
+(1) GOBIN
+    If you want binary files to go to a specific location, you can use the environment variable GOBIN:
+
+            If the GOBIN environment variable is set, 
+            commands are installed to the directory it names instead of DIR/bin.
+
+            Source : http://golang.org/cmd/go/#hdr-GOPATH_environment_variable
+
+            GOBIN=/usr/local/bin/ go install
+
+(2) GOPATH
+    If you want per-project bin/ directory then you can simply append your project path to GOPATH, 
+    however you must have your code under $project-path/src/ and go install will put all the binaries in $project-path/bin.
+
+    export GOPATH=/dir1:/dir2:/dir3
+
+
+    If GOBIN is not set, binaries from /dir1/src end up in /dir1/bin, 
+    binaries from /dir2/src end up in /dir2/bin, and so on 
+    (and binaries from $GOROOT/src end up in $GOROOT/bin).
+
+     it also installed library files (blah.a) to $GOPATH/pkg
+
+
+(3) -o switch
+    go build -o /path/binary-name
+
+
+
+
+
+
+
