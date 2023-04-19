@@ -582,7 +582,6 @@ B.
 
 
 
-
 (39) journalctl to see error status
 ===================================
 journalctl <service>
@@ -592,12 +591,28 @@ journalctl <service>
 
 
 
+(40) set hostname
+==================
+- set hostname 
+	sudo hostnamectl set-hostname server1.5gtb.nist.gov
+
+- add hostnames to /etc/hosts at each node
+	sudo vim /etc/hosts 
+	192.168.10.20 server1.5gtb.nist.gov
 
 
 
 
+(41) ifconfig, netstat install 
+==============================
+- ubuntu: 
+	apt install net-tools
+- centos/RHEL:
+	yum install net-tools
 
 
+ (cf) netstat usage: 
+	netstat -tapn | grep "words"
 
 
 
