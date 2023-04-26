@@ -1,0 +1,491 @@
+
+
+klee@vmware-063:~/aether-in-a-box$ helm upgrade --install --wait \
+									--namespace omec        \ 
+									 --values /home/klee/aether-in-a-box/ransim-values.yaml \
+							         5g-ransim-plane  \
+								       aether/5g-ran-sim --version 0.3.0 --debug
+
+history.go:56: [debug] getting history for release 5g-ransim-plane
+upgrade.go:123: [debug] preparing upgrade for 5g-ransim-plane
+upgrade.go:131: [debug] performing update for 5g-ransim-plane
+upgrade.go:303: [debug] creating upgraded release for 5g-ransim-plane
+client.go:209: [debug] checking 7 resources for changes
+client.go:492: [debug] Looks like there are no changes for ServiceAccount "gnbsim"
+client.go:492: [debug] Looks like there are no changes for ConfigMap "gnbsim"
+client.go:492: [debug] Looks like there are no changes for Role "gnbsim"
+client.go:492: [debug] Looks like there are no changes for RoleBinding "gnbsim"
+client.go:492: [debug] Looks like there are no changes for Service "gnbsim"
+client.go:492: [debug] Looks like there are no changes for StatefulSet "gnbsim"
+wait.go:47: [debug] beginning wait for 7 resources with timeout of 5m0s
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+ready.go:386: [debug] StatefulSet is not ready: omec/gnbsim. 0 out of 1 expected pods are ready
+upgrade.go:369: [debug] warning: Upgrade "5g-ransim-plane" failed: timed out waiting for the condition
+Error: UPGRADE FAILED: timed out waiting for the condition
+helm.go:88: [debug] timed out waiting for the condition
+UPGRADE FAILED
+main.newUpgradeCmd.func2
+        helm.sh/helm/v3/cmd/helm/upgrade.go:157
+github.com/spf13/cobra.(*Command).execute
+        github.com/spf13/cobra@v1.1.3/command.go:852
+github.com/spf13/cobra.(*Command).ExecuteC
+        github.com/spf13/cobra@v1.1.3/command.go:960
+github.com/spf13/cobra.(*Command).Execute
+        github.com/spf13/cobra@v1.1.3/command.go:897
+main.main
+        helm.sh/helm/v3/cmd/helm/helm.go:87
+runtime.main
+        runtime/proc.go:225
+runtime.goexit
+        runtime/asm_amd64.s:1371
+klee@vmware-063:~/aether-in-a-box$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+klee@vmware-063:~$ kubectl get pods -A
+NAMESPACE     NAME                                                              READY   STATUS             RESTARTS   AGE
+aether-roc    aether-roc-api-8fc6cbd6-spffz                                     1/1     Running            0          15h
+aether-roc    aether-roc-gui-v4-7497c97c6c-r46tg                                1/1     Running            0          15h
+aether-roc    aether-roc-umbrella-grafana-8dfbfc7d-f75wp                        2/2     Running            0          15h
+aether-roc    aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-h86d5           1/1     Running            0          15h
+aether-roc    aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5   2/2     Running            0          15h
+aether-roc    aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5        2/2     Running            0          15h
+aether-roc    aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr        2/2     Running            0          15h
+aether-roc    aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk        2/2     Running            0          15h
+aether-roc    aether-roc-websocket-855d64549b-jb9j9                             1/1     Running            0          15h
+aether-roc    demo-exporter-f97895d8f-vpgrq                                     1/1     Running            1          15h
+aether-roc    onos-cli-5b947f8f6-shs7c                                          1/1     Running            0          15h
+aether-roc    onos-config-678cb4d544-7txrw                                      5/5     Running            0          15h
+aether-roc    onos-consensus-store-0                                            1/1     Running            0          15h
+aether-roc    onos-topo-69c469c85-w8zw8                                         3/3     Running            0          15h
+aether-roc    prom-label-proxy-acc-58dbc89fb8-ppgwb                             1/1     Running            0          15h
+aether-roc    prom-label-proxy-amp-5d54b6d445-cxx99                             1/1     Running            0          15h
+aether-roc    sdcore-adapter-v2-77b6865bd5-wlxql                                1/1     Running            0          15h
+aether-roc    sdcore-adapter-v4-64fbb54697-87tdr                                1/1     Running            0          15h
+aether-roc    subscriber-proxy-79b66b55c4-nnbwf                                 1/1     Running            0          15h
+default       router                                                            1/1     Running            0          132m
+kube-system   atomix-controller-85894559b8-mc6z6                                1/1     Running            0          15h
+kube-system   atomix-raft-storage-controller-54cdb55579-bjczq                   1/1     Running            0          15h
+kube-system   calico-kube-controllers-dbfbbc4cb-ppkf9                           1/1     Running            1          18h
+kube-system   calico-node-7ws74                                                 1/1     Running            1          18h
+kube-system   coredns-bbb7d66cd-rmhmm                                           1/1     Running            0          18h
+kube-system   dns-autoscaler-7cdcfcf64f-2kpcj                                   1/1     Running            0          18h
+kube-system   kube-apiserver-node1                                              1/1     Running            0          18h
+kube-system   kube-controller-manager-node1                                     1/1     Running            1          18h
+kube-system   kube-multus-ds-amd64-shkcl                                        1/1     Running            0          18h
+kube-system   kube-proxy-wszmw                                                  1/1     Running            0          18h
+kube-system   kube-scheduler-node1                                              1/1     Running            1          18h
+kube-system   nodelocaldns-kt2mg                                                1/1     Running            0          18h
+kube-system   onos-operator-app-7bf5d77c56-ljzjc                                1/1     Running            0          15h
+kube-system   onos-operator-config-554c9848f7-fs7cj                             1/1     Running            0          15h
+kube-system   onos-operator-topo-7877c854d8-pg429                               1/1     Running            0          15h
+omec          gnbsim-0                                                          0/1     ImagePullBackOff   0          100m
+omec          simapp-6cdc4fcd94-gv69p                                           0/1     ImagePullBackOff   0          132m
+omec          simapp-856cbb995f-w869z                                           0/1     ImagePullBackOff   0          108m
+
+
+klee@vmware-063:~$ kubectl -n omec describe pod gnbsim-0
+Name:         gnbsim-0
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.63
+Start Time:   Wed, 02 Feb 2022 10:25:51 -0500
+Labels:       app=gnbsim
+              controller-revision-hash=gnbsim-7cd4cf9f5c
+              release=5g-ransim-plane
+              statefulset.kubernetes.io/pod-name=gnbsim-0
+Annotations:  cni.projectcalico.org/containerID: ccb57b08bf7b43d0e1ed9f4bc4d7dd0a4d868ca7956fff62a0d8da8ce4cf5166
+              cni.projectcalico.org/podIP: 192.168.84.54/32
+              cni.projectcalico.org/podIPs: 192.168.84.54/32
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.54"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks: [ { "name": "enb-net", "interface": "enb", "ips": ["192.168.251.5/24"] } ]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.54"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+Status:       Pending
+IP:           192.168.84.54
+IPs:
+  IP:           192.168.84.54
+Controlled By:  StatefulSet/gnbsim
+Init Containers:
+  wait-amf-module:
+    Container ID:  docker://9cbbd1cf2efa7e33fab716d902754b3cf3008838ee76f753674113e18b99044b
+    Image:         docker.io/omecproject/pod-init:1.0.0
+    Image ID:      docker-pullable://omecproject/pod-init@sha256:16c14327ce4a191c4f1ced5c0c0cd835150c893a824cc21f80748b674d0308dc
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup amf; do echo waiting for nrf; sleep 4; done;
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Wed, 02 Feb 2022 10:25:56 -0500
+      Finished:     Wed, 02 Feb 2022 10:25:56 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-b5cbk (ro)
+Containers:
+  gnbsim:
+    Container ID:
+    Image:         registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /opt/cp/scripts/gnbsim-run.sh
+    State:          Waiting
+      Reason:       ErrImagePull
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      MEM_LIMIT:  node allocatable (limits.memory)
+      POD_IP:      (v1:status.podIP)
+    Mounts:
+      /gnbsim/config from cp-config (rw)
+      /opt/cp/scripts/gnbsim-run.sh from cp-script (rw,path="gnbsim-run.sh")
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-b5cbk (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  cp-script:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  cp-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  gnbsim-token-b5cbk:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  gnbsim-token-b5cbk
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason                  Age                    From               Message
+  ----     ------                  ----                   ----               -------
+  Normal   Scheduled               52m                    default-scheduler  Successfully assigned omec/gnbsim-0 to node1
+  Normal   AddedInterface          52m                    multus             Add eth0 [192.168.84.53/32] from cni0
+  Warning  FailedCreatePodSandBox  52m                    kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container "73dadbc824c505ee816bd1a44ffc4adfd75e202b9458fc49399e3b3b8d61882d" network for pod "gnbsim-0": networkPlugin cni failed to set up pod "gnbsim-0_omec" network: [omec/gnbsim-0:enb-net]: error adding container to network "enb-net": netplugin failed: "+ set -o errexit\n+ set -o pipefail\n+ set -o nounset\n+ exec\n+ exec\n"
+  Normal   SandboxChanged          52m                    kubelet            Pod sandbox changed, it will be killed and re-created.
+  Normal   AddedInterface          52m                    multus             Add eth0 [192.168.84.54/32] from cni0
+  Normal   Started                 52m                    kubelet            Started container wait-amf-module
+  Normal   AddedInterface          52m                    multus             Add enb [192.168.251.5/24] from omec/enb-net
+  Normal   Pulled                  52m                    kubelet            Container image "docker.io/omecproject/pod-init:1.0.0" already present on machine
+  Normal   Created                 52m                    kubelet            Created container wait-amf-module
+  Warning  Failed                  51m (x3 over 52m)      kubelet            Failed to pull image "registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647": rpc error: code = Unknown desc = Error response from daemon: unauthorized: unauthorized to access repository: omecproject/5gc-gnbsim, action: pull: unauthorized to access repository: omecproject/5gc-gnbsim, action: pull
+  Warning  Failed                  51m (x3 over 52m)      kubelet            Error: ErrImagePull
+  Normal   Pulling                 51m (x4 over 52m)      kubelet            Pulling image "registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647"
+  Warning  Failed                  7m31s (x196 over 52m)  kubelet            Error: ImagePullBackOff
+  Normal   BackOff                 2m39s (x218 over 52m)  kubelet            Back-off pulling image "registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647"
+
+
+
+
+
+
+klee@vmware-063:~$ kubectl describe nodes
+Name:               node1
+Roles:              control-plane,master
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=node1
+                    kubernetes.io/os=linux
+                    node-role.kubernetes.io/control-plane=
+                    node-role.kubernetes.io/master=
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 10.0.50.63/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 192.168.84.0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 31 Jan 2022 21:49:10 -0500
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  node1
+  AcquireTime:     <unset>
+  RenewTime:       Tue, 01 Feb 2022 16:12:42 -0500
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Tue, 01 Feb 2022 12:42:09 -0500   Tue, 01 Feb 2022 12:42:09 -0500   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Tue, 01 Feb 2022 16:12:44 -0500   Mon, 31 Jan 2022 21:49:05 -0500   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Tue, 01 Feb 2022 16:12:44 -0500   Mon, 31 Jan 2022 21:49:05 -0500   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Tue, 01 Feb 2022 16:12:44 -0500   Mon, 31 Jan 2022 21:49:05 -0500   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Tue, 01 Feb 2022 16:12:44 -0500   Mon, 31 Jan 2022 21:50:14 -0500   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  10.0.50.63
+  Hostname:    node1
+Capacity:
+  cpu:                4
+  ephemeral-storage:  85986408Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16425572Ki
+  pods:               110
+Allocatable:
+  cpu:                3800m
+  ephemeral-storage:  79245073482
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15798884Ki
+  pods:               110
+System Info:
+  Machine ID:                 e4eaf2c623214a3ba0c3b94422af4c7a
+  System UUID:                4208BB8C-7007-9303-32FE-49BD5B71EF6A
+  Boot ID:                    9e27b699-5c53-4582-a103-ebb5283d5939
+  Kernel Version:             4.15.0-166-generic
+  OS Image:                   Ubuntu 18.04.6 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://20.10.8
+  Kubelet Version:            v1.20.11
+  Kube-Proxy Version:         v1.20.11
+PodCIDR:                      192.168.0.0/24
+PodCIDRs:                     192.168.0.0/24
+Non-terminated Pods:          (38 in total)
+  Namespace                   Name                                                               CPU Requests  CPU Limits  Memory Requests  Memory Limits  AGE
+  ---------                   ----                                                               ------------  ----------  ---------------  -------------  ---
+  aether-roc                  aether-roc-api-8fc6cbd6-spffz                                      0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-gui-v4-7497c97c6c-r46tg                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-grafana-8dfbfc7d-f75wp                         0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-h86d5            0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5    0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5         0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr         0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk         0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  aether-roc-websocket-855d64549b-jb9j9                              0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  demo-exporter-f97895d8f-vpgrq                                      0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  onos-cli-5b947f8f6-shs7c                                           0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  onos-config-678cb4d544-7txrw                                       0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  onos-consensus-store-0                                             0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  onos-topo-69c469c85-w8zw8                                          0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  prom-label-proxy-acc-58dbc89fb8-ppgwb                              0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  prom-label-proxy-amp-5d54b6d445-cxx99                              0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  sdcore-adapter-v2-77b6865bd5-wlxql                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  sdcore-adapter-v4-64fbb54697-87tdr                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  aether-roc                  subscriber-proxy-79b66b55c4-nnbwf                                  0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  default                     router                                                             0 (0%)        0 (0%)      0 (0%)           0 (0%)         143m
+  kube-system                 atomix-controller-85894559b8-mc6z6                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  kube-system                 atomix-raft-storage-controller-54cdb55579-bjczq                    0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  kube-system                 calico-kube-controllers-dbfbbc4cb-ppkf9                            30m (0%)      100m (2%)   64M (0%)         256M (1%)      18h
+  kube-system                 calico-node-7ws74                                                  150m (3%)     300m (7%)   64M (0%)         500M (3%)      18h
+  kube-system                 coredns-bbb7d66cd-rmhmm                                            100m (2%)     0 (0%)      70Mi (0%)        170Mi (1%)     18h
+  kube-system                 dns-autoscaler-7cdcfcf64f-2kpcj                                    20m (0%)      0 (0%)      10Mi (0%)        0 (0%)         18h
+  kube-system                 kube-apiserver-node1                                               250m (6%)     0 (0%)      0 (0%)           0 (0%)         18h
+  kube-system                 kube-controller-manager-node1                                      200m (5%)     0 (0%)      0 (0%)           0 (0%)         18h
+  kube-system                 kube-multus-ds-amd64-shkcl                                         100m (2%)     100m (2%)   90Mi (0%)        90Mi (0%)      18h
+  kube-system                 kube-proxy-wszmw                                                   0 (0%)        0 (0%)      0 (0%)           0 (0%)         18h
+  kube-system                 kube-scheduler-node1                                               100m (2%)     0 (0%)      0 (0%)           0 (0%)         18h
+  kube-system                 nodelocaldns-kt2mg                                                 100m (2%)     0 (0%)      70Mi (0%)        170Mi (1%)     18h
+  kube-system                 onos-operator-app-7bf5d77c56-ljzjc                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  kube-system                 onos-operator-config-554c9848f7-fs7cj                              0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  kube-system                 onos-operator-topo-7877c854d8-pg429                                0 (0%)        0 (0%)      0 (0%)           0 (0%)         15h
+  omec                        gnbsim-0                                                           0 (0%)        0 (0%)      0 (0%)           0 (0%)         110m
+  omec                        simapp-6cdc4fcd94-gv69p                                            0 (0%)        0 (0%)      0 (0%)           0 (0%)         142m
+  omec                        simapp-856cbb995f-w869z                                            0 (0%)        0 (0%)      0 (0%)           0 (0%)         118m
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests        Limits
+  --------           --------        ------
+  cpu                1050m (27%)     500m (13%)
+  memory             379658240 (2%)  1206887680 (7%)
+  ephemeral-storage  0 (0%)          0 (0%)
+  hugepages-1Gi      0 (0%)          0 (0%)
+  hugepages-2Mi      0 (0%)          0 (0%)
+Events:              <none>
+klee@vmware-063:~$
+
+
+

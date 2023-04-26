@@ -1,0 +1,4 @@
+2023  helm repo add atomix https://charts.atomix.io
+ 2024  helm repo update
+ 2025  helm install -n kube-system atomix-runtime atomix/atomix-runtime --wait
+ 

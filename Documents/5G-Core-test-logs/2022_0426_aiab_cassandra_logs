@@ -1,0 +1,263 @@
+root@vmware-062:~# kubectl logs cassandra-0 -n omec
+CompilerOracle: inline org/apache/cassandra/db/AbstractNativeCell.compareTo (Lorg/apache/cassandra/db/composites/Composite;)I
+CompilerOracle: inline org/apache/cassandra/db/composites/AbstractSimpleCellNameType.compareUnsigned (Lorg/apache/cassandra/db/composites/Composite;Lorg/apache/cassandra/db/composites/Composite;)I
+CompilerOracle: inline org/apache/cassandra/io/util/Memory.checkBounds (JJ)V
+CompilerOracle: inline org/apache/cassandra/io/util/SafeMemory.checkBounds (JJ)V
+CompilerOracle: inline org/apache/cassandra/utils/ByteBufferUtil.compare (Ljava/nio/ByteBuffer;[B)I
+CompilerOracle: inline org/apache/cassandra/utils/ByteBufferUtil.compare ([BLjava/nio/ByteBuffer;)I
+CompilerOracle: inline org/apache/cassandra/utils/ByteBufferUtil.compareUnsigned (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
+CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOperations.compareTo (Ljava/lang/Object;JILjava/lang/Object;JI)I
+CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOperations.compareTo (Ljava/lang/Object;JILjava/nio/ByteBuffer;)I
+CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOperations.compareTo (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
+INFO  23:52:26 Hostname: cassandra-0.cassandra.omec.svc.cluster.local
+INFO  23:52:26 Loading settings from file:/etc/cassandra/cassandra.yaml
+INFO  23:52:26 Node configuration:[authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_snapshot=true; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=192.168.84.40; broadcast_rpc_address=192.168.84.40; cas_contention_timeout_in_ms=1000; client_encryption_options=<REDACTED>; cluster_name=cassandra; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_directory=/var/lib/cassandra/commitlog; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_period_in_ms=10000; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_counter_writes=32; concurrent_reads=32; concurrent_writes=32; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; cross_node_timeout=false; data_file_directories=[/var/lib/cassandra/data]; disk_failure_policy=stop; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; endpoint_snitch=GossipingPropertyFileSnitch; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; incremental_backups=false; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; inter_dc_tcp_nodelay=false; internode_compression=all; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=192.168.84.40; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; memtable_allocation_type=heap_buffers; native_transport_port=9042; num_tokens=256; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_validity_in_ms=2000; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_timeout_in_ms=10000; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=0.0.0.0; rpc_keepalive=true; rpc_port=9160; rpc_server_type=sync; saved_caches_directory=/var/lib/cassandra/saved_caches; seed_provider=[{class_name=org.apache.cassandra.locator.SimpleSeedProvider, parameters=[{seeds=cassandra-0.cassandra.omec.svc.cluster.local}]}]; server_encryption_options=<REDACTED>; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; thrift_framed_transport_size_in_mb=15; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; write_request_timeout_in_ms=2000]
+INFO  23:52:27 DiskAccessMode 'auto' determined to be mmap, indexAccessMode is mmap
+INFO  23:52:27 Global memtable on-heap threshold is enabled at 499MB
+INFO  23:52:27 Global memtable off-heap threshold is enabled at 499MB
+INFO  23:52:27 Loaded cassandra-topology.properties for compatibility
+INFO  23:52:28 Loading settings from file:/etc/cassandra/cassandra.yaml
+INFO  23:52:28 Node configuration:[authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_snapshot=true; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=192.168.84.40; broadcast_rpc_address=192.168.84.40; cas_contention_timeout_in_ms=1000; client_encryption_options=<REDACTED>; cluster_name=cassandra; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_directory=/var/lib/cassandra/commitlog; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_period_in_ms=10000; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_counter_writes=32; concurrent_reads=32; concurrent_writes=32; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; cross_node_timeout=false; data_file_directories=[/var/lib/cassandra/data]; disk_failure_policy=stop; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; endpoint_snitch=GossipingPropertyFileSnitch; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; incremental_backups=false; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; inter_dc_tcp_nodelay=false; internode_compression=all; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=192.168.84.40; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; memtable_allocation_type=heap_buffers; native_transport_port=9042; num_tokens=256; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_validity_in_ms=2000; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_timeout_in_ms=10000; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=0.0.0.0; rpc_keepalive=true; rpc_port=9160; rpc_server_type=sync; saved_caches_directory=/var/lib/cassandra/saved_caches; seed_provider=[{class_name=org.apache.cassandra.locator.SimpleSeedProvider, parameters=[{seeds=cassandra-0.cassandra.omec.svc.cluster.local}]}]; server_encryption_options=<REDACTED>; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; thrift_framed_transport_size_in_mb=15; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; write_request_timeout_in_ms=2000]
+INFO  23:52:29 JVM vendor/version: OpenJDK 64-Bit Server VM/1.8.0_181
+WARN  23:52:29 OpenJDK is not recommended. Please upgrade to the newest Oracle Java release
+INFO  23:52:29 Heap size: 2093809664/2093809664
+INFO  23:52:29 Code Cache Non-heap memory: init = 2555904(2496K) used = 4046720(3951K) committed = 4063232(3968K) max = 251658240(245760K)
+INFO  23:52:29 Metaspace Non-heap memory: init = 0(0K) used = 16627680(16237K) committed = 17039360(16640K) max = -1(-1K)
+INFO  23:52:29 Compressed Class Space Non-heap memory: init = 0(0K) used = 1993120(1946K) committed = 2097152(2048K) max = 1073741824(1048576K)
+INFO  23:52:29 Par Eden Space Heap memory: init = 429522944(419456K) used = 128872832(125852K) committed = 429522944(419456K) max = 429522944(419456K)
+INFO  23:52:29 Par Survivor Space Heap memory: init = 53673984(52416K) used = 0(0K) committed = 53673984(52416K) max = 53673984(52416K)
+INFO  23:52:29 CMS Old Gen Heap memory: init = 1610612736(1572864K) used = 0(0K) committed = 1610612736(1572864K) max = 1610612736(1572864K)
+INFO  23:52:29 Classpath: /etc/cassandra:/usr/share/cassandra/lib/ST4-4.0.8.jar:/usr/share/cassandra/lib/airline-0.6.jar:/usr/share/cassandra/lib/antlr-runtime-3.5.2.jar:/usr/share/cassandra/lib/commons-cli-1.1.jar:/usr/share/cassandra/lib/commons-codec-1.2.jar:/usr/share/cassandra/lib/commons-lang3-3.1.jar:/usr/share/cassandra/lib/commons-math3-3.2.jar:/usr/share/cassandra/lib/compress-lzf-0.8.4.jar:/usr/share/cassandra/lib/concurrentlinkedhashmap-lru-1.4.jar:/usr/share/cassandra/lib/disruptor-3.0.1.jar:/usr/share/cassandra/lib/guava-16.0.jar:/usr/share/cassandra/lib/high-scale-lib-1.0.6.jar:/usr/share/cassandra/lib/jackson-core-asl-1.9.2.jar:/usr/share/cassandra/lib/jackson-mapper-asl-1.9.2.jar:/usr/share/cassandra/lib/jamm-0.3.0.jar:/usr/share/cassandra/lib/javax.inject.jar:/usr/share/cassandra/lib/jbcrypt-0.3m.jar:/usr/share/cassandra/lib/jline-1.0.jar:/usr/share/cassandra/lib/jna-4.0.0.jar:/usr/share/cassandra/lib/json-simple-1.1.jar:/usr/share/cassandra/lib/libthrift-0.9.2.jar:/usr/share/cassandra/lib/logback-classic-1.1.2.jar:/usr/share/cassandra/lib/logback-core-1.1.2.jar:/usr/share/cassandra/lib/lz4-1.2.0.jar:/usr/share/cassandra/lib/metrics-core-2.2.0.jar:/usr/share/cassandra/lib/netty-all-4.0.44.Final.jar:/usr/share/cassandra/lib/reporter-config-2.1.0.jar:/usr/share/cassandra/lib/slf4j-api-1.7.2.jar:/usr/share/cassandra/lib/snakeyaml-1.11.jar:/usr/share/cassandra/lib/snappy-java-1.0.5.2.jar:/usr/share/cassandra/lib/stream-2.5.2.jar:/usr/share/cassandra/lib/super-csv-2.1.0.jar:/usr/share/cassandra/lib/thrift-server-0.3.7.jar:/usr/share/cassandra/apache-cassandra-2.1.20.jar:/usr/share/cassandra/apache-cassandra-thrift-2.1.20.jar:/usr/share/cassandra/apache-cassandra.jar:/usr/share/cassandra/cassandra-driver-core-2.0.9.2.jar:/usr/share/cassandra/netty-3.9.0.Final.jar:/usr/share/cassandra/stress.jar::/usr/share/cassandra/lib/jamm-0.3.0.jar
+INFO  23:52:29 JVM Arguments: [-ea, -javaagent:/usr/share/cassandra/lib/jamm-0.3.0.jar, -XX:+CMSClassUnloadingEnabled, -XX:+UseThreadPriorities, -XX:ThreadPriorityPolicy=42, -Xms2048M, -Xmx2048M, -Xmn512M, -XX:+HeapDumpOnOutOfMemoryError, -Xss256k, -XX:StringTableSize=1000003, -XX:+UseParNewGC, -XX:+UseConcMarkSweepGC, -XX:+CMSParallelRemarkEnabled, -XX:SurvivorRatio=8, -XX:MaxTenuringThreshold=1, -XX:CMSInitiatingOccupancyFraction=75, -XX:+UseCMSInitiatingOccupancyOnly, -XX:+UseTLAB, -XX:CompileCommandFile=/etc/cassandra/hotspot_compiler, -XX:CMSWaitDuration=10000, -XX:+CMSParallelInitialMarkEnabled, -XX:+CMSEdenChunksRecordAlways, -XX:CMSWaitDuration=10000, -Djava.net.preferIPv4Stack=true, -Dcassandra.jmx.local.port=7199, -XX:+DisableExplicitGC, -Dlogback.configurationFile=logback.xml, -Dcassandra.logdir=/var/log/cassandra, -Dcassandra.storagedir=, -Dcassandra-foreground=yes]
+WARN  23:52:29 Unable to lock JVM memory (ENOMEM). This can result in part of the JVM being swapped out, especially with mmapped I/O enabled. Increase RLIMIT_MEMLOCK or run Cassandra as root.
+WARN  23:52:29 JMX is not enabled to receive remote connections. Please see cassandra-env.sh for more info.
+INFO  23:52:30 Initializing key cache with capacity of 99 MBs.
+INFO  23:52:30 Initializing row cache with capacity of 0 MBs
+INFO  23:52:30 Initializing counter cache with capacity of 49 MBs
+INFO  23:52:30 Scheduling counter cache save to every 7200 seconds (going to save all keys).
+INFO  23:52:31 Initializing system.sstable_activity
+INFO  23:52:32 Updating topology for all endpoints that have changed
+INFO  23:52:32 Opening /var/lib/cassandra/data/system/sstable_activity-5a1ff267ace03f128563cfae6103c65e/system-sstable_activity-ka-61 (321 bytes)
+INFO  23:52:33 Initializing system.hints
+INFO  23:52:34 Initializing system.compaction_history
+INFO  23:52:34 Opening /var/lib/cassandra/data/system/compaction_history-b4dbb7b4dc493fb5b3bfce6e434832ca/system-compaction_history-ka-61 (15735 bytes)
+INFO  23:52:34 Initializing system.peers
+INFO  23:52:34 Opening /var/lib/cassandra/data/system/peers-37f71aca7dc2383ba70672528af04d4f/system-peers-ka-2 (30 bytes)
+INFO  23:52:34 Opening /var/lib/cassandra/data/system/peers-37f71aca7dc2383ba70672528af04d4f/system-peers-ka-1 (30 bytes)
+INFO  23:52:35 Initializing system.schema_columnfamilies
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-87 (6168 bytes)
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-85 (15606 bytes)
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-86 (6168 bytes)
+INFO  23:52:35 Initializing system.IndexInfo
+INFO  23:52:35 Initializing system.local
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-250 (5747 bytes)
+INFO  23:52:35 Initializing system.schema_columns
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-87 (10261 bytes)
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-86 (10271 bytes)
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-85 (22841 bytes)
+INFO  23:52:35 Initializing system.schema_triggers
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_triggers-0359bc7171233ee19a4ab9dfb11fc125/system-schema_triggers-ka-61 (32 bytes)
+INFO  23:52:35 Initializing system.batchlog
+INFO  23:52:35 Initializing system.schema_usertypes
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/schema_usertypes-3aa752254f82350b8d5c430fa221fa0a/system-schema_usertypes-ka-61 (32 bytes)
+INFO  23:52:35 Initializing system.peer_events
+INFO  23:52:35 Initializing system.paxos
+INFO  23:52:35 Initializing system.size_estimates
+INFO  23:52:35 Opening /var/lib/cassandra/data/system/size_estimates-618f817b005f3678b8a453f3930b8e86/system-size_estimates-ka-61 (265157 bytes)
+INFO  23:52:36 Initializing system.compactions_in_progress
+INFO  23:52:36 Initializing system.range_xfers
+INFO  23:52:36 Initializing system.schema_keyspaces
+INFO  23:52:36 Opening /var/lib/cassandra/data/system/schema_keyspaces-b0f2235744583cdb9631c43e59ce3676/system-schema_keyspaces-ka-90 (134 bytes)
+INFO  23:52:36 Opening /var/lib/cassandra/data/system/schema_keyspaces-b0f2235744583cdb9631c43e59ce3676/system-schema_keyspaces-ka-89 (308 bytes)
+INFO  23:52:41 Enqueuing flush of local: 653 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:41 Writing Memtable-local@1574121094(0.107KiB serialized bytes, 3 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:42 Completed flushing /var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-tmp-ka-251-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=279)
+INFO  23:52:42 Initializing vpcrf.endpoints
+INFO  23:52:42 Opening /var/lib/cassandra/data/vpcrf/endpoints-1d51dac0c59711eca0aaafc182b31a9a/vpcrf-endpoints-ka-1 (426 bytes)
+INFO  23:52:42 Initializing vpcrf.rule_membership
+INFO  23:52:42 Initializing vpcrf.subscriber
+INFO  23:52:42 Opening /var/lib/cassandra/data/vpcrf/subscriber-1c04e860c59711eca0aaafc182b31a9a/vpcrf-subscriber-ka-1 (116 bytes)
+INFO  23:52:42 Initializing vpcrf.subscriber_apn
+INFO  23:52:42 Initializing vpcrf.session
+INFO  23:52:42 Initializing vpcrf.apns
+INFO  23:52:42 Opening /var/lib/cassandra/data/vpcrf/apns-1cf2cad0c59711eca0aaafc182b31a9a/vpcrf-apns-ka-1 (512 bytes)
+INFO  23:52:42 Initializing vpcrf.rules
+INFO  23:52:42 Opening /var/lib/cassandra/data/vpcrf/rules-1ade69c0c59711eca0aaafc182b31a9a/vpcrf-rules-ka-1 (621 bytes)
+INFO  23:52:42 Initializing vpcrf.session_bearer
+INFO  23:52:42 Initializing vpcrf.session_ip
+INFO  23:52:42 Initializing vhss.users_imsi
+INFO  23:52:42 Initializing vhss.extid_imsi_xref
+INFO  23:52:42 Initializing vhss.extid_imsi
+INFO  23:52:42 Initializing vhss.global_ids
+INFO  23:52:42 Initializing vhss.msisdn_imsi
+INFO  23:52:42 Initializing vhss.extid
+INFO  23:52:42 Initializing vhss.events_extid
+INFO  23:52:42 Initializing vhss.events_msisdn
+INFO  23:52:42 Initializing vhss.events
+INFO  23:52:42 Initializing vhss.mmeidentity
+INFO  23:52:42 Opening /var/lib/cassandra/data/vhss/mmeidentity-1c99ae50c59711eca0aaafc182b31a9a/vhss-mmeidentity-ka-1 (149 bytes)
+INFO  23:52:42 Initializing vhss.mmeidentity_host
+INFO  23:52:42 Opening /var/lib/cassandra/data/vhss/mmeidentity_host-1c2f2cb0c59711eca0aaafc182b31a9a/vhss-mmeidentity_host-ka-1 (157 bytes)
+INFO  23:52:42 Initializing system_traces.sessions
+INFO  23:52:42 Initializing system_traces.events
+INFO  23:52:42 Completed loading (15 ms; 13 keys) KeyCache cache
+INFO  23:52:43 Replaying /var/lib/cassandra/commitlog/CommitLog-4-1651016937862.log, /var/lib/cassandra/commitlog/CommitLog-4-1651016937863.log
+INFO  23:52:43 Replaying /var/lib/cassandra/commitlog/CommitLog-4-1651016937862.log
+INFO  23:52:43 Replaying /var/lib/cassandra/commitlog/CommitLog-4-1651016937862.log (CL version 4, messaging version 8)
+INFO  23:52:44 Finished reading /var/lib/cassandra/commitlog/CommitLog-4-1651016937862.log
+INFO  23:52:44 Replaying /var/lib/cassandra/commitlog/CommitLog-4-1651016937863.log
+INFO  23:52:44 Replaying /var/lib/cassandra/commitlog/CommitLog-4-1651016937863.log (CL version 4, messaging version 8)
+INFO  23:52:44 Finished reading /var/lib/cassandra/commitlog/CommitLog-4-1651016937863.log
+INFO  23:52:44 Enqueuing flush of compaction_history: 6164 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Writing Memtable-compaction_history@1037631507(1.235KiB serialized bytes, 46 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/compaction_history-b4dbb7b4dc493fb5b3bfce6e434832ca/system-compaction_history-tmp-ka-62-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Enqueuing flush of schema_columnfamilies: 103212 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Writing Memtable-schema_columnfamilies@158956949(26.712KiB serialized bytes, 460 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Enqueuing flush of schema_triggers: 154 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Enqueuing flush of size_estimates: 5964639 (1%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Enqueuing flush of peers: 152 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Enqueuing flush of schema_keyspaces: 471 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Enqueuing flush of schema_usertypes: 154 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-tmp-ka-88-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Enqueuing flush of sstable_activity: 7889 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Enqueuing flush of schema_columns: 263136 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:44 Writing Memtable-schema_triggers@1398178529(0.008KiB serialized bytes, 1 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/schema_triggers-0359bc7171233ee19a4ab9dfb11fc125/system-schema_triggers-tmp-ka-62-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Writing Memtable-size_estimates@523198719(1.190MiB serialized bytes, 16940 ops, 1%/0% of on/off-heap limit)
+INFO  23:52:44 Writing Memtable-peers@1838090655(0.008KiB serialized bytes, 1 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/peers-37f71aca7dc2383ba70672528af04d4f/system-peers-tmp-ka-3-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Writing Memtable-schema_keyspaces@54263227(0.118KiB serialized bytes, 4 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/schema_keyspaces-b0f2235744583cdb9631c43e59ce3676/system-schema_keyspaces-tmp-ka-91-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Writing Memtable-schema_usertypes@750187897(0.008KiB serialized bytes, 1 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/schema_usertypes-3aa752254f82350b8d5c430fa221fa0a/system-schema_usertypes-tmp-ka-62-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Writing Memtable-sstable_activity@1717957846(0.709KiB serialized bytes, 42 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/sstable_activity-5a1ff267ace03f128563cfae6103c65e/system-sstable_activity-tmp-ka-62-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:44 Writing Memtable-schema_columns@1990571625(43.692KiB serialized bytes, 855 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:44 Completed flushing /var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-tmp-ka-88-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:46 Completed flushing /var/lib/cassandra/data/system/size_estimates-618f817b005f3678b8a453f3930b8e86/system-size_estimates-tmp-ka-62-Data.db (249.399KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=287)
+INFO  23:52:46 Log replay complete, 66 replayed mutations
+INFO  23:52:46 Compacting [SSTableReader(path='/var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-86-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-87-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-85-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-88-Data.db')]
+INFO  23:52:46 Compacting [SSTableReader(path='/var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-86-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-87-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-88-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-85-Data.db')]
+INFO  23:52:46 Cassandra version: 2.1.20
+INFO  23:52:46 Thrift API version: 19.39.0
+INFO  23:52:46 CQL supported versions: 2.0.0,3.2.1 (default: 3.2.1)
+INFO  23:52:46 Initializing index summary manager with a memory pool size of 99 MB and a resize interval of 60 minutes
+INFO  23:52:46 Loading persisted ring state
+INFO  23:52:46 Starting up server gossip
+INFO  23:52:46 Enqueuing flush of local: 1822 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:46 Writing Memtable-local@786950771(0.329KiB serialized bytes, 13 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:46 Completed flushing /var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-tmp-ka-252-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=93157)
+INFO  23:52:47 Loading settings from file:/etc/cassandra/cassandra.yaml
+INFO  23:52:47 Node configuration:[authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_snapshot=true; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=192.168.84.40; broadcast_rpc_address=192.168.84.40; cas_contention_timeout_in_ms=1000; client_encryption_options=<REDACTED>; cluster_name=cassandra; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_directory=/var/lib/cassandra/commitlog; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_period_in_ms=10000; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_counter_writes=32; concurrent_reads=32; concurrent_writes=32; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; cross_node_timeout=false; data_file_directories=[/var/lib/cassandra/data]; disk_failure_policy=stop; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; endpoint_snitch=GossipingPropertyFileSnitch; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; incremental_backups=false; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; inter_dc_tcp_nodelay=false; internode_compression=all; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=192.168.84.40; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; memtable_allocation_type=heap_buffers; native_transport_port=9042; num_tokens=256; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_validity_in_ms=2000; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_timeout_in_ms=10000; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=0.0.0.0; rpc_keepalive=true; rpc_port=9160; rpc_server_type=sync; saved_caches_directory=/var/lib/cassandra/saved_caches; seed_provider=[{class_name=org.apache.cassandra.locator.SimpleSeedProvider, parameters=[{seeds=cassandra-0.cassandra.omec.svc.cluster.local}]}]; server_encryption_options=<REDACTED>; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; thrift_framed_transport_size_in_mb=15; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; write_request_timeout_in_ms=2000]
+INFO  23:52:47 Compacted 4 sstables to [/var/lib/cassandra/data/system/schema_columnfamilies-45f5b36024bc3f83a3631034ea4fa697/system-schema_columnfamilies-ka-89,].  34,116 bytes to 15,615 (~45% of original) in 674ms = 0.022094MB/s.  7 total partitions merged to 4.  Partition merge counts were {1:3, 4:1, }
+INFO  23:52:47 Compacted 4 sstables to [/var/lib/cassandra/data/system/schema_columns-296e9c049bec3085827dc17d3df2122a/system-schema_columns-ka-89,].  53,636 bytes to 22,833 (~42% of original) in 982ms = 0.022174MB/s.  7 total partitions merged to 4.  Partition merge counts were {1:3, 4:1, }
+INFO  23:52:47 Starting Messaging Service on port 7000
+INFO  23:52:47 Loading settings from file:/etc/cassandra/cassandra.yaml
+INFO  23:52:47 Node configuration:[authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_snapshot=true; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=192.168.84.40; broadcast_rpc_address=192.168.84.40; cas_contention_timeout_in_ms=1000; client_encryption_options=<REDACTED>; cluster_name=cassandra; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_directory=/var/lib/cassandra/commitlog; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_period_in_ms=10000; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_counter_writes=32; concurrent_reads=32; concurrent_writes=32; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; cross_node_timeout=false; data_file_directories=[/var/lib/cassandra/data]; disk_failure_policy=stop; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; endpoint_snitch=GossipingPropertyFileSnitch; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; incremental_backups=false; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; inter_dc_tcp_nodelay=false; internode_compression=all; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=192.168.84.40; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; memtable_allocation_type=heap_buffers; native_transport_port=9042; num_tokens=256; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_validity_in_ms=2000; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_timeout_in_ms=10000; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=0.0.0.0; rpc_keepalive=true; rpc_port=9160; rpc_server_type=sync; saved_caches_directory=/var/lib/cassandra/saved_caches; seed_provider=[{class_name=org.apache.cassandra.locator.SimpleSeedProvider, parameters=[{seeds=cassandra-0.cassandra.omec.svc.cluster.local}]}]; server_encryption_options=<REDACTED>; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; thrift_framed_transport_size_in_mb=15; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; write_request_timeout_in_ms=2000]
+INFO  23:52:47 Using saved tokens [-1070729320064485168, -110564270569680965, -1120592372507522980, -1129933644674852074, -1190933248798634724, -1263842728114677633, -1285625787940327287, -1310459246979519337, -1480542169785429697, -1491676069022561793, -1536857053645486844, -1588716776622286679, -1736878045540873374, -1827460668429366042, -2021867380135835263, -2137584870502234889, -216426536136789431, -2181039353584919456, -219058800065095592, -2199067176549349318, -2229646818915630713, -2300161790469074628, -2430493668070506097, -2556835149125371661, -2705549838284446412, -2792447783646635671, -2807495743678727150, -2814664321676944810, -284549155965807196, -2951794832076432977, -2954455894404749748, -299457580093923699, -3069059959799608366, -3092297208160026560, -3102980337651579309, -3107366380077818351, -3148954542776223435, -3152837230317591487, -3179294424117350900, -3234860817858702814, -3272320493413176208, -328439397351565299, -3304580043601537671, -3401795233573167122, -3512642080797980182, -3560898423371594394, -3587719837874112176, -3661336752823702174, -3682323147142673720, -3718809058917928376, -3783636573114051325, -3900577233093334841, -3990375132445536566, -4084496268825856314, -4101698306901778813, -4268867155361785242, -4352042727487746130, -4405419001571829934, -4424126900047385483, -4498170391827525649, -454153875130321820, -4571472289010758766, -4606307670313490400, -4638277417653309702, -4659168415790838706, -4794537058455586342, -5021206320678439774, -5027232310180306642, -5101815527259974355, -5112548159952692102, -5292502304584788308, -5343386963625248724, -5378646998914193783, -538622243635907047, -5424089630729763460, -5509892910269210278, -5581756763841953915, -5633673397186565789, -5712782415147950426, -5739894861798648009, -5774867687951811634, -5775230839596111050, -5811493857957720541, -5894303190464905502, -5914084990170611234, -5966779247455139159, -5980696799732462351, -616109134166277381, -6224336576841695862, -6298620049033526167, -6310847705780596026, -6366228323893891334, -642214540575889557, -6513571260265196588, -6674040152676779695, -6688851681085125855, -6891037523350653930, -7041440493506161465, -7047699126133710509, -7252692246532177189, -7324502982686065647, -7352047947542626477, -7431164294976274910, -75082458557748678, -7518857899977844542, -7522678076968907603, -7526304081258098399, -7539966118282169105, -7641217850426578224, -7772040184315777330, -785027038905021208, -794395295487699340, -8074195148180602352, -8104126804878489317, -8173865151251286868, -8191971177064023177, -8422621137840004387, -8429210961762364731, -8502272943009514922, -8617099789423747336, -8642702380978169257, -8702787318962376670, -8877911827317393128, -8882936499605119678, -8889287949403238438, -9033825900541178404, -9067492486086637030, -9093022801433170572, -9127373281036207929, -9139220605970825758, -9188165561996024030, 1046127986831821152, 1078732940369828912, 113202758484253872, 1193633400076461251, 1202613689625431429, 1210306299078397943, 1228694635603602084, 1364966019192179010, 1483084723707655310, 1485776425646980515, 1864097356291883827, 187540598762974090, 1903983859639087410, 1927190475119673823, 1974254684158377519, 1975663412400266869, 1984276963231025725, 19975176868165771, 2019758690545187678, 2058937754743895104, 2086385673836883190, 2120415921386362894, 2121601935662660211, 2158481207322157911, 2244316207041506271, 2265953235041051504, 2302690676052050095, 2393660026497255312, 2424879587832680123, 2480103224462276062, 2538001019639086667, 264748020536783482, 26541629982744549, 2683973865976181920, 268713080091955817, 2699044729354513549, 2745306572528441208, 2770082176444826382, 2882342437547273800, 2933979711515401388, 2966913357654902427, 3021941020712122883, 3075286618786813951, 3144652479293699067, 317771641075763028, 3194166536927577301, 3347831809279445101, 3401786328785212530, 3529916754452224028, 3615294878029397080, 3724730175969264180, 3755562398436930920, 3764240256045553845, 3778462237074513821, 3912254049079216440, 3916943020460943074, 3933942376940019280, 4092960794475194555, 4228297115437808985, 457415150565162325, 4600673151218867178, 4606988289889615311, 4635292799772973933, 4725378341468217907, 4783405350160627362, 4785627656027211020, 4859543665372982718, 4862418474326008764, 4930420868493107475, 5000436621939534358, 5010192211934832489, 5067845061442779168, 514796990582144346, 5310640628385592560, 5449920475902231772, 5469059334860854444, 5557854984245082706, 5618802832630809881, 5621322405818700155, 5656056680039570518, 5773391136435789620, 5863229848772912435, 6079337073378538021, 6097491049359364730, 6124739360394802065, 6175551844154252932, 6227590963608831298, 62326395562582604, 6257494574854413484, 6364480035810644530, 6384556917414253919, 6448511609533932124, 6489683263179400017, 6507571767435375508, 6630572427747945937, 6986762617810254509, 7265465956714749727, 7408405907967808775, 7410989204712700255, 7418222796138357133, 7448184361753556434, 7473805115582954660, 7481889644560677058, 7507304269180641181, 7563336345361436437, 7740360291370202091, 7820763882614252342, 7845085442599098685, 8101577300996065498, 8229019484253538040, 8238183256455971885, 8285965296621668206, 8325955908659715640, 8411223548845047745, 8435283191578042348, 8480927833523238151, 8564057535973028346, 8631328709211938207, 8655345386319227693, 8665260075067242291, 8729989236351775861, 8847113447336661696, 9123929313353326940, 9124043911991165869, 981988537280827937]
+INFO  23:52:47 Enqueuing flush of local: 578 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:47 Writing Memtable-local@1101221986(0.081KiB serialized bytes, 4 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:47 Completed flushing /var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-tmp-ka-253-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=95095)
+INFO  23:52:47 Compacting [SSTableReader(path='/var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-251-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-250-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-253-Data.db'), SSTableReader(path='/var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-252-Data.db')]
+INFO  23:52:47 Enqueuing flush of local: 51480 (0%) on-heap, 0 (0%) off-heap
+INFO  23:52:47 Writing Memtable-local@752194973(8.366KiB serialized bytes, 259 ops, 0%/0% of on/off-heap limit)
+INFO  23:52:47 Completed flushing /var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-tmp-ka-254-Data.db (0.000KiB) for commitlog position ReplayPosition(segmentId=1651017152835, position=107086)
+INFO  23:52:47 Node /192.168.84.40 state jump to NORMAL
+INFO  23:52:47 Waiting for gossip to settle before accepting client requests...
+INFO  23:52:47 Compacted 4 sstables to [/var/lib/cassandra/data/system/local-7ad54392bcdd35a684174e047860b377/system-local-ka-255,].  6,317 bytes to 5,725 (~90% of original) in 384ms = 0.014218MB/s.  4 total partitions merged to 1.  Partition merge counts were {4:1, }
+INFO  23:52:55 No gossip backlog; proceeding
+INFO  23:52:56 Netty using native Epoll event loop
+INFO  23:52:56 Using Netty Version: [netty-buffer=netty-buffer-4.0.44.Final.452812a, netty-codec=netty-codec-4.0.44.Final.452812a, netty-codec-haproxy=netty-codec-haproxy-4.0.44.Final.452812a, netty-codec-http=netty-codec-http-4.0.44.Final.452812a, netty-codec-socks=netty-codec-socks-4.0.44.Final.452812a, netty-common=netty-common-4.0.44.Final.452812a, netty-handler=netty-handler-4.0.44.Final.452812a, netty-tcnative=netty-tcnative-1.1.33.Fork26.142ecbb, netty-transport=netty-transport-4.0.44.Final.452812a, netty-transport-native-epoll=netty-transport-native-epoll-4.0.44.Final.452812a, netty-transport-rxtx=netty-transport-rxtx-4.0.44.Final.452812a, netty-transport-sctp=netty-transport-sctp-4.0.44.Final.452812a, netty-transport-udt=netty-transport-udt-4.0.44.Final.452812a]
+INFO  23:52:56 Starting listening for CQL clients on /0.0.0.0:9042...
+INFO  23:52:56 Not starting RPC server as requested. Use JMX (StorageService->startRPCServer()) or nodetool (enablethrift) to start it
+INFO  23:55:12 ParNew GC in 335ms.  CMS Old Gen: 0 -> 5043696; Par Eden Space: 429522944 -> 0; Par Survivor Space: 13661328 -> 28874936
+INFO  23:55:12 Pool Name                    Active   Pending      Completed   Blocked  All Time Blocked
+INFO  23:55:12 MutationStage                     0         0             76         0                 0
+INFO  23:55:12 RequestResponseStage              0         0              0         0                 0
+INFO  23:55:13 ReadRepairStage                   0         0              0         0                 0
+INFO  23:55:13 CounterMutationStage              0         0              0         0                 0
+INFO  23:55:13 ReadStage                         0         0             12         0                 0
+INFO  23:55:13 MiscStage                         0         0              0         0                 0
+INFO  23:55:13 HintedHandoff                     0         0              0         0                 0
+INFO  23:55:13 GossipStage                       0         0              0         0                 0
+INFO  23:55:13 CacheCleanupExecutor              0         0              0         0                 0
+INFO  23:55:13 InternalResponseStage             0         0              0         0                 0
+INFO  23:55:13 CommitLogArchiver                 0         0              0         0                 0
+INFO  23:55:13 CompactionExecutor                0         0             45         0                 0
+INFO  23:55:13 ValidationExecutor                0         0              0         0                 0
+INFO  23:55:13 MigrationStage                    0         0              0         0                 0
+INFO  23:55:13 AntiEntropyStage                  0         0              0         0                 0
+INFO  23:55:13 PendingRangeCalculator            0         0              1         0                 0
+INFO  23:55:13 Sampler                           0         0              0         0                 0
+INFO  23:55:13 MemtableFlushWriter               0         0             13         0                 0
+INFO  23:55:13 MemtablePostFlush                 0         0             25         0                 0
+INFO  23:55:13 MemtableReclaimMemory             0         0             13         0                 0
+INFO  23:55:13 CompactionManager                 0         0
+INFO  23:55:13 MessagingService                n/a       0/0
+INFO  23:55:13 Cache Type                     Size                 Capacity               KeysToSave
+INFO  23:55:13 KeyCache                       1160                103809024                      all
+INFO  23:55:13 RowCache                          0                        0                      all
+INFO  23:55:13 ColumnFamily                Memtable ops,data
+INFO  23:55:13 vpcrf.session_bearer                      0,0
+INFO  23:55:13 vpcrf.rules                               0,0
+INFO  23:55:13 vpcrf.endpoints                           0,0
+INFO  23:55:13 vpcrf.subscriber_apn                      0,0
+INFO  23:55:13 vpcrf.apns                                0,0
+INFO  23:55:13 vpcrf.session_ip                          0,0
+INFO  23:55:13 vpcrf.subscriber                          0,0
+INFO  23:55:13 vpcrf.session                             0,0
+INFO  23:55:13 vpcrf.rule_membership                     0,0
+INFO  23:55:13 system.compaction_history             29,3962
+INFO  23:55:13 system.hints                              0,0
+INFO  23:55:13 system.IndexInfo                          0,0
+INFO  23:55:13 system.schema_columnfamilies          460,103212
+INFO  23:55:13 system.schema_triggers                  1,154
+INFO  23:55:13 system.size_estimates           16940,5866662
+INFO  23:55:13 system.paxos                              0,0
+INFO  23:55:13 system.peer_events                        0,0
+INFO  23:55:13 system.range_xfers                        0,0
+INFO  23:55:13 system.compactions_in_progress                 0,0
+INFO  23:55:13 system.peers                            1,152
+INFO  23:55:13 system.schema_keyspaces                 4,471
+INFO  23:55:13 system.schema_usertypes                 1,154
+INFO  23:55:13 system.local                              0,0
+INFO  23:55:13 system.sstable_activity               30,5709
+INFO  23:55:13 system.schema_columns              855,232677
+INFO  23:55:13 system.batchlog                           0,0
+INFO  23:55:13 vhss.mmeidentity                          0,0
+INFO  23:55:13 vhss.events_extid                         0,0
+INFO  23:55:13 vhss.msisdn_imsi                          0,0
+INFO  23:55:13 vhss.extid_imsi                           0,0
+INFO  23:55:13 vhss.mmeidentity_host                     0,0
+INFO  23:55:13 vhss.extid                                0,0
+INFO  23:55:13 vhss.events_msisdn                        0,0
+INFO  23:55:13 vhss.users_imsi                           0,0
+INFO  23:55:13 vhss.events                               0,0
+INFO  23:55:13 vhss.extid_imsi_xref                      0,0
+INFO  23:55:13 vhss.global_ids                           0,0
+INFO  23:55:13 system_traces.sessions                    0,0
+INFO  23:55:13 system_traces.events                      0,0
+INFO  23:55:24 LEAVING: sleeping 30000 ms for batch processing and pending range setup
+ERROR 23:55:24 Exception in thread Thread[PendingRangeCalculator:1,5,main]
+java.lang.AssertionError: not aware of any cluster members
+        at org.apache.cassandra.locator.NetworkTopologyStrategy.calculateNaturalEndpoints(NetworkTopologyStrategy.java:94) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at org.apache.cassandra.service.PendingRangeCalculatorService.calculatePendingRanges(PendingRangeCalculatorService.java:149) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at org.apache.cassandra.service.PendingRangeCalculatorService$PendingRangeTask.run(PendingRangeCalculatorService.java:66) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) ~[na:1.8.0_181]
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266) ~[na:1.8.0_181]
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) ~[na:1.8.0_181]
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [na:1.8.0_181]
+        at java.lang.Thread.run(Thread.java:748) [na:1.8.0_181]
+ERROR 23:55:25 Exception in thread Thread[PendingRangeCalculator:1,5,main]
+java.lang.AssertionError: not aware of any cluster members
+        at org.apache.cassandra.locator.NetworkTopologyStrategy.calculateNaturalEndpoints(NetworkTopologyStrategy.java:94) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at org.apache.cassandra.service.PendingRangeCalculatorService.calculatePendingRanges(PendingRangeCalculatorService.java:149) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at org.apache.cassandra.service.PendingRangeCalculatorService$PendingRangeTask.run(PendingRangeCalculatorService.java:66) ~[apache-cassandra-2.1.20.jar:2.1.20]
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) ~[na:1.8.0_181]
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266) ~[na:1.8.0_181]
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) ~[na:1.8.0_181]
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [na:1.8.0_181]
+        at java.lang.Thread.run(Thread.java:748) [na:1.8.0_181]
+INFO  23:55:45 Stop listening for CQL clients
+INFO  23:55:45 Announcing shutdown
+INFO  23:55:45 Node /192.168.84.40 state jump to shutdown

@@ -1,0 +1,117 @@
+
+
+klee@vmware-063:~/aether-in-a-box$ kubectl -n aether-roc get pods
+NAME                                                              READY   STATUS    RESTARTS   AGE
+aether-roc-api-8fc6cbd6-spffz                                     1/1     Running   0          13h
+aether-roc-gui-v4-7497c97c6c-r46tg                                1/1     Running   0          13h
+aether-roc-umbrella-grafana-8dfbfc7d-f75wp                        2/2     Running   0          13h
+aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-h86d5           1/1     Running   0          13h
+aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5   2/2     Running   0          13h
+aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5        2/2     Running   0          13h
+aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr        2/2     Running   0          13h
+aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk        2/2     Running   0          13h
+aether-roc-websocket-855d64549b-jb9j9                             1/1     Running   0          13h
+demo-exporter-f97895d8f-vpgrq                                     1/1     Running   1          13h
+onos-cli-5b947f8f6-shs7c                                          1/1     Running   0          13h
+onos-config-678cb4d544-7txrw                                      5/5     Running   0          13h
+onos-consensus-store-0                                            1/1     Running   0          13h
+onos-topo-69c469c85-w8zw8                                         3/3     Running   0          13h
+prom-label-proxy-acc-58dbc89fb8-ppgwb                             1/1     Running   0          13h
+prom-label-proxy-amp-5d54b6d445-cxx99                             1/1     Running   0          13h
+sdcore-adapter-v2-77b6865bd5-wlxql                                1/1     Running   0          13h
+sdcore-adapter-v4-64fbb54697-87tdr                                1/1     Running   0          13h
+subscriber-proxy-79b66b55c4-nnbwf                                 1/1     Running   0          13h
+
+
+
+klee@vmware-063:~/aether-in-a-box$ kubectl get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   192.168.128.1   <none>        443/TCP   15h
+
+
+
+
+
+klee@vmware-063:~/aether-in-a-box$ sudo docker ps
+CONTAINER ID   IMAGE                                              COMMAND                  CREATED             STATUS             PORTS     NAMES
+1617e34d3822   7aa1277761b5                                       "start_runit"            About an hour ago   Up About an hour             k8s_calico-node_calico-node-7ws74_kube-system_3db8768a-1935-4337-a8af-20dfea9471fb_1
+8bcc3b6b2c06   779aa7e4e93c                                       "/usr/bin/kube-contr…"   About an hour ago   Up About an hour             k8s_calico-kube-controllers_calico-kube-controllers-dbfbbc4cb-ppkf9_kube-system_8d26cd3f-73c3-408d-af37-cda23be89b33_1
+52530b01bcc9   6d12038ea764                                       "/usr/local/bin/sdco…"   About an hour ago   Up About an hour             k8s_demo-exporter_demo-exporter-f97895d8f-vpgrq_aether-roc_0b1ae60d-78a1-445d-8422-6a41585c3cf7_1
+615fcb24bd15   4c5693dacb42                                       "kube-scheduler --au…"   7 hours ago         Up 7 hours                   k8s_kube-scheduler_kube-scheduler-node1_kube-system_1c012b714182cfe1bd343039d888308b_1
+17b52f80016d   c857cde24856                                       "kube-controller-man…"   7 hours ago         Up 7 hours                   k8s_kube-controller-manager_kube-controller-manager-node1_kube-system_626e783fabe53f78eabecaaf352a9fca_1
+f2857f2654a1   onosproject/config-model-registry                  "go run github.com/o…"   13 hours ago        Up 13 hours                  k8s_model-registry_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+3fb0352ea97e   73b5dc230c4f                                       "atomix-raft-storage…"   13 hours ago        Up 13 hours                  k8s_driver-raft-v2beta2_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+cf063a4823d2   1b2b3418df75                                       "atomix-broker"          13 hours ago        Up 13 hours                  k8s_atomix-broker_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+78caeb118e6b   openpolicyagent/opa                                "/opa run --server /…"   13 hours ago        Up 13 hours                  k8s_openpolicyagent_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+f6d955fcd9aa   onosproject/onos-config                            "onos-config -caPath…"   13 hours ago        Up 13 hours                  k8s_onos-config_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+ed02b2650ab2   atomix/atomix-raft-storage-driver                  "atomix-raft-storage…"   13 hours ago        Up 13 hours                  k8s_driver-raft-v2beta2_onos-topo-69c469c85-w8zw8_aether-roc_2dc789fd-a0d1-44e9-856e-e9b5e95e6e86_0
+28d4ef77f28b   grafana/grafana                                    "/run.sh"                13 hours ago        Up 13 hours                  k8s_grafana_aether-roc-umbrella-grafana-8dfbfc7d-f75wp_aether-roc_22be99f8-9c87-4bc2-a748-c47edf116af8_0
+1ad77f2b1c15   quay.io/prometheus/prometheus                      "/bin/prometheus --s…"   13 hours ago        Up 13 hours                  k8s_prometheus-amp-server_aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk_aether-roc_46504d2f-175c-42ce-82b3-af47593de0bd_0
+dba049d56da8   atomix/atomix-broker                               "atomix-broker"          13 hours ago        Up 13 hours                  k8s_atomix-broker_onos-topo-69c469c85-w8zw8_aether-roc_2dc789fd-a0d1-44e9-856e-e9b5e95e6e86_0
+1a407e82271c   quay.io/prometheus/prometheus                      "/bin/prometheus --s…"   13 hours ago        Up 13 hours                  k8s_prometheus-acc-server_aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5_aether-roc_5748089d-89d6-4dac-8b0b-2bb4bde80caa_0
+f9334856cee3   quay.io/prometheus/prometheus                      "/bin/prometheus --s…"   13 hours ago        Up 13 hours                  k8s_prometheus-ace-server_aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr_aether-roc_e571277a-69bb-4209-9128-4f7b72f5528b_0
+b934229be8ec   7cd5e6c23e4d                                       "python -u /app/side…"   13 hours ago        Up 13 hours                  k8s_grafana-sc-dashboard_aether-roc-umbrella-grafana-8dfbfc7d-f75wp_aether-roc_22be99f8-9c87-4bc2-a748-c47edf116af8_0
+8e08e6cff5e1   jimmidyson/configmap-reload                        "/configmap-reload -…"   13 hours ago        Up 13 hours                  k8s_prometheus-amp-server-configmap-reload_aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk_aether-roc_46504d2f-175c-42ce-82b3-af47593de0bd_0
+5b6c55ddec5d   onosproject/onos-topo                              "onos-topo -caPath=/…"   13 hours ago        Up 13 hours                  k8s_onos-topo_onos-topo-69c469c85-w8zw8_aether-roc_2dc789fd-a0d1-44e9-856e-e9b5e95e6e86_0
+27f0ca55cf9d   atomix/atomix-raft-storage-node                    "atomix-raft-storage…"   13 hours ago        Up 13 hours                  k8s_raft_onos-consensus-store-0_aether-roc_38dee6f7-b469-4f8c-9a1f-db548d682994_0
+8eca67f39631   k8s.gcr.io/kube-state-metrics/kube-state-metrics   "/kube-state-metrics…"   13 hours ago        Up 13 hours                  k8s_kube-state-metrics_aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-h86d5_aether-roc_3e2dbc6b-5bae-4371-a2c6-656c60e9e8b9_0
+97cdd3dd700f   onosproject/sdcore-adapter                         "/usr/local/bin/subs…"   13 hours ago        Up 13 hours                  k8s_subscriber-proxy_subscriber-proxy-79b66b55c4-nnbwf_aether-roc_f0965507-63dc-4c56-a706-a3563fe257f2_0
+976a84d71613   d771cc9785a1                                       "/configmap-reload -…"   13 hours ago        Up 13 hours                  k8s_prometheus-acc-alertmanager-configmap-reload_aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5_aether-roc_7071e478-d178-48b8-bea3-133dbab4eccc_0
+10b42c6c21fe   onosproject/prom-label-proxy                       "prom-label-proxy -l…"   13 hours ago        Up 13 hours                  k8s_prom-label-proxy-acc_prom-label-proxy-acc-58dbc89fb8-ppgwb_aether-roc_c0f1513e-2e1e-4b60-b0ae-0e6fe22ceb0e_0
+c3b4969217ab   quay.io/prometheus/alertmanager                    "/bin/alertmanager -…"   13 hours ago        Up 13 hours                  k8s_prometheus-acc-alertmanager_aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5_aether-roc_7071e478-d178-48b8-bea3-133dbab4eccc_0
+8f4dacf1aecf   jimmidyson/configmap-reload                        "/configmap-reload -…"   13 hours ago        Up 13 hours                  k8s_prometheus-acc-server-configmap-reload_aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5_aether-roc_5748089d-89d6-4dac-8b0b-2bb4bde80caa_0
+b6224c95c2d6   onosproject/prom-label-proxy                       "prom-label-proxy -l…"   13 hours ago        Up 13 hours                  k8s_prom-label-proxy-amp_prom-label-proxy-amp-5d54b6d445-cxx99_aether-roc_ce30263c-ab4a-4732-9f1b-cf50f7fa97e1_0
+0672ab0d85ab   onosproject/aether-roc-gui                         "docker-entrypoint.s…"   13 hours ago        Up 13 hours                  k8s_aether-roc-gui-v4_aether-roc-gui-v4-7497c97c6c-r46tg_aether-roc_26904d10-3039-4729-874a-9f8738a1b7d0_0
+068f58162e9e   onosproject/sdcore-adapter                         "/usr/local/bin/sdco…"   13 hours ago        Up 13 hours                  k8s_sdcore-adapter-v4_sdcore-adapter-v4-64fbb54697-87tdr_aether-roc_41a5eb5d-9ae7-41e5-840a-3193d0cbdbbd_0
+8bea25ec9b71   onosproject/aether-roc-websocket                   "aether-roc-websocket"   13 hours ago        Up 13 hours                  k8s_aether-roc-websocket_aether-roc-websocket-855d64549b-jb9j9_aether-roc_a7c0e259-02d2-42fe-a404-9b7cb5d08c0e_0
+605a9ce3bcb7   onosproject/aether-roc-api                         "aether-roc-api -all…"   13 hours ago        Up 13 hours                  k8s_aether-roc-api_aether-roc-api-8fc6cbd6-spffz_aether-roc_855b3efc-74c0-4968-9af6-9f952dc0057d_0
+f4284c3f34e5   jimmidyson/configmap-reload                        "/configmap-reload -…"   13 hours ago        Up 13 hours                  k8s_prometheus-ace-server-configmap-reload_aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr_aether-roc_e571277a-69bb-4209-9128-4f7b72f5528b_0
+44199ccf7093   onosproject/onos-cli                               "/bin/bash"              13 hours ago        Up 13 hours                  k8s_onos-cli_onos-cli-5b947f8f6-shs7c_aether-roc_b982c1a6-b13e-4b84-aa9d-a25468a508ee_0
+31049facb475   onosproject/sdcore-adapter                         "/usr/local/bin/sdco…"   13 hours ago        Up 13 hours                  k8s_sdcore-adapter-v2_sdcore-adapter-v2-77b6865bd5-wlxql_aether-roc_96a25a48-5123-42b9-a1eb-17738b863a57_0
+07b92237880d   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-prometheus-amp-server-67cc457fc7-fmfvk_aether-roc_46504d2f-175c-42ce-82b3-af47593de0bd_0
+65024cbc4b16   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-grafana-8dfbfc7d-f75wp_aether-roc_22be99f8-9c87-4bc2-a748-c47edf116af8_0
+e837869eb188   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-topo-69c469c85-w8zw8_aether-roc_2dc789fd-a0d1-44e9-856e-e9b5e95e6e86_0
+b3a755ffa75e   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-h86d5_aether-roc_3e2dbc6b-5bae-4371-a2c6-656c60e9e8b9_0
+eb0e0a5c7b38   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-consensus-store-0_aether-roc_38dee6f7-b469-4f8c-9a1f-db548d682994_0
+e5c38d0d693f   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_subscriber-proxy-79b66b55c4-nnbwf_aether-roc_f0965507-63dc-4c56-a706-a3563fe257f2_0
+f5250ae446f0   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-prometheus-acc-alertmanager-55ddf746856gzk5_aether-roc_7071e478-d178-48b8-bea3-133dbab4eccc_0
+ce48f23413ed   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_prom-label-proxy-acc-58dbc89fb8-ppgwb_aether-roc_c0f1513e-2e1e-4b60-b0ae-0e6fe22ceb0e_0
+c2baf7e65bc1   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-config-678cb4d544-7txrw_aether-roc_d3cf91ca-7889-4237-8604-609b0eec9462_0
+bd464665da7d   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-prometheus-acc-server-6df774dc96-fsrt5_aether-roc_5748089d-89d6-4dac-8b0b-2bb4bde80caa_0
+be64c90927ae   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_prom-label-proxy-amp-5d54b6d445-cxx99_aether-roc_ce30263c-ab4a-4732-9f1b-cf50f7fa97e1_0
+f7e206b1574a   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-gui-v4-7497c97c6c-r46tg_aether-roc_26904d10-3039-4729-874a-9f8738a1b7d0_0
+90a35ea37d07   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_sdcore-adapter-v4-64fbb54697-87tdr_aether-roc_41a5eb5d-9ae7-41e5-840a-3193d0cbdbbd_0
+c942427e6e54   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-websocket-855d64549b-jb9j9_aether-roc_a7c0e259-02d2-42fe-a404-9b7cb5d08c0e_0
+9bc79230b71d   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-2zdcr_aether-roc_e571277a-69bb-4209-9128-4f7b72f5528b_0
+77a8cc44a608   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_aether-roc-api-8fc6cbd6-spffz_aether-roc_855b3efc-74c0-4968-9af6-9f952dc0057d_0
+f8b77ec95bde   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_demo-exporter-f97895d8f-vpgrq_aether-roc_0b1ae60d-78a1-445d-8422-6a41585c3cf7_0
+3d32c0ee6b4c   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_sdcore-adapter-v2-77b6865bd5-wlxql_aether-roc_96a25a48-5123-42b9-a1eb-17738b863a57_0
+7c9d2a28a1ff   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-cli-5b947f8f6-shs7c_aether-roc_b982c1a6-b13e-4b84-aa9d-a25468a508ee_0
+9e3ced90054b   onosproject/app-operator                           "app-operator"           13 hours ago        Up 13 hours                  k8s_controller_onos-operator-app-7bf5d77c56-ljzjc_kube-system_2baa47f2-9d8f-40dc-a699-7f4a8ee249be_0
+0004fb86571c   onosproject/config-operator                        "config-operator"        13 hours ago        Up 13 hours                  k8s_controller_onos-operator-config-554c9848f7-fs7cj_kube-system_e175e3b5-bd93-478f-ae33-33cb08b186df_0
+1bc66bf53cd1   onosproject/topo-operator                          "topo-operator"          13 hours ago        Up 13 hours                  k8s_controller_onos-operator-topo-7877c854d8-pg429_kube-system_9e5f0299-db0a-482f-a52b-96fe4c8c9e27_0
+cf58b46ae603   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-operator-topo-7877c854d8-pg429_kube-system_9e5f0299-db0a-482f-a52b-96fe4c8c9e27_0
+e679c94eaa98   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-operator-config-554c9848f7-fs7cj_kube-system_e175e3b5-bd93-478f-ae33-33cb08b186df_0
+be6c273dc8f6   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_onos-operator-app-7bf5d77c56-ljzjc_kube-system_2baa47f2-9d8f-40dc-a699-7f4a8ee249be_0
+8991821dc205   atomix/atomix-raft-storage-controller              "atomix-raft-storage…"   13 hours ago        Up 13 hours                  k8s_atomix-raft-storage-controller_atomix-raft-storage-controller-54cdb55579-bjczq_kube-system_80c56453-a460-43a0-83a6-80de41fad061_0
+fdcd2aa1ae7c   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_atomix-raft-storage-controller-54cdb55579-bjczq_kube-system_80c56453-a460-43a0-83a6-80de41fad061_0
+8f8020a8fc85   atomix/atomix-controller                           "atomix-controller"      13 hours ago        Up 13 hours                  k8s_atomix-controller_atomix-controller-85894559b8-mc6z6_kube-system_6a63f9ae-7d64-48e6-bf4a-45e9468bacdf_0
+4f9951578500   k8s.gcr.io/pause:3.3                               "/pause"                 13 hours ago        Up 13 hours                  k8s_POD_atomix-controller-85894559b8-mc6z6_kube-system_6a63f9ae-7d64-48e6-bf4a-45e9468bacdf_0
+ffba6915575b   078b6f04135f                                       "/cluster-proportion…"   16 hours ago        Up 16 hours                  k8s_autoscaler_dns-autoscaler-7cdcfcf64f-2kpcj_kube-system_dd88cc25-3f40-4bc8-b294-f2fd6a4d38d1_0
+0bc96d5109a4   21fc69048bd5                                       "/node-cache -locali…"   16 hours ago        Up 16 hours                  k8s_node-cache_nodelocaldns-kt2mg_kube-system_dc48462e-be1c-4965-857b-368fb5964573_0
+9b552300a7ae   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_nodelocaldns-kt2mg_kube-system_dc48462e-be1c-4965-857b-368fb5964573_0
+b2d7cede4fdb   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_dns-autoscaler-7cdcfcf64f-2kpcj_kube-system_dd88cc25-3f40-4bc8-b294-f2fd6a4d38d1_0
+a844a74fdcab   296a6d5035e2                                       "/coredns -conf /etc…"   16 hours ago        Up 16 hours                  k8s_coredns_coredns-bbb7d66cd-rmhmm_kube-system_a1ddc9a3-55a9-47a4-8e76-eb32ac0285e2_0
+6c98233f1735   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_coredns-bbb7d66cd-rmhmm_kube-system_a1ddc9a3-55a9-47a4-8e76-eb32ac0285e2_0
+e5db97ee18c4   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_calico-kube-controllers-dbfbbc4cb-ppkf9_kube-system_8d26cd3f-73c3-408d-af37-cda23be89b33_0
+b2007c07dc3d   e6cafb5d5aa1                                       "/entrypoint.sh --cn…"   16 hours ago        Up 16 hours                  k8s_kube-multus_kube-multus-ds-amd64-shkcl_kube-system_26e48a2b-d63e-4b27-b71b-6bc5520c2bab_0
+8c57edc711ad   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_kube-multus-ds-amd64-shkcl_kube-system_26e48a2b-d63e-4b27-b71b-6bc5520c2bab_0
+d3739f3dc66d   f4a6053ca28d                                       "/usr/local/bin/kube…"   16 hours ago        Up 16 hours                  k8s_kube-proxy_kube-proxy-wszmw_kube-system_10c52c1a-f4b1-45a3-9f18-4259af122c41_0
+6b421a484853   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_calico-node-7ws74_kube-system_3db8768a-1935-4337-a8af-20dfea9471fb_0
+5de53b2b5391   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_kube-proxy-wszmw_kube-system_10c52c1a-f4b1-45a3-9f18-4259af122c41_0
+2d55e5581b73   d06f046c0907                                       "kube-apiserver --ad…"   16 hours ago        Up 16 hours                  k8s_kube-apiserver_kube-apiserver-node1_kube-system_d6e202016e49e32c18d1b1fc622c7d6c_0
+ed022e2a8a66   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_kube-scheduler-node1_kube-system_1c012b714182cfe1bd343039d888308b_0
+ca3cae06140b   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_kube-controller-manager-node1_kube-system_626e783fabe53f78eabecaaf352a9fca_0
+692b5a167c54   k8s.gcr.io/pause:3.3                               "/pause"                 16 hours ago        Up 16 hours                  k8s_POD_kube-apiserver-node1_kube-system_d6e202016e49e32c18d1b1fc622c7d6c_0
+82be10a04af1   quay.io/coreos/etcd:v3.4.13                        "/usr/local/bin/etcd"    16 hours ago        Up 16 hours                  etcd1
+

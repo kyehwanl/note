@@ -1,0 +1,353 @@
+
+
+-------------------------
+1. After make reset-5g-test and  make roc-clean
+-------------------------
+
+
+
+-------------------------
+2. roc-5g-models
+-------------------------
+
+user-5gtestbed@vmware-063:~/aether-in-a-box$ CHARTS=latest make roc-5g-models
+echo "ONOS CLI pod: pod/onos-cli-5d448ff6c4-s8w7k"
+ONOS CLI pod: pod/onos-cli-5d448ff6c4-s8w7k
+until kubectl -n aether-roc exec pod/onos-cli-5d448ff6c4-s8w7k -- \
+        curl -s -f -L -X PATCH "http://aether-roc-api:8181/aether-roc-api" \
+        --header 'Content-Type: application/json' \
+        --data-raw "$(cat /home/user-5gtestbed/aether-in-a-box//roc-5g-models.json)"; do sleep 5; done
+"uuid:bbbed888-cffd-4b4e-b091-36a1e0aa6afc"
+
+--> it seems ok to install "roc-5g-models"
+
+
+
+-------------------------
+3. 5g-test
+-------------------------
+
+user-5gtestbed@vmware-063:~/aether-in-a-box$ CHARTS=latest make 5g-test
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+NODE_IP= DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 envsubst < /home/user-5gtestbed/aether-in-a-box//sd-core-5g-values.yaml | \
+helm upgrade --create-namespace --install --wait  \
+        --namespace omec \
+        --values - \
+        sd-core \
+        aether/sd-core
+Release "sd-core" does not exist. Installing it now.
+Error: context deadline exceeded
+Makefile:206: recipe for target '/tmp/build/milestones/5g-core' failed
+make: *** [/tmp/build/milestones/5g-core] Error 1
+
+
+
+ ==> Failure here
+
+
+
+-------------------------
+ 3. Check pods status
+-------------------------
+
+user-5gtestbed@vmware-063:~/aether-in-a-box$ kubectl -n omec get pods
+NAME                       READY   STATUS                  RESTARTS   AGE
+amf-7465456d9f-xt8g4       1/1     Running                 0          7m7s
+ausf-654bbdd6b-tw24w       1/1     Running                 0          7m7s
+gnbsim-0                   1/1     Running                 0          7m7s
+mongodb-5fcdcff994-6rnfh   1/1     Running                 0          7m7s
+nrf-5db5789644-89tgb       1/1     Running                 0          7m7s
+nssf-775fdfbbb4-q59lp      1/1     Running                 0          7m7s
+pcf-756b565d85-prx8w       1/1     Running                 0          7m7s
+simapp-65dc44b9d-qqqlx     1/1     Running                 0          7m7s
+smf-9bbcf84bc-jq6fb        1/1     Running                 0          7m7s
+udm-5ff558bc69-r2w7s       1/1     Running                 0          7m7s
+udr-cc4654c64-kvbzc        1/1     Running                 0          7m7s
+upf-0                      0/5     Init:CrashLoopBackOff   6          7m7s
+webui-6db4cfdc55-fdwpb     1/1     Running                 0          7m7s
+
+
+
+user-5gtestbed@vmware-063:~/aether-in-a-box$ kubectl describe pod -n omec upf-0
+Name:         upf-0
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.63
+Start Time:   Tue, 29 Mar 2022 23:11:41 -0400
+Labels:       app=upf
+              controller-revision-hash=upf-59b4767bc5
+              release=sd-core
+              statefulset.kubernetes.io/pod-name=upf-0
+Annotations:  cni.projectcalico.org/containerID: 20b25e80f648a936ba3aa2ef80f7c4540bece92b1caefb8c5244a1eeca36af2c
+              cni.projectcalico.org/podIP: 192.168.84.57/32
+              cni.projectcalico.org/podIPs: 192.168.84.57/32
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.57"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/access-net",
+                    "interface": "access",
+                    "ips": [
+                        "192.168.252.3"
+                    ],
+                    "mac": "1a:cb:a7:23:06:9f",
+                    "dns": {}
+                },{
+                    "name": "omec/core-net",
+                    "interface": "core",
+                    "ips": [
+                        "192.168.250.3"
+                    ],
+                    "mac": "42:42:28:63:e0:49",
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks:
+                [ { "name": "access-net", "interface": "access", "ips": ["192.168.252.3/24"] }, { "name": "core-net", "interface": "core", "ips": ["192.16...
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.57"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/access-net",
+                    "interface": "access",
+                    "ips": [
+                        "192.168.252.3"
+                    ],
+                    "mac": "1a:cb:a7:23:06:9f",
+                    "dns": {}
+                },{
+                    "name": "omec/core-net",
+                    "interface": "core",
+                    "ips": [
+                        "192.168.250.3"
+                    ],
+                    "mac": "42:42:28:63:e0:49",
+                    "dns": {}
+                }]
+Status:       Pending
+IP:           192.168.84.57
+IPs:
+  IP:           192.168.84.57
+Controlled By:  StatefulSet/upf
+Init Containers:
+  bess-init:
+    Container ID:  docker://8b35099fd9a5666ecc0bcbea085dbbe8ffacb373b47ecb147c0f370f7598ce09
+    Image:         omecproject/upf-epc-bess:master-9a4d86c
+    Image ID:      docker-pullable://omecproject/upf-epc-bess@sha256:7338c3b3bd6b4f72bbfbef78ae5c16f4579f5a6979365dabab869d0ae3ed0de6
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -xec
+    Args:
+      ip route replace 192.168.251.0/24 via 192.168.252.1; ip route replace default via 192.168.250.1 metric 110; ip route replace  via 169.254.1.1; iptables -I OUTPUT -p icmp --icmp-type port-unreachable -j DROP;
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    255
+      Started:      Tue, 29 Mar 2022 23:17:26 -0400
+      Finished:     Tue, 29 Mar 2022 23:17:26 -0400
+    Ready:          False
+    Restart Count:  6
+    Limits:
+      cpu:     128m
+      memory:  64Mi
+    Requests:
+      cpu:        128m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+Containers:
+  bessd:
+    Container ID:
+    Image:         omecproject/upf-epc-bess:master-9a4d86c
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/bash
+      -xc
+    Args:
+      bessd -m 0 -f -grpc-url=0.0.0.0:10514
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Liveness:       tcp-socket :10514 delay=15s timeout=1s period=20s #success=1 #failure=3
+    Environment:
+      CONF_FILE:  /etc/bess/conf/upf.json
+    Mounts:
+      /etc/bess/conf from configs (rw)
+      /pod-share from shared-app (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+  routectl:
+    Container ID:
+    Image:         omecproject/upf-epc-bess:master-9a4d86c
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /opt/bess/bessctl/conf/route_control.py
+    Args:
+      -i
+      access
+      core
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      PYTHONUNBUFFERED:  1
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+  web:
+    Container ID:
+    Image:         omecproject/upf-epc-bess:master-9a4d86c
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/bash
+      -xc
+      bessctl http 0.0.0.0 8000
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+  pfcp-agent:
+    Container ID:
+    Image:         omecproject/upf-epc-pfcpiface:master-9a4d86c
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      pfcpiface
+    Args:
+      -config
+      /tmp/conf/upf.json
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /pod-share from shared-app (rw)
+      /tmp/conf from configs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+  arping:
+    Container ID:
+    Image:         registry.aetherproject.org/tools/busybox:stable
+    Image ID:
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -xc
+    Args:
+      while true; do
+        # arping does not work - BESS graph is still disconnected
+        #arping -c 2 -I access 192.168.252.1
+        #arping -c 2 -I core 192.168.250.1
+        ping -c 2 192.168.252.1
+        ping -c 2 192.168.250.1
+        sleep 10
+      done
+
+    State:          Waiting
+      Reason:       PodInitializing
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     128m
+      memory:  64Mi
+    Requests:
+      cpu:        128m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vdfcl (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       False
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  configs:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      upf
+    Optional:  false
+  shared-app:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:  <unset>
+  default-token-vdfcl:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-vdfcl
+    Optional:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                   From               Message
+  ----     ------          ----                  ----               -------
+  Normal   Scheduled       8m14s                 default-scheduler  Successfully assigned omec/upf-0 to node1
+  Normal   AddedInterface  8m10s                 multus             Add eth0 [192.168.84.57/32] from cni0
+  Normal   AddedInterface  8m9s                  multus             Add access [192.168.252.3/24] from omec/access-net
+  Normal   AddedInterface  8m9s                  multus             Add core [192.168.250.3/24] from omec/core-net
+  Normal   Pulled          6m36s (x5 over 8m9s)  kubelet            Container image "omecproject/upf-epc-bess:master-9a4d86c" already present on machine
+  Normal   Created         6m36s (x5 over 8m9s)  kubelet            Created container bess-init
+  Normal   Started         6m36s (x5 over 8m8s)  kubelet            Started container bess-init
+  Warning  BackOff         3m3s (x25 over 8m4s)  kubelet            Back-off restarting failed container
+
+
+
+
+
+-------------------------
+ 4. checking syslog
+-------------------------
+
+
+user-5gtestbed@vmware-063:~/aether-in-a-box$ sudo tail -f /var/log/syslog
+...
+...
+Mar 29 23:17:03 vmware-063 kubelet[1417]: W0329 23:17:03.172122    1417 kubelet_pods.go:880] Unable to retrieve pull secret omec/aether.registry for omec/upf-0 due to secret "aether.registry" not found.  The image pull may not succeed.
+Mar 29 23:17:03 vmware-063 kubelet[1417]: E0329 23:17:03.172485    1417 pod_workers.go:191] Error syncing pod fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43 ("upf-0_omec(fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43)"), skipping: failed to "StartContainer" for "bess-init" with CrashLoopBackOff: "back-off 2m40s restarting failed container=bess-init pod=upf-0_omec(fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43)"
+Mar 29 23:17:04 vmware-063 kernel: [25790.720473] IPVS: rr: TCP 192.168.85.185:8080 - no destination available
+Mar 29 23:17:05 vmware-063 kernel: [25791.266779] IPVS: rr: UDP 192.168.85.230:8805 - no destination available
+Mar 29 23:17:05 vmware-063 kernel: [25791.730223] IPVS: rr: TCP 192.168.85.185:8080 - no destination available
+Mar 29 23:17:08 vmware-063 kernel: [25794.266887] IPVS: rr: UDP 192.168.85.230:8805 - no destination available
+Mar 29 23:17:10 vmware-063 kernel: [25796.735893] IPVS: rr: TCP 192.168.85.185:8080 - no destination available
+Mar 29 23:17:11 vmware-063 kernel: [25797.266971] IPVS: rr: UDP 192.168.85.230:8805 - no destination available
+Mar 29 23:17:11 vmware-063 kernel: [25797.746220] IPVS: rr: TCP 192.168.85.185:8080 - no destination available
+Mar 29 23:17:14 vmware-063 kubelet[1417]: W0329 23:17:14.172318    1417 kubelet_pods.go:880] Unable to retrieve pull secret omec/aether.registry for omec/upf-0 due to secret "aether.registry" not found.  The image pull may not succeed.
+Mar 29 23:17:14 vmware-063 kubelet[1417]: E0329 23:17:14.172688    1417 pod_workers.go:191] Error syncing pod fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43 ("upf-0_omec(fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43)"), skipping: failed to "StartContainer" for "bess-init" with CrashLoopBackOff: "back-off 2m40s restarting failed container=bess-init pod=upf-0_omec(fe9cbf2f-9d24-44ea-8cd1-ce7c505ebc43)"
+Mar 29 23:17:15 vmware-063 kernel: [25801.266908] IPVS: rr: UDP 192.168.85.230:8805 - no destination available
+Mar 29 23:17:16 vmware-063 kernel: [25802.752366] IPVS: rr: TCP 192.168.85.185:8080 - no destination available
+^C
+
+
+

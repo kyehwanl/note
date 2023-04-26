@@ -1,0 +1,5 @@
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+helm repo update
+helm install rancher rancher-stable/rancher --namespace cattle-system --set hostname=5g.antd.nist.gov --set bootstrapPassword=5gpw --set ingress.tls.source=secret --set privateCA=true
+kubectl -n cattle-system create secret generic tls-ca --from-file=cacerts.pem=./cacerts.pem
+kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key

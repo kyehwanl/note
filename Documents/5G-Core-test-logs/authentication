@@ -1,0 +1,12 @@
+# Copyright 2021-present Open Networking Foundation
+#
+# SPDX-License-Identifier: LicenseRef-ONF-Member-Only-1.0
+
+# Configure auth for private Helm repos.  Override with your credentials.
+REPO_USERNAME := nist 
+REPO_PASSWORD := nohfieniroo4weapo4Emunah3 
+
+# Configure auth for private Docker registry.  Override with credentials
+# obtained from https://registry.aetherproject.org.
+REGISTRY_USERNAME   := kyehwanl
+REGISTRY_CLI_SECRET := HUPBeHyqJfMh9thITfDP48aZNqOKbYQJ 

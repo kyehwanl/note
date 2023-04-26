@@ -1,0 +1,350 @@
+klee@vmware-063:~/aether-in-a-box$ make 5g-test
+sudo cp /home/klee/aether-in-a-box//resources/simpleovs /opt/cni/bin/
+sudo apt install -y openvswitch-switch
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libpython-stdlib openvswitch-common python python-minimal python-six python2.7 python2.7-minimal
+Suggested packages:
+  ethtool openvswitch-doc python-doc python-tk python2.7-doc binfmt-support
+The following NEW packages will be installed:
+  libpython-stdlib openvswitch-common openvswitch-switch python python-minimal python-six python2.7 python2.7-minimal
+0 upgraded, 8 newly installed, 0 to remove and 9 not upgraded.
+Need to get 4,030 kB of archives.
+After this operation, 15.3 MB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7-minimal amd64 2.7.17-1~18.04ubuntu1.6 [1,291 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python-minimal amd64 2.7.15~rc1-1 [28.1 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python2.7 amd64 2.7.17-1~18.04ubuntu1.6 [248 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 libpython-stdlib amd64 2.7.15~rc1-1 [7,620 B]
+Get:5 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python amd64 2.7.15~rc1-1 [140 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 python-six all 1.11.0-2 [11.3 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openvswitch-common amd64 2.9.8-0ubuntu0.18.04.2 [806 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openvswitch-switch amd64 2.9.8-0ubuntu0.18.04.2 [1,498 kB]
+Fetched 4,030 kB in 0s (13.6 MB/s)
+Selecting previously unselected package python2.7-minimal.
+(Reading database ... 163200 files and directories currently installed.)
+Preparing to unpack .../python2.7-minimal_2.7.17-1~18.04ubuntu1.6_amd64.deb ...
+Unpacking python2.7-minimal (2.7.17-1~18.04ubuntu1.6) ...
+Selecting previously unselected package python-minimal.
+Preparing to unpack .../python-minimal_2.7.15~rc1-1_amd64.deb ...
+Unpacking python-minimal (2.7.15~rc1-1) ...
+Selecting previously unselected package python2.7.
+Preparing to unpack .../python2.7_2.7.17-1~18.04ubuntu1.6_amd64.deb ...
+Unpacking python2.7 (2.7.17-1~18.04ubuntu1.6) ...
+Selecting previously unselected package libpython-stdlib:amd64.
+Preparing to unpack .../libpython-stdlib_2.7.15~rc1-1_amd64.deb ...
+Unpacking libpython-stdlib:amd64 (2.7.15~rc1-1) ...
+Setting up python2.7-minimal (2.7.17-1~18.04ubuntu1.6) ...
+Linking and byte-compiling packages for runtime python2.7...
+Setting up python-minimal (2.7.15~rc1-1) ...
+Selecting previously unselected package python.
+(Reading database ... 163257 files and directories currently installed.)
+Preparing to unpack .../python_2.7.15~rc1-1_amd64.deb ...
+Unpacking python (2.7.15~rc1-1) ...
+Selecting previously unselected package python-six.
+Preparing to unpack .../python-six_1.11.0-2_all.deb ...
+Unpacking python-six (1.11.0-2) ...
+Selecting previously unselected package openvswitch-common.
+Preparing to unpack .../openvswitch-common_2.9.8-0ubuntu0.18.04.2_amd64.deb ...
+Unpacking openvswitch-common (2.9.8-0ubuntu0.18.04.2) ...
+Selecting previously unselected package openvswitch-switch.
+Preparing to unpack .../openvswitch-switch_2.9.8-0ubuntu0.18.04.2_amd64.deb ...
+Unpacking openvswitch-switch (2.9.8-0ubuntu0.18.04.2) ...
+Setting up python2.7 (2.7.17-1~18.04ubuntu1.6) ...
+Setting up libpython-stdlib:amd64 (2.7.15~rc1-1) ...
+Setting up python (2.7.15~rc1-1) ...
+Setting up python-six (1.11.0-2) ...
+Setting up openvswitch-common (2.9.8-0ubuntu0.18.04.2) ...
+Setting up openvswitch-switch (2.9.8-0ubuntu0.18.04.2) ...
+update-alternatives: using /usr/lib/openvswitch-switch/ovs-vswitchd to provide /usr/sbin/ovs-vswitchd (ovs-vswitchd) in auto mode
+Created symlink /etc/systemd/system/multi-user.target.wants/openvswitch-switch.service → /lib/systemd/system/openvswitch-switch.service.
+Processing triggers for gnome-menus (3.13.3-11ubuntu1.1) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+Processing triggers for desktop-file-utils (0.23-1ubuntu3.18.04.2) ...
+Processing triggers for systemd (237-3ubuntu10.53) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+sudo ovs-vsctl --may-exist add-br br-enb-net
+sudo ovs-vsctl --may-exist add-port br-enb-net enb -- set Interface enb type=internal
+sudo ip addr add 192.168.251.4/24 dev enb || true
+sudo ip link set enb up
+sudo ethtool --offload enb tx off
+sudo: ethtool: command not found
+Makefile:146: recipe for target '/tmp/build/milestones/fabric' failed
+make: *** [/tmp/build/milestones/fabric] Error 1
+
+
+
+klee@vmware-063:~$ sudo apt install ethtool
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  ethtool
+0 upgraded, 1 newly installed, 0 to remove and 9 not upgraded.
+Need to get 114 kB of archives.
+After this operation, 392 kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu bionic/main amd64 ethtool amd64 1:4.15-0ubuntu1 [114 kB]
+Fetched 114 kB in 0s (1,358 kB/s)
+Selecting previously unselected package ethtool.
+(Reading database ... 163404 files and directories currently installed.)
+Preparing to unpack .../ethtool_1%3a4.15-0ubuntu1_amd64.deb ...
+Unpacking ethtool (1:4.15-0ubuntu1) ...
+Setting up ethtool (1:4.15-0ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$ make 5g-test
+sudo apt install -y openvswitch-switch
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+openvswitch-switch is already the newest version (2.9.8-0ubuntu0.18.04.2).
+0 upgraded, 0 newly installed, 0 to remove and 9 not upgraded.
+sudo ovs-vsctl --may-exist add-br br-enb-net
+sudo ovs-vsctl --may-exist add-port br-enb-net enb -- set Interface enb type=internal
+sudo ip addr add 192.168.251.4/24 dev enb || true
+RTNETLINK answers: File exists
+sudo ip link set enb up
+sudo ethtool --offload enb tx off
+Actual changes:
+tx-checksumming: off
+        tx-checksum-ip-generic: off
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [requested on]
+        tx-tcp-ecn-segmentation: off [requested on]
+        tx-tcp-mangleid-segmentation: off [requested on]
+        tx-tcp6-segmentation: off [requested on]
+sudo ip route replace 192.168.252.0/24 via 192.168.251.1 dev enb
+kubectl apply -f /home/klee/aether-in-a-box//resources/router.yaml
+networkattachmentdefinition.k8s.cni.cncf.io/core-net created
+networkattachmentdefinition.k8s.cni.cncf.io/access-net created
+networkattachmentdefinition.k8s.cni.cncf.io/enb-net created
+pod/router created
+kubectl wait pod -n default --for=condition=Ready -l app=router --timeout=300s
+pod/router condition met
+kubectl -n default exec router -- ip route add 172.250.0.0/16 via 192.168.250.3
+kubectl delete net-attach-def core-net
+networkattachmentdefinition.k8s.cni.cncf.io "core-net" deleted
+touch /tmp/build/milestones/fabric
+kubectl get namespace omec 2> /dev/null || kubectl create namespace omec
+namespace/omec created
+kubectl -n omec get secret aether.registry || kubectl create -f /home/klee/aether-in-a-box//resources/aether.registry.yaml
+Error from server (NotFound): secrets "aether.registry" not found
+secret/aether.registry created
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [[ "local" == "local" || "local" == "local-sdcore" ]]; then helm dep up /home/klee/cord/sdcore-helm-charts/5g-control-plane; fi
+Getting updates for unmanaged Helm repositories...
+...Successfully got an update from the "https://charts.bitnami.com/bitnami" chart repository
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading mongodb from repo https://charts.bitnami.com/bitnami
+Deleting outdated charts
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        sim-app \
+        /home/klee/cord/sdcore-helm-charts/omec-sub-provision && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//upf-values.yaml \
+        5g-core-up \
+        /home/klee/cord/aether-helm-charts/omec/omec-user-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        fgc-core \
+        /home/klee/cord/sdcore-helm-charts/5g-control-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//ransim-values.yaml \
+        5g-ransim-plane \
+        /home/klee/cord/sdcore-helm-charts/5g-ran-sim
+Release "sim-app" does not exist. Installing it now.
+Error: timed out waiting for the condition
+Makefile:190: recipe for target '/tmp/build/milestones/5g-core' failed
+make: *** [/tmp/build/milestones/5g-core] Error 1
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$
+klee@vmware-063:~/aether-in-a-box$ make 5g-test
+kubectl get namespace omec 2> /dev/null || kubectl create namespace omec
+NAME   STATUS   AGE
+omec   Active   6m6s
+kubectl -n omec get secret aether.registry || kubectl create -f /home/klee/aether-in-a-box//resources/aether.registry.yaml
+NAME              TYPE                             DATA   AGE
+aether.registry   kubernetes.io/dockerconfigjson   1      6m5s
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [[ "local" == "local" || "local" == "local-sdcore" ]]; then helm dep up /home/klee/cord/sdcore-helm-charts/5g-control-plane; fi
+Getting updates for unmanaged Helm repositories...
+...Successfully got an update from the "https://charts.bitnami.com/bitnami" chart repository
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading mongodb from repo https://charts.bitnami.com/bitnami
+Deleting outdated charts
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        sim-app \
+        /home/klee/cord/sdcore-helm-charts/omec-sub-provision && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//upf-values.yaml \
+        5g-core-up \
+        /home/klee/cord/aether-helm-charts/omec/omec-user-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        fgc-core \
+        /home/klee/cord/sdcore-helm-charts/5g-control-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//ransim-values.yaml \
+        5g-ransim-plane \
+        /home/klee/cord/sdcore-helm-charts/5g-ran-sim
+Error: UPGRADE FAILED: timed out waiting for the condition
+Makefile:190: recipe for target '/tmp/build/milestones/5g-core' failed
+make: *** [/tmp/build/milestones/5g-core] Error 1
+
+
+
+
+
+
+
+
+
+klee@vmware-063:~/aether-in-a-box$ CHARTS=latest make 5g-test
+kubectl get namespace omec 2> /dev/null || kubectl create namespace omec
+NAME   STATUS   AGE
+omec   Active   18m
+kubectl -n omec get secret aether.registry || kubectl create -f /home/klee/aether-in-a-box//resources/aether.registry.yaml
+NAME              TYPE                             DATA   AGE
+aether.registry   kubernetes.io/dockerconfigjson   1      18m
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [[ "latest" == "local" || "latest" == "local-sdcore" ]]; then helm dep up aether/5g-control-plane; fi
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        sim-app \
+        aether/omec-sub-provision && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//upf-values.yaml \
+        5g-core-up \
+        aether/omec-user-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        fgc-core \
+        aether/5g-control-plane && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//ransim-values.yaml \
+        5g-ransim-plane \
+        aether/5g-ran-sim
+Error: UPGRADE FAILED: timed out waiting for the condition
+Makefile:190: recipe for target '/tmp/build/milestones/5g-core' failed
+make: *** [/tmp/build/milestones/5g-core] Error 1
+
+
+
+klee@vmware-063:~/aether-in-a-box$ CHARTS=release-1.6 make 5g-test
+kubectl get namespace omec 2> /dev/null || kubectl create namespace omec
+NAME   STATUS   AGE
+omec   Active   24m
+kubectl -n omec get secret aether.registry || kubectl create -f /home/klee/aether-in-a-box//resources/aether.registry.yaml
+NAME              TYPE                             DATA   AGE
+aether.registry   kubernetes.io/dockerconfigjson   1      24m
+helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "onosproject" chart repository
+...Successfully got an update from the "aether" chart repository
+...Successfully got an update from the "cord" chart repository
+Update Complete. ⎈Happy Helming!⎈
+if [[ "release-1.6" == "local" || "release-1.6" == "local-sdcore" ]]; then helm dep up aether/5g-control-plane --version 0.5.6; fi
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        sim-app \
+        aether/omec-sub-provision --version 0.3.2 && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//upf-values.yaml \
+        5g-core-up \
+        aether/omec-user-plane --version 0.5.4 && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//5g-core-values.yaml \
+        fgc-core \
+        aether/5g-control-plane --version 0.5.6 && \
+helm upgrade --install --wait  \
+        --namespace omec \
+        --values /home/klee/aether-in-a-box//ransim-values.yaml \
+        5g-ransim-plane \
+        aether/5g-ran-sim --version 0.3.0
+
+
+Error: UPGRADE FAILED: timed out waiting for the condition
+Makefile:190: recipe for target '/tmp/build/milestones/5g-core' failed
+make: *** [/tmp/build/milestones/5g-core] Error 1
+
+
+
+
+klee@vmware-063:~/aether-in-a-box$ helm upgrade --install --wait  \
+>         --namespace omec \
+>         --values /home/klee/aether-in-a-box//ransim-values.yaml \
+>         5g-ransim-plane \
+>         aether/5g-ran-sim --version 0.3.0
+Release "5g-ransim-plane" does not exist. Installing it now.
+Error: timed out waiting for the condition
+klee@vmware-063:~/aether-in-a-box$ helm upgrade --install --wait          --namespace omec         --values /home/klee/aether-in-a-box//ransim-values.yaml         5g-ransim-plane         aether/5g-ran-sim --version 0.3.0
+Error: UPGRADE FAILED: timed out waiting for the condition
+

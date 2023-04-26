@@ -1,0 +1,7 @@
+
+
+1. When install, roc-5g-models, there were docker install errors
+
+- need to remove previous version docker*, docker-ce*, containerd*
+- otherwise, installation with ansible will stop
+

@@ -1,0 +1,76 @@
+     1	11:32	kubectl create namespace cattle-system
+     2	11:35	cd /
+     3	11:35	find . -xdev -name "*.pem" -print
+     4	11:36	find . -xdev -name "*.pem" -print | grep -v onfadmin
+     5	11:36	cd /var/lib/rancher
+     6	11:36	ls
+     7	11:36	cd rke2/
+     8	11:36	ls
+     9	11:36	ls agent/
+    10	11:37	cd agent/containerd/
+    11	11:37	ls
+    12	11:37	ls -F
+    13	11:37	ls io.containerd.runtime.v1.linux
+    14	11:37	ls lib
+    15	11:37	ls bin
+    16	11:37	du .
+    17	11:38	cd /etc/rancher/rke2/
+    18	11:38	ls
+    19	11:38	cd ..
+    20	11:38	ls
+    21	11:38	ls node/
+    22	11:38	cd node/
+    23	11:38	ls -l
+    24	11:38	more password
+    25	12:21	cd
+    26	12:21	helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+    27	12:23	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+    28	12:23	# Add the Jetstack Helm repository
+    29	12:23	helm repo add jetstack https://charts.jetstack.io
+    30	12:23	helm repo update
+    31	12:24	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+    32	12:29	bg
+    33	12:29	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+    34	12:30	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.7.1
+    35	12:30	helm uninstall cert-manager jetstack/cert-manager --namespace cert-manager --version v1.7.1
+    36	12:30	helm uninstall cert-manager jetstack/cert-manager --namespace cert-manager
+    37	12:30	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+    38	12:44	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+    39	12:44	helm uninstall cert-manager jetstack/cert-manager --namespace cert-manager
+    40	12:44	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace
+    41	12:49	helm uninstall cert-manager jetstack/cert-manager --namespace cert-manager
+    42	12:49	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.7.1
+    43	12:52	helm uninstall cert-manager -n cert-manager
+    44	12:52	kubectl delete roles cert-manager-startupapicheck:create-cert -n cert-manager ;
+    45	12:52	kubectl delete serviceaccount cert-manager-startupapicheck -n cert-manager ;
+    46	12:52	kubectl delete serviceaccount default -n cert-manager ;
+    47	12:52	kubectl delete jobs cert-manager-startupapicheck -n cert-manager ;
+    48	12:52	kubectl delete rolebindings cert-manager-startupapicheck:create-cert -n cert-manager ;
+    49	12:53	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 --set startupapicheck.timeout=5m --set installCRDs=true
+    50	12:55	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1 --set startupapicheck.timeout=5m
+    51	12:58	helm --namespace cert-manager delete cert-manage
+    52	12:59	kubectl delete namespace cert-manager
+    53	12:59	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+    54	13:00	helm repo add jetstack https://charts.jetstack.io
+    55	13:00	helm repo update
+    56	13:00	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+    57	13:01	elm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+    58	13:01	helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+    59	13:09	cmctl check api
+    60	13:09	helm --namespace cert-manager delete cert-manager
+    61	13:09	kubectl delete namespace cert-manager
+    62	13:10	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+    63	13:11	ls
+    64	13:11	ls -t
+    65	13:12	cd /root
+    66	13:12	ls
+    67	14:00	cd
+    68	14:00	helm install rancher rancher-stable/rancher --namespace cattle-system --set hostname=5g.antd.nist.gov --set bootstrapPassword=5gpw --set ingress.tls.source=secret --set privateCA=true
+    69	14:07	cd /tmp
+    70	14:08	kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key
+    71	14:08	kubectl -n cattle-system delete secret tls-rancher-ingress
+    72	14:10	kubectl -n cattle-system create secret generic tls-ca --from-file=cacerts.pem=./cacerts.pem
+    73	14:10	kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key
+    74	14:12	kubectl -n cattle-system rollout status deploy/rancher
+    75	14:22	cd
+    76	14:22	history > dothese

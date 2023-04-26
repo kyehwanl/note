@@ -1,0 +1,7 @@
+
+
+
+User account newly created on vmware-063
+=========================================
+
+sudo useradd klee root  (passwd:r---)

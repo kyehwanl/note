@@ -79,22 +79,26 @@ MAILTO=""
 
 
 (2) vmware-005 for sync Document(config_and_diff_patch, Shell_script and Debugging_note) to Github
+ --updated on 2023.04.25
+
 MAILTO=""
-15 0 * * * /users/kyehwanl/Emulab/Shell_Script/github_sync_vm005.sh > /tmp/crontab.log 2>&1
-17 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.sh > /tmp/crontab-exabgp.log 2>&1
-18 0 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.old.sh >> /tmp/crontab-exabgp.log 2>&1
-19 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.sh  > /tmp/crontab-gobgp.log 2>&1
-20 0 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.old.sh  >> /tmp/crontab-gobgp.log 2>&1
-21 20 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_sync_vm005.sh > /tmp/crontab-srx_grpc.log 2>&1
+59 1 * * * /users/kyehwanl/Emulab/Shell_Script/github_sync_vm005.sh > /tmp/crontab.log 2>&1
+17 1 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.sh > /tmp/crontab-exabgp.log 2>&1
+18 1 * * * /users/kyehwanl/Emulab/Shell_Script/exabgp_sync_vm005.old.sh >> /tmp/crontab-exabgp.log 2>&1
+19 1 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.sh  > /tmp/crontab-gobgp.log 2>&1
+20 1 * * * /users/kyehwanl/Emulab/Shell_Script/gobgp_sync_vm005.old.sh  >> /tmp/crontab-gobgp.log 2>&1
+21 1 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_sync_vm005.sh > /tmp/crontab-srx_grpc.log 2>&1
+23 1 * * * /users/kyehwanl/Emulab/Shell_Script/srx_grpc_v6_sync_vm005.sh > /tmp/crontab-srx_grpc_v6.log 2>&1
+21 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/srx_grpc_v6/ ~/proj-program_data/srx_grpc_v6
+21 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/srx_grpc_v6 /opt/project/gobgp_test/gowork/src/srx_grpc/
 22 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/srx_grpc/ ~/proj-program_data/srx_grpc/
 24 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp/ ~/proj-program_data/gobgp/
 25 0 * * * rsync -avPuiz --delete /opt/project/gobgp_test/gobgp_v2_running_test/src/github.com/osrg/gobgp ~/proj-program_data/gobgp_v2/
-26 0 * * * rsync -avPuiz --delete ~/Emulab/exabgp-3.4.13 ~/proj-program_data/
+26 0 * * * rsync -avPuiz --delete /users/kyehwanl/Emulab/exabgp-3.4.13 ~/proj-program_data/
 27 0 * * * rsync -avPuiz --delete /opt/project/exabgp_test/exabgp-4.1.2 ~/proj-program_data/
-28 0 * * * rsync -avPuiz --delete /opt/project/Github_usnistgov ~/proj-program_data/
-29 0 * * * /users/kyehwanl/Emulab/Shell_Script/bgp-srx-suite_sync_klee_repo_vm005.sh > /tmp/crontab-bgp-srx-suite.log 2>&1
-
-
+28 0 * * * rsync -avPuiz --delete /opt/project/Github_usnistgov/NIST-BGP-SRx ~/proj-program_data/Github_usnistgov/
+29 1 * * * /users/kyehwanl/Emulab/Shell_Script/bgp-srx-suite_sync_klee_repo_vm005.sh > /tmp/crontab-bgp-srx-suite.log 2>&1
+30 1 * * * rsync -avPuiz --delete /users/kyehwanl/workspace/5G-Core-test-logs /users/kyehwanl/Emulab/Documents/ --exclude="*-UERANSIM" --exclude="*download"
 
 
 

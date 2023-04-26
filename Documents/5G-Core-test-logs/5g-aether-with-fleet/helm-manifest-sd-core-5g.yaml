@@ -1,0 +1,2843 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+data:
+  amf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    IMGPATH=/free5gc
+
+    cd $IMGPATH
+    cat config/amfcfg.conf
+
+    GOTRACEBACK=crash ./amf/amf -amfcfg config/amfcfg.conf
+  amfcfg.conf: |-
+    configuration:
+      amfName: AMF
+      networkFeatureSupport5GS:
+        emc: 0
+        emcN3: 0
+        emf: 0
+        enable: true
+        imsVoPS: 0
+        iwkN26: 0
+        mcsi: 0
+        mpsi: 0
+      networkName:
+        full: Aether5G
+        short: Aether
+      ngapIpList:
+      - 0.0.0.0
+      non3gppDeregistrationTimerValue: 3240
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - plmnId:
+          mcc: "315"
+          mnc: "010"
+        snssaiList:
+        - sd: "010203"
+          sst: 1
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29518
+        registerIPv4: amf
+        scheme: http
+      security:
+        cipheringOrder:
+        - NEA0
+        integrityOrder:
+        - NIA1
+      servedGuamiList:
+      - amfId: f511b2
+        plmnId:
+          mcc: "315"
+          mnc: "010"
+      serviceNameList:
+      - namf-comm
+      - namf-evts
+      - namf-mt
+      - namf-loc
+      - namf-oam
+      supportDnnList:
+      - internet
+      supportTaiList:
+      - plmnId:
+          mcc: "315"
+          mnc: "010"
+        tac: 1
+      t3502Value: 720
+      t3512Value: 3600
+      t3513:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3522:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3550:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3560:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+      t3565:
+        enable: true
+        expireTime: 6s
+        maxRetryTimes: 4
+    info:
+      description: AMF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+
+---
+apiVersion: v1
+data:
+  ausf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+    cat config/ausfcfg.conf
+
+    GOTRACEBACK=crash ./ausf/ausf -ausfcfg config/ausfcfg.conf
+  ausfcfg.conf: |-
+    configuration:
+      groupId: ausfGroup001
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - mcc: "315"
+        mnc: "010"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29509
+        registerIPv4: ausf
+        scheme: http
+      serviceNameList:
+      - nausf-auth
+    info:
+      description: AUSF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+
+---
+apiVersion: v1
+data:
+  nrf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/nrfcfg.conf
+
+    GOTRACEBACK=crash ./nrf/nrf -nrfcfg config/nrfcfg.conf
+  nrfcfg.conf: |-
+    configuration:
+      DefaultPlmnId:
+        mcc: "315"
+        mnc: "010"
+      MongoDBName: free5gc
+      MongoDBUrl: mongodb://mongodb
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29510
+        registerIPv4: nrf
+        scheme: http
+      serviceNameList:
+      - nnrf-nfm
+      - nnrf-disc
+    info:
+      description: NRF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+
+---
+apiVersion: v1
+data:
+  nssf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/nssfcfg.conf
+
+    GOTRACEBACK=crash ./nssf/nssf -nssfcfg config/nssfcfg.conf
+  nssfcfg.conf: |-
+    configuration:
+      nrfUri: http://nrf:29510
+      nsiList:
+      - nsiInformationList:
+        - nrfId: http://nrf:29510/nnrf-nfm/v1/nf-instances
+          nsiId: 22
+        snssai:
+          sd: "010203"
+          sst: 1
+      nssfName: NSSF
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29531
+        registerIPv4: nssf
+        scheme: http
+      serviceNameList:
+      - nnssf-nsselection
+      - nnssf-nssaiavailability
+      supportedNssaiInPlmnList:
+      - plmnId:
+          mcc: "315"
+          mnc: "010"
+        supportedSnssaiList:
+        - sd: "010203"
+          sst: 1
+      supportedPlmnList:
+      - mcc: "315"
+        mnc: "010"
+    info:
+      description: NSSF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+
+---
+apiVersion: v1
+data:
+  pcf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/pcfcfg.conf
+
+    GOTRACEBACK=crash ./pcf/pcf -pcfcfg config/pcfcfg.conf
+  pcfcfg.conf: |-
+    configuration:
+      defaultBdtRefId: BdtPolicyId-
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      nrfUri: http://nrf:29510
+      pcfName: PCF
+      plmnList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "333"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29507
+        registerIPv4: pcf
+        scheme: http
+      serviceList:
+      - serviceName: npcf-am-policy-control
+      - serviceName: npcf-smpolicycontrol
+        suppFeat: 3fff
+      - serviceName: npcf-bdtpolicycontrol
+      - serviceName: npcf-policyauthorization
+        suppFeat: 3
+      - serviceName: npcf-eventexposure
+      - serviceName: npcf-ue-policy-control
+    info:
+      description: PCF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+
+---
+apiVersion: v1
+data:
+  smf-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/smfcfg.conf
+    cat uerouting/uerouting.conf
+
+    GOTRACEBACK=crash ./smf/smf -smfcfg config/smfcfg.conf -uerouting uerouting/uerouting.conf
+  smfcfg.conf: |-
+    configuration:
+      nrfUri: http://nrf:29510
+      pfcp:
+        addr: POD_IP
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29502
+        registerIPv4: smf
+        scheme: http
+        tls:
+          key: gofree5gc/support/TLS/smf.key
+          pem: gofree5gc/support/TLS/smf.pem
+      serviceNameList:
+      - nsmf-pdusession
+      - nsmf-event-exposure
+      smfName: SMF
+      snssaiInfos:
+      - dnnInfos:
+        - dnn: internet
+          dns:
+            ipv4: 8.8.8.8
+          ueSubnet: 10.250.0.0/24
+        sNssai:
+          sd: "010203"
+          sst: 1
+      userplane_information:
+        links:
+        - A: gNB1
+          B: UPF
+        up_nodes:
+          UPF:
+            interfaces:
+            - endpoints:
+              - upf
+              interfaceType: N3
+              networkInstance: internet
+            node_id: upf
+            sNssaiUpfInfos:
+            - dnnUpfInfoList:
+              - dnn: internet
+              plmnId:
+                mcc: "208"
+                mnc: "93"
+              sNssai:
+                sd: "010203"
+                sst: 1
+            - dnnUpfInfoList:
+              - dnn: internet
+              plmnId:
+                mcc: "208"
+                mnc: "93"
+              sNssai:
+                sd: "112233"
+                sst: 1
+            type: UPF
+          gNB1:
+            type: AN
+    info:
+      description: SMF initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+  uerouting.conf: |-
+    info:
+      description: Routing information for UE
+      version: 1.0.0
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+
+---
+apiVersion: v1
+data:
+  udm-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/udmcfg.conf
+
+    GOTRACEBACK=crash ./udm/udm -udmcfg config/udmcfg.conf
+  udmcfg.conf: |-
+    configuration:
+      keys:
+        udmProfileAHNPrivateKey: c53c22208b61860b06c62e5406a7b330c2b577aa5558981510d128247d38bd1d
+        udmProfileAHNPublicKey: 5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650
+        udmProfileBHNPrivateKey: F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA
+        udmProfileBHNPublicKey: 0472DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD15A7DED52FCBB097A4ED250E036C7B9C8C7004C4EEDC4F068CD7BF8D3F900E3B4
+      nrfUri: http://nrf:29510
+      plmnList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "222"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29503
+        registerIPv4: udm
+        scheme: http
+        tls:
+          key: free5gc/support/TLS/udm.key
+          log: free5gc/udmsslkey.log
+          pem: free5gc/support/TLS/udm.pem
+      serviceNameList:
+      - nudm-sdm
+      - nudm-uecm
+      - nudm-ueau
+      - nudm-ee
+      - nudm-pp
+    info:
+      description: UDM initial local configuration
+      version: 1.0.0
+    keys:
+      udmProfileAHNPrivateKey: c53c22208b61860b06c62e5406a7b330c2b577aa5558981510d128247d38bd1d
+      udmProfileAHNPublicKey: 5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650
+      udmProfileBHNPrivateKey: F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA
+      udmProfileBHNPublicKey: 0472DA71976234CE833A6907425867B82E074D44EF907DFB4B3E21C1C2256EBCD15A7DED52FCBB097A4ED250E036C7B9C8C7004C4EEDC4F068CD7BF8D3F900E3B4
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+
+---
+apiVersion: v1
+data:
+  udr-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/udrcfg.conf
+
+    GOTRACEBACK=crash ./udr/udr -udrcfg config/udrcfg.conf
+  udrcfg.conf: |-
+    configuration:
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      nrfUri: http://nrf:29510
+      plmnSupportList:
+      - plmnId:
+          mcc: "208"
+          mnc: "93"
+      - plmnId:
+          mcc: "333"
+          mnc: "88"
+      sbi:
+        bindingIPv4: 0.0.0.0
+        port: 29504
+        registerIPv4: udr
+        scheme: http
+    info:
+      description: UDR initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+
+---
+apiVersion: v1
+data:
+  webui-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /free5gc
+
+    cat config/webuicfg.conf
+
+    GOTRACEBACK=crash ./webconsole/webconsole -webuicfg config/webuicfg.conf
+  webuicfg.conf: |-
+    configuration:
+      managedByConfigPod:
+        enabled: true
+        syncUrl: http://sdcore-adapter-v2.aether-roc:8080/synchronize
+      mongodb:
+        name: free5gc
+        url: mongodb://mongodb
+      spec-compliant-sdf: false
+    info:
+      description: WebUI initial local configuration
+      version: 1.0.0
+    logger:
+      AMF:
+        ReportCaller: true
+        debugLevel: debug
+      AUSF:
+        ReportCaller: true
+        debugLevel: debug
+      Aper:
+        ReportCaller: true
+        debugLevel: info
+      CommonConsumerTest:
+        ReportCaller: true
+        debugLevel: debug
+      FSM:
+        ReportCaller: true
+        debugLevel: debug
+      MongoDBLibrary:
+        ReportCaller: true
+        debugLevel: debug
+      N3IWF:
+        ReportCaller: true
+        debugLevel: debug
+      NAS:
+        ReportCaller: true
+        debugLevel: debug
+      NGAP:
+        ReportCaller: true
+        debugLevel: debug
+      NRF:
+        ReportCaller: true
+        debugLevel: debug
+      NamfComm:
+        ReportCaller: true
+        debugLevel: debug
+      NamfEventExposure:
+        ReportCaller: true
+        debugLevel: debug
+      NsmfPDUSession:
+        ReportCaller: true
+        debugLevel: debug
+      NudrDataRepository:
+        ReportCaller: true
+        debugLevel: debug
+      OpenApi:
+        ReportCaller: true
+        debugLevel: debug
+      PCF:
+        ReportCaller: true
+        debugLevel: debug
+      PFCP:
+        ReportCaller: true
+        debugLevel: debug
+      PathUtil:
+        ReportCaller: true
+        debugLevel: debug
+      SMF:
+        ReportCaller: true
+        debugLevel: debug
+      UDM:
+        ReportCaller: true
+        debugLevel: debug
+      UDR:
+        ReportCaller: true
+        debugLevel: debug
+      WEBUI:
+        ReportCaller: true
+        debugLevel: debug
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+
+---
+apiVersion: v1
+data:
+  simapp-run.sh: |
+    #!/bin/sh
+
+    # Copyright 2020-present Open Networking Foundation
+    #
+    # SPDX-License-Identifier: Apache-2.0
+
+    set -xe
+
+    cd /simapp
+    cat config/simapp.yaml
+
+    ./bin/simapp -simapp config/simapp.yaml
+  simapp.yaml: |-
+    configuration:
+      device-groups:
+      - imsis:
+        - "123456789123458"
+        - "208014567891201"
+        ip-domain-expanded:
+          dnn: internet
+          dns-primary: 8.8.8.8
+          mtu: 1460
+          ue-dnn-qos:
+            bitrate-unit: bps
+            dnn-mbr-downlink: 5000000
+            dnn-mbr-uplink: 2000000
+            traffic-class:
+              arp: 6
+              name: gold
+              pdb: 300
+              pelr: 6
+              qci: 9
+          ue-ip-pool: 10.91.0.0/16
+        ip-domain-name: pool1
+        name: iot-camera
+        site-info: menlo
+      network-slices:
+      - applications-information:
+        - app-name: iot-app
+          end-port: 40000
+          endpoint: 1.1.1.1/32
+          protocol: 17
+          start-port: 40000
+        name: slice1
+        site-device-group:
+        - iot-camera
+        site-info:
+          gNodeBs:
+          - name: menlo-gnb1
+            tac: 1
+          plmn:
+            mcc: "315"
+            mnc: "010"
+          site-name: menlo
+          upf:
+            upf-name: upf
+            upf-port: 8805
+        slice-id:
+          sd: 65565
+          sst: 255
+      provision-network-slice: false
+      sub-provision-endpt:
+        addr: webui
+        port: 5000
+      subscribers:
+      - key: 000102030405060708090a0b0c0d0e0f
+        op: ""
+        opc: 69d5c2eb2e2e624750541d3bbc692ba5
+        plmnId: 315010
+        sequenceNumber: 96
+        ueId-end: 315010999912355
+        ueId-start: 315010999912349
+    info:
+      description: SIMAPP initial local configuration
+      http-version: 1
+      version: 1.0.0
+    logger:
+      APP:
+        ReportCaller: false
+        debugLevel: info
+kind: ConfigMap
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+  namespace: aether-sdcore-5g
+rules:
+- apiGroups:
+  - ""
+  - extensions
+  - batch
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - jobs
+  - pods
+  - services
+  - endpoints
+  - configmaps
+  verbs:
+  - get
+  - list
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: amf
+subjects:
+- kind: ServiceAccount
+  name: amf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ausf
+subjects:
+- kind: ServiceAccount
+  name: ausf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nrf
+subjects:
+- kind: ServiceAccount
+  name: nrf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nssf
+subjects:
+- kind: ServiceAccount
+  name: nssf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pcf
+subjects:
+- kind: ServiceAccount
+  name: pcf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: smf
+subjects:
+- kind: ServiceAccount
+  name: smf
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: udm
+subjects:
+- kind: ServiceAccount
+  name: udm
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: udr
+subjects:
+- kind: ServiceAccount
+  name: udr
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: webui
+subjects:
+- kind: ServiceAccount
+  name: webui
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+  namespace: aether-sdcore-5g
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: simapp
+subjects:
+- kind: ServiceAccount
+  name: simapp
+  namespace: aether-sdcore-5g
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+spec:
+  externalIPs:
+  - 10.92.2.168
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: sbi
+    port: 29518
+    protocol: TCP
+  - name: ngapp
+    port: 38412
+    protocol: SCTP
+  selector:
+    app: amf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+spec:
+  ports:
+  - name: sbi
+    port: 29509
+    protocol: TCP
+  selector:
+    app: ausf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+spec:
+  ports:
+  - name: sbi
+    port: 29510
+    protocol: TCP
+  selector:
+    app: nrf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+spec:
+  ports:
+  - name: sbi
+    port: 29531
+    protocol: TCP
+  selector:
+    app: nssf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+spec:
+  ports:
+  - name: sbi
+    port: 29507
+    protocol: TCP
+  selector:
+    app: pcf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+spec:
+  ports:
+  - name: pfcp
+    port: 8805
+    protocol: UDP
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: sbi
+    port: 29502
+    protocol: TCP
+  selector:
+    app: smf
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+spec:
+  ports:
+  - name: sbi
+    port: 29503
+    protocol: TCP
+  selector:
+    app: udm
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+spec:
+  ports:
+  - name: sbi
+    port: 29504
+    protocol: TCP
+  selector:
+    app: udr
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+spec:
+  ports:
+  - name: urlport-http
+    port: 5000
+    protocol: TCP
+  - name: grpc
+    port: 9876
+    protocol: TCP
+  selector:
+    app: webui
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+spec:
+  ports:
+  - name: prometheus-exporter
+    port: 9089
+    protocol: TCP
+  - name: config-exporter
+    port: 8080
+    protocol: TCP
+  selector:
+    app: simapp
+    release: sd-core-5g
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: amf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: amf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amf
+      release: sd-core-5g
+  template:
+    metadata:
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+      labels:
+        app: amf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/amf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-amf:master-1438b55
+        imagePullPolicy: IfNotPresent
+        name: amf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/amf-run.sh
+          name: run-script
+          subPath: amf-run.sh
+        - mountPath: /free5gc/config
+          name: amf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup nrf; do echo waiting for nrf; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-nrf-module
+      serviceAccountName: amf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: amf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: amf
+        name: amf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: ausf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: ausf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ausf
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: ausf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/ausf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-ausf:master-7dcc39c
+        imagePullPolicy: IfNotPresent
+        name: ausf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/ausf-run.sh
+          name: run-script
+          subPath: ausf-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup ausf; do echo waiting for ausf; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-ausf-module2
+      serviceAccountName: ausf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: ausf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: ausf
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nrf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nrf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nrf
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: nrf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/nrf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-nrf:master-5844fcf
+        imagePullPolicy: IfNotPresent
+        name: nrf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/nrf-run.sh
+          name: run-script
+          subPath: nrf-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      serviceAccountName: nrf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: nrf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: nrf
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: nssf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: nssf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nssf
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: nssf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/nssf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-nssf:master-e751140
+        imagePullPolicy: IfNotPresent
+        name: nssf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/nssf-run.sh
+          name: run-script
+          subPath: nssf-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup nssf; do echo waiting for nssf; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-nssf-module
+      serviceAccountName: nssf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: nssf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: nssf
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: pcf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: pcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pcf
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: pcf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/pcf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-pcf:master-874bbe1
+        imagePullPolicy: IfNotPresent
+        name: pcf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/pcf-run.sh
+          name: run-script
+          subPath: pcf-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup pcf; do echo waiting for pcf; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-pcf-module
+      serviceAccountName: pcf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: pcf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: pcf
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: smf
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: smf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smf
+      release: sd-core-5g
+  template:
+    metadata:
+      annotations:
+        field.cattle.io/workloadMetrics: '[{"path":"/metrics","port":9089,"schema":"HTTP"}]'
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "5"
+      labels:
+        app: smf
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/smf-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-smf:master-7ef661b
+        imagePullPolicy: IfNotPresent
+        name: smf
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/smf-run.sh
+          name: run-script
+          subPath: smf-run.sh
+        - mountPath: /free5gc/uerouting
+          name: nf-config
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup smf; do echo waiting for smf; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-smf-module
+      serviceAccountName: smf
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: smf
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: smf
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udm
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udm
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: udm
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/udm-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-udm:master-15369ab
+        imagePullPolicy: IfNotPresent
+        name: udm
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/udm-run.sh
+          name: run-script
+          subPath: udm-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup udm; do echo waiting for udm; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-udm-module
+      - command:
+        - sh
+        - -c
+        - until nslookup udr; do echo waiting for udr; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-udr-module
+      serviceAccountName: udm
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: udm
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: udm
+        name: nf-config
+      - emptyDir: {}
+        name: config-dir
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: udr
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: udr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udr
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: udr
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/udr-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MANAGED_BY_CONFIG_POD
+          value: "true"
+        image: omecproject/5gc-udr:master-3756e35
+        imagePullPolicy: IfNotPresent
+        name: udr
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/udr-run.sh
+          name: run-script
+          subPath: udr-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup udr; do echo waiting for udr; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-udr-module
+      serviceAccountName: udr
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: udr
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: udr
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: webui
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webui
+      release: sd-core-5g
+  template:
+    metadata:
+      labels:
+        app: webui
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /free5gc/script/webui-run.sh
+        env:
+        - name: GRPC_GO_LOG_VERBOSITY_LEVEL
+          value: "99"
+        - name: GRPC_GO_LOG_SEVERITY_LEVEL
+          value: info
+        - name: GRPC_TRACE
+          value: all
+        - name: GRPC_VERBOSITY
+          value: debug
+        - name: CONFIGPOD_DEPLOYMENT
+          value: 5G
+        image: omecproject/5gc-webui:master-727636a
+        imagePullPolicy: IfNotPresent
+        name: webui
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /free5gc/script/webui-run.sh
+          name: run-script
+          subPath: webui-run.sh
+        - mountPath: /free5gc/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup webui; do echo waiting for webui; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-webui-module
+      serviceAccountName: webui
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: webui
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: webui
+        name: nf-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    objectset.rio.cattle.io/id: default-sd-core-5g-cattle-fleet-local-system
+  labels:
+    app: simapp
+    objectset.rio.cattle.io/hash: fef09e3f6dc437a65f0f2f02b8dafca140e54781
+    release: sd-core-5g
+  name: simapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simapp
+      release: sd-core-5g
+  template:
+    metadata:
+      annotations:
+        field.cattle.io/workloadMetrics: ""
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "5"
+      labels:
+        app: simapp
+        release: sd-core-5g
+    spec:
+      containers:
+      - command:
+        - /simapp/script/simapp-run.sh
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        image: omecproject/simapp:main-2a3d85f
+        imagePullPolicy: IfNotPresent
+        name: simapp
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /simapp/script/simapp-run.sh
+          name: run-script
+          subPath: simapp-run.sh
+        - mountPath: /simapp/config
+          name: nf-config
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nslookup simapp; do echo waiting for simapp; sleep 4; done;
+        image: omecproject/pod-init:1.0.0
+        imagePullPolicy: IfNotPresent
+        name: wait-simapp-module2
+      serviceAccountName: simapp
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: simapp
+        name: run-script
+      - configMap:
+          defaultMode: 493
+          name: simapp
+        name: nf-config
+

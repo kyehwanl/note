@@ -1,0 +1,217 @@
+
+
+root@vmware-062:/var/lib/kubelet# kubectl get pods -A
+NAMESPACE     NAME                                                              READY   STATUS    RESTARTS   AGE
+aether-roc    aether-roc-api-7fb4d55f7-ht6fm                                    1/1     Running   0          26h
+aether-roc    aether-roc-gui-v4-78646d5f68-ld5m9                                1/1     Running   0          26h
+aether-roc    aether-roc-umbrella-grafana-5c8b6855d8-msgtg                      2/2     Running   0          26h
+aether-roc    aether-roc-umbrella-kube-state-metrics-6c57fdcdcc-nrhwb           1/1     Running   0          26h
+aether-roc    aether-roc-umbrella-prometheus-acc-alertmanager-55ddf74685kt7fh   2/2     Running   0          26h
+aether-roc    aether-roc-umbrella-prometheus-acc-server-6df774dc96-ml5w9        2/2     Running   0          26h
+aether-roc    aether-roc-umbrella-prometheus-ace-server-7d8c6d4578-hmxhj        2/2     Running   0          26h
+aether-roc    aether-roc-umbrella-prometheus-amp-server-67cc457fc7-6lqrk        2/2     Running   0          26h
+aether-roc    aether-roc-websocket-855d64549b-sr5p9                             1/1     Running   0          26h
+aether-roc    demo-exporter-f97895d8f-hdfl5                                     1/1     Running   0          26h
+aether-roc    onos-cli-5b947f8f6-4r5nm                                          1/1     Running   0          26h
+aether-roc    onos-config-678cb4d544-768gb                                      5/5     Running   0          26h
+aether-roc    onos-consensus-store-0                                            1/1     Running   0          26h
+aether-roc    onos-topo-69c469c85-xww2h                                         3/3     Running   0          26h
+aether-roc    prom-label-proxy-acc-5fcd9c8dc8-8b2g5                             1/1     Running   0          26h
+aether-roc    prom-label-proxy-amp-7dc46b4bc9-qsb66                             1/1     Running   0          26h
+aether-roc    sdcore-adapter-v4-64fbb54697-8mcww                                1/1     Running   0          26h
+aether-roc    subscriber-proxy-7856fb68d9-4zhpg                                 1/1     Running   0          26h
+default       router                                                            1/1     Running   0          25h
+kube-system   atomix-controller-85894559b8-z7m25                                1/1     Running   0          5d3h
+kube-system   atomix-raft-storage-controller-54cdb55579-kdhl9                   1/1     Running   0          5d3h
+kube-system   calico-kube-controllers-dbfbbc4cb-zrd5h                           1/1     Running   0          5d3h
+kube-system   calico-node-748gg                                                 1/1     Running   0          5d3h
+kube-system   coredns-bbb7d66cd-2lzxp                                           1/1     Running   0          5d3h
+kube-system   dns-autoscaler-7cdcfcf64f-6m8j8                                   1/1     Running   0          5d3h
+kube-system   kube-apiserver-node1                                              1/1     Running   0          5d3h
+kube-system   kube-controller-manager-node1                                     1/1     Running   5          5d3h
+kube-system   kube-multus-ds-amd64-wns6w                                        1/1     Running   0          5d3h
+kube-system   kube-proxy-l6cv2                                                  1/1     Running   0          5d3h
+kube-system   kube-scheduler-node1                                              1/1     Running   5          5d3h
+kube-system   nodelocaldns-nbhvj                                                1/1     Running   0          5d3h
+kube-system   onos-operator-app-7bf5d77c56-mfjzn                                1/1     Running   0          26h
+kube-system   onos-operator-config-554c9848f7-jb5j2                             1/1     Running   0          26h
+kube-system   onos-operator-topo-7877c854d8-w7z88                               1/1     Running   0          26h
+omec          amf-97fc4df7d-5xvvh                                               1/1     Running   0          25h
+omec          ausf-7c45749675-wwt2j                                             1/1     Running   0          25h
+omec          gnbsim-0                                                          1/1     Running   0          25h
+omec          mongodb-5f8cfdb8-h7jbk                                            1/1     Running   0          25h
+omec          nrf-68894c64c5-jnd6j                                              1/1     Running   0          25h
+omec          nssf-5b7c8967dd-wtc24                                             1/1     Running   0          25h
+omec          pcf-7fccd9f9d5-qdwkv                                              1/1     Running   0          25h
+omec          simapp-6cdc4fcd94-wl5cm                                           1/1     Running   0          25h
+omec          smf-77cf977996-p9h4f                                              1/1     Running   0          25h
+omec          udm-5b55c8d5c7-qpb6f                                              1/1     Running   0          25h
+omec          udr-56c9d7bcfd-lhq48                                              1/1     Running   0          25h
+omec          upf-0                                                             5/5     Running   0          25h
+omec          webui-7bf4546b4b-6rdm7                                            1/1     Running   0          25h
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl get service
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   192.168.128.1   <none>        443/TCP   5d3h
+root@vmware-062:/var/lib/kubelet# kubectl get service -A
+NAMESPACE     NAME                                              TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)                         AGE
+aether-roc    aether-roc-api                                    ClusterIP   192.168.186.232   <none>        8181/TCP                        26h
+aether-roc    aether-roc-gui-v4                                 NodePort    192.168.152.104   <none>        80:25638/TCP                    26h
+aether-roc    aether-roc-gui-v4-external                        NodePort    192.168.204.126   <none>        80:31194/TCP                    26h
+aether-roc    aether-roc-umbrella-grafana                       ClusterIP   192.168.212.13    <none>        80/TCP                          26h
+aether-roc    aether-roc-umbrella-kube-state-metrics            ClusterIP   192.168.197.47    <none>        8080/TCP                        26h
+aether-roc    aether-roc-umbrella-prometheus-acc-alertmanager   ClusterIP   192.168.134.91    <none>        80/TCP                          26h
+aether-roc    aether-roc-umbrella-prometheus-acc-server         ClusterIP   192.168.133.228   <none>        80/TCP                          26h
+aether-roc    aether-roc-umbrella-prometheus-ace-server         ClusterIP   192.168.216.239   <none>        80/TCP                          26h
+aether-roc    aether-roc-umbrella-prometheus-amp-server         ClusterIP   192.168.129.10    <none>        80/TCP                          26h
+aether-roc    aether-roc-websocket                              ClusterIP   192.168.189.77    <none>        80/TCP                          26h
+aether-roc    demo-exporter                                     ClusterIP   192.168.207.57    <none>        2112/TCP,8081/TCP               26h
+aether-roc    onos-config                                       ClusterIP   192.168.244.242   <none>        5150/TCP,5151/TCP               26h
+aether-roc    onos-consensus-store                              ClusterIP   192.168.160.119   <none>        5678/TCP,5679/TCP               26h
+aether-roc    onos-consensus-store-hs                           ClusterIP   None              <none>        5678/TCP,5679/TCP               26h
+aether-roc    onos-topo                                         ClusterIP   192.168.236.164   <none>        5150/TCP                        26h
+aether-roc    prom-label-proxy-acc                              ClusterIP   192.168.191.159   <none>        8080/TCP,5150/TCP               26h
+aether-roc    prom-label-proxy-amp                              ClusterIP   192.168.199.191   <none>        8080/TCP,5150/TCP               26h
+aether-roc    sdcore-adapter-v4                                 ClusterIP   192.168.222.66    <none>        5150/TCP,9851/TCP,8080/TCP      26h
+aether-roc    subscriber-proxy                                  ClusterIP   192.168.249.246   <none>        5000/TCP                        26h
+default       kubernetes                                        ClusterIP   192.168.128.1     <none>        443/TCP                         5d3h
+kube-system   atomix-controller                                 ClusterIP   192.168.164.91    <none>        5679/TCP,443/TCP                5d3h
+kube-system   coredns                                           ClusterIP   192.168.128.3     <none>        53/UDP,53/TCP,9153/TCP          5d3h
+kube-system   onos-operator-app                                 ClusterIP   192.168.188.106   <none>        443/TCP                         26h
+kube-system   onos-operator-config                              ClusterIP   192.168.185.150   <none>        443/TCP                         26h
+omec          amf                                               ClusterIP   192.168.227.15    <none>        9089/TCP,29518/TCP,38412/SCTP   25h
+omec          ausf                                              ClusterIP   192.168.159.185   <none>        29509/TCP                       25h
+omec          gnbsim                                            ClusterIP   192.168.235.107   <none>        38412/SCTP                      25h
+omec          mongodb                                           ClusterIP   192.168.164.199   <none>        27017/TCP                       25h
+omec          nrf                                               ClusterIP   192.168.134.34    <none>        29510/TCP                       25h
+omec          nssf                                              ClusterIP   192.168.230.144   <none>        29531/TCP                       25h
+omec          pcf                                               ClusterIP   192.168.148.255   <none>        29507/TCP                       25h
+omec          simapp                                            ClusterIP   192.168.160.239   <none>        9089/TCP,8080/TCP               25h
+omec          smf                                               ClusterIP   192.168.135.26    <none>        8805/UDP,9089/TCP,29502/TCP     25h
+omec          udm                                               ClusterIP   192.168.202.49    <none>        29503/TCP                       25h
+omec          udr                                               ClusterIP   192.168.221.254   <none>        29504/TCP                       25h
+omec          upf                                               ClusterIP   192.168.155.138   <none>        8805/UDP                        25h
+omec          upf-http                                          ClusterIP   192.168.152.147   <none>        8000/TCP,8080/TCP               25h
+omec          webui                                             ClusterIP   192.168.161.26    <none>        5000/TCP,9876/TCP               25h
+root@vmware-062:/var/lib/kubelet#
+
+
+
+
+
+
+
+
+
+
+root@vmware-062:/var/lib/kubelet# kubectl -n omec describe pod gnbsim-0
+Name:         gnbsim-0
+Namespace:    omec
+Priority:     0
+Node:         node1/10.0.50.62
+Start Time:   Mon, 07 Feb 2022 12:57:50 -0500
+Labels:       app=gnbsim
+              controller-revision-hash=gnbsim-7cd4cf9f5c
+              release=5g-ransim-plane
+              statefulset.kubernetes.io/pod-name=gnbsim-0
+Annotations:  cni.projectcalico.org/containerID: 7f5f8fbd7271cdde0c397a6406f59967c75a6d290f754aa601e7876ea5ef0f82
+              cni.projectcalico.org/podIP: 192.168.84.42/32
+              cni.projectcalico.org/podIPs: 192.168.84.42/32
+              k8s.v1.cni.cncf.io/network-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.42"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+              k8s.v1.cni.cncf.io/networks: [ { "name": "enb-net", "interface": "enb", "ips": ["192.168.251.5/24"] } ]
+              k8s.v1.cni.cncf.io/networks-status:
+                [{
+                    "name": "cni0",
+                    "ips": [
+                        "192.168.84.42"
+                    ],
+                    "default": true,
+                    "dns": {}
+                },{
+                    "name": "omec/enb-net",
+                    "dns": {}
+                }]
+Status:       Running
+IP:           192.168.84.42
+IPs:
+  IP:           192.168.84.42
+Controlled By:  StatefulSet/gnbsim
+Init Containers:
+  wait-amf-module:
+    Container ID:  docker://84620646d0ce96d5897f0d95db50cba7be82dcf6d07b5df95cbeffe630c4976c
+    Image:         docker.io/omecproject/pod-init:1.0.0
+    Image ID:      docker-pullable://omecproject/pod-init@sha256:16c14327ce4a191c4f1ced5c0c0cd835150c893a824cc21f80748b674d0308dc
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nslookup amf; do echo waiting for nrf; sleep 4; done;
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 07 Feb 2022 12:57:56 -0500
+      Finished:     Mon, 07 Feb 2022 12:57:57 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-dz94n (ro)
+Containers:
+  gnbsim:
+    Container ID:  docker://ba531f25a24e774a3372b56d2fcbde5d527bc2e15f45775ad1d731f014ee6dd0
+    Image:         registry.aetherproject.org/omecproject/5gc-gnbsim:dev-new-gnbsim-68c0647
+    Image ID:      docker-pullable://registry.aetherproject.org/omecproject/5gc-gnbsim@sha256:808acc3f37888c95ea1bf9623641ebab32099830bde0a0db61771049c8f33713
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /opt/cp/scripts/gnbsim-run.sh
+    State:          Running
+      Started:      Mon, 07 Feb 2022 12:58:06 -0500
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MEM_LIMIT:  node allocatable (limits.memory)
+      POD_IP:      (v1:status.podIP)
+    Mounts:
+      /gnbsim/config from cp-config (rw)
+      /opt/cp/scripts/gnbsim-run.sh from cp-script (rw,path="gnbsim-run.sh")
+      /var/run/secrets/kubernetes.io/serviceaccount from gnbsim-token-dz94n (ro)
+Conditions:
+  Type              Status
+  AtomixReady       True
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  cp-script:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  cp-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      gnbsim
+    Optional:  false
+  gnbsim-token-dz94n:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  gnbsim-token-dz94n
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:          <none>

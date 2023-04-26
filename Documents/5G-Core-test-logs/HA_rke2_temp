@@ -1,0 +1,109 @@
+
+
+
+
+vagrant@rke-cli1:~$ curl --insecure https://192.168.10.20:9345/cacerts
+-----BEGIN CERTIFICATE-----
+MIIBeDCCAR+gAwIBAgIBADAKBggqhkjOPQQDAjAkMSIwIAYDVQQDDBlya2UyLXNl
+cnZlci1jYUAxNjgwOTA4NjkzMB4XDTIzMDQwNzIzMDQ1M1oXDTMzMDQwNDIzMDQ1
+M1owJDEiMCAGA1UEAwwZcmtlMi1zZXJ2ZXItY2FAMTY4MDkwODY5MzBZMBMGByqG
+SM49AgEGCCqGSM49AwEHA0IABHaZ+lADCT7qIWmBC9fDvRkfkONzPW3sDLF82/D4
+xsh42RbN2Iu+Mrik+8XLq7/KQ7mYEta/PAglVYtFadA/9umjQjBAMA4GA1UdDwEB
+/wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTXGUmtltqLZxf89rHT
+TmYDOSyhKzAKBggqhkjOPQQDAgNHADBEAiBaZArKqfQY7K0if0N/p3acAmERCh0n
+bb+yiuzvBprAfQIgYrxKEPv0r629pXuj1rwOFBMWcR9McQnp18qyjrYP62E=
+-----END CERTIFICATE-----
+vagrant@rke-cli1:~$ curl https://192.168.10.20:9345/cacerts
+curl: (60) SSL certificate problem: self signed certificate in certificate chain
+More details here: https://curl.haxx.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+
+
+
+
+
+
+
+
+2. Error, "unknown directive "stream" in /etc/nginx/nginx.conf:86"
+https://serverfault.com/questions/858067/unknown-directive-stream-in-etc-nginx-nginx-conf86
+
+
+vagrant@rke-cli3:~$ journalctl -xe
+-- Subject: Unit nginx.service has begun start-up
+-- Defined-By: systemd
+-- Support: http://www.ubuntu.com/support
+--
+-- Unit nginx.service has begun starting up.
+Apr 08 20:25:18 rke-cli3 nginx[14031]: nginx: [emerg] getpwnam("nginx") failed in /etc/nginx/nginx.conf:1
+load_module /usr/lib/nginx/modules/ngx_stream_module.so;
+user vagrant;
+worker_processes 4;
+worker_rlimit_nofile 40000;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 8192;
+}
+
+stream {
+upstream backend {
+        least_conn;
+        server 192.168.10.20:9345 max_fails=3 fail_timeout=5s;
+        server 192.168.10.21:9345 max_fails=3 fail_timeout=5s;
+        server 192.168.10.22:9345 max_fails=3 fail_timeout=5s;
+   }
+
+
+
+
+
+
+
+
+
+
+tls-san:        
+- 192.168.10.20
+- 192.168.10.21 
+cni: multus,calico     
+#cluster-cidr: 192.168.84.0/24
+#service-cidr: 192.168.85.0/24
+kubelet-arg:
+- --allowed-unsafe-sysctls=net.* 
+#- --node-ip=10.0.2.15
+- --feature-gates=CPUManager=true
+- --topology-manager-policy=best-effort 
+pause-image: k8s.gcr.io/pause:3.3
+kube-proxy-arg:      
+- --metrics-bind-address=0.0.0.0:10249
+- --proxy-mode=ipvs 
+#kube-apiserver-arg:
+  #- --service-node-port-range=2000-36767  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

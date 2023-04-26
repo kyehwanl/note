@@ -1,0 +1,60 @@
+root@sakura:~# docker ps
+CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS          PORTS     NAMES
+5812b1000e03   f4a6053ca28d                  "/usr/local/bin/kube…"   7 minutes ago    Up 7 minutes              k8s_kube-proxy_kube-proxy-89bbb_kube-system_75c3fbd6-6910-4632-9a6a-9006dd17d90c_0
+1fcac23ca749   k8s.gcr.io/pause:3.3          "/pause"                 7 minutes ago    Up 7 minutes              k8s_POD_kube-proxy-89bbb_kube-system_75c3fbd6-6910-4632-9a6a-9006dd17d90c_0
+0a58cc333d60   4c5693dacb42                  "kube-scheduler --au…"   11 minutes ago   Up 11 minutes             k8s_kube-scheduler_kube-scheduler-node1_kube-system_1c012b714182cfe1bd343039d888308b_3
+bfe98473e326   c857cde24856                  "kube-controller-man…"   11 minutes ago   Up 11 minutes             k8s_kube-controller-manager_kube-controller-manager-node1_kube-system_626e783fabe53f78eabecaaf352a9fca_2
+b2de023aeb57   779aa7e4e93c                  "/usr/bin/kube-contr…"   12 minutes ago   Up 12 minutes             k8s_calico-kube-controllers_calico-kube-controllers-dbfbbc4cb-pxmzr_kube-system_8bdc7854-5c35-4341-bc8a-5a5109694d20_2
+5830a2584e0a   078b6f04135f                  "/cluster-proportion…"   27 minutes ago   Up 27 minutes             k8s_autoscaler_dns-autoscaler-7cdcfcf64f-z6l6l_kube-system_4b9df800-0be4-46bb-a624-3a4b34862cec_0
+e6d05e1f7e0a   7aa1277761b5                  "start_runit"            27 minutes ago   Up 27 minutes             k8s_calico-node_calico-node-5gmc6_kube-system_0909a5d7-8dc3-4222-876b-744475ff4a3d_1
+e9b563984fbd   k8s.gcr.io/pause:3.3          "/pause"                 28 minutes ago   Up 28 minutes             k8s_POD_dns-autoscaler-7cdcfcf64f-z6l6l_kube-system_4b9df800-0be4-46bb-a624-3a4b34862cec_0
+cdc1d7ba5685   k8s.gcr.io/pause:3.3          "/pause"                 28 minutes ago   Up 28 minutes             k8s_POD_calico-kube-controllers-dbfbbc4cb-pxmzr_kube-system_8bdc7854-5c35-4341-bc8a-5a5109694d20_0
+59d835c9b5a9   k8s.gcr.io/pause:3.3          "/pause"                 31 minutes ago   Up 31 minutes             k8s_POD_calico-node-5gmc6_kube-system_0909a5d7-8dc3-4222-876b-744475ff4a3d_0
+a626df9f2164   d06f046c0907                  "kube-apiserver --ad…"   33 minutes ago   Up 33 minutes             k8s_kube-apiserver_kube-apiserver-node1_kube-system_7f8dad00b4ac2dffea754c6b794d4a89_0
+82cc4054d374   k8s.gcr.io/pause:3.3          "/pause"                 33 minutes ago   Up 33 minutes             k8s_POD_kube-scheduler-node1_kube-system_1c012b714182cfe1bd343039d888308b_0
+616c4f965b8c   k8s.gcr.io/pause:3.3          "/pause"                 33 minutes ago   Up 33 minutes             k8s_POD_kube-controller-manager-node1_kube-system_626e783fabe53f78eabecaaf352a9fca_0
+b6dda01e7a77   k8s.gcr.io/pause:3.3          "/pause"                 33 minutes ago   Up 33 minutes             k8s_POD_kube-apiserver-node1_kube-system_7f8dad00b4ac2dffea754c6b794d4a89_0
+317b6f871540   quay.io/coreos/etcd:v3.4.13   "/usr/local/bin/etcd"    34 minutes ago   Up 34 minutes             etcd1
+
+
+root@sakura:~# kubectl config view
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://127.0.0.1:6443
+  name: cluster.local
+contexts:
+- context:
+    cluster: cluster.local
+    user: kubernetes-admin
+  name: kubernetes-admin@cluster.local
+current-context: kubernetes-admin@cluster.local
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+
+
+root@sakura:~# kubectl get services
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   192.168.128.1   <none>        443/TCP   34m
+
+
+
+root@sakura:~# kubectl get pods -A
+NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE
+kube-system   calico-kube-controllers-dbfbbc4cb-pxmzr   1/1     Running   2          31m
+kube-system   calico-node-5gmc6                         1/1     Running   1          33m
+kube-system   coredns-bbb7d66cd-9qv44                   0/1     Pending   0          30m
+kube-system   dns-autoscaler-7cdcfcf64f-z6l6l           1/1     Running   0          30m
+kube-system   kube-apiserver-node1                      1/1     Running   0          34m
+kube-system   kube-controller-manager-node1             1/1     Running   2          34m
+kube-system   kube-multus-ds-amd64-p2z22                0/1     Pending   0          30m
+kube-system   kube-proxy-89bbb                          1/1     Running   0          9m28s
+kube-system   kube-scheduler-node1                      1/1     Running   3          34m
+kube-system   nodelocaldns-cfqnb                        0/1     Pending   0          30m
+

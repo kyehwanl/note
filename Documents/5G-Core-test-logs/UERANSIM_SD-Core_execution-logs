@@ -116,8 +116,6 @@
         In addition, execute the following command:
           sudo iptables -I FORWARD 1 -j ACCEPT
 
-		(addtionally, sudo iptables -A FORWARD -d 192.168.252.3 -i ens192 -o access -j ACCEPT might be required)
-
           < My case >
 
           vagrant@5g-sdcore:~/aether-in-a-box$ sudo sysctl -w net.ipv4.ip_forward=1
@@ -392,4 +390,145 @@ settings allow traffic to that destination. You can view them via the following:
 That command will capture all packets to/from the UE subnet.
 
 
+
+
+
+
+
+
+4. config in ONF-01,02,03
+--------------------------
+
+(1) ONF-01 (core)
+  -- interface
+
+  2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+	  link/ether 00:0c:29:be:fa:15 brd ff:ff:ff:ff:ff:ff
+	  inet 10.0.50.74/24 brd 10.0.50.255 scope global ens160
+
+  3: ens192: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+	  link/ether 00:0c:29:be:fa:1f brd ff:ff:ff:ff:ff:ff
+	  inet 192.168.11.74/24 brd 192.168.11.255 scope global ens192
+
+
+
+  -- forwarding table
+
+	systemctl stop ufw
+	sudo iptables -t nat -A POSTROUTING -o ens160 -j MASQUERADE
+	sudo iptables -A FORWARD -d 192.168.252.3 -i ens192 -o access -j ACCEPT
+	sudo iptables -I FORWARD 1 -j ACCEPT
+	sudo iptables -S FORWARD (--> list summary in FORWARD rule)
+
+  
+
+  -- Aether install
+
+  ENABLE_GNBSIM=false DATA_IFACE=ens192 CHARTS=release-2.0 make 5g-core -n -B (-n -B: for debugging)
+  NODE_IP=10.0.50.74 DATA_IFACE=ens192 RAN_SUBNET=192.168.11.0/24 ENABLE_GNBSIM=false envsubst < /home/onf/aether-in-a-box//aether-2.0/sd-core-5g-values.yaml | helm upgrade --create-namespace --install --wait --namespace omec --values - sd-core aether/sd-core --version 0.10.20
+
+
+  -- etc
+
+  onf@onf-01:~$ kubectl exec -it -n omec upf-0 -c bessd -- bash
+  root@upf-0:/opt/bess/bessctl# tcpdump -i core -vv -n net 172.250.0.0/16
+
+
+
+
+(2) ONF-02 (ran)
+
+ -- interface
+
+	ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+			inet 10.0.50.75  netmask 255.255.255.0  broadcast 10.0.50.255
+
+	ens192: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+			inet 192.168.11.75  netmask 255.255.255.0  broadcast 192.168.11.255
+
+
+ -- Routing
+
+	sudo ip route add 192.168.252.3 via 192.168.11.74 <DATA_IFACE ip>
+
+
+
+ -- UERANSIM
+	* gNodeB
+	onf@onf-02:~/UERANSIM/build$ pwd
+	/home/onf/UERANSIM/build
+	onf@onf-02:~/UERANSIM/build$ ./nr-gnb -c ../config/free5gc-gnb.yaml
+
+	* UE1
+	onf@onf-02:~/UERANSIM/build$ sudo ./nr-ue -c ../config/free5gc-ue.yaml
+
+	<free5gc-gnb.yaml, excerpt>
+	  mcc: '208'          # Mobile Country Code value
+	  mnc: '93'           # Mobile Network Code value (2 or 3 digits)
+
+	  nci: '0x000000010'  # NR Cell Identity (36-bit)
+	  idLength: 32        # NR gNB ID length in bits [22...32]
+	  tac: 1              # Tracking Area Code
+
+	  linkIp: 192.168.11.75   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+	  ngapIp: 192.168.11.75   # gNB's local IP address for N2 Interface (Usually same with local IP)
+	  gtpIp: 192.168.11.75    # gNB's local IP address for N3 Interface (Usually same with local IP)
+
+	  # List of AMF address information
+	  amfConfigs:
+		- address: 192.168.11.74
+		  port: 38412
+
+	  # List of supported S-NSSAIs by this gNB
+	  slices:
+		- sst: 0x1
+		  sd: 0x010203
+
+
+
+
+	<free5gc-ue.yaml,  excerpt>
+	  supi: 'imsi-208930100007500'
+	  mcc: '208'
+	  mnc: '93'
+	  key: '5122250214c33e723a5dd523fc145fc0'
+	  op: '981d464c7c52eb6e5036234984ad0bcf'
+		...
+	  gnbSearchList:
+  		- 192.168.11.75
+
+	  sessions:
+		- type: 'IPv4'
+		  apn: 'internet'
+		  slice:
+			sst: 0x01
+			sd: 0x010203
+
+	  configured-nssai:
+		- sst: 0x01
+		  sd: 0x010203
+
+
+
+  -- test
+
+  	ping 8.8.8.8 -I uesimtun0
+	iperf -c 129.6.142.13 -B 172.250.0.1 ( <-- uesimtun0)
+
+
+
+
+(3) ONF-03, with 10.0.50.0/24, for accessing ANTD VM farm
+
+
+
+
+(4) ETC
+ 	-- Monitoring
+
+	* install Prometheus/Grafana monitoring in Aether makefile
+		make monitoring-5g
+		(https://docs.aetherproject.org/master/developer/aiabhw5g.html#enable-monitoring)
+
+	* After this step, Grafana is available at http://<server-ip>:30950
 
