@@ -1,0 +1,12 @@
+source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+1. download
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+
+2. install kubectl 
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+
+3. test
+    kubectl version --client --output=yaml 
