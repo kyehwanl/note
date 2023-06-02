@@ -1,0 +1,249 @@
+
+sd-core release 1.3 install procedures
+=======================================
+release info: https://docs.sd-core.opennetworking.org/master/release/1.3.html
+download install: https://docs.sd-core.opennetworking.org/master/deployment/deployment5G.html
+
+
+
+
+0. preparation for Install RKE2 kubernetes distribution.
+
+	- Aiab download and make node-prep
+
+	git clone "https://gerrit.opencord.org/aether-in-a-box"
+	cd ~/aether-in-a-box
+	make node-prep
+
+
+1. sd-core download 
+
+  git clone "https://gerrit.opencord.org/sdcore-helm-charts"
+  cd sdcore-helm-charts/sdcore-helm-charts/
+  helm dep update #Update Helm dependencies
+
+
+	- after git clone, if you want to check out tag 1.3.0, --> git checkout <index> -b <branchName>
+
+
+2. in order to make macvlan environment, 
+	just make 5g-test for installation of 5g and upf with macvlan
+	and then, remove or replace 5g functions with sd-core helm charts (I removed 5g-test)
+
+
+	- because installation of sd-core assumes sr-iov is to be used on the machine, so if you don't have sriov,
+		then, you should use macvlan instead.
+
+
+	CHARTS=latest make 5g-test
+	make reset-5g-test
+
+
+3. sd-core values update to override
+
+location: ~/sdcore-helm-charts/sdcore-helm-charts/myvalues.yaml
+	-- this context below was from Aether-in-a-box manifest
+		"helm get values -n omec sd-core"
+		and then copy/ paste to 'myvalues.yaml' to override bess-upf default values which describes for using sriov
+
+	omec-user-plane:
+	  enable: true
+	  #images:
+	  #  tags:
+		  #4G/5G user plane images
+	  config:
+		upf:
+	  #    cfgFiles:
+	  #      upf.json:
+	  #        cpiface:
+		  access:
+			iface: data
+		  cfgFiles:
+			upf.json:
+			  cpiface:
+				dnn: internet
+				hostname: upf
+			  gtppsc: true
+			  hwcksum: true
+			  log_level: trace
+			  mode: af_packet
+		  cniPlugin: macvlan
+		  core:
+			iface: data
+		  enb:
+			subnet: 192.168.251.0/24
+		  hugepage:
+			enabled: false
+		  ipam: static
+		  name: oaisim
+		  routes:
+		  - to: 10.0.2.15
+			via: 169.254.1.1
+		  sriov:
+			enabled: false
+
+
+** sd-core below is v0.10.20 which was installed by Aiab make file (make 5g-test)
+
+vagrant@server:~/sdcore-helm-charts/sdcore-helm-charts/charts/bess-upf$ helm list -A
+NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                                         APP VERSION
+rke2-calico             kube-system     1               2023-05-31 20:47:48.988287424 +0000 UTC deployed        rke2-calico-v3.24.501                         v3.24.5
+rke2-calico-crd         kube-system     1               2023-05-31 20:47:44.118969091 +0000 UTC deployed        rke2-calico-crd-v3.24.501
+rke2-coredns            kube-system     1               2023-05-31 20:47:46.078842085 +0000 UTC deployed        rke2-coredns-1.19.401                         1.9.3
+rke2-ingress-nginx      kube-system     1               2023-05-31 20:48:36.474501377 +0000 UTC deployed        rke2-ingress-nginx-4.1.008                    1.2.0
+rke2-metrics-server     kube-system     1               2023-05-31 20:48:37.676386732 +0000 UTC deployed        rke2-metrics-server-2.11.100-build2022101107  0.6.1
+rke2-multus             kube-system     1               2023-05-31 20:47:44.12756698 +0000 UTC  deployed        rke2-multus-v3.9-build2022102805              3.9
+sd-core                 omec            1               2023-05-31 17:40:07.935808251 -0400 EDT deployed        sd-core-0.10.20
+
+
+
+
+** upf override values below
+
+vagrant@server:~/sdcore-helm-charts/sdcore-helm-charts/charts/bess-upf$ helm get values -n omec sd-core
+...
+...
+omec-user-plane:
+  config:
+    upf:
+      access:
+        iface: data
+      cfgFiles:
+        upf.json:
+          cpiface:
+            dnn: internet
+            hostname: upf
+          gtppsc: true
+          hwcksum: true
+          log_level: trace
+          mode: af_packet                                                                                                                                                                                                                                                         cniPlugin: macvlan
+      core:
+        iface: data
+      enb:
+        subnet: 192.168.251.0/24
+      hugepage:
+        enabled: false
+      ipam: static
+      name: oaisim
+      routes:
+      - to: 10.0.2.15
+        via: 169.254.1.1
+      sriov:
+        enabled: false
+  enable: true
+  resources:
+    enabled: false
+
+
+
+** Reset and remove Aether 5g pods
+
+vagrant@server:~/aether-in-a-box$ make reset-5g-test
+Removing 0 additional UPFs
+helm delete -n omec $(helm -n omec ls -qa) || true
+release "sd-core" uninstalled
+kubectl delete namespace omec || true
+namespace "omec" deleted
+
+Wait for all pods to terminate...
+kubectl wait -n omec --for=delete --all=true -l app!=ue pod --timeout=180s || true
+cd /home/vagrant/aether-in-a-box//build/milestones; rm -f 5g-core
+
+
+
+** sd-core v0.1.3 helm install 
+
+vagrant@server:~/sdcore-helm-charts/sdcore-helm-charts$ helm upgrade --install -n sdcore-5g --create-namespace -f myvalues.yaml sdcore
+-5g ~/sdcore-helm-charts/sdcore-helm-charts                                                                                                                                                                                                                                 Release "sdcore-5g" does not exist. Installing it now.
+NAME: sdcore-5g
+LAST DEPLOYED: Thu Jun  1 12:42:22 2023
+NAMESPACE: sdcore-5g
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Notes - Instructions to use SD-Core application helm charts
+
+
+
+
+** Running sd-core helm chart successfully
+	upf pods are running ok
+
+vagrant@server:~/sdcore-helm-charts/sdcore-helm-charts$ k get po -A -w
+NAMESPACE         NAME                                                    READY   STATUS      RESTARTS      AGE
+calico-system     calico-kube-controllers-7f7959b5db-xptvl                1/1     Running     0             19h
+calico-system     calico-node-cjhmg                                       1/1     Running     0             19h
+calico-system     calico-typha-84866c5748-75kbl                           1/1     Running     0             19h
+default           router                                                  1/1     Running     0             19h
+kube-system       cloud-controller-manager-server                         1/1     Running     0             19h
+kube-system       etcd-server                                             1/1     Running     0             19h
+kube-system       helm-install-rke2-calico-crd-hrkwr                      0/1     Completed   0             19h
+kube-system       helm-install-rke2-calico-nc2rs                          0/1     Completed   1             19h
+kube-system       helm-install-rke2-coredns-8769m                         0/1     Completed   0             19h
+kube-system       helm-install-rke2-ingress-nginx-zccc4                   0/1     Completed   0             19h
+kube-system       helm-install-rke2-metrics-server-pqx9l                  0/1     Completed   0             19h
+kube-system       helm-install-rke2-multus-2n7fp                          0/1     Completed   0             19h
+kube-system       kube-apiserver-server                                   1/1     Running     0             19h
+kube-system       kube-controller-manager-server                          1/1     Running     0             19h
+kube-system       kube-proxy-server                                       1/1     Running     0             19h
+kube-system       kube-scheduler-server                                   1/1     Running     0             19h
+kube-system       rke2-coredns-rke2-coredns-775c5b4bb4-jz765              1/1     Running     0             19h
+kube-system       rke2-coredns-rke2-coredns-autoscaler-695fc554c9-f7qmn   1/1     Running     0             19h
+kube-system       rke2-ingress-nginx-controller-sjkc4                     1/1     Running     0             19h
+kube-system       rke2-metrics-server-644f588b5-xhrmq                     1/1     Running     0             19h
+kube-system       rke2-multus-ds-cd6lh                                    1/1     Running     0             19h
+sdcore-5g         amf-5b878cbfdb-bgcz2                                    1/1     Running     0             45s
+sdcore-5g         ausf-9796767f7-jsfz6                                    1/1     Running     0             45s
+sdcore-5g         mongodb-0                                               0/1     Running     0             45s
+sdcore-5g         mongodb-arbiter-0                                       1/1     Running     0             45s
+sdcore-5g         nrf-5c78cf4cbd-ddmk4                                    1/1     Running     1 (12s ago)   45s
+sdcore-5g         nssf-6b5d5d8948-7js9m                                   1/1     Running     0             45s
+sdcore-5g         pcf-5c79dd9886-dxwpq                                    1/1     Running     0             45s
+sdcore-5g         simapp-776b4cbccf-t9n6t                                 1/1     Running     0             45s
+sdcore-5g         smf-7d87d56589-mx95n                                    1/1     Running     0             45s
+sdcore-5g         udm-7846dc7957-4g2m8                                    1/1     Running     0             45s
+sdcore-5g         udr-5dcf848db7-sr9xm                                    1/1     Running     0             45s
+sdcore-5g         upf-0                                                   5/5     Running     0             45s
+sdcore-5g         webui-7f5fc84444-q4drg                                  1/1     Running     0             45s
+tigera-operator   tigera-operator-b77ddd45f-htpmt                         1/1     Running     0             19h
+
+
+
+
+
+** checkout upf description and events
+
+vagrant@server:~/sdcore-helm-charts/sdcore-helm-charts$ k describe pod -n sdcore-5g upf-0
+...
+...
+Events:
+  Type    Reason          Age   From               Message
+  ----    ------          ----  ----               -------
+  Normal  Scheduled       57s   default-scheduler  Successfully assigned sdcore-5g/upf-0 to server
+  Normal  AddedInterface  55s   multus             Add eth0 [192.168.84.243/32] from k8s-pod-network
+  Normal  AddedInterface  55s   multus             Add access [192.168.252.3/24] from sdcore-5g/access-net
+  Normal  AddedInterface  55s   multus             Add core [192.168.250.3/24] from sdcore-5g/core-net
+  Normal  Pulling         54s   kubelet            Pulling image "omecproject/upf-epc-bess:master-5786085"
+  Normal  Pulled          36s   kubelet            Successfully pulled image "omecproject/upf-epc-bess:master-5786085" in 17.96706618s
+  Normal  Created         36s   kubelet            Created container bess-init
+  Normal  Started         36s   kubelet            Started container bess-init
+  Normal  Pulled          32s   kubelet            Container image "omecproject/upf-epc-bess:master-5786085" already present on machine
+  Normal  Created         32s   kubelet            Created container bessd
+  Normal  Started         32s   kubelet            Started container bessd
+  Normal  Pulling         27s   kubelet            Pulling image "omecproject/upf-epc-pfcpiface:master-5786085"
+  Normal  Pulled          27s   kubelet            Container image "omecproject/upf-epc-bess:master-5786085" already present on machine
+  Normal  Started         27s   kubelet            Started container routectl
+  Normal  Pulled          27s   kubelet            Container image "omecproject/upf-epc-bess:master-5786085" already present on machine
+  Normal  Created         27s   kubelet            Created container web
+  Normal  Started         27s   kubelet            Started container web
+  Normal  Created         27s   kubelet            Created container routectl
+  Normal  Pulled          26s   kubelet            Successfully pulled image "omecproject/upf-epc-pfcpiface:master-5786085" in 1.059861763s
+  Normal  Created         26s   kubelet            Created container pfcp-agent
+  Normal  Started         25s   kubelet            Started container pfcp-agent
+  Normal  Pulled          25s   kubelet            Container image "registry.aetherproject.org/tools/busybox:stable" already present on machine
+  Normal  Created         25s   kubelet            Created container arping
+  Normal  Started         25s   kubelet            Started container arping
+
+
+
