@@ -1,5 +1,5 @@
 
-sd-core release 1.3 install procedures
+sd-core release 1.3 install procedures (in Ubuntu 22.04)
 =======================================
 release info: https://docs.sd-core.opennetworking.org/master/release/1.3.html
 download install: https://docs.sd-core.opennetworking.org/master/deployment/deployment5G.html
@@ -7,6 +7,97 @@ download install: https://docs.sd-core.opennetworking.org/master/deployment/depl
 
 
 
+---------------------
+Method I (new & easy)
+---------------------
+0. download Aether and sdcore-helm-charts
+
+	sdcore-helm-charts needs to have dependency update
+		cd sdcore-helm-charts/sdcore-helm-charts
+		helm dep update
+
+
+1. install sd-core in Aether with sd-core install
+	make 5g-core (or CHARTS=release-2.0 make 5g-core)
+		--> this command will install sd-core in omec namespace 
+		
+
+2. uninstall sd-core chart only with 
+
+	vagrant@ran:~/aether-in-a-box$ helm uninstall -n omec sd-core
+	release "sd-core" uninstalled
+
+
+3. replace original helm charts with the latest charts which is downloaded 
+
+ - original logs in Aether install
+	  NODE_IP=10.0.2.15 DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 ENABLE_GNBSIM=true \ 
+					envsubst < /home/vagrant/aether-in-a-box//sd-core-5g-values.yaml | \
+	  				helm upgrade --create-namespace --install --wait  \
+					  --namespace omec \
+					  --values - \
+					  sd-core \
+					  /home/vagrant/cord/sdcore-helm-charts/sdcore-helm-charts
+
+
+ - replace with "~/sdcore-helm-charts/sdcore-helm-charts"
+	 NODE_IP=10.0.2.15 DATA_IFACE=data RAN_SUBNET=192.168.251.0/24 ENABLE_GNBSIM=true  \
+		 			envsubst < /home/vagrant/aether-in-a-box//sd-core-5g-values.yaml | \ 
+					helm upgrade --create-namespace --install --wait \ 
+						--namespace omec  \
+						 --values -   \
+						 sd-core	\
+						 ~/sdcore-helm-charts/sdcore-helm-charts
+
+
+
+4. checkout the version
+
+vagrant@ran:~/aether-in-a-box$ helm ls -n omec
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+sd-core omec            1               2023-06-05 16:30:09.233908432 -0400 EDT deployed        sd-core-0.13.2
+
+
+(previous Aether included sd-core version)
+vagrant@ran:~/aether-in-a-box$ helm list -n omec
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+sd-core omec            1               2023-06-05 17:36:05.53201952 -0400 EDT  deployed        sd-core-0.10.20
+
+
+
+
+
+5. TroubleShoot
+
+If there are following errors, 
+	^CRelease sd-core has been cancelled.
+	Error: UPGRADE FAILED: context canceled
+
+Then, 
+	helm uninstall and install(or upgrade) again, then it might be resolved
+
+
+
+
+
+6. ETC, 
+
+for roc-5g-models,
+
+	(1) CHARTS=release-2.0 make roc-5g-models
+	(2) CHARTS=release-2.0 make 5g-core
+	(3) helm uninstall -n omec 5g-core
+	(4) helm install or upgrade again 
+
+
+
+
+
+
+
+---------------------
+Method II (previous)
+---------------------
 0. preparation for Install RKE2 kubernetes distribution.
 
 	- Aiab download and make node-prep
