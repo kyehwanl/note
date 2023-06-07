@@ -380,5 +380,22 @@ set cursorline
 
 
 
+In case window switching is not working, (mapping <c-h> to <c-w>h) 
+=========================================
+  try following command into mappings (temp solution)
+
+  :nnoremap <bs> <C-w>h
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -82,7 +82,7 @@ Then,
 
 6. ETC, 
 
-for roc-5g-models,
+A. for roc-5g-models,
 
 	(1) CHARTS=release-2.0 make roc-5g-models
 	(2) CHARTS=release-2.0 make 5g-core
@@ -90,8 +90,26 @@ for roc-5g-models,
 	(4) helm install or upgrade again 
 
 
+B. UERANSIM + sdcore
+    (1) download Aether, cord and sd-core-helm-charts(v1.3)
+	(2) modify sd-core-5g-values.yaml file for external amf
 
+    (3) install sd-core in Aether for generating core, access interfaces as macvlan interfaces
+        ENABLE_GNBSIM=false DATA_IFACE=eth1 make 5g-core
 
+    (4) helm uninstall -n omec sd-core
+
+	(5) install a new version of sd-core-helm-charts
+
+	  NODE_IP=10.0.2.15 DATA_IFACE=eth1 RAN_SUBNET=192.168.10.0/24 ENABLE_GNBSIM=false envsubst \
+									 < /home/vagrant/aether-in-a-box//sd-core-5g-values.yaml | \
+	  helm upgrade --create-namespace --install --wait  \
+	           --namespace omec \
+	           --values - \  
+	           sd-core \
+	           /home/vagrant/sdcore-helm-charts/sdcore-helm-charts
+
+	(6) following the instruction, "UERANSIM_SD-Core_execution-logs" or other documents describing how to build sdcore and gnb
 
 
 
