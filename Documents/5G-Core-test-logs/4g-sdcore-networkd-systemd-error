@@ -1,0 +1,175 @@
+
+
+1. Error
+
+    FATAL: Could not find systemd-networkd config for interface $(DATA_IFACE), exiting now!; exit 1 
+
+
+2. Reason
+
+    in Aether, 4g or 5g sdcore only install with the following command needs to use systemd-networkd instead of NetworkManager
+         ENABLE_OAISIM=false DATA_IFACE=ens160 CHARTS=latest make 4g-core (Or 5g-core)
+
+
+    - Ubuntu Desktop distribution uses NetworkManager as a default network configuration, 
+    - Ubuntu Server distribution uses systemd-networkd as a default network configuration.
+
+
+    Because Aether makefile tries to verify this with the script, 
+
+       DATA_IFACE_PATH := $(shell find /*/systemd/network -maxdepth 1 -not -type d -name '*$(DATA_IFACE).network' -print) 
+       DATA_IFACE_CONF ?= $(shell basename $(DATA_IFACE_PATH)).d 
+    
+
+	 If there is no *.network file in /etc/systemd/network/ or /run/systemd/network/ directories,
+	  then, the error message above will be printed out and exit the make process.
+
+
+
+3. Solution
+
+(1) Convert NetworkManager to systemd-networkd 
+https://www.xmodulo.com/switch-from-networkmanager-to-systemd-networkd.html
+https://linux.fernandocejas.com/docs/how-to/switch-from-network-manager-to-systemd-networkd
+
+
+  A. 
+	As a first step let’s disable Network Manager service and enable systemd-networkd service:
+	$ sudo systemctl stop NetworkManager
+	$ sudo systemctl disable NetworkManager
+	$ sudo systemctl enable systemd-networkd 
+
+
+  B. 
+	As a second step, we have to enable and start systemd-resolved service, 
+	which is used by systemd-networkd for network name resolution. This service implements a caching DNS server.
+
+	$ sudo systemctl enable systemd-resolved
+	$ sudo systemctl start systemd-resolved
+
+	Systemd-resolved will create its own resolv.conf under /run/systemd directory. 
+	However, it is a common practise to store DNS resolver information in /etc/resolv.conf, 
+	and many applications still rely on /etc/resolv.conf. 
+	That is why we have to create a symlink to /etc/resolv.conf for compatibility reasons:
+
+	$ sudo rm /etc/resolv.conf
+	$ sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+
+  C. Setting up network connections¶
+	Network configuration information are represented by text files with .network extension in the directory /etc/systemd/network
+
+	$ sudo mkdir /etc/systemd/network
+
+	$ sudo touch /etc/systemd/network/10-netplan-ens160.network
+	$ sudo touch /etc/systemd/network/20-netplan-ens192.network
+
+	  < 10-netplan-ens160.network >
+	  [Match]
+	  Name=ens160
+
+	  [Network]
+	  LinkLocalAddressing=ipv6
+	  Address=10.0.50.62/24
+	  Gateway=10.0.50.200
+	  DNS=10.0.50.200
+	  Domains=antd.nist.gov nist.gov
+
+
+
+	  < 20-netplan-ens192.network >
+	  [Match]
+	  Name=ens192
+
+	  [Network]
+	  LinkLocalAddressing=ipv6
+	  Address=192.168.11.62/24
+	  Gateway=192.168.11.1
+	  DNS=192.168.11.1
+	  Domains=antd.nist.gov nist.gov
+
+
+
+  D. Restarting the service
+	$ sudo systemctl restart systemd-networkd
+
+
+
+
+  E. Install Aether sd-core
+	...
+	...
+	NODE_IP=10.0.50.62 DATA_IFACE=ens160 RAN_SUBNET=10.0.50.0/24 envsubst < /home/kyehwanl/aether-in-a-box//sd-core-4g-values.yaml | \
+	helm upgrade --create-namespace --install --wait  \
+			--namespace omec \
+			--values - \
+			sd-core \
+			aether/sd-core
+	Release "sd-core" does not exist. Installing it now.
+	NAME: sd-core
+	LAST DEPLOYED: Fri Jun  9 17:50:22 2023
+	NAMESPACE: omec
+	STATUS: deployed
+	REVISION: 1
+	TEST SUITE: None
+	NOTES:
+	Notes - Instructions to use SD-Core application helm charts
+	Your MME IP is 10.0.50.62
+	
+
+
+	kyehwanl@vmware-062:~/aether-in-a-box$ kubectl get po -A
+	NAMESPACE            NAME                                                    READY   STATUS      RESTARTS   AGE
+	...
+	...
+	kube-system          rke2-metrics-server-644f588b5-ncvn6                     1/1     Running     0          12m
+	kube-system          rke2-multus-ds-pzmjv                                    1/1     Running     0          13m
+	local-path-storage   local-path-provisioner-67f5f9cb7b-75z4c                 1/1     Running     0          12m
+	omec                 cassandra-0                                             1/1     Running     0          11m
+	omec                 config4g-0                                              1/1     Running     0          11m
+	omec                 hss-0                                                   1/1     Running     0          11m
+	omec                 mme-0                                                   4/4     Running     0          11m
+	omec                 pcrf-0                                                  1/1     Running     0          11m
+	omec                 simapp-6cccd6f787-8bvmm                                 1/1     Running     0          11m
+	omec                 spgwc-0                                                 2/2     Running     0          11m
+	omec                 upf-0                                                   5/5     Running     0          11m
+	tigera-operator      tigera-operator-b77ddd45f-hs6kp                         1/1     Running     0          13m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
