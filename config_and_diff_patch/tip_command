@@ -260,6 +260,8 @@ press '-' on gdb running (tui enable|disable)
 
 (15) grep | egrep
 ====================
+egrep is exactly same as ‘grep -E’
+
 1. recursive grep for a particular file type: 
     grep -lr --include='*.[ch]' search-pattern ./
 2. exclude leading # or empty lines in file
@@ -274,8 +276,22 @@ press '-' on gdb running (tui enable|disable)
 		  repository: https://charts.aetherproject.org
 		  version: 0.0.6
 		- name: 5g-ran-sim
+4. grep OR, AND, NOT
+(https://www.thegeekstuff.com/2011/10/grep-or-and-not-operators/)
+	(1) OR
+   		grep 'pattern1\|pattern2' filename
+		grep -E 'pattern1|pattern2' filename
+		grep -e pattern1 -e pattern2 filename
+		egrep 'pattern1|pattern2' filename
 
+	(2) AND
+		grep -E 'pattern1.*pattern2' filename
+		grep -E 'pattern1.*pattern2|pattern2.*pattern1' filename
+		grep -E 'pattern1' filename | grep -E 'pattern2'
 
+	(3) NOT
+		grep -v 'pattern1' filename
+		(example) egrep 'Manager|Developer' employee.txt | grep -v Sales
 
 
 
