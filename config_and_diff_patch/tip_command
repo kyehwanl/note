@@ -569,9 +569,13 @@ sudo passwd username
 sudo useradd -g users username 
 ( or for multiple groups,  sudo useradd -g users -G wheel,developers username)
   or  usermod -aG sudo,adm,docker kyehwanl 
-sudo useradd -s /usr/bin/bash username
+sudo useradd -s /bin/bash username
 ( or edit /etc/passwd)
 
+
+--> Practical Usage
+	useradd -m <userid> -s /bin/bash
+	usermod -aG sudo,adm <userid>
 
 
 (37) download from web, curl
