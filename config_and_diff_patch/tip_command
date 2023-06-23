@@ -636,6 +636,24 @@ journalctl <service>
 
 
 
+
+
+
+
+
+(42) Change Default Gateway
+==============================
+route del default
+route add default 1.2.3.4
+
+
+
+
+
+
+
+
+
 (ETC)
 =================================
 A. show file types except source files in project directory

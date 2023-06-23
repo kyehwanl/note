@@ -1,0 +1,33 @@
+
+1. gre tunnel initiation and ip route rules ?
+----------------------------------------------
+https://serverfault.com/questions/1129219/gre-tunnel-issue
+
+
+
+I have 2 linux servers. I want to use server 1 ip for server 2 as a ddos protection, 
+I have followed a tutorial online which works quite good but there is a small issue. 
+While trying to do curl server1ip inside server 2 it gives me error connection timed out, 
+while when doing curl server 1 ip from anywhere else apart from server 2 it works. 
+
+Here is the commands i ran on server 1 :
+
+
+echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+sysctl -p
+iptunnel add gre1 mode gre local server1ip remote server2ip ttl 255
+ip addr add 192.168.168.1/30 dev gre1
+ip link set gre1 up
+iptables -t nat -A POSTROUTING -s 192.168.168.0/30 ! -o gre+ -j SNAT --to-source server1ip
+iptables -t nat -A PREROUTING -d server1ip -j DNAT --to-destination 192.168.168.2
+iptables -A FORWARD -d 192.168.168.2 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+
+Here is the commands ran on server 2 :
+
+iptunnel add gre1 mode gre local server2ip remote server1ip ttl 255
+ip addr add 192.168.168.2/30 dev gre1
+ip link set gre1 up
+echo '100 BUYVM' >> /etc/iproute2/rt_tables
+ip rule add from 192.168.168.0/30 table BUYVM
+ip route add default via 192.168.168.1 table BUYVM
