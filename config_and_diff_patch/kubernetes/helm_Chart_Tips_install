@@ -553,3 +553,33 @@ Retrieve a package from a package repository, and download it locally
 
 
 
+
+
+---------------------------
+12. uninstall all releases
+---------------------------
+https://stackoverflow.com/questions/47817818/helm-delete-all-releases
+
+helm ls -a --all-namespaces | awk 'NR > 1 { print  "-n "$2, $1}' | xargs -L1 helm delete (uninstall on v3)
+
+  ("NR > 1" is true only for lines greater than one, so it does not get executed on the first line)
+  (-L1 tells xargs to process the following command every 1 line (-Ln will process every n lines)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
