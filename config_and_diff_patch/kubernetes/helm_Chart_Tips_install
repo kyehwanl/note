@@ -419,7 +419,9 @@ idac-server02$ helm template -n omec bess-upf ./sdfabric-helm-charts/bess-upf
 
 
     another example with values
-        helm template test1 aether/sd-core --values ~/aether-configs/app/sd-core-5g/values.yaml | less
+      *  helm template test1 aether/sd-core --values ~/aether-configs/app/sd-core-5g/values.yaml | less
+	  *  NODE_IP=10.5.0.2 DATA_IFACE=enp59s0f0np0 RAN_SUBNET=10.5.2.0/24 ENABLE_GNBSIM=false envsubst < \
+	  		/home/onfadmin/aether-in-a-box//sd-core-5g-values.yaml | helm template --values - sdcore  aether/sd-core 
 
 
 
