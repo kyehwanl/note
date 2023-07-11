@@ -130,7 +130,9 @@ node0 [925]{~/kubernetes}$ sudo ETCDCTL_API=3 etcdctl --endpoints https://155.98
 9. Kubernetes pod stuck terminating
 ------------------------------------
 following command to delete the POD forcefully:
-  kubectl delete pod <PODNAME> --grace-period=0 --force --namespace <NAMESPACE>
+  kubectl delete pods <PODNAME> --grace-period=0 --force --namespace <NAMESPACE>
+  
+  kubectl delete --force pods -n omec --all
 
 
 
