@@ -140,4 +140,16 @@ following command to delete the POD forcefully:
 
 
 
+------------------------------------
+10. Kubernetes checking Event
+------------------------------------
+
+- getting events with Watch (-w) 
+ kubectl get events -w -n omec | grep upf
+
+
+
+
+
+
 
