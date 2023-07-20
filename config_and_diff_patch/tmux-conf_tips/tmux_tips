@@ -468,6 +468,35 @@ tmux tips
 
 
 
+ 
+
+
+14. Stop Displaying from smaller client
+---------------------------------------
+(https://stackoverflow.com/questions/51700641/stop-displaying-tmux-information-about-smaller-client)
+ it shows information at bottom right something like this : (size 80*24 from a smaller client) 
+ and fills area with dots and boundary with green color.
+
+
+ (Solution)
+  $ tmux list-clients
+  /dev/pts/29: 0 [129x20 xterm-256color] (utf8) 
+  /dev/pts/55: 0 [132x27 xterm-256color] (utf8) 
+
+  $ tmux detach
+
+  $ tmux list-clients
+  /dev/pts/29: 0 [129x20 xterm-256color] (utf8) 
+
+  $ tmux detach
+
+  $ tmux list-clients
+
+  And then, finally attach again
+  $ tmux a
+
+
+
 
 
 
