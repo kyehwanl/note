@@ -1,0 +1,184 @@
+
+---------------
+1. Error Status
+---------------
+
+  (1) Messages When UERANSIM, gnodeB failed to connect to AMF
+
+   "ueransim Cause misc/unknown-PLMN" at gNodeB
+
+
+  (2) in AMF logs
+
+  "Error while dialing dial tcp 9876: connect: connection refused webui"
+
+    --> seems amf was not able to connect to webui
+
+  (3) in webui log
+
+  onf@onf-01:~/aether-in-a-box$ k logs -f -n omec webui-5894ffd49d-p6c4r
+  [GIN-debug] Listening and serving HTTP on :5000
+  2023-07-26T17:46:10Z [INFO][LIB][MonDB] RestfulAPIGetMany : DB fetch failed for collection ( NfProfile ) :  server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: mongodb-arbiter-headless:27017, Type: RSGhost, Average RTT: 24754016 }, ] }
+  2023-07-26T17:46:10Z [INFO][WebUI][CONFIG] Waiting for configuration event
+
+	--> seems webui was not able to mongodb
+
+
+
+
+	So, webui didn't receive simapp info (subscribers, plmn, mcc, mnc, etc), 
+	it resulted in amf not being configured with the above information.
+	This leads to UE, gnodeb failed to connect to AMF with the above error messages
+
+
+
+-------------
+2. Root Cause
+-------------
+	
+	(Conclusion in short )
+	kube dns has some misconfigured with "search: - antd.nist.gov"
+
+
+
+	(1) inside amf, webui, any other pods, /etc/resolve.conf, 
+		There is "antd.nist.gov" in search from the host dns configuration, which should NOT be there.
+
+	  onf@onf-01:~/aether-in-a-box$ k exec -it -n omec amf-5887bbf6c5-bbpqr -- bash
+	  bash-4.4# cat /etc/resolv.conf
+	  search omec.svc.cluster.local svc.cluster.local cluster.local antd.nist.gov
+	  nameserver 192.168.85.10
+	  options ndots:5
+
+	(2) this has a problem for internal dns addressing
+	  A. for example on amf pod, 
+
+		onf@onf-01:~/aether-in-a-box$ k exec -it -n omec amf-5887bbf6c5-mrzsn -- bash
+		bash-4.4# nslookup webui.omec.svc.cluster.local
+		Server:         192.168.85.10
+		Address:        192.168.85.10#53
+
+		*** Can't find webui.omec.svc.cluster.local.antd.nist.gov: No answer
+
+	  --> because search was set to antd.nist.gov, dns search is not based on omec.svc.cluster.local.antd.nist.gov
+		  So, all pods name addressing were not working
+
+
+	  B. Other example on webui pod,
+		onf@onf-01:~/aether-in-a-box$ k exec -it -n omec webui-5894ffd49d-p6c4r -- /bin/sh
+
+		/free5gc # ping webui.omec.svc.cluster.local
+		ping: bad address 'webui.omec.svc.cluster.local'
+
+	  --> Ping address was not recognized for webui.omec.svc.cluster.local
+			so, dns addressing was something wrong
+
+		/free5gc # cat /etc/resolv.conf
+		search omec.svc.cluster.local svc.cluster.local cluster.local antd.nist.gov
+		nameserver 192.168.85.10
+		options ndots:5
+
+	
+	  C. This below is the example from the rightly working Aether cluster
+		 Even though ping doesn't have icmp-reply, at least pod's address is correct!!
+	
+		  vagrant@sdcore:~$ k exec -it -n omec amf-5887bbf6c5-vfx5j -- bash
+		  bash-4.4# ping webui.omec.svc.cluster.local
+		  PING webui.omec.svc.cluster.local (192.168.85.194): 56 data bytes
+		  ^C
+		  --- webui.omec.svc.cluster.local ping statistics ---
+		  11 packets transmitted, 0 packets received, 100% packet loss
+
+
+		vagrant@sdcore:~$ k exec  -it -n omec amf-5887bbf6c5-vfx5j -- bash
+		bash-4.4# cat /etc/resolv.conf
+		search omec.svc.cluster.local svc.cluster.local cluster.local
+		nameserver 192.168.85.10
+		options ndots:5
+
+		--> Of course, dns field doesn't have "search antd.nist.gov" 
+
+
+
+	(*)
+	--> I guess it comes from the host dns configuration when installing clusters
+
+	  onf@onf-01:$ cat /etc/resolv.conf
+	  nameserver 127.0.0.53
+	  options edns0
+	  search antd.nist.gov
+
+
+
+------------
+3. Solution
+------------
+
+(1) in order to modify dns resolv.conf in pods network, Need to modify host's dns config file.
+	In recent Ubuntu, netplan is used, so modify /etc/netplan/xx-config.yaml
+
+	onf@onf-01:~$ cat /etc/netplan/00-installer-config.yaml
+	network:
+	  ethernets:
+		ens160:
+		  addresses:
+		  - 10.0.50.75/24
+		  gateway4: 10.0.50.200
+		  nameservers:
+			addresses:
+			- 10.0.50.200
+			search: 		
+			- antd.nist.gov --> Remove this line !!
+		ens192:
+		  addresses:
+		  - 192.168.11.75/24
+	  version: 2
+
+
+	
+(2) sudo netplan apply
+
+(3) confirm after building the cluster, 
+	verify /etc/resolv.conf that there is no antd.nist.gov search base anymore
+ 
+	  onf@onf-01:~$ k exec -it -n omec amf-5887bbf6c5-bbpqr -- bash
+	  bash-4.4# cat /etc/resolv.conf
+	  search omec.svc.cluster.local svc.cluster.local cluster.local
+	  nameserver 192.168.85.10
+	  options ndots:5
+
+	   
+	  onf@onf-01:~$ k exec -it -n omec amf-5887bbf6c5-bbpqr -- bash
+	  bash-4.4# nslookup webui.omec.svc.cluster.local
+	  Server:         192.168.85.10
+	  Address:        192.168.85.10#53
+
+	  Name:   webui.omec.svc.cluster.local
+	  Address: 192.168.85.212
+
+	   
+(4) check webui, amf logs, so that there are successfully connected and received the necessary info for gnodeB and UE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
