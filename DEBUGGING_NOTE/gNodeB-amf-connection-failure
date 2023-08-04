@@ -134,6 +134,30 @@
 		  - 192.168.11.75/24
 	  version: 2
 
+(1-1) in case of PowerEdge R640,
+
+  onfadmin@5g1-comp1:~/dpdk$ cat /etc/netplan/00-installer-config.yaml
+  # This is the network config written by 'subiquity'
+  network:
+	ethernets:
+	  eno1np0:
+		dhcp4: false
+	  eno2np1:
+		dhcp4: false
+	  eno3:
+		dhcp4: true --> Need to be changed to false
+	  eno4:
+		dhcp4: false
+	  enp59s0f0np0:
+		dhcp4: false
+	  enp59s0f1np1:
+		dhcp4: false
+	  enp94s0f0np0:
+		dhcp4: false
+	  enp94s0f1np1:
+		dhcp4: false
+	version: 2
+
 
 	
 (2) sudo netplan apply
