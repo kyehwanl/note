@@ -152,4 +152,148 @@ following command to delete the POD forcefully:
 
 
 
+-----------------------------------
+11. Where the pods logs are stored 
+-----------------------------------
+/var/log/pods/
+
+  onfadmin@5g1-comp2:~$ ll /var/log/pods/
+  calico-system_calico-kube-controllers-7f7959b5db-99hdt_544ff2f5-1581-4101-a749-474b7125092b/
+  calico-system_calico-node-pkscj_09625468-9dd8-4224-9833-342040a8517d/
+  calico-system_calico-typha-64b7764f4-2gbzs_b0abc9a0-8624-4266-ad18-7cb868c54e5b/
+  kube-system_cloud-controller-manager-5g1-comp2_1a84611ed06607ed8a51e65d936a6ff0/
+  kube-system_etcd-5g1-comp2_e18aa5e5b83a5a3c56d78e4054612394/
+  kube-system_helm-install-rke2-calico-5fkkw_7cf64442-6896-4274-82da-9913a535bb3c/
+  kube-system_helm-install-rke2-calico-crd-mvhxh_512e4056-da3a-4911-aebd-5aaa3e7123e2/
+  kube-system_helm-install-rke2-coredns-rgf9h_4a19b85a-fbcf-4afa-8f2e-10e7c5dd57c5/
+  kube-system_helm-install-rke2-ingress-nginx-p9bqd_019dce1b-d533-4a6c-8623-3898d133435a/
+  kube-system_helm-install-rke2-metrics-server-ljxhx_2600b2c2-ab28-47a7-9fb6-375ad9cf845d/
+  kube-system_helm-install-rke2-multus-5xjgk_2f43f8fe-14b0-4fe1-a835-0c8f879a2ed9/
+  kube-system_kube-apiserver-5g1-comp2_4874a08227e8932676b83ca998a390f3/
+  kube-system_kube-controller-manager-5g1-comp2_57585a0305e4e46df816ebab263926f3/
+  kube-system_kube-proxy-5g1-comp2_ce051fc91f9e463593a1d45efa60be52/
+  kube-system_kube-scheduler-5g1-comp2_2495d4d1888db1561e78ccbc2ff8677c/
+  kube-system_rke2-coredns-rke2-coredns-775c5b4bb4-8q4g2_e471d882-5bbb-479b-8410-043df2874e8c/
+  kube-system_rke2-coredns-rke2-coredns-autoscaler-695fc554c9-rmwdh_20c5ecfc-001b-4873-8be1-88efd48cf14e/
+  kube-system_rke2-ingress-nginx-controller-zrrrk_6eb4b396-3a98-4fc2-a70c-948568d759ec/
+  kube-system_rke2-metrics-server-644f588b5-zqgq5_e9f421b5-56a0-47c5-a518-1b0c70d85b0d/
+  kube-system_rke2-multus-ds-t2rq5_fee59f10-90d8-4a75-88f9-4b0369a62975/                                                               local-path-storage_local-path-provisioner-67f5f9cb7b-6cmqd_8d7929c5-c222-4de0-a482-1ecf00c78c4a/
+  omec_amf-5887bbf6c5-kqs2p_b51e6386-d966-449c-8aa0-e12c1c444e01/
+  omec_ausf-6dbb7655c7-ksknp_4114efa6-48e1-4c89-9d06-b8e6973209ae/
+  omec_kafka-0_3d46935e-73a2-40ec-aa5d-3d0941268d6c/
+  omec_metricfunc-55b47f58d5-2bf9x_630fb8c8-a91d-4ab5-9918-0065d515581b/                                                               omec_mongodb-0_b44d2466-79f3-47ff-b4ad-1bd9925459f0/
+  omec_mongodb-1_ee8e3848-9eb4-46bc-a17f-eb1cd25fc4ba/
+  omec_mongodb-arbiter-0_ff76bcdd-6721-47e7-90c8-a60ad6e55d6f/
+  omec_nrf-54bf88c78c-2kcxb_cbc38cc7-208a-42b3-bf6f-479b347d6c0a/
+  omec_nssf-5b85b8978d-dqj6n_a1a3bd68-49bc-4324-80d4-b5750d1904d1/
+  omec_pcf-758d7cfb48-bzbgd_ff4542e8-33a6-48b4-b34c-1b3cdb893ab9/
+  omec_sd-core-zookeeper-0_3d1d3095-9b76-4be5-8ce8-fb093e3ef03f/
+  omec_simapp-6cccd6f787-gkj8s_4283acf8-f3ec-4184-a016-433362e5a4f7/
+  omec_smf-b8f85d747-7lhhb_427c19bc-001d-4321-93af-7eb0951f6bc2/
+  omec_udm-768b9987b4-wwxx8_d79f3a60-4416-40a6-a2bf-fd085784d005/
+  omec_udr-8566897d45-mvrhk_bd95d72d-9ae7-4644-9c57-2dadbeff7923/
+  omec_upf-0_0275fd22-8858-4fc1-9de5-117e4b5381d1/                                                                                     omec_webui-5894ffd49d-xcr6w_deacac1f-f1ad-4ca2-8234-3ef1ad682a8c/
+  tigera-operator_tigera-operator-b77ddd45f-n76z8_824af4cd-f1d2-4a2f-864d-0deb219100e4/
+
+
+  onfadmin@5g1-comp2:~/$ ll /var/log/pods/omec_amf-5887bbf6c5-kqs2p_b51e6386-d966-449c-8aa0-e12c1c444e01/amf/
+  total 20M
+  -rw-r--r-- 1 root root 659K Aug  4 12:46 0.log.20230804-120032.gz
+  -rw-r--r-- 1 root root 660K Aug  4 13:32 0.log.20230804-124626.gz
+  -rw-r----- 1 root root  11M Aug  4 14:18 0.log.20230804-141832                                                                       -rw-r--r-- 1 root root 659K Aug  4 14:18 0.log.20230804-133229.gz                                                                    -rw-r----- 1 root root 7.2M Aug  4 14:51 0.log
+
+	--> seems 0.log is ongoing log being stored, 
+		0.log.20230804-141832 is the file which is written before gz'ed, the number indicates timeline
+
+
+
+---------------------------------
+12. simple DNS test with busybox
+---------------------------------
+https://ranchermanager.docs.rancher.com/v2.5/troubleshooting/other-troubleshooting-tips/dns
+
+(1) Check if domain names are resolving
+  	kubectl run -it --rm --restart=Never busybox --image=busybox:1.28 -- nslookup kubernetes.default
+
+(2) Check if external names are resolving (in this example, www.google.com)
+  	kubectl run -it --rm --restart=Never busybox --image=busybox:1.28 -- nslookup www.google.com
+
+(3) Check upstream nameservers in resolv.conf
+  	kubectl run -i --restart=Never --rm test-${RANDOM} --image=ubuntu --overrides='{"kind":"Pod", "apiVersion":"v1", "spec": {"dnsPolicy":"Default"}}' -- sh -c 'cat /etc/resolv.conf'
+
+
+(4) Check upstream nameservers in coredns container
+  	(in case, host will run a local caching DNS nameserver, which means the address in /etc/resolv.conf will point to an address in the loopback range (127.0.0.0/8)
+	  In case of Ubuntu 18.04, this is done by systemd-resolved. We detect if systemd-resolved is running, and will automatically use the /etc/resolv.conf file with the correct upstream nameservers (which is located at /run/systemd/resolve/resolv.conf).
+
+	< A. Vagrant case >
+
+	  vagrant@sdcore:~$ cat /run/systemd/resolve/resolv.conf
+	  nameserver 10.0.2.3
+
+	  vagrant@sdcore:~$ kubectl -n kube-system get configmap rke2-coredns-rke2-coredns -o go-template={{.data.Corefile}}
+	  .:53 {
+		  errors
+		  health  {
+			  lameduck 5s
+		  }
+		  ready
+		  kubernetes   cluster.local  cluster.local in-addr.arpa ip6.arpa {
+			  pods insecure
+			  fallthrough in-addr.arpa ip6.arpa
+			  ttl 30
+		  }
+		  prometheus   0.0.0.0:9153
+		  forward   . /etc/resolv.conf
+		  cache   30
+		  loop
+		  reload
+		  loadbalance
+	  }
+	  
+	vagrant@sdcore:~$ kubectl run -i --restart=Never --rm test-${RANDOM} --image=ubuntu --overrides='{"kind":"Pod", "apiVersion":"v1", "sec": {"dnsPolicy":"Default"}}' -- sh -c 'cat /etc/resolv.conf'
+	  nameserver 10.0.2.3
+	  pod "test-31269" deleted
+
+	  vagrant@sdcore:~$ kubectl -n kube-system get pods -l k8s-app=kube-dns --no-headers -o custom-columns=NAME:.metadata.name,HOSTIP:.status.hostIP | while read pod host; do echo "Pod ${pod} on host ${host}"; kubectl -n kube-system exec $pod -c coredns -- cat /etc/resolv.c
+	  onf; done
+	  Pod rke2-coredns-rke2-coredns-775c5b4bb4-w4wzr on host 10.0.2.15
+	  nameserver 10.0.2.3
+
+
+	< B. 5g1-comp2 server >
+
+	kubectl -n kube-system get pods -l k8s-app=kube-dns --no-headers -o custom-columns=NAME:.metadata.name,HOSTIP:.status.hostIP | while read pod host; do echo "Pod ${pod} on host ${host}"; kubectl -n kube-system exec $pod -c coredns -- cat /etc/resolv.conf; done
+	Pod rke2-coredns-rke2-coredns-775c5b4bb4-8q4g2 on host 10.5.0.3
+	search antd.nist.gov
+	nameserver 10.5.1.1
+	nameserver 10.5.9.200
+	nameserver 10.0.20.200            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
