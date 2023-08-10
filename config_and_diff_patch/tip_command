@@ -473,6 +473,44 @@ EOF
 
 
 
+ 2. kill shell and terminal session
+	(https://www.baeldung.com/linux/kill-terminal)
+	< case > while loop infinately continues, but sesssion lost, so need to kill a certain process(iperf3, here)
+
+
+	-- first check out terminal session, pts/6
+	onfadmin@5g1-comp3:~$ ps aux | grep iperf3                                                            
+	onfadmin 42982  0.8  0.0  10540  1236 pts/6    S+   11:42   0:00 iperf3 -c 10.5.0.1 -B 172.250.237.123
+	onfadmin 43007  0.0  0.0  13140  1084 pts/0    S+   11:43   0:00 grep --color=auto iperf3
+
+	-- current terminal
+	onfadmin@5g1-comp3:~$ tty                
+	/dev/pts/0                               
+
+	-- list terminal processes (-H: hierarchy, -t: given tty)
+	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/0
+	  PID TTY          TIME CMD              
+	18078 pts/0    00:00:03 bash             
+	45678 pts/0    00:00:00   ps             
+
+	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6
+	  PID TTY          TIME CMD              
+	38031 pts/6    00:00:02 bash             
+	45748 pts/6    00:00:00   iperf3         
+
+	-- useful to see parent pid with pstree
+	onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3                         
+			   |                              `-bash(38031)---iperf3(47602) 
+
+	-- kill or pkill the pid of bash
+	onfadmin@5g1-comp3:~$ kill -9 38031                   
+	onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3       
+	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6             
+	error: TTY could not be found                         
+														  
+
+
+
 (29) gnome shell minimized or unresponsive
 ===========================================
 (https://askubuntu.com/questions/455301/how-can-i-restart-gnome-shell-after-it-freezes-or-becomes-unresponsive)

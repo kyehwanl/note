@@ -39,3 +39,18 @@
 https://tldp.org/LDP/abs/html/comparison-ops.html
 https://www.tutorialspoint.com/unix/unix-basic-operators.htm
 
+
+
+
+
+
+
+
+2. escape from Infinite loop 
+============================
+
+(1) while loop
+(https://unix.stackexchange.com/questions/42287/terminating-an-infinite-loop)
+
+  while :;  do iperf3 -c 10.5.0.1 -B 172.250.237.124; test $? -eq 1 && break || echo $?; done 
+    --> it should be -gt 128 (according to the above link), but I don't know the reason why Ctrl-C makes the number 1
