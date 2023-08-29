@@ -11,6 +11,28 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 
 
 
+------------------------------------------------
+ Quick Command summary for restart (NOT reboot)
+------------------------------------------------
+c.f - if reboot, need to configure VFs numbers and binding
+
+1. Node preparation 
+	ENABLE_GNBSIM=false DATA_IFACE=enp94s0f0 CHARTS=latest make node-prep
+2. sr-iov plugin configure
+	dpdk$ kubectl create -f sriov-device-plugin-config.yaml
+	dpdk$ kubectl create -f sriov-device-plugin.yaml
+3. ENABLE_GNBSIM=false DATA_IFACE=enp94s0f0 CHARTS=latest make 5g-core
+4. make monitoring-5g
+5. iptables Configure
+ 	sudo sysctl -w net.ipv4.ip_forward=1
+	sudo iptables -t nat -A POSTROUTING -o eno3 -j MASQUERADE
+	sudo systemctl stop ufw
+	sudo iptables -I FORWARD 1 -j ACCEPT
+6. (on gNB side) sudo iproute add 192.168.252.3 via 10.5.3.3
+
+
+
+
 ---------------------------
 1. Requirements and servers
 ---------------------------
@@ -84,6 +106,66 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 4. Check NIC controller has sr-iov capability
 ----------------------------------------------
 
+< I. Intel >
+  root@5g1-comp2:~# lshw -c network -businfo
+  Bus info          Device        Class          Description
+  ==========================================================
+  pci@0000:01:00.0  eno3          network        NetXtreme BCM5720 Gigabit Ethernet PCIe
+  pci@0000:01:00.1  eno4          network        NetXtreme BCM5720 Gigabit Ethernet PCIe
+  pci@0000:19:00.0  eno1np0       network        BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller
+  pci@0000:19:00.1  eno2np1       network        BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller
+  pci@0000:3b:00.0  enp59s0f0np0  network        BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller
+  pci@0000:3b:00.1  enp59s0f1np1  network        BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller
+  pci@0000:5e:00.0  enp94s0f0     network        Ethernet Controller 10G X550T
+  pci@0000:5e:00.1  enp94s0f1     network        Ethernet Controller 10G X550T
+
+
+  root@5g1-comp2:~# lspci -vs 0000:5e:00.0
+  5e:00.0 Ethernet controller: Intel Corporation Ethernet Controller 10G X550T (rev 01)
+		  Subsystem: Intel Corporation Ethernet 10G 2P X550-t Adapter
+		  Flags: bus master, fast devsel, latency 0, IRQ 359, NUMA node 0
+		  Memory at b8c00000 (64-bit, prefetchable) [size=4M]
+		  Memory at b9204000 (64-bit, prefetchable) [size=16K]
+		  Expansion ROM at b9600000 [disabled] [size=512K]
+		  Capabilities: [40] Power Management version 3
+		  Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+		  Capabilities: [70] MSI-X: Enable+ Count=64 Masked-
+		  Capabilities: [a0] Express Endpoint, MSI 00
+		  Capabilities: [e0] Vital Product Data
+		  Capabilities: [100] Advanced Error Reporting
+		  Capabilities: [140] Device Serial Number 91-56-8a-ff-ff-dc-00-00
+		  Capabilities: [150] Alternative Routing-ID Interpretation (ARI)
+		  Capabilities: [160] Single Root I/O Virtualization (SR-IOV)
+		  Capabilities: [1a0] Transaction Processing Hints
+		  Capabilities: [1b0] Access Control Services
+		  Capabilities: [1c0] Latency Tolerance Reporting
+		  Capabilities: [1d0] #19
+		  Kernel driver in use: ixgbe
+		  Kernel modules: ixgbe
+
+
+  root@5g1-comp2:~# ethtool -i enp94s0f0
+  driver: ixgbe
+  version: 5.1.0-k
+  firmware-version: 0x80000f32
+  expansion-rom-version:
+  bus-info: 0000:5e:00.0
+  supports-statistics: yes
+  supports-test: yes
+  supports-eeprom-access: yes
+  supports-register-dump: yes
+  supports-priv-flags: yes
+
+
+  root@5g1-comp2:~# lspci -vvv -s 5e:00.0 | grep 'Initial VFs'
+				  Initial VFs: 64, Total VFs: 64, Number of VFs: 0, Function Dependency Link: 00
+
+
+
+
+
+< II. Broadcom >
+
   onfadmin@5g1-comp1:~# lshw -c network -businfo
   WARNING: you should run this program as super-user.
   Bus info          Device           Class          Description
@@ -146,6 +228,33 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 --------------------------------------
 5. Create sr-iov VF(Virtual Function)
 --------------------------------------
+< I. Intel >
+
+  (1) first, make zero and then assign the number of designated VFs (Optional)-- only need to when to change the number of vf)
+	root@5g1-comp1:~# cat /sys/class/net/enp94s0f0/device/sriov_numvfs                   
+	0 
+
+  (2) Create VFs
+	root@5g1-comp2:~# lspci -vvv -s 5e:00.0 | grep 'Initial VFs'
+					Initial VFs: 64, Total VFs: 64, Number of VFs: 0, Function Dependency Link: 00
+
+	root@5g1-comp2:~# cat /sys/class/net/enp94s0f0/device/sriov_
+	sriov_drivers_autoprobe  sriov_numvfs             sriov_offset             sriov_stride             sriov_totalvfs           sriov_vf_device
+
+	root@5g1-comp2:~# cat /sys/class/net/enp94s0f0/device/sriov_numvfs
+	0
+
+	root@5g1-comp2:~# echo 2 > /sys/class/net/enp94s0f0/device/sriov_numvfs
+
+	root@5g1-comp2:~# lspci -vvv -s 5e:00.0 | grep 'Initial VFs'
+					Initial VFs: 64, Total VFs: 64, Number of VFs: 2, Function Dependency Link: 00
+
+	root@5g1-comp2:~# cat /sys/class/net/enp94s0f0/device/sriov_numvfs
+	2
+
+
+
+< II. Broadcom >
 
 (1) first, make zero and then assign the number of designated VFs 
 
@@ -190,7 +299,56 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 6. Bind vfio-pci driver 
 ------------------------
 
-    bind to vfio-pci driver → bnxt_en (because of broadcom netXtreme uses bnxt_en)
+< I. Intel >
+
+  (1) bind to vfio-pci driver: ixgbe→ vfio-pci  for Intel X550t
+
+	A. check the current driver 
+	onfadmin@5g1-comp2:~/dpdk$ ./usertools/dpdk-devbind.py -s
+	Network devices using kernel driver
+	===================================
+	0000:01:00.0 'NetXtreme BCM5720 Gigabit Ethernet PCIe 165f' if=eno3 drv=tg3 unused=vfio-pci *Active*
+	0000:01:00.1 'NetXtreme BCM5720 Gigabit Ethernet PCIe 165f' if=eno4 drv=tg3 unused=vfio-pci *Active*
+	0000:19:00.0 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=eno1np0 drv=bnxt_en unused=vfio-pci
+	0000:19:00.1 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=eno2np1 drv=bnxt_en unused=vfio-pci
+	0000:3b:00.0 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=enp59s0f0np0 drv=bnxt_en unused=vfio-pci *Active*
+	0000:3b:00.1 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=enp59s0f1np1 drv=bnxt_en unused=vfio-pci
+	0000:5e:00.0 'Ethernet Controller 10G X550T 1563' if=enp94s0f0 drv=ixgbe unused=vfio-pci *Active*
+	0000:5e:00.1 'Ethernet Controller 10G X550T 1563' if=enp94s0f1 drv=ixgbe unused=vfio-pci
+	0000:5e:10.0 'X550 Virtual Function 1565' if=enp94s16 drv=ixgbevf unused=vfio-pci
+	0000:5e:10.2 'X550 Virtual Function 1565' if=enp94s16f2 drv=ixgbevf unused=vfio-pci
+
+	B. change driver
+	onfadmin@5g1-comp2:~/dpdk$ sudo ./usertools/dpdk-devbind.py -b vfio-pci 0000:5e:10.0
+	onfadmin@5g1-comp2:~/dpdk$ sudo ./usertools/dpdk-devbind.py -b vfio-pci 0000:5e:10.2
+
+
+	C. check the changed driver 
+	onfadmin@5g1-comp2:~/dpdk$ ./usertools/dpdk-devbind.py -s
+	Network devices using DPDK-compatible driver
+	============================================
+	0000:5e:10.0 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+	0000:5e:10.2 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+
+	Network devices using kernel driver
+	===================================
+	0000:01:00.0 'NetXtreme BCM5720 Gigabit Ethernet PCIe 165f' if=eno3 drv=tg3 unused=vfio-pci *Active*
+	0000:01:00.1 'NetXtreme BCM5720 Gigabit Ethernet PCIe 165f' if=eno4 drv=tg3 unused=vfio-pci *Active*
+	0000:19:00.0 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=eno1np0 drv=bnxt_en unused=vfio-pci
+	0000:19:00.1 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=eno2np1 drv=bnxt_en unused=vfio-pci
+	0000:3b:00.0 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=enp59s0f0np0 drv=bnxt_en unused=vfio-pci *Active*
+	0000:3b:00.1 'BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller 16d8' if=enp59s0f1np1 drv=bnxt_en unused=vfio-pci
+	0000:5e:00.0 'Ethernet Controller 10G X550T 1563' if=enp94s0f0 drv=ixgbe unused=vfio-pci *Active*
+	0000:5e:00.1 'Ethernet Controller 10G X550T 1563' if=enp94s0f1 drv=ixgbe unused=vfio-pci
+
+
+
+
+
+
+< II. Broadcom >
+
+    (1) bind to vfio-pci driver → bnxt_en (because of broadcom netXtreme uses bnxt_en)
 
 	- binding ( vfio-pci 가 원래값인데, bnxt_en 드라이버로 바꿨음 맞는지 몰겠음) → Answer, bnxt_en이 맞음 vfio-pci로 하면 CNI plugin이 제대로 설치안됨 log로 확인가능
 	onfadmin@5g1-comp1:~/dpdk/usertools$ sudo python3 ./dpdk-devbind.py -b bnxt_en 0000:3b:02.0 
@@ -227,7 +385,7 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 
 
 
-	<TroubleShoot> 
+<TroubleShoot> 
 	만약 아래와 같이 dpdk module이 없다고 나오면	
 	onfadmin@5g1-mrtr:~/dpdk/usertools$ python3 ./dpdk-devbind.py -b bnxt_en 0000:19:02.0
 	Warning: no supported DPDK kernel modules are loaded
@@ -295,6 +453,8 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 
 	- Download Aether-in-a-box (https://gerrit.opencord.org/aether-in-a-box)
 	- make node-prep
+		or 
+	  ENABLE_GNBSIM=false DATA_IFACE=enp94s0f0 CHARTS=latest make node-prep
 
 
 
@@ -306,7 +466,55 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 	 wget https://github.com/opennetworkinglab/aether-configs/blob/main/sys/sriov-device-plugin/sriov-device-plugin-config.yaml
 
 
+	< I. Intel >
+	onfadmin@5g1-comp2:~/dpdk$ cat sriov-device-plugin-config.yaml
+	apiVersion: v1
+	kind: ConfigMap
+	metadata:
+	  name: sriovdp-config
+	data:
+	  config.json: |
+		{
+		  "resourceList": [
+			{
+			  "resourcePrefix": "intel.com",
+			  "resourceName": "intel_sriov_access",
+			  "selectors": {
+				"vendors": ["8086"],
+				"pfNames": ["enp94s0f0#0"],  → in case of 2 VFs, if more than 3, then “---#0-1”, “---#2-3”
+				"drivers": ["vfio-pci"]
+			  }
+			},
+			{
+			  "resourcePrefix": "intel.com",
+			  "resourceName": "intel_sriov_core",
+			  "selectors": {
+				"vendors": ["8086"],
+				"pfNames": ["enp94s0f0#1"],
+				"drivers": ["vfio-pci"]
+			  }
+			}
+		  ]
+		}
 
+
+	*cf, 	
+	Vendors, Devices ID -여기
+	root@5g1-comp2:~/aether-in-a-box# lspci -nn | grep Eth
+	01:00.0 Ethernet controller [0200]: Broadcom Inc. and subsidiaries NetXtreme BCM5720 Gigabit Ethernet PCIe [14e4:165f]
+	01:00.1 Ethernet controller [0200]: Broadcom Inc. and subsidiaries NetXtreme BCM5720 Gigabit Ethernet PCIe [14e4:165f]
+	19:00.0 Ethernet controller [0200]: Broadcom Inc. and subsidiaries BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller [14e4:16d8] (rev 01)
+	19:00.1 Ethernet controller [0200]: Broadcom Inc. and subsidiaries BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller [14e4:16d8] (rev 01)
+	3b:00.0 Ethernet controller [0200]: Broadcom Inc. and subsidiaries BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller [14e4:16d8] (rev 01)
+	3b:00.1 Ethernet controller [0200]: Broadcom Inc. and subsidiaries BCM57416 NetXtreme-E Dual-Media 10G RDMA Ethernet Controller [14e4:16d8] (rev 01)
+	5e:00.0 Ethernet controller [0200]: Intel Corporation Ethernet Controller 10G X550T [8086:1563] (rev 01)
+	5e:00.1 Ethernet controller [0200]: Intel Corporation Ethernet Controller 10G X550T [8086:1563] (rev 01)
+	5e:10.0 Ethernet controller [0200]: Intel Corporation X550 Virtual Function [8086:1565]
+	5e:10.2 Ethernet controller [0200]: Intel Corporation X550 Virtual Function [8086:1565]
+
+
+
+	< II. Broadcom >
 	- Update the sriov-device-plugin-config.yaml as follows and create the plugin
 
 		onfadmin@5g1-comp1:~/dpdk$ cat sriov-device-plugin-config.yaml
@@ -395,6 +603,21 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 
 
 	B. node status
+
+	< I. Intel >
+	onfadmin@5g1-comp2:~/dpdk$ kubectl get node 5g1-comp2 -o json | jq '.status.allocatable'
+	{
+	  "cpu": "48",
+	  "ephemeral-storage": "199729482391",
+	  "hugepages-1Gi": "32Gi",
+	  "intel.com/intel_sriov_access": "1",
+	  "intel.com/intel_sriov_core": "1",
+	  "memory": "32093764Ki",
+	  "pods": "110"
+	}
+
+
+	< II. Broadcom >
 	root@5g1-comp1:~/aether-in-a-box# kubectl get node 5g1-comp1 -o json | jq '.status.allocatable'
 	{
 	  "broadcom.com/netxtreme_sriov_access": "2",
@@ -420,9 +643,68 @@ https://dramasamy.medium.com/high-performance-containerized-applications-in-kube
 --------------------------------------------------------
 8. update sd-core-5g-values.yaml file parameters in Aiab
 --------------------------------------------------------
-
-
 < sd-core-5g-values.yaml >
+
+< I. Intel >
+...
+    amf:
+      # use externalIP if you need to access your AMF from remote setup and you don't
+      # want setup NodePort Service Type
+      ngapp:
+        externalIp: "10.5.1.3"
+        port: 38412
+...
+omec-user-plane:
+  enable: true
+  resources:
+    enabled: true
+  images:
+    repository: "registry.opennetworking.org/docker.io/"
+    # uncomment below section to add update bess image tag
+    #tags:
+    #  bess: <bess image tag>
+    #  pfcpiface: <pfcp image tag>
+  config:
+    upf:
+      name: "oaisim"
+      privileged: true
+      sriov:
+        enabled: true #default sriov is disabled in AIAB setup
+      hugepage:
+        enabled: true #should be enabled if dpdk is enabled
+      #can be any other plugin as well, remember this plugin dictates how IP address are assigned.
+      cniPlugin: vfioveth
+      ipam: static
+      routes:
+        - to: ${NODE_IP}
+          via: 169.254.1.1
+      enb:
+        subnet: ${RAN_SUBNET} #this is your gNB network
+      access:
+        resourceName: "intel.com/intel_sriov_access"
+        ip: "192.168.252.3/24"
+        gateway: "192.168.252.1"
+      core:
+        resourceName: "intel.com/intel_sriov_core"
+        ip: "192.168.250.3/24"
+        gateway: "192.168.250.1"
+      cfgFiles:
+        upf.json:
+          #mode: af_packet  #this mode means no dpdk
+          mode: dpdk #this mode means dpdk
+          hwcksum: true
+          log_level: "trace"
+          gtppsc: true #extension header is enabled in 5G. Sending QFI in pdu session extension header
+          cpiface:
+            dnn: "internet" #keep it matching with Slice dnn
+            hostname: "upf"
+            #http_port: "8080"
+            enable_ue_ip_alloc: false # if true then it means UPF allocates address from below pool
+            ue_ip_pool: "172.250.0.0/16" # UE ip pool is used if enable_ue_ip_alloc is set to true
+
+
+< II. Broadcom >
+
 ---<snip>---
     amf:
       # use externalIP if you need to access your AMF from remote setup and you don't
@@ -486,7 +768,10 @@ omec-user-plane:
 ---------------------------------------------------------
 9. Deploy the 5g-core (in the below case GNBSIM disabled) 
 ---------------------------------------------------------
+< I. Intel >
+onfadmin@5g1-comp2:~/aether-in-a-box$ ENABLE_GNBSIM=false DATA_IFACE=enp94s0f0 CHARTS=latest make 5g-core
 
+< II. Broadcom >
 ENABLE_GNBSIM=false DATA_IFACE=enp59s0f0np0 CHARTS=latest make 5g-core  
 or 
 ENABLE_GNBSIM=false DATA_IFACE=enp59s0f0np0 PROXY_ENABLED=true CHARTS=latest make 5g-core
