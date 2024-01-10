@@ -509,6 +509,20 @@ EOF
 	error: TTY could not be found                         
 														  
 
+	< Otherwise, use this way >
+		(1) shell script to prevent infinite while loop  >
+
+		(https://unix.stackexchange.com/questions/42287/terminating-an-infinite-loop)
+
+			while :;  do iperf3 -c 10.5.0.1 -B 172.250.237.124; test $? -eq 1 && break || echo $?; done
+
+		--> POSIX also specifies that the value of a command that terminated by a signal is greater than 128
+		For example if you interrupt a command with control-C the exit code will be 130,                                    because SIGINT is signal 2 on Unix systems.
+
+
+		(2) use -tinf switch
+			iperf3 -tinf
+
 
 
 (29) gnome shell minimized or unresponsive

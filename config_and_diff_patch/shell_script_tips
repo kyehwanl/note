@@ -54,3 +54,6 @@ https://www.tutorialspoint.com/unix/unix-basic-operators.htm
 
   while :;  do iperf3 -c 10.5.0.1 -B 172.250.237.124; test $? -eq 1 && break || echo $?; done 
     --> it should be -gt 128 (according to the above link), but I don't know the reason why Ctrl-C makes the number 1
+    --> POSIX also specifies that the value of a command that terminated by a signal is greater than 128
+        For example if you interrupt a command with control-C the exit code will be 130, 
+        because SIGINT is signal 2 on Unix systems. 
