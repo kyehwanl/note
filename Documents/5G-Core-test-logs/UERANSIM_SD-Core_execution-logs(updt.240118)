@@ -515,6 +515,11 @@ That command will capture all packets to/from the UE subnet.
   	ping 8.8.8.8 -I uesimtun0
 	iperf -c 129.6.142.13 -B 172.250.0.1 ( <-- uesimtun0)
 
+  	*** various usage of iperf, iperf3 ***
+	
+	$ for i in $(seq 1 10);  do  echo iperf3 -c 10.5.0.4 -B 172.250.237.123;  iperf3 -c 10.5.0.4 -B 172.250.237.123; done	
+	$ iperf3 -c 10.5.0.4 -B 172.250.237.123 -tinf
+
 
 
 
