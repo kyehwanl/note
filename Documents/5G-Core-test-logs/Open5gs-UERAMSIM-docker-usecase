@@ -1,0 +1,232 @@
+
+Open5GS + UERAMSIM in docker, docker compose 
+=============================================
+
+
+1. github repo
+https://github.com/herlesupreeth/docker_open5gs
+
+
+2. build for open5gs and ueransim only
+
+  # Build docker images for open5gs EPC/5GC components
+  git clone https://github.com/herlesupreeth/docker_open5gs
+  cd docker_open5gs/base
+  docker build --no-cache --force-rm -t docker_open5gs .
+
+
+  # Build docker images for UERANSIM (gNB + UE)
+  cd ../ueransim
+  docker build --no-cache --force-rm -t docker_ueransim .
+
+
+3. Arguments from  Environment Variable
+
+  cd ..
+  set -a
+  source .env
+  sudo ufw disable
+  sudo sysctl -w net.ipv4.ip_forward=1
+
+
+4. Network and deployment configuration
+
+(1) Single host setup
+
+	Edit only the following parameters in .env as per your setup (following is my case)
+
+	  MCC=001
+	  MNC=01
+	  DOCKER_HOST_IP=192.168.10.11 --> This is the IP address of the host running your docker setup
+	  UE_IPV4_INTERNET=192.168.100.0/24 --> Change this to your desired (Not conflicted) UE network ip range for internet APN
+	  UE_IPV4_IMS=192.168.101.0/24 --> Change this to your desired (Not conflicted) UE network ip range for ims APN
+
+
+
+
+
+5. Network Deployment
+
+(1) 5G SA deployment
+
+  # 5G Core Network
+  docker compose -f sa-deploy.yaml up
+
+  # UERANSIM gNB (RF simulated)
+  docker compose -f nr-gnb.yaml up -d && docker container attach nr_gnb
+
+  # UERANSIM NR-UE (RF simulated)
+  docker compose -f nr-ue.yaml up -d && docker container attach nr_ue
+
+
+--> in this case, it resulted in registration fail, because there is no recored in mongo-db
+
+
+	< UE logs > --> here, registration failed
+
+	vagrant@ran1:~/docker_open5gs$ docker compose -f nr-ue.yaml up -d && docker container attach nr_ue
+	WARN[0000] networks.default: external.name is deprecated. Please set name and external: true
+	WARN[0000] Found orphan containers ([nr_gnb upf smf amf pcf ausf nssf bsf udm udr webui nrf mongo metrics scp]) for this project. 
+	[+] Running 1/1
+	 ✔ Container nr_ue  Started                                                                                                     0.0s
+	root@f88ff4b5aad2:/UERANSIM/build# [2024-01-25 15:33:37.606] [rrc] [info] Selected cell plmn[001/01] tac[1] category[SUITABLE]
+	[2024-01-25 15:33:37.606] [nas] [info] UE switches to state [MM-DEREGISTERED/PS]
+	[2024-01-25 15:33:37.606] [nas] [info] UE switches to state [MM-DEREGISTERED/NORMAL-SERVICE]   
+	[2024-01-25 15:33:37.606] [nas] [debug] Initial registration required due to [MM-DEREG-NORMAL-SERVICE]
+	[2024-01-25 15:33:37.606] [nas] [debug] UAC access attempt is allowed for identity[0], category[MO_sig]  
+	[2024-01-25 15:33:37.606] [nas] [debug] Sending Initial Registration
+	[2024-01-25 15:33:37.608] [nas] [info] UE switches to state [MM-REGISTER-INITIATED] 
+	[2024-01-25 15:33:37.608] [rrc] [debug] Sending RRC Setup Request
+	[2024-01-25 15:33:37.609] [rrc] [info] RRC connection established 
+	[2024-01-25 15:33:37.609] [rrc] [info] UE switches to state [RRC-CONNECTED]
+	[2024-01-25 15:33:37.609] [nas] [info] UE switches to state [CM-CONNECTED] 
+	[2024-01-25 15:33:37.624] [rrc] [debug] RRC Release received
+	[2024-01-25 15:33:37.624] [nas] [error] Initial Registration failed [PLMN_NOT_ALLOWED] 
+	[2024-01-25 15:33:37.624] [nas] [info] UE switches to state [5U3-ROAMING-NOT-ALLOWED]
+	[2024-01-25 15:33:37.624] [nas] [info] Performing local release of NAS connection
+	[2024-01-25 15:33:37.624] [nas] [info] UE switches to state [MM-DEREGISTERED/PLMN-SEARCH]
+	[2024-01-25 15:33:37.624] [nas] [info] UE switches to state [CM-IDLE] 
+	[2024-01-25 15:33:37.624] [rrc] [info] UE switches to state [RRC-IDLE]
+	[2024-01-25 15:33:42.814] [nas] [info] UE switches to state [MM-DEREGISTERED/NO-CELL-AVAILABLE]   
+
+
+	< open5gs logs > --> here, there cannot find IMSI, SUPI in DB from udr and ausf
+
+	amf      | 01/25 15:33:37.611: [amf] INFO: InitialUEMessage (../src/amf/ngap-handler.c:401)
+	amf      | 01/25 15:33:37.611: [amf] INFO: [Added] Number of gNB-UEs is now 1 (../src/amf/context.c:2555)
+	amf      | 01/25 15:33:37.611: [amf] INFO:     RAN_UE_NGAP_ID[1] AMF_UE_NGAP_ID[1] TAC[1] CellID[0x10] (../src/amf/ngap-handler.c:562)
+	amf      | 01/25 15:33:37.611: [amf] INFO: [suci-0-001-01-0000-0-0-1234567895] Unknown UE by SUCI (../src/amf/context.c:1839)
+	amf      | 01/25 15:33:37.611: [amf] INFO: [Added] Number of AMF-UEs is now 1 (../src/amf/context.c:1620)
+	amf      | 01/25 15:33:37.611: [gmm] INFO: Registration request (../src/amf/gmm-sm.c:1165)
+	amf      | 01/25 15:33:37.611: [gmm] INFO: [suci-0-001-01-0000-0-0-1234567895]    SUCI (../src/amf/gmm-handler.c:166)
+	scp      | 01/25 15:33:37.614: [sbi] WARNING: [AUSF] (NRF-discover) NF has already been added [c449dd02-bbc0-41ee-8618-ab32feae9e0c:1] (../lib/sbi/nnrf-handler.c:1059)
+	scp      | 01/25 15:33:37.614: [sbi] WARNING: NF EndPoint(addr) updated [172.22.0.11:80] (../lib/sbi/context.c:2174)
+	scp      | 01/25 15:33:37.614: [sbi] WARNING: NF EndPoint(addr) updated [172.22.0.11:7777] (../lib/sbi/context.c:1917)
+	scp      | 01/25 15:33:37.614: [sbi] INFO: [AUSF] (NF-discover) NF Profile updated [c449dd02-bbc0-41ee-8618-ab32feae9e0c:1] (../lib/sbi/nnrf-handler.c:1097)
+	udr      | 01/25 15:33:37.620: [dbi] INFO: [imsi-001011234567895] Cannot find IMSI in DB (../lib/dbi/subscription.c:56)
+	udr      | 01/25 15:33:37.621: [udr] WARNING: [imsi-001011234567895] Cannot find SUPI in DB (../src/udr/nudr-handler.c:68)
+	udm      | 01/25 15:33:37.622: [udm] WARNING: [suci-0-001-01-0000-0-0-1234567895] HTTP response error [404] (../src/udm/nudr-handler.c:86)
+	ausf     | 01/25 15:33:37.623: [ausf] WARNING: [suci-0-001-01-0000-0-0-1234567895] Cannot find SUPI [404] (../src/ausf/ue-sm.c:156)
+	amf      | 01/25 15:33:37.623: [sbi] INFO: [AUSF] (SCP-discover) NF registered [c449dd02-bbc0-41ee-8618-ab32feae9e0c:1] (../lib/sbi/path.c:211)
+	amf      | 01/25 15:33:37.624: [gmm] WARNING: [suci-0-001-01-0000-0-0-1234567895] Cannot find SUCI [404] (../src/amf/gmm-sm.c:1704) 
+	amf      | 01/25 15:33:37.624: [amf] WARNING: [suci-0-001-01-0000-0-0-1234567895] Registration reject [11] (../src/amf/nas-path.c:206)
+	amf      | 01/25 15:33:37.625: [amf] INFO: UE Context Release [Action:3] (../src/amf/ngap-handler.c:1698) 
+	amf      | 01/25 15:33:37.625: [amf] INFO:     RAN_UE_NGAP_ID[1] AMF_UE_NGAP_ID[1] (../src/amf/ngap-handler.c:1699)
+	amf      | 01/25 15:33:37.625: [amf] INFO:     SUCI[suci-0-001-01-0000-0-0-1234567895] (../src/amf/ngap-handler.c:1702)
+	amf      | 01/25 15:33:37.625: [amf] INFO: [Removed] Number of gNB-UEs is now 0 (../src/amf/context.c:2562)
+	amf      | 01/25 15:33:37.625: [amf] INFO: [Removed] Number of AMF-UEs is now 0 (../src/amf/context.c:1713)
+
+
+
+
+
+(2) Provisioning of SIM information
+
+ in pwct2, use a web browser(Safari or Chrome)
+ - http://192.168.10.11:9999 
+	--> webui container is waiting for the connection on port 9999
+
+  vagrant@ran1:~/docker_open5gs/osmohlr$ docker ps
+  CONTAINER ID   IMAGE             COMMAND                  CREATED        STATUS        PORTS                                                                                                  NAMES
+  f88ff4b5aad2   docker_ueransim   "/bin/sh -c /ueransi…"   7 hours ago    Up 6 hours    4997/udp                                                                                               nr_ue
+  eee622878e39   docker_ueransim   "/bin/sh -c /ueransi…"   7 hours ago    Up 6 hours    2152/udp, 4997/udp, 38412/sctp                                                                         nr_gnb
+  6a018e0c6227   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    2152/udp, 8805/udp, 9091/tcp                                                                           upf
+  95172b81e94e   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    2123/udp, 3868/sctp, 3868/tcp, 3868/udp, 5868/tcp, 5868/udp, 7777/tcp, 8805/udp, 5868/sctp, 9091/tcp   smf
+  63bc14956b98   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp, 9091/tcp, 38412/sctp                                                                         amf
+  20013dd55126   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp, 9091/tcp                                                                                     pcf
+  5ab96a419573   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               ausf
+  c225bbe24fb0   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               nssf
+  5b147e973ab4   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               bsf
+  af1f41205f60   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               udm
+  018c78cd3579   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               udr
+  031fda09eca2   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    0.0.0.0:9999->9999/tcp, :::9999->9999/tcp                                                              webui
+  e8c8b55c3c08   docker_open5gs    "/bin/sh -c /open5gs…"   7 hours ago    Up 6 hours    7777/tcp                                                                                               nrf
+
+
+ - put SIM info to webui for mongo-db
+
+	IMSI: 001011234567895   
+	subscriber key: 8baf473f2f8fd09487cccbd7097c6862
+	AMF: 8000
+	USIM type: OP
+	Operation Key: 11111111111111111111111111111111
+
+	* above information can be refered from .env and open5gs-ue.yaml
+
+	< .env >
+	UE1_IMEI=356938035643803 
+	UE1_IMEISV=4370816125816151
+	UE1_IMSI=001011234567895   
+	UE1_KI=8baf473f2f8fd09487cccbd7097c6862
+	UE1_OP=11111111111111111111111111111111
+	UE1_AMF=8000
+
+	< open5gs-ue.yaml >
+	# Permanent subscription key
+	key: 'UE1_KI'
+	# Operator code (OP or OPC) of the UE 
+	op: 'UE1_OP'
+	# This value specifies the OP type and it can be either 'OP' or 'OPC' 
+	opType: 'OP'
+	# Authentication Management Field (AMF) value
+	amf: 'UE1_AMF'
+	# IMEI number of the device. It is used if no SUPI is provided 
+	imei: 'UE1_IMEI'
+	# IMEISV number of the device. It is used if no SUPI and IMEI is provided
+	imeiSv: 'UE1_IMEISV'
+
+
+
+(3) again, docker compose run
+
+  docker compose -f nr-gnb.yaml up -d && docker container attach nr_gnb
+  docker compose -f nr-ue.yaml up -d && docker container attach nr_ue
+
+
+
+	-- once SIM info added into webui, then PDU session will be established between ue and amf
+		and tunnel interface will be generated.
+
+	< open5gs logs >
+	scp      | 01/25 21:51:17.675: [sbi] INFO: [UDR] (NF-discover) NF Profile updated [ca67f0a2-bbc0-41ee-91e1-05e5588099fb:1] (../lib/sbi/nnrf-handler.c:1097)
+	pcf      | 01/25 21:51:17.677: [sbi] INFO: [UDR] (SCP-discover) NF registered [ca67f0a2-bbc0-41ee-91e1-05e5588099fb:1] (../lib/sbi/path.c:211)
+	amf      | 01/25 21:51:17.882: [gmm] INFO: [imsi-001011234567895] Registration complete (../src/amf/gmm-sm.c:2195)
+	amf      | 01/25 21:51:17.882: [amf] INFO: [imsi-001011234567895] Configuration update command (../src/amf/nas-path.c:596)
+	amf      | 01/25 21:51:17.882: [gmm] INFO:     UTC [2024-01-26T02:51:17] Timezone[0]/DST[0] (../src/amf/gmm-build.c:558)
+	amf      | 01/25 21:51:17.882: [gmm] INFO:     LOCAL [2024-01-25T21:51:17] Timezone[-18000]/DST[0] (../src/amf/gmm-build.c:563)
+	amf      | 01/25 21:51:17.883: [amf] INFO: [Added] Number of AMF-Sessions is now 1 (../src/amf/context.c:2576)
+	amf      | 01/25 21:51:17.883: [gmm] INFO: UE SUPI[imsi-001011234567895] DNN[internet] S_NSSAI[SST:1 SD:0xffffff] smContextRef [NULL] (../src/amf/gmm-handler.c:1242)
+	amf      | 01/25 21:51:17.883: [gmm] INFO: SMF Instance [c54462f4-bbc0-41ee-9fc2-997b740d882c] (../src/amf/gmm-handler.c:1281)
+	smf      | 01/25 21:51:17.885: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1019)
+	smf      | 01/25 21:51:17.885: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3068)
+	scp      | 01/25 21:51:17.897: [sbi] INFO: [BSF] (NF-discover) NF Profile updated [ca4ac914-bbc0-41ee-b4cd-91139360f5aa:1] (../lib/sbi/nnrf-handler.c:1097)
+	pcf      | 01/25 21:51:17.898: [sbi] INFO: [BSF] (SCP-discover) NF registered [ca4ac914-bbc0-41ee-b4cd-91139360f5aa:1] (../lib/sbi/path.c:211)                       
+	smf      | 01/25 21:51:17.899: [smf] INFO: UE SUPI[imsi-001011234567895] DNN[internet] IPv4[192.168.100.2] IPv6[] (../src/smf/npcf-handler.c:539)
+	upf      | 01/25 21:51:17.900: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:208)  
+	upf      | 01/25 21:51:17.900: [gtp] INFO: gtp_connect() [172.22.0.7]:2152 (../lib/gtp/path.c:60)
+	upf      | 01/25 21:51:17.900: [upf] INFO: UE F-SEID[UP:0x221 CP:0x473] APN[internet] PDN-Type[1] IPv4[192.168.100.2] IPv6[] (../src/upf/context.c:485) 
+	upf      | 01/25 21:51:17.900: [upf] INFO: UE F-SEID[UP:0x221 CP:0x473] APN[internet] PDN-Type[1] IPv4[192.168.100.2] IPv6[] (../src/upf/context.c:485)
+	smf      | 01/25 21:51:17.901: [gtp] INFO: gtp_connect() [192.168.10.11]:2152 (../lib/gtp/path.c:60)
+	upf      | 01/25 21:51:17.913: [gtp] INFO: gtp_connect() [172.22.0.23]:2152 (../lib/gtp/path.c:60)
+	scp      | 01/25 21:51:17.916: [sbi] INFO: [UDM] (NF-discover) NF Profile updated [c45616b2-bbc0-41ee-b9d9-656c1a4e2c7b:1] (../lib/sbi/nnrf-handler.c:1097)
+	smf      | 01/25 21:51:17.919: [sbi] WARNING: [UDM] (SCP-discover) NF has already been added [c45616b2-bbc0-41ee-b9d9-656c1a4e2c7b:2] (../lib/sbi/path.c:216)
+	amf      | 01/25 21:51:17.919: [amf] INFO: [imsi-001011234567895:1:11][0:0:NULL] /nsmf-pdusession/v1/sm-contexts/{smContextRef}/modify (../src/amf/nsmf-handler.c:867)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

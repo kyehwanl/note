@@ -1,0 +1,71 @@
+
+
+I. x2goserver error
+=====================
+
+When x2go client happens the following error 
+
+	Error: The remote NX proxy closed the connection.
+	Error: Failure negotiating the session in stage '7'.
+	Error: Wrong version or invalid session authentication cookie
+
+popped up box saying, authentication error or etc
+
+
+Solution
+----------
+https://superuser.com/questions/1111385/x2go-failed-to-connect-but-not-ssh-with-error-failure-negotiating-the-session
+
+
+
+	I finally find it. The problem was in /etc/ssh/ssd_config.
+	I had a line containing:
+
+		AllowTcpForwarding no
+
+	I comment it and it work now.
+
+
+
+==> in my case, 
+
+1. in /etc/ssh/sshd_conf, 
+
+  AllowTcpForwarding yes
+  #AllowTcpForwarding no
+
+2. and then, systemctl restart sshd
+
+3. x2go client with session type, MATE
+
+
+
+
+
+II. Mate error
+===============
+
+ x2go client Error message, "unable to execute: mate-session"  
+
+
+
+Reason
+-------
+Simply it doesn't have 'mate', 
+
+Solution
+--------
+--> sudo apt install mate 
+
+
+
+
+
+------------------------------
+ Additional useful commands
+------------------------------
+kyehwanl@pwct2:~$ sudo x2godbadmin --createdb
+kyehwanl@pwct2:~$ x2golistsessions
+110070|kyehwanl-50-1706232413_stDXFCE_dp32|50|pwct2|R|2024-01-25T20:26:53|2871eef546c6d1e921e781dbe95faea5|132.163.219.36|54043|54044|2024-01-25T20:26:55|kyehwanl|35|54045|-1|-1
+kyehwanl@pwct2:~$ x2goterminate-session kyehwanl-50-1706232413_stDXFCE_dp32
+
