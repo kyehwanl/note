@@ -1,0 +1,12 @@
+
+
+[Emulab] Windows 10에서 Emulab으로 ssh
+
+1. https://www.emulab.net/ 에서 Experiment 텝에서 Rerun Recent experiment 로 최근것을 다시 run ( recommended for using type: d430)
+
+2. MobaXterm or terminal prompt에서 private key 위치확인 
+    Documents에 id_rsa or id_rsa_2022 etc. (in laptop)
+
+3. Ssh command with -i (identity file)
+    ssh -i /mnt/c/Users/kyehwanl/Documents/id_rsa -p 22 kyehwanl@pc849.emulab.net  (pc number will be changed)
+
