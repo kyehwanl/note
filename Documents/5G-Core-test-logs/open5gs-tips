@@ -1,0 +1,58 @@
+
+1. WebUI not working on the brower
+==================================
+
+(1) need to check port forwarding first
+
+    vagrant port [vm]
+
+$ vagrant port 5ginabox   
+ 22 (guest) => 2200 (host)
+ 38412 (guest) => 38412 (host)
+ 3000 (guest) => 9000 (host)
+ 9999 (guest) => 9999 (host)
+
+
+(2) netstat check
+
+    netstat -tapn | grep 3000
+--> not listening, then next
+
+(3) check running config file
+
+vagrant@5ginabox:~$ systemctl status open5gs-webui                                              
+● open5gs-webui.service - Open5GS WebUI
+     Loaded: loaded (/lib/systemd/system/open5gs-webui.service; enabled; vendor preset: enabled) 
+
+
+(4) open /lib/systemd/system/open5gs-webui.service 
+    add the following lines
+...
+Environment=HOSTNAME=0.0.0.0
+Environment=PORT=3000       
+...
+
+
+(5) restart
+
+$ sudo systemctl daemon-reload                                                                   
+$ sudo systemctl restart open5gs-webui
+$ sudo systemctl status open5gs-webui 
+● open5gs-webui.service - Open5GS WebUI
+vagrant@5ginabox:~$ sudo systemctl status open5gs-webui            
+● open5gs-webui.service - Open5GS WebUI
+     Loaded: loaded (/lib/systemd/system/open5gs-webui.service; enabled; vendor preset: enabled)      
+     Active: active (running) since Mon 2024-02-05 20:44:39 EST; 5s ago
+   Main PID: 13923 (node)                                                                             
+      Tasks: 14 (limit: 4571)
+     Memory: 55.9M 
+        CPU: 1.305s
+     CGroup: /system.slice/open5gs-webui.service       
+             └─13923 /usr/bin/node server/index.js
+                                                                                                      
+Feb 05 20:44:39 5ginabox systemd[1]: Started Open5GS WebUI.
+Feb 05 20:44:40 5ginabox node[13923]: (node:13923) DeprecationWarning: collection.ensureIndex is depre
+Feb 05 20:44:40 5ginabox node[13923]: (Use `node --trace-deprecation ...` to show where the warning wa
+Feb 05 20:44:40 5ginabox node[13923]: > Ready on http://0.0.0.0:3000                                  
+
+
