@@ -56,3 +56,54 @@ Feb 05 20:44:40 5ginabox node[13923]: (Use `node --trace-deprecation ...` to sho
 Feb 05 20:44:40 5ginabox node[13923]: > Ready on http://0.0.0.0:3000                                  
 
 
+
+2. Wireshark Dissector for Radio Link Simulation Protocol from UERANSIM
+========================================================================
+https://github.com/louisroyer/RLS-wireshark-dissector
+https://www.youtube.com/watch?v=ZM9jOCdElMs&list=PLZqpS76PykwIoqMdUt6noAor7eJw83bbp&index=6
+
+Installation
+------------
+$ mkdir -p ${XDG_LIB_HOME:-~/.local/lib}/wireshark/plugins
+$ git -C ${XDG_LIB_HOME:-~/.local/lib}/wireshark/plugins clone https://github.com/louisroyer/RLS-wireshark-dissector
+
+
+- What I did
+  $ git clone https://github.com/louisroyer/RLS-wireshark-dissector.git
+  $ sudo cp -rf RLS-wireshark-dissector/ /usr/lib/x86_64-linux-gnu/wireshark/plugins/ <-- can be found (wiresharrk-> Help-> Plugins)
+  run wireshark again
+
+
+- if vagrant doesn't have gui feature, capture traffic remotely over ssh
+    ssh node2 'sudo tshark -i eth30 -nn -f"tcp port 179" -w -' | wireshark -k -i -
+    ssh -p 2200 vagrant@localhost 'sudo tshark -i eth1 -nn -w -' | sudo wireshark -k -i -
+        (port 2200 comes from 'vagrant ssh-config [vm]')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

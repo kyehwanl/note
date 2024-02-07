@@ -1,0 +1,306 @@
+
+
+Open5GS, UERANSIM and Configuration
+=====================================
+
+
+1. Vagrant file
+---------------
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.define "5ginabox" do |open5gs|
+    # First VM definition
+    open5gs.vm.box = "bento/ubuntu-22.04"
+    open5gs.vm.hostname = "5ginabox.local"
+    open5gs.vm.network "private_network", ip:"192.168.10.101" , hostname: true
+    open5gs.vm.network "forwarded_port", guest: 3000, host: 9000
+    open5gs.vm.network "forwarded_port", guest: 38412, host: 38412
+
+    ## add this line before provisioning to avoid overriding
+    #open5gs.vm.synced_folder "shared_dirs/open5gs_data/configs" , "/etc/open5gs/"
+    open5gs.vm.synced_folder ".", "/vagrant"
+
+    ## add this line before provisioning to avoid overriding
+    open5gs.vm.post_up_message = "This is the 5G server based on Open5GS for development, do not use in production"
+    open5gs.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "4096"
+      vb.cpus = 2
+    end
+    #open5gs.vm.provision "shell", path:"install_open5gs_mod.sh"
+  end
+
+  config.vm.define "ueransim" do |ueransim|
+    # Second VM definition
+    ueransim.vm.box = "bento/ubuntu-22.04"
+    ueransim.vm.hostname = "ueransim.local"
+    ueransim.vm.post_up_message = "This is just for testing, do not use in production"
+
+    ## add this line before provisioning to avoid overriding
+    ueransim.vm.synced_folder "shared_dirs/ueransim_data/" , "/home/vagrant/config"
+    ueransim.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "1024"
+    end
+    ueransim.vm.provision "shell", path:"install_ueransim.sh"
+    ueransim.vm.network "private_network", ip:"192.168.10.102"
+  end
+end
+
+
+
+2. Install MongoDB, Open5GS 
+----------------------------
+(install_open5gs_mod.sh)
+
+# Getting MongoDB
+sudo apt update
+sudo apt install gnupg -y
+curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+# Install MongoDB
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Install Open5gs
+sudo add-apt-repository ppa:open5gs/latest
+sudo apt update
+sudo apt install open5gs -y
+
+# Download and import the Nodesource GPG key
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+# Create deb repository
+export NODE_MAJOR=20
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+
+# Run Update and Install
+sudo apt update
+sudo apt install nodejs -y
+
+# Install WebUI of Open5GS.
+curl -fsSL https://open5gs.org/open5gs/assets/webui/install | sudo -E bash -
+
+sudo systemctl daemon-reload
+sudo systemctl restart open5gs-webui
+
+
+
+
+3. Install UERANSIM
+--------------------
+(install_ueransim.sh)
+
+# Installing UERANSIM - gNB & UE in a Box
+apt-get -y update
+apt-get install -y gnupg wget tcpdump make gcc g++ libsctp-dev lksctp-tools iproute2 git
+snap install cmake --classic
+cd /home/vagrant/UERANSIM
+rm -fr .git
+git init
+git remote add origin https://github.com/aligungr/UERANSIM
+git fetch
+git reset --hard origin/master
+ls
+pwd
+cd /home/vagrant/UERANSIM/
+make
+
+
+
+
+4. Configuration
+-----------------
+(1) webui 
+- check running config file
+
+  vagrant@5ginabox:~$ systemctl status open5gs-webui
+  ● open5gs-webui.service - Open5GS WebUI
+       Loaded: loaded (/lib/systemd/system/open5gs-webui.service; enabled; vendor preset: enabled)
+
+
+- edit /lib/systemd/system/open5gs-webui.service & add the following lines
+  ...
+  Environment=HOSTNAME=0.0.0.0
+  Environment=PORT=3000
+  ...
+
+
+- restart
+$ sudo systemctl restart open5gs-webui
+$ sudo systemctl daemon-reload
+
+
+(2) Register User Info (supi)
+
+- open web browser with "localhost:9000"
+- add "supi: 'imsi-999700000000001'" from ue1.yaml into the subscriber
+    as well as Key, OPc etc
+
+
+(3) gnb.yaml
+
+ 
+  linkIp: 127.0.0.1   # match with ue's gnbSearchList
+  ngapIp: 192.168.10.102   #  N2 
+  gtpIp: 192.168.10.102    #  N3
+                              
+  # List of AMF address inform
+  amfConfigs:                 
+    - address: 192.168.10.101 # amf IPaddress : open5gs Ip address
+
+
+
+(4) /etc/open5gs/amf.yaml, in Open5gs
+
+  amf:
+    sbi:
+      server:
+        - address: 127.0.0.5
+          port: 7777
+      client:
+        scp:
+          - uri: http://127.0.0.200:7777
+    ngap:
+      server:
+        - address: 192.168.10.101   # <-- changed into open5gs IP
+
+
+- restart
+$ sudo systemctl restart open5gs-amfd
+$ sudo systemctl daemon-reload
+
+ 
+(5) /etc/open5gs/upf.yaml, in Open5gs
+
+  upf:
+    pfcp:
+      server:
+        - address: 127.0.0.7    # between smf and upf, this means smf running in this ip
+      client:
+    gtpu:
+      server:
+        - address: 192.168.10.101  # <-- changed into open5gs IP
+    session:
+      - subnet: 10.45.0.1/16       # UE will be provided with this IP subnet
+      - subnet: 2001:db8:cafe::1/48
+
+- restart 
+$ sudo systemctl restart open5gs-upfd
+$ sudo systemctl daemon-reload
+
+
+!! CAUTION !! 
+If you do not restart upfd, then UE will not be able to forward traffic through a tunnel interface
+
+
+(6) check logs
+
+in open5gs, 
+tail -f /vag/log/open5gs/*.log
+
+
+
+
+
+
+
+5. UE traffic test
+-------------------
+(1) nr-binder tool
+$ ifconfig
+uesimtun0: flags=369<UP,POINTOPOINT,NOTRAILERS,RUNNING,PROMISC>  mtu 1400 
+        inet 10.45.0.6  netmask 255.255.255.255  destination 10.45.0.6    
+...
+
+$ ./tools/nr-binder 10.45.0.4 ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.         
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=63 time=6.44 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=63 time=5.95 ms
+^C                                                   
+
+
+
+(2) UE to have WAN connectivity (forwarding)
+https://open5gs.org/open5gs/docs/guide/01-quickstart/#:~:text=restart%20open5gs%2Dsgwud-,Setup%20a%205G%20Core,-You%20will%20need
+
+  ### Enable IPv4/IPv6 Forwarding
+  $ sudo sysctl -w net.ipv4.ip_forward=1
+
+  ### Add NAT Rule
+  $ sudo iptables -t nat -A POSTROUTING -s 10.45.0.0/16 ! -o ogstun -j MASQUERADE
+
+  ### Configure the firewall to be diable
+  $ sudo ufw disable
+
+
+vagrant@ueransim:~/config$ ping google.com -I uesimtun0 -i 10                          
+PING google.com (142.250.72.78) from 10.45.0.6 uesimtun0: 56(84) bytes of data.        
+64 bytes from den16s09-in-f14.1e100.net (142.250.72.78): icmp_seq=1 ttl=61 time=40.7 ms
+64 bytes from den16s09-in-f14.1e100.net (142.250.72.78): icmp_seq=2 ttl=61 time=41.0 ms
+
+
+
+
+
+
+6. Wireshark traffic
+--------------------
+(1) Wireshark Dissector for Radio Link Simulation Protocol from UERANSIM
+    https://github.com/louisroyer/RLS-wireshark-dissector
+    https://www.youtube.com/watch?v=ZM9jOCdElMs&list=PLZqpS76PykwIoqMdUt6noAor7eJw83bbp&index=6
+
+  - install dissector
+  $ git clone https://github.com/louisroyer/RLS-wireshark-dissector.git
+  $ sudo cp -rf RLS-wireshark-dissector/ /usr/lib/x86_64-linux-gnu/wireshark/plugins/ <-- can be found (wiresharrk-> Help-> Plugins)
+
+  - run wireshark again
+
+
+(2) if vagrant doesn't have gui feature, capture traffic remotely over ssh
+
+    
+ - install tshark
+    sudo apt install tshark
+
+ - run wireshark over ssh
+    ssh -p 2201 vagrant@localhost 'sudo tshark -i any -nn -w -' | sudo wireshark -k -i -    (ueransim)
+    ssh -p 2200 vagrant@localhost 'sudo tshark -i eth1 -nn -w -' | sudo wireshark -k -i -   (open5gs)
+        (port 2201 comes from 'vagrant ssh-config [vm]')
+
+    (other example)
+    ssh node2 'sudo tshark -i eth30 -nn -f"tcp port 179" -w -' | wireshark -k -i -
+
+
+    * if there 's authentication error, try to access "ssh -p 2201 vagrant@localhost" first to store connection info
+        then, run wireshark over ssh again.
+    * if running as a root, after wireshark over ssh command, it needs to enter the root password (pw:vagrant)
+
+    * still don't know how to apply display fiter for NR RRC(Radio Resource Control), nr-rrc, RLS-3.2(UERANSIM Radio Link Simulation protocol)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,120 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM1 = "open5gs"
+VM2 = "ueransim"
+VM3 = "ran3"
+
+HostName1 = "core"
+HostName2 = "ran"
+HostName3 = "ran3"
+
+#ServerIP  = "192.168.50.55"
+IP1 = "192.168.10.11"
+IP2 = "192.168.10.12"
+IP3 = "192.168.10.13"
+
+
+servers = [
+  { :hostname => HostName1, :ip => IP1, :memory => "4096", :vm => VM1, :cpu => 4},
+  { :hostname => HostName2, :ip => IP2, :memory => "2048", :vm => VM2, :cpu => 2 },
+  #{ :hostname => HostName3, :ip => IP3, :memory => "12288", :vm => VM3, :cpu => 8 },
+]
+
+$script = <<-SCRIPT
+apt update
+apt install -y make vifm bash-completion git curl exuberant-ctags
+SCRIPT
+
+$script_user = <<-SCRIPT_USER
+git clone https://github.com/kyehwanl/config_ready_to_use.git
+config_ready_to_use/vagrant_vim_env_config.sh
+SCRIPT_USER
+
+
+Vagrant.configure("2") do |config|
+  #config.vm.box = "bento/ubuntu-18.04"
+  config.vm.box = "bento/ubuntu-22.04"
+
+  servers.each do |conf|
+    config.vm.define conf[:vm] do |node|
+      node.vm.hostname = conf[:hostname]
+      node.vm.network "private_network", ip: conf[:ip]
+      node.vm.synced_folder ".", "/vagrant"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = conf[:memory]
+        vb.cpus = conf[:cpu]
+      end
+
+      node.vm.provision "shell", inline: $script, privileged: true
+      node.vm.provision "shell", inline: $script_user, privileged: false 
+    end 
+
+  end
+
+
+  config.vm.define "5ginabox" do |open5gs|
+	# First VM definition
+	#open5gs.vm.box = "ubuntu/focal64"
+	open5gs.vm.box = "bento/ubuntu-22.04"
+	open5gs.vm.hostname = "5ginabox.local"
+	open5gs.vm.network "private_network", ip:"192.168.10.101" , hostname: true
+	open5gs.vm.network "forwarded_port", guest: 3000, host: 9000
+	open5gs.vm.network "forwarded_port", guest: 9999, host: 9999
+	open5gs.vm.network "forwarded_port", guest: 38412, host: 38412
+
+	## add this line before provisioning to avoid overriding
+	#open5gs.vm.synced_folder "shared_dirs/open5gs_data/configs" , "/etc/open5gs/"
+	#open5gs.vm.synced_folder "shared_dirs/open5gs_data/" , "/home/vagrant/data"
+	open5gs.vm.synced_folder ".", "/vagrant"
+
+	## add this line before provisioning to avoid overriding
+	open5gs.vm.post_up_message = "This is the 5G server based on Open5GS for development, do not use in production"
+	open5gs.vm.provider "virtualbox" do |vb|
+	  # Display the VirtualBox GUI when booting the machine
+	  vb.gui = true
+	  # Customize the amount of memory on the VM:
+	  vb.memory = "4096"
+	  vb.cpus = 2
+	end
+    open5gs.vm.provision "shell", inline: $script, privileged: true
+    open5gs.vm.provision "shell", inline: $script_user, privileged: false 
+    #open5gs.vm.provision "shell", path:"install_open5gs_mod.sh"
+
+  end
+
+  config.vm.define "ueransim" do |ueransim|
+    # Second VM definition
+    #ueransim.vm.box = "ubuntu/focal64"
+	ueransim.vm.box = "bento/ubuntu-22.04"
+    ueransim.vm.hostname = "ueransim.local"
+    ueransim.vm.post_up_message = "This is just for testing, do not use in production"
+    ## add this line before provisioning to avoid overriding
+    ueransim.vm.synced_folder "shared_dirs/ueransim_data/" , "/home/vagrant/config"
+    ueransim.vm.provider "virtualbox" do |vb|
+      # Display the VirtualBox GUI when booting the machine
+      vb.gui = false
+      # Customize the amount of memory on the VM:
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+	ueransim.vm.provision "shell", inline: $script, privileged: true
+	ueransim.vm.provision "shell", inline: $script_user, privileged: false 
+    ueransim.vm.provision "shell", path:"install_ueransim.sh"
+    ueransim.vm.network "private_network", ip:"192.168.10.102"
+
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+  
