@@ -2,7 +2,9 @@
 
 Open5GS, UERANSIM and Configuration
 =====================================
-
+https://github.com/mohitkr05/5G_stuff/tree/main/vagrant/04_multiplevms
+https://www.youtube.com/watch?v=oNiAC1mxKNQ&list=PLZqpS76PykwIoqMdUt6noAor7eJw83bbp&index=10&t=5s&pp=iAQB
+https://www.youtube.com/watch?v=gaGMkWLVlr4&list=PLZqpS76PykwIoqMdUt6noAor7eJw83bbp&index=11&t=1s&pp=iAQB
 
 1. Vagrant file
 ---------------
@@ -118,6 +120,7 @@ make
 
 4. Configuration
 -----------------
+
 (1) webui 
 - check running config file
 
