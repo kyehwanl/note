@@ -583,6 +583,7 @@ with Vagrant commands from any directory. For example:
   (3) Ubuntu 22.04
 	.vm.box = "generic/ubuntu2204"
 	.vm.box = "bento/ubuntu-22.04"
+	.vm.box = "ubuntu/jammy64"  	
 
 
 
