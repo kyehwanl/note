@@ -1,0 +1,18 @@
+
+Vagrant Errors and Issues
+==========================
+
+
+1. When boot up or load the saved snapshot, if following "headless" error occurs,
+
+    Command: ["startvm", "ee98ae13-5b96-46fd-8d5b-2545eaa11c87", "--type", "headless"]   
+
+
+(Solution)
+    go to VBoxManager in GUI, completely purge or remove the image and try to restart all again
+
+
+
+
+
+
