@@ -1,0 +1,854 @@
+vagrant@oran:~$ git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep"
+Cloning into 'ric-dep'...
+remote: Total 2199 (delta 0), reused 2199 (delta 0)
+Receiving objects: 100% (2199/2199), 879.62 KiB | 3.48 MiB/s, done.
+Resolving deltas: 100% (906/906), done.
+vagrant@oran:~$ cd ric-dep/bin/
+vagrant@oran:~/ric-dep/bin$ ll
+total 44K
+-rwxrwxr-x 1 vagrant vagrant 4.6K Feb 14 11:36 verify-ric-charts*
+-rwxrwxr-x 1 vagrant vagrant 2.9K Feb 14 11:36 uninstall*
+-rwxrwxr-x 1 vagrant vagrant 1.2K Feb 14 11:36 setup-ric-common-template*
+-rwxrwxr-x 1 vagrant vagrant  12K Feb 14 11:36 install_k8s_and_helm.sh*
+-rwxrwxr-x 1 vagrant vagrant 2.8K Feb 14 11:36 install_common_templates_to_helm.sh*
+-rwxrwxr-x 1 vagrant vagrant  12K Feb 14 11:36 install*
+vagrant@oran:~/ric-dep/bin$ sudo ./install_k8s_and_helm.sh
++ KUBEV=1.16.0
++ KUBECNIV=0.7.5
++ HELMV=3.5.4
++ DOCKERV=20.10.21
++ echo running ./install_k8s_and_helm.sh
+running ./install_k8s_and_helm.sh
++ getopts :k:d:e:n:c o
++ [[ 3.5.4 == 2.* ]]
++ set -x
++ export DEBIAN_FRONTEND=noninteractive
++ DEBIAN_FRONTEND=noninteractive
+++ hostname -I
+++ hostname
++ echo '10.0.2.15 192.168.10.21  oran'
++ printenv
+SHELL=/bin/bash
+SUDO_GID=1000
+SUDO_COMMAND=./install_k8s_and_helm.sh
+SUDO_USER=vagrant
+PWD=/home/vagrant/ric-dep/bin
+LOGNAME=root
+HOME=/root
+LANG=en_US.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+TERM=screen-256color
+USER=root
+SHLVL=1
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+SUDO_UID=1000
+MAIL=/var/mail/root
+DEBIAN_FRONTEND=noninteractive
+_=/usr/bin/printenv
++ IPV6IF=
++ rm -rf /opt/config
++ mkdir -p /opt/config
++ echo ''
++ echo 1.16.0
++ echo 0.7.5
++ echo 3.5.4
+++ hostname -I
++ echo '10.0.2.15 192.168.10.21 '
+++ curl ifconfig.co
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    13  100    13    0     0     63      0 --:--:-- --:--:-- --:--:--    63
++ echo 129.6.142.11
+++ hostname -I
++ echo '10.0.2.15 192.168.10.21 '
++ echo __mtu__
++ echo __cinder_volume_id__
+++ hostname
++ echo oran
++ ISAUX=false
+++ cat /opt/config/stack_name.txt
++ [[ oran == *aux* ]]
++ modprobe -- ip_vs
++ modprobe -- ip_vs_rr
++ modprobe -- ip_vs_wrr
++ modprobe -- ip_vs_sh
++ modprobe -- nf_conntrack_ipv4
+modprobe: FATAL: Module nf_conntrack_ipv4 not found in directory /lib/modules/5.4.0-135-generic
++ modprobe -- nf_conntrack_ipv6
+modprobe: FATAL: Module nf_conntrack_ipv6 not found in directory /lib/modules/5.4.0-135-generic
++ modprobe -- nf_conntrack_proto_sctp
+modprobe: FATAL: Module nf_conntrack_proto_sctp not found in directory /lib/modules/5.4.0-135-generic
++ '[' '!' -z '' ']'
+++ grep swap /etc/fstab
+++ sed '/^[ \t]*#/ d'
+++ sed 's/[\t ]/ /g'
+++ tr -s ' '
+++ cut -f1 '-d '
++ SWAPFILES=/swap.img
++ '[' '!' -z /swap.img ']'
++ for SWAPFILE in $SWAPFILES
++ '[' '!' -z /swap.img ']'
++ echo 'disabling swap file /swap.img'
+disabling swap file /swap.img
++ [[ /swap.img == UUID* ]]
++ swapoff /swap.img
++ sed -i '\%/swap.img%d' /etc/fstab
++ echo '### Docker version  = 20.10.21'
+### Docker version  = 20.10.21
++ echo '### k8s version     = 1.16.0'
+### k8s version     = 1.16.0
++ echo '### helm version    = 3.5.4'
+### helm version    = 3.5.4
++ echo '### k8s cni version = 0.7.5'
+### k8s cni version = 0.7.5
++ KUBEVERSION=1.16.0-00
++ CNIVERSION=0.7.5-00
++ DOCKERVERSION=20.10.21
+++ lsb_release -r
+++ sed 's/^[a-zA-Z:\t ]\+//g'
++ UBUNTU_RELEASE=20.04
++ [[ 20.04 == 16.* ]]
++ [[ 20.04 == 18.* ]]
++ [[ 20.04 == 20.* ]]
++ echo 'Installing on Ubuntu 20.04 (Focal Fossal)'
+Installing on Ubuntu 20.04 (Focal Fossal)
++ '[' '!' -z 20.10.21 ']'
++ DOCKERVERSION=20.10.21-0ubuntu1~20.04.2
++ echo 'docker version to use = 20.10.21-0ubuntu1~20.04.2'
+docker version to use = 20.10.21-0ubuntu1~20.04.2
++ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg
++ apt-key add -
+OK
++ echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
++ mkdir -p /etc/apt/apt.conf.d
++ echo 'APT::Acquire::Retries "3";'
++ apt-get update
+Hit:1 http://us.archive.ubuntu.com/ubuntu focal InRelease
+Hit:2 http://us.archive.ubuntu.com/ubuntu focal-updates InRelease
+Hit:3 http://us.archive.ubuntu.com/ubuntu focal-backports InRelease
+Hit:4 http://us.archive.ubuntu.com/ubuntu focal-security InRelease
+Get:5 https://packages.cloud.google.com/apt kubernetes-xenial InRelease [8,993 B]
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 Packages [69.9 kB]
+Fetched 78.9 kB in 1s (54.7 kB/s)
+Reading package lists... Done
+++ apt-get install -y curl jq netcat make ipset moreutils
++ RES='Reading package lists...
+Building dependency tree...
+Reading state information...
+make is already the newest version (4.2.1-1.2).
+curl is already the newest version (7.68.0-1ubuntu2.21).
+The following additional packages will be installed:
+  libio-pty-perl libipc-run-perl libipset13 libjq1 libonig5
+  libtime-duration-perl libtimedate-perl
+The following NEW packages will be installed:
+  ipset jq libio-pty-perl libipc-run-perl libipset13 libjq1 libonig5
+  libtime-duration-perl libtimedate-perl moreutils netcat
+0 upgraded, 11 newly installed, 0 to remove and 170 not upgraded.
+Need to get 628 kB of archives.
+After this operation, 2,223 kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 libonig5 amd64 6.9.4-1 [142 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu focal-updates/universe amd64 libjq1 amd64 1.6-1ubuntu0.20.04.1 [121 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu focal-updates/universe amd64 jq amd64 1.6-1ubuntu0.20.04.1 [50.2 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libio-pty-perl amd64 1:1.12-1 [32.4 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libipc-run-perl all 20180523.0-2 [89.7 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 libipset13 amd64 7.5-1ubuntu0.20.04.1 [53.6 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 libtime-duration-perl all 1.21-1 [13.1 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libtimedate-perl all 2.3200-1 [34.0 kB]
+Get:9 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 moreutils amd64 0.63-1 [60.5 kB]
+Get:10 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 netcat all 1.206-1ubuntu1 [2,172 B]
+Get:11 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 ipset amd64 7.5-1ubuntu0.20.04.1 [29.8 kB]
+Fetched 628 kB in 0s (4,140 kB/s)
+Selecting previously unselected package libonig5:amd64.
+(Reading database ... 44196 files and directories currently installed.)
+Preparing to unpack .../00-libonig5_6.9.4-1_amd64.deb ...
+Unpacking libonig5:amd64 (6.9.4-1) ...
+Selecting previously unselected package libjq1:amd64.
+Preparing to unpack .../01-libjq1_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package jq.
+Preparing to unpack .../02-jq_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking jq (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package libio-pty-perl.
+Preparing to unpack .../03-libio-pty-perl_1%3a1.12-1_amd64.deb ...
+Unpacking libio-pty-perl (1:1.12-1) ...
+Selecting previously unselected package libipc-run-perl.
+Preparing to unpack .../04-libipc-run-perl_20180523.0-2_all.deb ...
+Unpacking libipc-run-perl (20180523.0-2) ...
+Selecting previously unselected package libipset13:amd64.
+Preparing to unpack .../05-libipset13_7.5-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking libipset13:amd64 (7.5-1ubuntu0.20.04.1) ...
+Selecting previously unselected package libtime-duration-perl.
+Preparing to unpack .../06-libtime-duration-perl_1.21-1_all.deb ...
+Unpacking libtime-duration-perl (1.21-1) ...
+Selecting previously unselected package libtimedate-perl.
+Preparing to unpack .../07-libtimedate-perl_2.3200-1_all.deb ...
+Unpacking libtimedate-perl (2.3200-1) ...
+Selecting previously unselected package moreutils.
+Preparing to unpack .../08-moreutils_0.63-1_amd64.deb ...
+Unpacking moreutils (0.63-1) ...
+Selecting previously unselected package netcat.
+Preparing to unpack .../09-netcat_1.206-1ubuntu1_all.deb ...
+Unpacking netcat (1.206-1ubuntu1) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../10-ipset_7.5-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking ipset (7.5-1ubuntu0.20.04.1) ...
+Setting up libio-pty-perl (1:1.12-1) ...
+Setting up netcat (1.206-1ubuntu1) ...
+Setting up libipc-run-perl (20180523.0-2) ...
+Setting up libtime-duration-perl (1.21-1) ...
+Setting up libtimedate-perl (2.3200-1) ...
+Setting up libipset13:amd64 (7.5-1ubuntu0.20.04.1) ...
+Setting up ipset (7.5-1ubuntu0.20.04.1) ...
+Setting up libonig5:amd64 (6.9.4-1) ...
+Setting up moreutils (0.63-1) ...
+Setting up libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Setting up jq (1.6-1ubuntu0.20.04.1) ...
+Processing triggers for man-db (2.9.1-1) ...
+'rocessing triggers for libc-bin (2.31-0ubuntu9.9) ...
++ [[ Reading package lists...
+Building dependency tree...
+Reading state information...
+make is already the newest version (4.2.1-1.2).
+curl is already the newest version (7.68.0-1ubuntu2.21).
+The following additional packages will be installed:
+  libio-pty-perl libipc-run-perl libipset13 libjq1 libonig5
+  libtime-duration-perl libtimedate-perl
+The following NEW packages will be installed:
+  ipset jq libio-pty-perl libipc-run-perl libipset13 libjq1 libonig5
+  libtime-duration-perl libtimedate-perl moreutils netcat
+0 upgraded, 11 newly installed, 0 to remove and 170 not upgraded.
+Need to get 628 kB of archives.
+After this operation, 2,223 kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 libonig5 amd64 6.9.4-1 [142 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu focal-updates/universe amd64 libjq1 amd64 1.6-1ubuntu0.20.04.1 [121 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu focal-updates/universe amd64 jq amd64 1.6-1ubuntu0.20.04.1 [50.2 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libio-pty-perl amd64 1:1.12-1 [32.4 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libipc-run-perl all 20180523.0-2 [89.7 kB]
+Get:6 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 libipset13 amd64 7.5-1ubuntu0.20.04.1 [53.6 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 libtime-duration-perl all 1.21-1 [13.1 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libtimedate-perl all 2.3200-1 [34.0 kB]
+Get:9 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 moreutils amd64 0.63-1 [60.5 kB]
+Get:10 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 netcat all 1.206-1ubuntu1 [2,172 B]
+Get:11 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 ipset amd64 7.5-1ubuntu0.20.04.1 [29.8 kB]
+Fetched 628 kB in 0s (4,140 kB/s)
+Selecting previously unselected package libonig5:amd64.
+(Reading database ... 44196 files and directories currently installed.)
+Preparing to unpack .../00-libonig5_6.9.4-1_amd64.deb ...
+Unpacking libonig5:amd64 (6.9.4-1) ...
+Selecting previously unselected package libjq1:amd64.
+Preparing to unpack .../01-libjq1_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package jq.
+Preparing to unpack .../02-jq_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking jq (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package libio-pty-perl.
+Preparing to unpack .../03-libio-pty-perl_1%3a1.12-1_amd64.deb ...
+Unpacking libio-pty-perl (1:1.12-1) ...
+Selecting previously unselected package libipc-run-perl.
+Preparing to unpack .../04-libipc-run-perl_20180523.0-2_all.deb ...
+Unpacking libipc-run-perl (20180523.0-2) ...
+Selecting previously unselected package libipset13:amd64.
+Preparing to unpack .../05-libipset13_7.5-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking libipset13:amd64 (7.5-1ubuntu0.20.04.1) ...
+Selecting previously unselected package libtime-duration-perl.
+Preparing to unpack .../06-libtime-duration-perl_1.21-1_all.deb ...
+Unpacking libtime-duration-perl (1.21-1) ...
+Selecting previously unselected package libtimedate-perl.
+Preparing to unpack .../07-libtimedate-perl_2.3200-1_all.deb ...
+Unpacking libtimedate-perl (2.3200-1) ...
+Selecting previously unselected package moreutils.
+Preparing to unpack .../08-moreutils_0.63-1_amd64.deb ...
+Unpacking moreutils (0.63-1) ...
+Selecting previously unselected package netcat.
+Preparing to unpack .../09-netcat_1.206-1ubuntu1_all.deb ...
+Unpacking netcat (1.206-1ubuntu1) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../10-ipset_7.5-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking ipset (7.5-1ubuntu0.20.04.1) ...
+Setting up libio-pty-perl (1:1.12-1) ...
+Setting up netcat (1.206-1ubuntu1) ...
+Setting up libipc-run-perl (20180523.0-2) ...
+Setting up libtime-duration-perl (1.21-1) ...
+Setting up libtimedate-perl (2.3200-1) ...
+Setting up libipset13:amd64 (7.5-1ubuntu0.20.04.1) ...
+Setting up ipset (7.5-1ubuntu0.20.04.1) ...
+Setting up libonig5:amd64 (6.9.4-1) ...
+Setting up moreutils (0.63-1) ...
+Setting up libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Setting up jq (1.6-1ubuntu0.20.04.1) ...
+Processing triggers for man-db (2.9.1-1) ...
+ == */var/lib/dpkg/lock* ]]c-bin (2.31-0ubuntu9.9) ...
++ APTOPTS='--allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold '
++ for PKG in kubeadm docker.io
+++ dpkg --list
+++ grep kubeadm
+++ tr -s ' '
+++ cut -f3 -d ' '
++ INSTALLED_VERSION=
++ '[' '!' -z ']'
++ for PKG in kubeadm docker.io
+++ dpkg --list
+++ grep docker.io
+++ cut -f3 -d ' '
+++ tr -s ' '
++ INSTALLED_VERSION=
++ '[' '!' -z ']'
++ apt-get -y autoremove
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+0 upgraded, 0 newly installed, 0 to remove and 170 not upgraded.
++ '[' -z 20.10.21-0ubuntu1~20.04.2 ']'
++ apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold docker.io=20.10.21-0ubuntu1~20.04.2
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  bridge-utils containerd dns-root-data dnsmasq-base libidn11 pigz runc ubuntu-fan
+Suggested packages:
+  ifupdown aufs-tools cgroupfs-mount | cgroup-lite debootstrap docker-doc rinse zfs-fuse | zfsutils
+The following NEW packages will be installed:
+  bridge-utils containerd dns-root-data dnsmasq-base docker.io libidn11 pigz runc ubuntu-fan
+0 upgraded, 9 newly installed, 0 to remove and 170 not upgraded.
+Need to get 67.1 MB of archives.
+After this operation, 294 MB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu focal/universe amd64 pigz amd64 2.4-1 [57.4 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu focal/main amd64 bridge-utils amd64 1.6-2ubuntu1 [30.5 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 runc amd64 1.1.7-0ubuntu1~20.04.2 [3,836 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 containerd amd64 1.7.2-0ubuntu1~20.04.1 [32.5 MB]
+Get:5 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 dns-root-data all 2023112702~ubuntu0.20.04.1 [5,308 B]
+Get:6 http://us.archive.ubuntu.com/ubuntu focal/main amd64 libidn11 amd64 1.33-2.2ubuntu2 [46.2 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 dnsmasq-base amd64 2.80-1.1ubuntu1.7 [315 kB]
+Get:8 http://us.archive.ubuntu.com/ubuntu focal-security/universe amd64 docker.io amd64 20.10.21-0ubuntu1~20.04.2 [30.3 MB]
+Get:9 http://us.archive.ubuntu.com/ubuntu focal-updates/main amd64 ubuntu-fan all 0.12.13ubuntu0.1 [34.4 kB]
+Fetched 67.1 MB in 1s (52.7 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package pigz.
+(Reading database ... 44364 files and directories currently installed.)
+Preparing to unpack .../0-pigz_2.4-1_amd64.deb ...
+Unpacking pigz (2.4-1) ...
+Selecting previously unselected package bridge-utils.
+Preparing to unpack .../1-bridge-utils_1.6-2ubuntu1_amd64.deb ...
+Unpacking bridge-utils (1.6-2ubuntu1) ...
+Selecting previously unselected package runc.
+Preparing to unpack .../2-runc_1.1.7-0ubuntu1~20.04.2_amd64.deb ...
+Unpacking runc (1.1.7-0ubuntu1~20.04.2) ...
+Selecting previously unselected package containerd.
+Preparing to unpack .../3-containerd_1.7.2-0ubuntu1~20.04.1_amd64.deb ...
+Unpacking containerd (1.7.2-0ubuntu1~20.04.1) ...
+Selecting previously unselected package dns-root-data.
+Preparing to unpack .../4-dns-root-data_2023112702~ubuntu0.20.04.1_all.deb ...
+Unpacking dns-root-data (2023112702~ubuntu0.20.04.1) ...
+Selecting previously unselected package libidn11:amd64.
+Preparing to unpack .../5-libidn11_1.33-2.2ubuntu2_amd64.deb ...
+Unpacking libidn11:amd64 (1.33-2.2ubuntu2) ...
+Selecting previously unselected package dnsmasq-base.
+Preparing to unpack .../6-dnsmasq-base_2.80-1.1ubuntu1.7_amd64.deb ...
+Unpacking dnsmasq-base (2.80-1.1ubuntu1.7) ...
+Selecting previously unselected package docker.io.
+Preparing to unpack .../7-docker.io_20.10.21-0ubuntu1~20.04.2_amd64.deb ...
+Unpacking docker.io (20.10.21-0ubuntu1~20.04.2) ...
+Selecting previously unselected package ubuntu-fan.
+Preparing to unpack .../8-ubuntu-fan_0.12.13ubuntu0.1_all.deb ...
+Unpacking ubuntu-fan (0.12.13ubuntu0.1) ...
+Setting up runc (1.1.7-0ubuntu1~20.04.2) ...
+Setting up dns-root-data (2023112702~ubuntu0.20.04.1) ...
+Setting up libidn11:amd64 (1.33-2.2ubuntu2) ...
+Setting up bridge-utils (1.6-2ubuntu1) ...
+Setting up pigz (2.4-1) ...
+Setting up containerd (1.7.2-0ubuntu1~20.04.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /lib/systemd/system/containerd.service.
+Setting up docker.io (20.10.21-0ubuntu1~20.04.2) ...
+Adding group `docker' (GID 118) ...
+Done.
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /lib/systemd/system/docker.socket.
+Setting up dnsmasq-base (2.80-1.1ubuntu1.7) ...
+Setting up ubuntu-fan (0.12.13ubuntu0.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/ubuntu-fan.service → /lib/systemd/system/ubuntu-fan.service.
+Processing triggers for systemd (245.4-4ubuntu3.19) ...
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for dbus (1.12.16-2ubuntu2.3) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.9) ...
++ cat
++ mkdir -p /etc/systemd/system/docker.service.d
++ systemctl enable docker.service
++ systemctl daemon-reload
++ systemctl restart docker
++ '[' -z 0.7.5-00 ']'
++ apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold kubernetes-cni=0.7.5-00
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  kubernetes-cni
+0 upgraded, 1 newly installed, 0 to remove and 171 not upgraded.
+Need to get 6,473 kB of archives.
+After this operation, 50.2 MB of additional disk space will be used.
+Get:1 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubernetes-cni amd64 0.7.5-00 [6,473 kB]
+Fetched 6,473 kB in 1s (9,011 kB/s)
+Selecting previously unselected package kubernetes-cni.
+(Reading database ... 44725 files and directories currently installed.)
+Preparing to unpack .../kubernetes-cni_0.7.5-00_amd64.deb ...
+Unpacking kubernetes-cni (0.7.5-00) ...
+Setting up kubernetes-cni (0.7.5-00) ...
++ '[' -z 1.16.0-00 ']'
++ apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold kubeadm=1.16.0-00 kubelet=1.16.0-00 kubectl=1.16.0-00
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  conntrack cri-tools ebtables socat
+Suggested packages:
+  nftables
+The following NEW packages will be installed:
+  conntrack cri-tools ebtables kubeadm kubectl kubelet socat
+0 upgraded, 7 newly installed, 0 to remove and 172 not upgraded.
+Need to get 58.1 MB of archives.
+After this operation, 268 MB of additional disk space will be used.
+Get:3 http://us.archive.ubuntu.com/ubuntu focal/main amd64 conntrack amd64 1:1.4.5-2 [30.3 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu focal/main amd64 ebtables amd64 2.0.11-3build1 [80.3 kB]
+Get:7 http://us.archive.ubuntu.com/ubuntu focal/main amd64 socat amd64 1.7.3.3-2 [323 kB]
+Get:1 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 cri-tools amd64 1.26.0-00 [18.9 MB]
+Get:2 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubelet amd64 1.16.0-00 [20.7 MB]
+Get:4 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubectl amd64 1.16.0-00 [9,231 kB]
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubeadm amd64 1.16.0-00 [8,764 kB]
+Fetched 58.1 MB in 2s (23.3 MB/s)
+Selecting previously unselected package conntrack.
+(Reading database ... 44741 files and directories currently installed.)
+Preparing to unpack .../0-conntrack_1%3a1.4.5-2_amd64.deb ...
+Unpacking conntrack (1:1.4.5-2) ...
+Selecting previously unselected package cri-tools.
+Preparing to unpack .../1-cri-tools_1.26.0-00_amd64.deb ...
+Unpacking cri-tools (1.26.0-00) ...
+Selecting previously unselected package ebtables.
+Preparing to unpack .../2-ebtables_2.0.11-3build1_amd64.deb ...
+Unpacking ebtables (2.0.11-3build1) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../3-socat_1.7.3.3-2_amd64.deb ...
+Unpacking socat (1.7.3.3-2) ...
+Selecting previously unselected package kubelet.
+Preparing to unpack .../4-kubelet_1.16.0-00_amd64.deb ...
+Unpacking kubelet (1.16.0-00) ...
+Selecting previously unselected package kubectl.
+Preparing to unpack .../5-kubectl_1.16.0-00_amd64.deb ...
+Unpacking kubectl (1.16.0-00) ...
+Selecting previously unselected package kubeadm.
+Preparing to unpack .../6-kubeadm_1.16.0-00_amd64.deb ...
+Unpacking kubeadm (1.16.0-00) ...
+Setting up conntrack (1:1.4.5-2) ...
+Setting up kubectl (1.16.0-00) ...
+Setting up ebtables (2.0.11-3build1) ...
+Setting up socat (1.7.3.3-2) ...
+Setting up cri-tools (1.26.0-00) ...
+Setting up kubelet (1.16.0-00) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /lib/systemd/system/kubelet.service.
+Setting up kubeadm (1.16.0-00) ...
+Processing triggers for man-db (2.9.1-1) ...
++ apt-mark hold docker.io kubernetes-cni kubelet kubeadm kubectl
+docker.io set on hold.
+kubernetes-cni set on hold.
+kubelet set on hold.
+kubeadm set on hold.
+kubectl set on hold.
++ kubeadm config images pull --kubernetes-version=1.16.0
+[config/images] Pulled k8s.gcr.io/kube-apiserver:v1.16.0
+[config/images] Pulled k8s.gcr.io/kube-controller-manager:v1.16.0
+[config/images] Pulled k8s.gcr.io/kube-scheduler:v1.16.0
+[config/images] Pulled k8s.gcr.io/kube-proxy:v1.16.0
+[config/images] Pulled k8s.gcr.io/pause:3.1
+[config/images] Pulled k8s.gcr.io/etcd:3.3.15-0
+[config/images] Pulled k8s.gcr.io/coredns:1.6.2
++ NODETYPE=master
++ '[' master == master ']'
++ [[ 1.16.0 == 1.13.* ]]
++ [[ 1.16.0 == 1.14.* ]]
++ [[ 1.16.0 == 1.15.* ]]
++ [[ 1.16.0 == 1.16.* ]]
++ cat
++ cat
++ kubeadm init --config /root/config.yaml
+[init] Using Kubernetes version: v1.16.0
+[preflight] Running pre-flight checks
+        [WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.21. Latest validated version: 18.09
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Activating the kubelet service
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [oran kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.0.2.15]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [oran localhost] and IPs [10.0.2.15 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [oran localhost] and IPs [10.0.2.15 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 22.503489 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.16" in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node oran as control-plane by adding the label "node-role.kubernetes.io/master=''"
+[mark-control-plane] Marking the node oran as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: xcbz37.4somdttkhqnsroq4
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.0.2.15:6443 --token xcbz37.4somdttkhqnsroq4 \
+    --discovery-token-ca-cert-hash sha256:c6192725b4de43445b589866e16dc82c91fb1605d9a0bf9029733a1ac988313e
++ cd /root
++ rm -rf .kube
++ mkdir -p .kube
++ cp -i /etc/kubernetes/admin.conf /root/.kube/config
++ chown root:root /root/.kube/config
++ export KUBECONFIG=/root/.kube/config
++ KUBECONFIG=/root/.kube/config
++ echo KUBECONFIG=/root/.kube/config
++ kubectl get pods --all-namespaces
+No resources found
++ kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml
+podsecuritypolicy.policy/psp.flannel.unprivileged created
+clusterrole.rbac.authorization.k8s.io/flannel created
+clusterrolebinding.rbac.authorization.k8s.io/flannel created
+serviceaccount/flannel created
+configmap/kube-flannel-cfg created
+daemonset.apps/kube-flannel-ds created
++ wait_for_pods_running 8 kube-system
++ NS=kube-system
++ CMD='kubectl get pods --all-namespaces '
++ '[' kube-system '!=' all-namespaces ']'
++ CMD='kubectl get pods -n kube-system '
++ KEYWORD=Running
++ '[' 2 == 3 ']'
++ CMD2='kubectl get pods -n kube-system  | grep "Running" | wc -l'
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
+No resources found in kube-system namespace.
++ NUMPODS=0
++ echo 'waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]'
+waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 0 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
+No resources found in kube-system namespace.
++ NUMPODS=0
++ echo '> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 0 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
+No resources found in kube-system namespace.
++ NUMPODS=0
++ echo '> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 0 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=0
++ echo '> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 0/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 0 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=1
++ echo '> waiting for 1/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 1/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 1 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=2
++ echo '> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 2 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=2
++ echo '> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 2 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=2
++ echo '> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 2/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 2 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ grep Running
++++ wc -l
++++ kubectl get pods -n kube-system
++ NUMPODS=4
++ echo '> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 4 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=4
++ echo '> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 4 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=4
++ echo '> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 4 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=4
++ echo '> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 4 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ grep Running
++++ kubectl get pods -n kube-system
++++ wc -l
++ NUMPODS=4
++ echo '> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 4/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 4 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=6
++ echo '> waiting for 6/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 6/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 6 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ wc -l
++++ grep Running
++ NUMPODS=6
++ echo '> waiting for 6/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 6/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 6 -lt 8 ']'
++ sleep 5
+++ eval 'kubectl get pods -n kube-system  | grep "Running" | wc -l'
++++ kubectl get pods -n kube-system
++++ grep Running
++++ wc -l
++ NUMPODS=8
++ echo '> waiting for 8/8 pods running in namespace [kube-system] with keyword [Running]'
+> waiting for 8/8 pods running in namespace [kube-system] with keyword [Running]
++ '[' 8 -lt 8 ']'
++ kubectl taint nodes --all node-role.kubernetes.io/master-
+node/oran untainted
+++ cat /opt/config/helm_version.txt
++ HELMV=3.5.4
++ HELMVERSION=3.5.4
++ '[' '!' -e helm-v3.5.4-linux-amd64.tar.gz ']'
++ wget https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz
+--2024-02-14 11:39:30--  https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz
+Resolving get.helm.sh (get.helm.sh)... 152.195.19.97, 2606:2800:11f:1cb7:261b:1f9c:2074:3c
+Connecting to get.helm.sh (get.helm.sh)|152.195.19.97|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 12378363 (12M) [application/x-tar]
+Saving to: ‘helm-v3.5.4-linux-amd64.tar.gz’
+
+helm-v3.5.4-linux-amd64.tar.gz  100%[======================================================>]  11.80M  --.-KB/s    in 0.1s
+
+2024-02-14 11:39:30 (108 MB/s) - ‘helm-v3.5.4-linux-amd64.tar.gz’ saved [12378363/12378363]
+
++ cd /root
++ rm -rf Helm
++ mkdir Helm
++ cd Helm
++ tar -xvf ../helm-v3.5.4-linux-amd64.tar.gz
+linux-amd64/
+linux-amd64/helm
+linux-amd64/LICENSE
+linux-amd64/README.md
++ mv linux-amd64/helm /usr/local/bin/helm
++ cd /root
++ rm -rf /root/.helm
++ helm version
+version.BuildInfo{Version:"v3.5.4", GitCommit:"1b5edb69df3d3a08df77c9902dc17af864ff05d1", GitTreeState:"clean", GoVersion:"go1.15.11"}
++ echo 'Preparing a master node (lower ID) for using local FS for PV'
+Preparing a master node (lower ID) for using local FS for PV
+++ kubectl get nodes
+++ grep master
+++ cut -f1 '-d '
+++ sort
+++ head -1
++ PV_NODE_NAME=oran
++ kubectl label --overwrite nodes oran local-storage=enable
+node/oran labeled
+++ hostname
++ '[' oran == oran ']'
++ mkdir -p /opt/data/dashboard-data
++ echo 'Done with master node setup'
+Done with master node setup
++ [[ ! -z '' ]]
++ [[ ! -z '' ]]
++ [[ ! -z '' ]]
++ [[ 1 -gt 100 ]]
++ [[ 1 -gt 100 ]]
+vagrant@oran:~/ric-dep/bin$ ll
+total 44K
+-rwxrwxr-x 1 vagrant vagrant 4.6K Feb 14 11:36 verify-ric-charts*
+-rwxrwxr-x 1 vagrant vagrant 2.9K Feb 14 11:36 uninstall*
+-rwxrwxr-x 1 vagrant vagrant 1.2K Feb 14 11:36 setup-ric-common-template*
+-rwxrwxr-x 1 vagrant vagrant  12K Feb 14 11:36 install_k8s_and_helm.sh*
+-rwxrwxr-x 1 vagrant vagrant 2.8K Feb 14 11:36 install_common_templates_to_helm.sh*
+-rwxrwxr-x 1 vagrant vagrant  12K Feb 14 11:36 install*
+
+
+
+vagrant@oran:~/ric-dep/bin$ ./install_common_templates_to_helm.sh
+Installing servecm (Chart Manager) and common templates to helm3
+Installed plugin: servecm
+/home/vagrant/.cache/helm/repository
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.0M  100 15.0M    0     0  31.3M      0 --:--:-- --:--:-- --:--:-- 31.2M
+linux-386/
+linux-386/chartmuseum
+linux-386/LICENSE
+linux-386/README.md
+cp: cannot create regular file '/usr/local/bin/chartmuseum': Permission denied
+nohup: appending output to 'nohup.out'
+servecm not yet running. sleeping for 2 seconds
+^C
+
+
+
+
+vagrant@oran:~/ric-dep/bin$ sudo ./install_common_templates_to_helm.sh
+Installing servecm (Chart Manager) and common templates to helm3
+Installed plugin: servecm
+/root/.cache/helm/repository
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.0M  100 15.0M    0     0  67.2M      0 --:--:-- --:--:-- --:--:-- 67.2M
+linux-386/
+linux-386/chartmuseum
+linux-386/LICENSE
+linux-386/README.md
+nohup: appending output to 'nohup.out'
+servecm not yet running. sleeping for 2 seconds
+servcm up and running
+/root/.cache/helm/repository
+Successfully packaged chart and saved it to: /tmp/ric-common-3.3.2.tgz
+Error: no repositories configured
+"local" has been added to your repositories
+checking that ric-common templates were added
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+local/ric-common        3.3.2                           Common templates for inclusion in other charts
+
+
+
+
+vagrant@oran:~/ric-dep/bin$
+vagrant@oran:~/ric-dep/bin$ helm ls -A
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+vagrant@oran:~/ric-dep/bin$ helm repo list
+Error: no repositories to show
+vagrant@oran:~/ric-dep/bin$ helm repo
+
+This command consists of multiple subcommands to interact with chart repositories.
+
+It can be used to add, remove, list, and index chart repositories.
+
+Usage:
+  helm repo [command]
+
+Available Commands:
+  add         add a chart repository
+  index       generate an index file given a directory containing packaged charts
+  list        list chart repositories
+  remove      remove one or more chart repositories
+  update      update information of available charts locally from chart repositories
+
+Flags:
+  -h, --help   help for repo
+
+Global Flags:
+      --debug                       enable verbose output
+      --kube-apiserver string       the address and the port for the Kubernetes API server
+      --kube-as-group stringArray   group to impersonate for the operation, this flag can be repeated to specify multiple groups.
+      --kube-as-user string         username to impersonate for the operation
+      --kube-ca-file string         the certificate authority file for the Kubernetes API server connection
+      --kube-context string         name of the kubeconfig context to use
+      --kube-token string           bearer token used for authentication
+      --kubeconfig string           path to the kubeconfig file
+  -n, --namespace string            namespace scope for this request
+      --registry-config string      path to the registry config file (default "/home/vagrant/.config/helm/registry.json")
+      --repository-cache string     path to the file containing cached repository indexes (default "/home/vagrant/.cache/helm/repository")
+      --repository-config string    path to the file containing repository names and URLs (default "/home/vagrant/.config/helm/repositories.yaml")
+
+Use "helm repo [command] --help" for more information about a command.
+vagrant@oran:~/ric-dep/bin$
