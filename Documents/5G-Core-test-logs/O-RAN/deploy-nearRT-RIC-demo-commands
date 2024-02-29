@@ -1,0 +1,113 @@
+
+Demo on how to deploy the near-RT RIC, compile and connect the E2 simulator, 
+	 compile the hello-world go xapp and how use the dms_cli to deploy it: DEMO
+--------------------------------------------------------------------------------
+https://wiki.o-ran-sc.org/display/RICP/2022-05-24+Release+F
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+- demo video:
+	https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release_1680x1050.mp4?version=1&modificationDate=1655980117725&api=v2
+- demo commands:
+	https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+- demo slide
+	https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.pdf?version=1&modificationDate=1655979705678&api=v2
+
+
+### general instructions
+https://wiki.o-ran-sc.org/pages/viewpage.action?pageId=1179659 
+  -> Introduction and guides 
+      -> "Generally the latest instructions"
+
+lsb_release -a
+
+git clone https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep
+cd ric-dep/bin
+./install_k8s_and_helm.sh
+
+
+### next five commands 
+mkdir /etc/sysconfig
+vi /etc/sysconfig/docker  ### e.g. add *PROXY variables 
+vi /lib/systemd/system/docker.service ### add a line "EnvironmentFile=-/etc/sysconfig/docker" and add registry-mirrors in ExecStart
+systemctl daemon-reload
+service docker restart
+
+./install_common_templates_to_helm.sh
+
+### the "for ... docker pull" loop is not necessary, but it separates the image pull from the public image registry and the actual installation
+### make sure to use same versions as in ../RECIPE_EXAMPLE/example_recipe_oran_f_release.yaml
+cat versions.txt
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1:2.5.2
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr:0.5.6
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas:0.6.1
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:6.0.0
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2:6.0.0
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr:0.9.1
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr:0.9.3
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-vespamgr:0.7.5
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-o1:0.6.0
+nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager:0.5.13
+nexus3.o-ran-sc.org:10002/o-ran-sc/it-dep-init:0.0.1
+docker.io/prom/prometheus:v2.18.1
+docker.io/kong/kubernetes-ingress-controller:0.7.0
+docker.io/kong:1.4
+docker.io/prom/alertmanager:v0.20.0
+
+for i in `cat versions.txt`; do echo $i; docker pull $i; done
+
+vi ../RECIPE_EXAMPLE/example_recipe_oran_f_release.yaml  ' IP Addresses from "ip a"
+./install -f ../RECIPE_EXAMPLE/example_recipe_oran_f_release.yaml
+kubectl get pods -n ricplt
+
+
+
+******************* ORAN SIM
+https://wiki.o-ran-sc.org/display/SIM/E2+Simulator#E2Simulator-Buildingdockerimageandrunningsimulatorinstance
+
+
+git clone https://gerrit.o-ran-sc.org/r/sim/e2-interface
+apt-get install cmake g++ libsctp-dev
+cd e2-interface/e2sim
+vi e2sm_examples/kpm_e2sm/Dockerfile    ### modify last line to "sleep 100000000"
+mkdir build
+cd build/
+cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
+cp *.deb ../e2sm_examples/kpm_e2sm/
+cd ../e2sm_examples/kpm_e2sm/
+docker build -t oransim:0.0.999 .
+docker run -d --name oransim -it oransim:0.0.999
+docker exec -ti oransim /bin/bash
+kpm_sim <ip> 36422
+
+
+******************* HW-GO
+git clone https://gerrit.o-ran-sc.org/r/ric-app/hw-go
+cd hw-go
+docker build -t example.com:80/hw-go:1.2 .
+export CHART_REPO_URL=http://0.0.0.0:8090
+vi config/config-file.json
+    modify tag = 1.2
+    modify example.com:80 for "registry"
+    modify name in image to "hw-go"
+dms_cli onboard ./config/config-file.json ./config/schema.json
+dms_cli install hw-go 1.0.0 ricxapp
+
+
+******************* dms_cli
+docker run --rm -u 0 -it -d -p 8090:8080 -e DEBUG=1 -e STORAGE=local -e STORAGE_LOCAL_ROOTDIR=/charts -v $(pwd)/charts:/charts chartmuseum/chartmuseum:latest
+export CHART_REPO_URL=http://0.0.0.0:8090
+git clone https://gerrit.o-ran-sc.org/r/ric-plt/appmgr -b f-release
+cd appmgr/xapp_orchestrater/dev/xapp_onboarder
+apt-get install python3-pip
+pip3 uninstall xapp_onboarder
+pip3 install ./
+chmod 755 /usr/local/bin/dms_cli
+ls -la /usr/local/lib/python3.8
+chmod -R 755 /usr/local/lib/python3.8
+chmod -R 755 /usr/local/lib/python3.8
+
+
+
+******************** useful curl commands:
+curl -X GET http://10.107.231.92:3800/v1/nodeb/states 2>/dev/null|jq
+
