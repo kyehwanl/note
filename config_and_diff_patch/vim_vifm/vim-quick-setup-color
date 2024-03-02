@@ -153,7 +153,10 @@ autoSolarize : Automatically switches between light and dark background for sola
 ----------------------
 Solarized8
 ----------------------
+(https://github.com/lifepillar/vim-solarized8)
+
 If your Vim supports packages (echo has('packages') prints 1), I strongly recommend that you use them. 
+	--> in Vim command line, type :echo has('packages'), then enter, the result will be '1'
 Just clone this repo inside pack/*/opt, e.g.:
 
   git clone https://github.com/lifepillar/vim-solarized8.git \
@@ -173,6 +176,15 @@ Just clone this repo inside pack/*/opt, e.g.:
 
 
 
+
+
+--------------------------
+Simpliest Way for Vagrant 
+--------------------------
+
+colorscheme ron
+set hlsearch
+vnorem // y/<c-r>"<cr>
 
 
 
