@@ -10,3 +10,12 @@ Vifm Tips
   (2) select trash directory or just go to .vifm/Trash directory
 
   (3) select file(s) and hit ':restore' command
+
+
+
+2. undo & redo
+(https://vifm.info/vimdoc.shtml)
+
+  u - undo last change     
+  Ctrl-R - redo last change 
+

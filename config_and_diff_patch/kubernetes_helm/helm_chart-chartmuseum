@@ -1,0 +1,131 @@
+
+Chartmuseum for USING WITH LOCAL FILESYSTEM STORAGE
+
+1. What Chartmuseum 
+--------------------
+ChartMuseum Repository Server
+(https://helm.sh/docs/topics/chart_repository/)
+
+docs: https://chartmuseum.com/docs/#using-with-local-filesystem-storage
+using with plugin: https://github.com/jdolitsky/helm-servecm
+
+
+
+1. Installation with servecm plugin
+------------------------------------
+
+(1) from servecm github
+
+$ helm plugin install https://github.com/jdolitsky/helm-servecm
+Installed plugin: servecm
+
+If ChartMuseum is not installed, it will ask to install the latest stable release upon use:
+
+$ helm servecm
+ChartMuseum not installed. Install latest stable release? (type "yes"): yes
+Attempting to install ChartMuseum server (v0.4.2)...
+Detected your os as "darwin"
++ curl -LO https://s3.amazonaws.com/chartmuseum/release/v0.4.2/bin/darwin/amd64/chartmuseum
+
+
+
+(2) o-ran sc, Near Realtime RIC Installation, 
+
+    < install_common_templates_to_helm.sh >
+    ...
+    echo "Installing servecm (Chart Manager) and common templates to helm3"
+
+    helm plugin install https://github.com/jdolitsky/helm-servecm
+    eval $(helm env |grep HELM_REPOSITORY_CACHE)
+    echo ${HELM_REPOSITORY_CACHE}
+
+    # servecm can download chartmuseum binary, but the hardcoded location does not work anymore
+    # so, we download it now before starting servecm, so that it's available when servecm
+    # tries to start the chartmuseum binary
+    curl -LO https://get.helm.sh/chartmuseum-v0.15.0-linux-386.tar.gz
+    tar xzvf chartmuseum-v0.15.0-linux-386.tar.gz
+    chmod +x ./linux-386/chartmuseum
+    cp ./linux-386/chartmuseum /usr/local/bin
+
+    nohup helm servecm --port=8879 --context-path=/charts --storage local --storage-local-rootdir $HELM_REPOSITORY_CACHE/local/ <<EOF &
+    yes
+    EOF
+
+    CURL_CMD="curl --silent --output /dev/null  http://127.0.0.1:8879/charts"
+    `${CURL_CMD}`
+    READY=$?
+    while [ ${READY} != 0 ]; do
+            echo "servecm not yet running. sleeping for 2 seconds"
+            sleep 2
+            `${CURL_CMD}`
+            READY=$?
+    done
+    echo "servcm up and running"
+
+    eval $(helm env |grep HELM_REPOSITORY_CACHE)
+    echo ${HELM_REPOSITORY_CACHE}
+    mkdir -p "${HELM_REPOSITORY_CACHE}/local/"
+    ...
+
+
+2. USING WITH LOCAL FILESYSTEM STORAGE
+---------------------------------------
+(1) 
+chartmuseum --debug --port=8080 \
+  --storage="local" \
+  --storage-local-rootdir="./chartstorage"
+
+
+(2) using docker
+docker run --rm -u 0 -it -d -p 8090:8080 -e DEBUG=1 -e STORAGE=local -e STORAGE_LOCAL_ROOTDIR=/charts -v $(pwd)/charts:/charts chartmuseum/chartmuseum:latest
+export CHART_REPO_URL=http://0.0.0.0:8090
+
+
+
+
+
+3.  UPLOADING A CHART PACKAGE
+-----------------------------
+Follow “How to Run” section below to get ChartMuseum up and running at http://localhost:8080
+
+First create mychart-0.1.0.tgz using the Helm CLI:
+
+cd mychart/
+helm package .
+Upload mychart-0.1.0.tgz:
+
+curl --data-binary "@mychart-0.1.0.tgz" http://localhost:8080/api/charts
+If you’ve signed your package and generated a provenance file, upload it with:
+
+curl --data-binary "@mychart-0.1.0.tgz.prov" http://localhost:8080/api/prov
+Both files can also be uploaded at once (or one at a time) on the /api/charts route using the multipart/form-data format:
+
+curl -F "chart=@mychart-0.1.0.tgz" -F "prov=@mychart-0.1.0.tgz.prov" http://localhost:8080/api/charts
+You can also use the helm-push plugin:
+
+helm cm-push mychart/ chartmuseum
+
+
+
+
+4. INSTALLING CHARTS INTO KUBERNETES
+-------------------------------------
+Add the URL to your ChartMuseum installation to the local repository list:
+
+helm repo add chartmuseum http://localhost:8080
+Search for charts:
+
+helm search repo chartmuseum/
+Install chart:
+
+helm install chartmuseum/mychart --generate-name
+
+
+
+
+
+
+
+
+
+
