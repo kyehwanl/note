@@ -626,6 +626,7 @@ Git Submodule
 
 		$ git submodule init
 		Submodule 'DbConnector' (https://github.com/chaconinc/DbConnector) registered for path 'DbConnector'
+
 		$ git submodule update
 		Cloning into 'DbConnector'...
 		remote: Counting objects: 11, done.
@@ -667,6 +668,12 @@ Git Submodule
 
 	To also initialize, fetch and checkout any nested submodules, you can use the foolproof 
 		git submodule update --init --recursive
+
+
+
+6. in case to replace remote branch with local branch
+
+ git push --set-upstream [--force] origin master
 
 
 
