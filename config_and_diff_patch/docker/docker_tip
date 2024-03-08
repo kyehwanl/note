@@ -38,6 +38,27 @@ Docker Tips
             1     0 root     R     1700   0%   3   0% top -b
 
 
+4.3 detach without stopping the container
+(1)
+    (https://betterstack.com/community/questions/how-to-attach-and-detach-from-docker-process/)
+        To detach from the container without stopping it, you can press the Ctrl + P and Ctrl + Q keys together. 
+        This will detach your terminal from the container's process and return you to the host machine's command prompt
+
+    --> Ctrl+p Ctrl+q will be ok (keep pressing Ctrl key)
+
+(2)
+    (https://stackoverflow.com/questions/19688314/how-do-you-attach-and-detach-from-dockers-process)
+    To detach the tty without exiting the shell, use the escape sequence Ctrl+P followed by Ctrl+Q. 
+    More details here(https://docs.docker.com/reference/cli/docker/container/attach/).
+
+    Additional info from this source:
+
+    docker run -t -i → can be detached with ^P^Qand reattached with docker attach
+    docker run -i → cannot be detached with ^P^Q; will disrupt stdin
+    docker run → cannot be detached with ^P^Q; can SIGKILL client; can reattach with docker attach
+
+
+
 5. log file location on each container
 
     directory: /var/lib/docker/containers/

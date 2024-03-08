@@ -1,0 +1,109 @@
+
+QuaggaSRx and Bgpsecio running Experiments with Docker 
+========================================================
+
+1. bgpsecio
+
+(1) environment
+- vmware-011
+- docker image: 10.0.50.11:5000/nist-bgp-srx:6
+
+
+(2) volumes
+- for bgpsecio.conf
+    /opt/project/docker_test/bgpsecImples/keys/bgpsecio.docker.conf.temp2
+
+- some important configs
+
+    ski_file    = "/root/NIST-BGP-SRx/local-6.1.3/opt/bgp-srx-examples/bgpsec-keys/ski-list.txt";
+    ski_key_loc = "/root/NIST-BGP-SRx/local-6.1.3/opt/bgp-srx-examples/bgpsec-keys/";
+    capi_cfg = "/root/NIST-BGP-SRx/srx-crypto-api/srxcryptoapi.conf";
+    session = (
+      {
+        asn        = 65005;
+        bgp_ident  = "172.27.0.4";
+        hold_timer = 180;
+
+        peer_asn   = 65000;
+        peer_ip    = "172.27.0.3";
+        peer_port  = 179;
+    ...
+
+- keys
+    internal key location is written in bgpsecio.conf, which is 
+
+    /root/NIST-BGP-SRx/local-6.1.3/opt/bgp-srx-examples/bgpsec-keys/
+    (originally it will be decided on compiling on docker build)
+    
+
+
+(3) running command
+
+docker run --rm -it --net composetest_bgp_net --ip 172.27.0.4 --name bgpsecio \
+-p 1791:179 \
+-v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \
+-v /opt/project/docker_test/bgpsecImples/keys/bgpsecio.docker.conf.temp2:/etc/bgpsecio.conf \
+10.0.50.11:5000/nist-bgp-srx:6 \
+/root/NIST-BGP-SRx/bgpsec-io/bgpsecio -f /etc/bgpsecio.conf
+
+
+
+
+2. Quaggasrx
+
+(1) environment
+- vmware-011
+- docker image: 10.0.50.11:5000/nist-bgp-srx:6
+
+(2) volumes
+
+- for srxcryptoapi.conf, 
+    configured to use an internal file, /root/NIST-BGP-SRx/local-6.1.3/etc/srxcryptoapi.conf will be used
+    (same as bgpsecio)
+- bgpd.conf
+    /opt/project/docker_test/bgpsecImples/bgpd.docker.2403.conf
+
+   ... 
+    router bgp 65000
+    bgp router-id 172.27.0.3
+    srx bgpsec ski 0 1 8E232FCCAB9905C3D4802E27CC0576E6BFFDED64
+    srx bgpsec active 0
+
+    neighbor 172.27.0.4 remote-as 65005
+    neighbor 172.27.0.4 bgpsec both
+
+
+
+
+
+(3) running command
+
+docker run --rm --net composetest_bgp_net --ip 172.27.0.3 --name qsrx \
+-p 1790:179 -p 2605:2605 \
+-v /opt/project/Github_usnistgov/NIST-BGP-SRx/examples/bgpsec-keys:/var/lib/bgpsec-keys \
+-v /opt/project/docker_test/bgpsecImples/bgpd.docker.2403.conf:/etc/quagga/bgpd.conf \
+-it 10.0.50.11:5000/nist-bgp-srx:6 \
+/bin/bash (or /root/NIST-BGP-SRx/quagga-srx/bgpd/bgpd -f /etc/quagga/bgpd.conf)
+
+
+
+
+3. commands summary
+docker run --rm -it --net composetest_bgp_net --ip 172.27.0.3 --name qsrx \
+-p 1790:179 -p 2605:2605 \
+-v /opt/project/Github_usnistgov/NIST-BGP-SRx/examples/bgpsec-keys:/var/lib/bgpsec-keys \
+-v /opt/project/docker_test/bgpsecImples/bgpd.docker.2403.conf:/etc/quagga/bgpd.conf \
+-it 10.0.50.11:5000/nist-bgp-srx:6 \
+/root/NIST-BGP-SRx/quagga-srx/bgpd/bgpd -f /etc/quagga/bgpd.conf
+
+
+docker run --rm --net composetest_bgp_net --ip 172.27.0.4 --name bgpsecio \
+-p 1791:179 \
+-v /opt/project/docker_test/bgpsecImples/keys:/var/lib/bgpsec-keys \
+-v /opt/project/docker_test/bgpsecImples/keys/bgpsecio.docker.conf.temp2:/etc/bgpsecio.conf \
+-it 10.0.50.11:5000/nist-bgp-srx:6 \
+/root/NIST-BGP-SRx/bgpsec-io/bgpsecio -f /etc/bgpsecio.conf
+
+
+
+
