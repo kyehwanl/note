@@ -1,0 +1,51 @@
+
+
+
+1. Errors from o-ran ric installation, 
+  (https://docs.o-ran-sc.org/projects/o-ran-sc-ric-plt-ric-dep/en/latest/installation-guides.html#installing-near-realtime-ric-in-ric-cluster)
+
+
+  there is git clone for downloading, 
+  git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep"
+
+  in ric-dep/bin/install_k8s_and_helm.sh
+
+    KUBEV=1.16.0
+
+    this line related to the following line later,
+
+    KUBEVERSION=1.16.0-00
+
+
+    But, it will end up with 
+    "./install_k8s_and_helm.sh: line 48: kubectl: command not found"
+
+    or 
+
+    The repository 'http://apt.kubernetes.io kubernetes-xenial Release' does not have a Release file
+    ...
+    Ign:6 https://packages.cloud.google.com/apt kubernetes-xenial InRelease
+    Err:7 https://packages.cloud.google.com/apt kubernetes-xenial Release
+    404 Not Found [IP: 142.251.42.46 443]
+
+
+    Because of version not support anymore, 
+    https://forum.linuxfoundation.org/discussion/864693/the-repository-http-apt-kubernetes-io-kubernetes-xenial-release-does-not-have-a-release-file
+
+
+
+
+2. Solution
+
+th the change to the new Kubernetes images repo, the installation steps are no longer backward compatible, 
+and we have to be explicit about the desired version for the apt source file and gpg key.
+
+To install components versioned 1.28.1 run the following:
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt update
+sudo apt install -y kubeadm=1.28.1-1.1 kubelet=1.28.1-1.1 kubectl=1.28.1-1.1
+
+To install components versioned 1.29.1 run the same commands but replace 28 with 29 for gpg key, apt source, and install.

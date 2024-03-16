@@ -817,40 +817,6 @@ vagrant@oran:~/ric-dep/bin$ helm ls -A
 NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
 vagrant@oran:~/ric-dep/bin$ helm repo list
 Error: no repositories to show
-vagrant@oran:~/ric-dep/bin$ helm repo
-
-This command consists of multiple subcommands to interact with chart repositories.
-
-It can be used to add, remove, list, and index chart repositories.
-
-Usage:
-  helm repo [command]
-
-Available Commands:
-  add         add a chart repository
-  index       generate an index file given a directory containing packaged charts
-  list        list chart repositories
-  remove      remove one or more chart repositories
-  update      update information of available charts locally from chart repositories
-
-Flags:
-  -h, --help   help for repo
-
-Global Flags:
-      --debug                       enable verbose output
-      --kube-apiserver string       the address and the port for the Kubernetes API server
-      --kube-as-group stringArray   group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --kube-as-user string         username to impersonate for the operation
-      --kube-ca-file string         the certificate authority file for the Kubernetes API server connection
-      --kube-context string         name of the kubeconfig context to use
-      --kube-token string           bearer token used for authentication
-      --kubeconfig string           path to the kubeconfig file
-  -n, --namespace string            namespace scope for this request
-      --registry-config string      path to the registry config file (default "/home/vagrant/.config/helm/registry.json")
-      --repository-cache string     path to the file containing cached repository indexes (default "/home/vagrant/.cache/helm/repository")
-      --repository-config string    path to the file containing repository names and URLs (default "/home/vagrant/.config/helm/repositories.yaml")
-
-Use "helm repo [command] --help" for more information about a command.
 vagrant@oran:~/ric-dep/bin$
 
 
