@@ -843,3 +843,78 @@ B.  When uid is different
 
 
 
+-----------------------------------------
+10. Resize Disk 
+-----------------------------------------
+(https://askubuntu.com/questions/317338/how-can-i-increase-disk-size-on-a-vagrant-vm)
+
+1. Vagrantfile
+Install this plugin: (following command can be run in the $HOME directory)
+
+vagrant plugin install vagrant-disksize 
+
+  pwct1:~/vagrant-test$ vagrant plugin install vagrant-disksize   
+  Installing the 'vagrant-disksize' plugin. This can take a few minutes...
+  Fetching xml-simple-1.1.9.gem
+  Fetching diffy-3.4.2.gem
+  Fetching vagrant-libvirt-0.12.2.gem
+  Fetching vagrant-disksize-0.1.3.gem
+  Installed the plugin 'vagrant-disksize (0.1.3)'!
+
+Edit the Vagrantfile:
+
+  Vagrant.configure('2') do |config|
+	...
+	config.vm.box = 'ubuntu/xenial64'
+	config.disksize.size = '50GB'
+	...
+  end
+
+vagrant halt && vagrant up
+
+
+2. using VBoxManager
+
+To increase the capacity of disk for Vagrant Base Box
+Steps are
+
+To be able to resize the HDD, you'll have to convert it to VDI first, e.g. 
+
+	VBoxManage clonehd in.vmdk out.vdi --format VDI 
+
+and then re-attached it (using the GUI is easier).
+
+Resize it using 
+
+	VBoxManage modifyhd box.vdi --resize 15360 
+
+which increases the capacity to 15GB.
+
+However this only changes the drive capacity, you will have to expand the file system for the guest afterwards. 
+For example, use resize2fs -p -F DEVICE for ext{3,4}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
