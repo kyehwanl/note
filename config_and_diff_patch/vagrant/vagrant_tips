@@ -873,6 +873,21 @@ Edit the Vagrantfile:
 vagrant halt && vagrant up
 
 
+-- errors -- (maybe from version mismatch ?)
+
+==> oran: Booting VM...
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["startvm", "212b8569-6ab5-42de-85e4-4d5e5a9bf7af", "--type", "headless"]
+
+Stderr: VBoxManage: error: The VMMR0.r0 module version does not match VBoxVMM.dll/so/dylib. If you just upgraded VirtualBox, please terminate all VMs and make sure that neither VBoxNetDHCP nor VBoxNetNAT is running. Then try again. If this error persists, try re
+-installing VirtualBox. (VERR_VMM_R0_VERSION_MISMATCH)
+VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component ConsoleWrap, interface IConsole
+
+
+
+
 2. using VBoxManager
 
 To increase the capacity of disk for Vagrant Base Box
