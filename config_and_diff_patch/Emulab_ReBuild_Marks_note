@@ -1,0 +1,508 @@
+1. Introduction
+
+Here are some notes on setting up and running Emulab, both the old version
+(emulab2) and the new one (emulab3). (In case you're wondering, emulab1
+died a quiet death around ten years back, with the usable remnants from
+it scrounged to start emulab2.)
+
+The main documentation for Emulab is the University of Utah wiki:
+
+https://wiki.emulab.net/wiki
+
+In particular, you'll want to look at the install documentation
+starting at:
+
+https://wiki.emulab.net/wiki/Emulab/wiki/InstallRoot
+
+Note: The links here go to a slightly older version of the Emulab
+software. There's newer documentation which I used when installing
+emulab3, but for some reason now, that documentation requires you to have
+a login on their wiki before you can see it. I haven't done that myself,
+but whoever takes over Emulab should probably do so. The registration
+page is at:
+
+https://gitlab.flux.utah.edu/users/sign_up
+
+You should also join the emulab-admins mailing list:
+
+https://groups.google.com/g/emulab-admins
+
+and probably the emulab-users one as well. They've been fairly responsive
+to questions, though you'll need to give them a few days to answer.
+You can also email me at mecarson@gmail.com. Who knows, I might even be
+able to answer your question!
+
+And of course, essentially all the source is on the boss and ops
+nodes, under /usr/testbed/src. As would be expected for a project
+going on for decades now, there's quite a conglomeration of stuff
+there, but any true programmer is used to grepping entire source
+trees to find what they need.
+
+2. Most important info (addresses, passwords, etc.)
+
+For emulab2:
+
+Addresses:
+
+emulab2/boss2:  129.6.141.215 (ext) 10.0.31.201 (int)
+            10.0.20.219 (future ext)
+            10.0.51.201 (exp switches)
+            10.0.52.201 (backup)
+ops2:       129.6.141.216 (ext) 10.0.31.202 (int)
+            10.0.20.217 (future ext)
+backup (old botboy):    10.0.52.210
+root (and elabman and carson) password is ipv6@antd
+
+Control net:    10.0.31.0/24
+Node addresses: 10.0.31.xx for node xx
+        10.0.31.(xx+100) for idrac/mng xx
+
+ctrlswitch1:    10.0.31.252
+ctrlswitch2:    10.0.31.253
+(ctrlswitch 3-5 moved to emulab3)
+expswitch1: 10.0.51.250 (vlan 51, port Gi7/48)
+(expswitch2 moved to emulab3)
+login for all switches: admin/csp4antd
+snmp community string csp4antd
+ipmi/idrac login: root/csp4antd
+
+
+For emulab3:
+
+Addreses:
+
+emulab3/boss3:  10.0.20.222 (ext) 10.0.32.222 (int) 10.0.33.222 (idrac)
+            10.0.34.222 (exp switches)
+            10.0.35.222 (backup)
+ops3:       10.0.20.223 (ext) 10.0.32.223 (int) 10.0.33.223 (idrac)
+backup (old botman1):   10.0.35.210
+root (and elabman and carson) password is ipv6@antd
+
+Control net:    10.0.32.0/23
+Node addresses: 10.0.32.xx for node xx
+        10.0.33.xx for idrac/mng xx
+Exp switch net: 10.0.34.0/24
+        expswitch1: 10.0.34.1 (vlan 34, port Gi2/48)
+        expswitch2: 10.0.34.2 (port Te1/1/1)
+trunk from expswitch1 2/48 to expswitch2 Te1/1/1
+
+ctrlswitch1:    10.0.32.252
+ctrlswitch2:    10.0.32.253
+ctrlswitch3:    10.0.32.254
+expswitch1:     10.0.34.1   (vlan 34, port 2/47)
+expswitch2:     10.0.34.2   (port 0/0 - note no vlan)
+login for all switches: admin/csp4antd
+snmp community string csp4antd
+ipmi/idrac login: root/csp4antd
+    
+
+3. Emulab overview
+
+Very briefly, Emulab is a system for automating the creation of network
+test setups ("experiments" in Emulab lingo). Two main nodes (boss and ops)
+run the system and provide monitoring tools, operating system images, and
+storage for the testbed nodes. Emulab creates experiments by allocating
+a set of nodes (real physical machines) out of a pool, installing OS
+images on them, and creating links between them by allocating VLANs on
+a large switch or switches.
+
+It does this through a few basic mechanisms: PXE-booting images on the
+nodes to be used, and SNMP (and sometimes direct CLI commands) to set up
+VLANs and set port characteristics on the switch(es) for links between
+the nodes in the test setup.
+
+A couple of the PXE images are special: (1) newnode, which, as the name
+suggests, is the first image booted on a new node. It determines the node
+type from its memory, disk space and processor type, and communicates
+its MAC addresses so the Emulab system can determine which ports on the
+switch(es) its interfaces are connected to. (2) frisbee, which is a small
+in-memory image for installing and customizing the actual OS disk image
+that's to be installed.
+
+The OS images that Emulab installs have a few additions to allow
+it to monitor and control experiments. These are mostly found under
+/usr/local/sbin in the images, and include code for status reporting,
+checkpointing an image, and swapping an image out when an experiment
+is terminated. If a node OS becomes nonresponsive, Emulab has two more
+drastic tools for trying to handle it: the "ping of death," a special
+ICMP packet which, when received by code Emulab has installed in all
+the kernels in its images, should cause an immediate reboot; and an
+ipmi-based power cycle command, for when even that fails.
+
+4. The Emulab database
+
+Emulab keeps its configuration information in a mysql database called tbdb
+(testbed database). For the most part, you won't have to deal with this
+directly after the initial setup, but certain operations, like adding
+a new switch, may require a database edit.
+
+Even so, I recommend making a database dump (using mysqldump), to provide
+a reference in case you are making major changes, or are having problems
+you can't otherwise diagnose. You'll notice there's a lot of cruft
+in the database, including things like years-old status messages from
+the Utah Emulab. My guess is that Utah doesn't actually have a pure,
+empty version of the database; whenever they make a new distribution,
+they but just take whatever they have and clean it up somewhat.
+
+Emulab does make daily backups of its database, and of the current switch
+configurations, so if things go really wrong, you can revert to these.
+
+5. Node configuration
+
+For a new node to be added to Emulab, certain BIOS and IDRAC settings
+and appropriate cabling are needed.
+
+BIOS: Set it to BIOS boot (at least the version I have doesn't support
+UEFI yet), with PXE boot as first choice, disk as second, and maybe USB
+as third (or higher if you're still debugging things). Turn on PXE boot
+for the interface you want to boot from, and turn it off for all the
+others. All the nodes of the same type should preferably be booting from
+the same interface, generally the first 1G interface on the motherboard.
+To speed up booting, you may want to turn off as much POST checking
+as possible.
+
+IDRAC: Set IDRAC to use a shared LOM (lights out mode, or something like
+that) which is the same interface that it's doing PXE boot from. For node
+XX, set the name pcXX in the front LED panel. Set the IPv4 address to
+10.0.31.(XX+100) for emulab2; 10.0.33.XX for emulab3. Set the default
+router and name server to the boss node (10.0.31.201 for mulab2;
+10.0.32.222 for emulab3). Set the domain to emulab*.antd.nist.gov (where
+* is 2 or 3) and its name in the domain to pcXX-mng if you want to be
+thorough, though this isn't that important. Set the ipmi login/password
+to root/csp4antd. You may also want to record the IDRAC's MAC address
+for later use (see below), or simply use ping+arp to look it up
+when you need it.
+
+Cabling: connect the boot interface you chose to the control switch.
+Connect at least 4 other interfaces to the experimental switch. To keep
+things from getting out of hand, we try to connect all the nodes in a
+consistent fashion, and route all the cables similarly.
+
+6. Switch configuration
+
+I've done the initial configuration for the switches we have, and if
+all goes well, Emulab should maintain things hereafter. But if something
+goes wrong, or if the new switches ever arrive, here are some notes on
+the setup. Most of it is done with the usual Cisco IOS CLI, with some
+in the Emulab database. The Emulab database parts are detailed in:
+
+https://wiki.emulab.net/wiki/install/switches-db.html
+
+though there are a couple of minor changes - for "interfaces" the
+fields are now card_saved and port_saved. Make the snmp_community string
+csp4antd, the min_vlan 256 and the max_vlan 999.
+
+Control switches: Not much needs to be done for these. Emulab only
+needs to know their names/ip addresses. Make everything vlan 1, and have
+the management addresses on the control network, in the 200+ range. If
+you're adding a switch, chain it to the others. I used trunk connections,
+though I suppose with only one vlan, that isn't strictly necessary.
+
+Experiment switches: Put the management interface and VLAN on the
+switch-only subnet (10.0.51 for emulab2, 10.0.34 for emulab3).  Set up a
+trunk to the lead switch (expswitch1). Ideally, the trunks would be 10G,
+though right now I can't do that since the 10G on the 9300 is copper,
+while on the 4507 the only SFPs I have are fiber.
+
+Troubleshooting: To check Emulab knows about the switches properly,
+run wap snmpit -l as the instructions indicate. If there are problems,
+you can add a debug flag (-v 1, say) to try to figure them out.
+
+7. Adding yourself as an Emulab admin
+
+If you haven't already, create an Emulab account for yourself: go to each
+of https://emulab2.antd.nist.gov and https://emulab3.antd.nist.gov and
+click on "Request Account." Choose "Start a New Project" and fill out
+the form. Username and password are the most important parts, of course,
+but it will make you fill out all the starred items. For Project Name,
+just choose something short that indicates this is an admin account.
+
+When you're done, go back to the login screen and login as elabman,
+password ipv6@antd (password is that for historical reasons). Click
+the green dot at the top of the page. It will turn red, and an
+"Administration" menu will appear. Choose "Approve New Projects" and
+approve the one you just created under your own id. Next, choose "List
+Users" then "all" and then your UID. Under Profile, go to "Administrator"
+and toggle it to "Yes."
+
+All this gives you admin rights through the Emulab web interface.  To do
+usual sysadmin stuff, do a normal (via ssh) login as elabman, i.e.,
+ssh elabman@emulab2 (or 3), with password again ipv6@antd. Use sudo
+to edit /etc/passwd, and check the shell field under your username. If
+it's /usr/testbed/sbin/paperbag (the default dummy shell), change it to
+the shell of your choice. You should now be an admin and can sudo with
+no password.
+
+Lastly, go to /etc/mail/lists on ops2 (or 3) and add your email address to
+testbed-ops. If you're already in anri-admins, this may not be necessary.
+
+8. Adding nodes
+
+Once nodes are properly configured and cabled, and you're set up as an
+Emulab administrator, adding them to Emulab is mostly automated. Login to
+Emulab, click the green dot to red, and choose Add Testbed Nodes under
+the Administration menu. Now turn on the next node to be added and wait
+for it to come up. When it's (hopefully) booted the newnode image, hit
+"Refresh this page" and it should be listed in the table as pcXX, where
+XX is one greater than the last node added. Check that it recognized
+the node type properly. While I've improved it somewhat, the node
+matching code is still rather crude, so it sometimes makes mistakes.
+
+You can add the node now or, if there are more to do, power up each one
+in turn and again refresh the page until they appear.  Don't power them
+on too close together, as there may be a hangup with one of them that
+makes it boot more slowly, so it could get out of order. Also, don't
+do more than 20 at once, as that's all the free addresses I allowed
+for dhcpd to use for new nodes. And, as I just discovered, don't wait
+too long to add a node, as its MAC addresses will age out of the switch
+database after some time (default 30 minutes, which I've now increased
+to 1 hour).
+
+Once the nodes you want are up and recognized, select them and click
+"Search switch ports." It should find four interfaces for each node and
+not find the others - i.e., any unconnected interfaces, plus the one
+connected to the control switch. For, e.g., the r610s, this means it
+should find interfaces 1-4, and not find 0 or 5.
+
+If more interfaces than expected are missing, check all the usual suspects
+like cabling. Also, especially if Emulab has used this switch for a
+while, check that the switch ports are active. Emulab turns off all switch
+ports not in current use to prevent unintentional cross-experiment links.
+Use the Cisco CLI and configure "no shutdown" on all the ports you need
+to be active.
+
+Once everything is set, click "Create selected nodes" along with the
+"Ignore unconnected interfaces" box next to it.
+
+After the nodes have been added, next inform Emulab of their IPMI
+(i.e., IDRAC) addresses. As noted above, for emulab2, node pcXX
+has its IPMI address at 10.0.31.(XX+100), while for emulab3,
+it is at 10.0.33.XX. You'll need both the IP and MAC addresses;
+to get the latter, you could either have noted it back when you
+were editing the node's IDRAC or, more conveniently, ping it now
+that it's up, and use arp to get the MAC address.
+
+(10.0.33.6) at b0:7b:25:ef:d6:94
+(10.0.33.5) at b0:7b:25:f0:29:68
+
+root@boss3:~ # su - elabman
+Want to strip UTF-8 BOM(Byte Order Mark) from given files?
+
+        sed -e '1s/^\xef\xbb\xbf//' < bomfile > newfile
+elabman@boss3:~ % /root/bin/addipmi b0:7b:25:ef:d6:94 6
+mac b0:7b:25:ef:d6:94 host 10.0.32.6 ipmihost 10.0.33.6
+/usr/testbed/sbin/wap /usr/testbed/sbin/management_iface -a pswd -t ipmi20 pc6 b0:7b:25:ef:d6:94 10.0.33.6 root csp4antd
+*** Interface->Create(): ignoring card/port, these are now set with the wire.
+Re-generating dhcpd.conf and restarting dhcpd
+Re-generating named config and restarting named
+
+root@boss3:~ # su - carson
+boss3%102 revivedead pc5
+Moving [Node: pc5] to [Experiment: emulab-ops/reloadpending]
+boss3%103 revivedead pc6
+Moving [Node: pc6] to [Experiment: emulab-ops/reloadpending]
+
+
+What I've done in the past is add all the nodes, then ping all
+of them and gathered all their MAC addresses at once. I then
+wrote a trivial script addipmi which takes this info and adds
+it into Emulab's database.
+
+All the above is for nodes of existing types. If adding a node of a new
+type (i.e., one not essentially identical to one of the existing nodes),
+you'll have to add a node type entry for it. Go to "Node Status" click
+on "Node type list" and then "Create a Node Type." To fill out the form,
+you'll need to gather an amount of information from the node. You can do
+this by, e.g., booting it from a USB key. You could probably also do it
+from booting the newnode image and logging into it, but I haven't tried
+this myself.
+
+The info you'll need is (1) the bios boottime, from power on to when
+it first tries a PXE (or other) boot; (2) the Linux ethX number of
+its boot interface; (3) the size of its disk in MB; (4) its processor type
+and frequency in MHz; (5) its total number of interfaces; (6) the size
+of its memory in MB. There's a little leeway in these numbers but not
+much, so try to get them fairly exact.
+
+There are other fields to fill as well, but they're either already known
+(e.g., disktype - i.e., the FreeBSD driver for the disk - will be mfid
+for all Dell systems for emulab2; da for emulab3), or ones you can just
+guess at (e.g., simnode_capacity, where I've simply bumped it up some for
+each newer/faster type). You'll know if you got it close enough if Emulab
+chooses your node type when you boot it with newnode. If it doesn't,
+go back and check your entries against what newnode came up with. If it
+finds two matching types, it probably means the node matching code needs
+to be improved. You can either do that, or just be lazy and substitute
+the correct type in the table if it chose the wrong one.
+
+After you've successfully added a node, it will be in the "down"
+state. I wrote a simple script "revivedead" (usage: revivedead pcXX)
+to take it out of this state and load its first OS image, making
+it available for use. If this hangs or has other issues, there's
+another script "pokedrunk" (usage: pokedrunk pcXX) which can be
+used to take another crack at it.
+
+First, though, you may want to check why it didn't load. Often,
+the node will be far enough along that you can login to it
+(sudo ssh pcXX from boss) and take a look. Otherwise, it's time
+to venture into the server room and hook up a terminal.
+
+9. Adding OS images
+
+Both emulabs have a number of OS images available to load. The
+version of the documentation I linked above talks about pulling
+in new images from a Utah download page, but this no longer exists.
+Instead, any new images come as part of a general Emulab update.
+
+The upshot here is that emulab2 is not going to get any new images
+unless you feel motivated enough to create them. There are some
+instructions on doing this, and I have managed to do so myself
+(essentially by carefully upgrading one of the existing images),
+but with the new emulab now coming, it hardly seems worth it.
+
+The images coming with emulab3 seem sufficient for now, at least if
+you don't mind Ubuntu. Rather than creating all-new images, for most
+purposes it should be sufficient to install and then customize one of the
+existing images, adding and upgrading packages to it, doing any custom
+configuration, etc. Once it's set up the way you (or any user) wants,
+save the image for later use.
+
+One caveat I just found with the emulab3 images - perhaps because
+they were installed automatically, before I had defined any of the
+node types, by default they're not marked as being able to run on
+any of our nodes. I had to go through and check off "pcr620" as
+an acceptable type before I could get them to load on a node.
+Note I only said "pcr620" and not 630 or 640 - apparently it will
+only allow you to check off that type if you've actually added a
+real node of that type to Emulab. So when you get to the latter
+nodes, you'll be faced with that ...
+
+Update: I went in and edited the database and added pcr630 and pc640
+to all the OS images manually. It seems to have worked, so at least
+for those it should be good to go.
+
+10. Things still to do
+
+For old emulab: do the rest of the cabling, and add back the rest
+of the nodes. Their IDRACs were all set before, though you'll
+almost certainly have to adjust their names and addresses to match
+their current positions - almost all the nodes got moved around.
+
+Sooner or later, depending on how much OISM complains, the boss
+and ops nodes will have to be moved from 129.6.141 to 10.0.20.
+I've made this (hopefully) straightforward: the 129.6.141 interfaces
+are hooked to a little 5-port hub on top of the rack. It then has
+a long cable to the main switch. Change the addresses on boss and
+ops (new values already reserved in the DNS) and change the VLAN
+on the main switch to 1020.
+
+For new emulab: fix their IDRAC contents (same deal - all of them
+have been moved) and add the rest of the nodes. If the new switches
+show up, figure out what's needed to add them and do it. Ideally,
+we'd have a fiber 10G interface in one of them, so the trunk
+between it and the 4507 can use the 10G port in the latter.
+Alternatively, get a 10G copper SFP to use in the 4507, so
+the connection to the 3900 can run at 10G.
+
+When (not if) there are problems, you'll probably want to update
+the Emulab code on emulab3. The code that's there now is 
+a year old, and I'm sure many bugs have been fixed since then. But
+be careful - I've already made a few fixes/updates myself in the
+/usr/testbed/src tree, so make sure those aren't wiped out, unless
+of course the new Utah code has fixed them as well.
+
+11. Ongoing administration
+
+There are a couple of old systems for backing up user Emulab files -
+an r610 for emulab2 (the old botboy), and an r620 for emulab3 (the old
+botman1). Trivial scripts in /root/bin on the boss and ops nodes do the
+backing up. The boss and ops nodes also have clone disks for their root
+filesystems. However, I haven't checked the cloning for quite a while, so
+I'm not sure how current they are. Also, the two systems being used for
+backups are old, and I mean really old, like Fedora 20 era old. They're
+ok when left to run, but rebooting them is problematic at best.
+
+The main daily administrative task is rescuing stuck nodes. While
+the combo of ping-of-death and ipmi power cycling usually works,
+especially now that I've purged the questionable nodes, there's
+a chance neither of them will be successful. The main problem is
+that the IDRAC sometimes gets rendered inaccessible by the OS
+running on the node. This apparently is a long-standing IDRAC
+issue, especially on the older nodes. So for them, the only
+real option is physically hitting the power button. Sorry.
+
+The old emulab (emulab2) had an issue where attempting to swap
+in certain experiments, especially those trying to use the r630s,
+would not only fail, but also bring down the Emulab event system
+(the state machine which tracks the steps in bringing an experiment
+up). Hopefully this won't be such an issue now that the newer
+nodes have all been moved to the new emulab. If it does happen,
+though, the command "wap testbed-control restart" can be used
+to restart things, while leaving existing experiments alone.
+
+The other big administrative task is the periodic shutting down
+and later starting up whenever there's one of our twice-yearly
+cooling outages. I've created scripts to handle these tasks.
+Here's the README file for them (found in /root/bin on the
+boss nodes, along with all the scripts):
+
+I've written some scripts to automate shutting down and bringing up emulab
+properly. They attempt to address all the issues I've had in the past
+with this process, though of course some cases may still remain which
+will have to be handled manually. Here's a brief overview of what to do:
+
+Emulab shutdown
+
+1. Login as root on the boss node. Probably, the console will already
+be logged in that way, but if not, it has the old ipv6 testbed password.
+
+2. Run emulab.shutdown in /root/bin. This shuts down the emulab event
+system, saves the switch configurations, and goes through a variety of
+steps to attempt to shutdown all of the nodes as cleanly as possible.
+It will take about 15-20 minutes to run.
+
+3. As a final step, the script runs bossops.shutdown in /root/bin.
+This shuts down the boss and ops nodes as cleanly as possible. This
+should only takes a couple of minutes.
+
+4. Because of apparent bugs in the IDRAC/IPMI power control stuff,
+some nodes may not power off. It will be safe simply to power them
+down manually. Also turn off the two Cisco 4507 (experimental network)
+switches manually. The (control network) Cisco 2900 series switches
+don't have separate power switches, so can be left as is, or powered
+down by turning off the UPSes they are attached to.
+
+Emulab startup
+
+1. Turn on any UPSes which were turned off, and power up the 4507 switches.
+
+2. Some or other of the nodes may have come up by themselves when power
+is restored. They'll be in a confused state, but can mostly be ignored,
+as the startup script attempts to deal with them.
+
+3. Power up the boss and ops nodes, and login to the boss node as root.
+If they're already up, but in a confused state, simply reboot them.
+
+4. Run emulab.startup in /root/bin. This checks the switch configurations,
+attempts to bring up all the nodes, and restarts the emulab event system.
+It should take about 10-15 minutes to run.
+
+5. The script does two complete rounds of powerup attempts on the nodes.
+If you notice any node not powering on while the others around are,
+simply power it on manually. This can be done at any point during the
+powerup process.
+
+6. After (hopefully) powering up all the nodes, the script runs
+emulab.enable. This turns on the web interface and attempts to free
+any stuck nodes. At this point, emulab should be ready to use. If
+there are still issues, try running emulab.enable again to clean
+things up.
+
+Note that the scripts, while run by root, have a couple of instances
+of "sudo carson" in them. That's because some of the commands have
+to be run by a "real" admin user, and not directly by root. You can
+leave them be for now, but if you decide to get rid of the carson
+account, make these sudo to an admin account that remains (either
+your own, or perhaps elabman if you want to avoid accountability).
+
+
