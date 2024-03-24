@@ -36,10 +36,10 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scrip
 chmod 700 get_helm.sh
 sudo DESIRED_VERSION=v3.10.3 ./get_helm.sh
 helm repo add incubator https://charts.helm.sh/incubator
-helm repo add cord https://charts.opencord.org
-helm repo add atomix https://charts.atomix.io
-helm repo add onosproject https://charts.onosproject.org
-helm repo add aether https://charts.aetherproject.org
+#helm repo add cord https://charts.opencord.org
+#helm repo add atomix https://charts.atomix.io
+#helm repo add onosproject https://charts.onosproject.org
+#helm repo add aether https://charts.aetherproject.org
 helm repo add rancher http://charts.rancher.io/
 mkdir -p $HOME/.kube/cni-plugins; cd $HOME/.kube/cni-plugins; \
 wget https://github.com/containernetworking/plugins/releases/download/v0.8.2/cni-plugins-linux-amd64-v0.8.2.tgz && \
