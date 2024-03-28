@@ -31,7 +31,8 @@ sudo mv kubectl /usr/local/bin/
 kubectl version --client
 mkdir -p $HOME/.kube
 sudo cp /etc/rancher/rke2/rke2.yaml $HOME/.kube/config
-sudo chown -R 1001:1001 $HOME/.kube
+#sudo chown -R 1001:1001 $HOME/.kube --> 1001 means first user, but doesn't work with vagrant
+sudo chown -R $USER $HOME/.kube
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 sudo DESIRED_VERSION=v3.10.3 ./get_helm.sh
