@@ -1,0 +1,120 @@
+
+** ssh tunnel & sync gowork from vmwware-005 to a virtualbox image **
+=====================================================================
+
+
+1. make ssh tunnel
+    [kyehwanl@localhost ~]$ ssh -fNL12345:vmware-005.antd.nist.gov:22 bgpsec1.antd.nist.gov
+
+
+2. sync with rsync
+    [kyehwanl@localhost ~]$ rsync -avPuiz -e "ssh -p 12345" localhost:/opt/project/gobgp_test/gowork/src/github.com/osrg/gobgp ~/project/gowork/src/github.com/osrg/
+
+
+
+
+** Double ssh tunneling ** 
+===========================
+SSH Tunnel from Macbook's virtualbox image to Macbook(toadyoon), and then ssh-tunneling from Macbook to NIST laptop, and then connect BGPSEC1 inside ANTD net
+
+
+(Step 1) SSH Remote Tunneling  from Windows 7 laptop(NIST) to Macbook 
+ - because NIST laptos has Windows OS, so need to Remote SSH tunneling
+ - in SecureCRT's Remote Port Forwarding Properties, 
+     -- Remote Port 12345
+     -- Local Hostname : bgpsec1.antd.nist.gov
+     -- check the box, 'Destination host is different from localhost'
+     -- port 22
+
+    -> these means, -R12345:bgpsec1.antd.nist.gov:22 192.168.1.121(Macbook ip address)
+
+
+ (Step 2) Open terminal on Macbook and connect to Virtualbox Fedora guest os
+  - connect to Fedora guest os on Virtualbox, 
+    -- ssh -p 2222 kyehwanl@192.168.56.1   ( 2222: port forwarding setting, 192.168.56.1: guest os's ip address) 
+
+  - from guest OS, make a local ssh tunnel to Macbook
+    -- ssh -fNL12346:localhost:12345 toadyoon@192.168.1.121 (where, localhost connection will be redirected to BGPSEC1)
+
+
+ (Step 3) from guest OS to NIST BGPSEC1
+  - using guest os's local ssh tunnel, it will be able to connect to localhost:12345, 
+    which was configured previously to connect to BGPSEC1 in NIST with ssh Remote tunnel
+
+    -- ssh -p 12346 localhost
+
+
+        (at Guest OS, Fedora, user:kyehwanl, hostname: localhost)
+        [kyehwanl@localhost ~]$ ssh -fNL12346:localhost:12345 toadyoon@192.168.1.121
+        Password:
+
+        [kyehwanl@localhost ~]$ ssh -p 12346 localhost
+        The authenticity of host '[localhost]:12346 ([127.0.0.1]:12346)' can't be established.
+        RSA key fingerprint is b8:0e:c0:04:a5:6f:6d:15:c6:a0:c1:8c:3f:1b:e9:8b.
+        Are you sure you want to continue connecting (yes/no)? yes
+        Warning: Permanently added '[localhost]:12346' (RSA) to the list of known hosts.
+
+        You are accessing a U.S. Government information system, which includes: 1) this computer, 2) this computer network, 3) all computers  connected to this network, and 4) all devices and storage media attached to this network or to a computer on this network. You understand and consent to the following: you may access this information system for authorized use only; you have no reasonable expectation of privacy regarding any communication of data transiting or stored on this information system; at any time and for any lawful Government purpose, the Government may monitor, intercept, and search and seize any communication or data transiting or stored on this information system; and any communications or data transiting or stored on this information system may be disclosed or used for any lawful Government purpose.
+
+        kyehwanl@localhost's password:
+        Last login: Tue Feb 12 03:50:37 2019 from 129.6.218.253
+        bgpsec1.antd [1055]{~}->
+
+
+ (ETC) rsync 
+    [kyehwanl@localhost ~]$ rsync -avPuniz -e "ssh -p 12346" localhost:/users/kyehwanl/fs6/Emulab/config_and_diff_patch/ ~/config_and_diff_patch/ --delete
+
+
+
+
+
+
+ SSH tunnel to ANTD servers From Windows 10 NIST VPN
+=====================================================
+(http://woshub.com/ssh-tunnel-port-forward-windows/)
+
+1. in Windows 10 console, in order to make ssh tunnel
+
+    Z:\>ssh kyehwanl@access.antd.nist.gov -L 13389:vmware-011.antd.nist.gov:3389
+
+    The authenticity of host 'access.antd.nist.gov (129.6.140.223)' can't be established.
+    ECDSA key fingerprint is SHA256:eBeVyCWZowzBEvQQeV6foRfa2sUtRe5wbxM+Y6f861M.
+    Are you sure you want to continue connecting (yes/no)? yes
+    Warning: Permanently added 'access.antd.nist.gov,129.6.140.223' (ECDSA) to the list of known hosts.
+    kyehwanl@access.antd.nist.gov's password:
+    Last login: Thu Apr 29 13:04:07 2021 from 129.6.218.74
+
+
+    access.antd [1996]{~}-> 
+
+
+
+
+2. command type and run 'mstsc'(Remote Desktop Connection) in run dialog with 'localhost' in Computer section,
+
+    Computer: localhost:13389
+
+
+
+3. -f: background running
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

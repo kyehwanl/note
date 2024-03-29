@@ -1,0 +1,110 @@
+[VirtualBox] image resize
+=========================
+
+
+1. VBoxManage 로  virual machine의 디스크 사이즈 늘려줌
+    VBoxManage modifyhd “C:\Users\Chris\VirtualBox VMs\Windows 7\Windows 7.vdi” --resize 81920
+
+
+2.  Gparted로 Linux에서 인식하도록 만듦
+    다운로드 : https://gparted.org/download.php
+    참조 : https://www.howtogeek.com/124622/how-to-enlarge-a-virtual-machines-disk-in-virtualbox-or-vmware/
+    
+
+3. File system 재조정
+
+# lvresize -L +10G --resizefs /dev/mapper/fedora-root
+  Extending logical volume root to 16.71 GiB
+  Logical volume root successfully resized
+  resize2fs 1.42.8 (20-Jun-2013)
+  Filesystem at /dev/mapper/fedora-root is mounted on /; on-line resizing required
+  old_desc_blocks = 1, new_desc_blocks = 2
+  The filesystem on /dev/mapper/fedora-root is now 4379648 blocks long.
+
+
+
+4. 결과
+
+(Previous)
+
+root@localhost:/home/kyehwanl[root@localhost kyehwanl]# fdisk -l
+
+Disk /dev/sda: 8 GiB, 8589934592 bytes, 16777216 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x0005e819
+
+Device    Boot     Start       End  Blocks  Id System
+/dev/sda1 *         2048   1026047  512000  83 Linux
+/dev/sda2        1026048  16777215 7875584  8e Linux LVM
+
+
+Disk /dev/sdb: 8 GiB, 8589934592 bytes, 16777216 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+Disk /dev/mapper/fedora-root: 6.7 GiB, 7201619968 bytes, 14065664 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+Disk /dev/mapper/fedora-swap: 820 MiB, 859832320 bytes, 1679360 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+root@localhost:/home/kyehwanl[root@localhost kyehwanl]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/mapper/fedora-root  6.5G  4.6G  1.6G  75% /
+devtmpfs                 743M     0  743M   0% /dev
+tmpfs                    750M   80K  750M   1% /dev/shm
+tmpfs                    750M  688K  750M   1% /run
+tmpfs                    750M     0  750M   0% /sys/fs/cgroup
+tmpfs                    750M  4.0K  750M   1% /tmp
+/dev/sda1                477M   89M  359M  20% /boot
+root@localhost:/home/kyehwanl[root@localhost kyehwanl]#  exit
+exit
+
+
+
+(after)
+
+[kyehwanl@localhost ~]$ sudo fdisk -l
+
+Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x0005e819
+
+Device    Boot     Start       End   Blocks  Id System
+/dev/sda1 *         2048   1026047   512000  83 Linux
+/dev/sda2        1026048  41943039 20458496  8e Linux LVM
+
+
+Disk /dev/mapper/fedora-root: 6.7 GiB, 7201619968 bytes, 14065664 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+Disk /dev/mapper/fedora-swap: 820 MiB, 859832320 bytes, 1679360 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+
+root@localhost:/home/kyehwanl[root@localhost kyehwanl]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/mapper/fedora-root   17G  4.8G   11G  31% /
+devtmpfs                 743M     0  743M   0% /dev
+tmpfs                    750M   88K  750M   1% /dev/shm
+tmpfs                    750M  752K  750M   1% /run
+tmpfs                    750M     0  750M   0% /sys/fs/cgroup
+tmpfs                    750M  460K  750M   1% /tmp
+/dev/sda1                477M   89M  359M  20% /boot
+

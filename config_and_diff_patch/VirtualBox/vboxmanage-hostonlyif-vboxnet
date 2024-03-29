@@ -1,0 +1,33 @@
+
+
+1. Create Hostonly interface (vboxnet0) with vboxmanage
+---------------------------------------------------------
+
+vboxnet0 might be disappered when a vm is no longer using hostonly interface or rebooted
+
+Following command is the way manually to restore
+
+  (0) usage
+  $ VBoxManage hostonlyif create --help
+  Usage:
+
+  VBoxManage hostonlyif       ipconfig <name>
+                              [--dhcp |
+                              --ip <ipv4> [--netmask <ipv4> (def:255.255.255.0)]|
+                              --ipv6 <ipv6> [--netmasklengthv6 <N> (def:64)]] |
+                              create |
+                              remove <name>
+
+  VBoxManage: error: Unknown option: --help
+
+
+  (1) create
+  $ sudo vboxmanage hostonlyif create
+  0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+  Interface 'vboxnet0' was successfully created
+
+
+
+  (2) modify
+  $ sudo vboxmanage hostonlyif ipconfig vboxnet0 --ip 192.168.10.1 --netmask 255.255.255.0
+

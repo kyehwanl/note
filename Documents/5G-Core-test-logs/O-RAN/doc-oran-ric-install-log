@@ -1,0 +1,847 @@
+
+Installation Release I - Non Realtime RIC
+============================================
+(https://wiki.o-ran-sc.org/display/RICNR/Release+I+-+Run+in+Kubernetes)
+
+
+1. Prerequisites
+----------------
+  kubernetes v1.19 +
+  docker and docker-compose (latest)
+  git
+  Text editor, e.g. vi, notepad, nano, etc.
+  helm
+  helm3
+
+	--> their script to install kubernetes was not working well, 
+		so, I uesed my own rke2 install script (install-docker-kubernetes-rke2.sh)
+		(https://github.com/kyehwanl/note/blob/master/Shell_Script/install-docker-kubernetes-rke2.sh)
+
+  ChartMuseum to store the HELM charts on the server, multiple options are available:
+
+	> Execute the install script:
+
+	./dep/smo-install/scripts/layer-0/0-setup-charts-museum.sh
+
+   	> Install chartmuseum manually on port 18080 (https://chartmuseum.com/#Instructions, https://github.com/helm/chartmuseum)
+
+        onf@onf-03:~/dep/smo-install/scripts/layer-0$ ./0-setup-charts-museum.sh
+        --2024-03-28 14:04:06--  https://get.helm.sh/chartmuseum-v0.13.1-linux-amd64.tar.gz
+        Resolving get.helm.sh (get.helm.sh)... 152.195.19.97, 2606:2800:11f:1cb7:261b:1f9c:2074:3c
+        Connecting to get.helm.sh (get.helm.sh)|152.195.19.97|:443... connected.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 15065895 (14M) [application/x-tar]
+        Saving to: ‘chartmuseum-v0.13.1-linux-amd64.tar.gz’
+
+        chartmuseum-v0.13.1-linux-amd64. 100%[========================================================>]  14.37M  --.-KB/s    in 0.1s
+
+        2024-03-28 14:04:07 (105 MB/s) - ‘chartmuseum-v0.13.1-linux-amd64.tar.gz’ saved [15065895/15065895]
+
+        linux-amd64/
+        linux-amd64/chartmuseum
+        linux-amd64/README.md
+        linux-amd64/LICENSE
+        onf@onf-03:~/dep/smo-install/scripts/layer-0$ 2024-03-28T14:04:07.961-0400      INFO    Starting ChartMuseum    {"host": "0.0.0.0", "port": 18080}
+
+
+
+    (optional)
+    -- smo      : chartmuseum:18080
+    -- nonrtric : chartmuseum:8879
+
+    > helm repo remove local
+    > helm repo add local http://localhost:18080
+
+
+
+2. download dep.git package from oran sc
+----------------------------------------
+
+  git clone https://gerrit.o-ran-sc.org/r/it/dep.git
+
+  > commit info:
+	commit 2bb0899010fad78a7cf2eca80ac19208580a63b6 (HEAD -> master, origin/master, origin/HEAD)
+	Author: aravind.est <aravindhan.a@est.tech>
+	Date:   Wed Mar 20 13:47:39 2024 +0000
+
+
+
+
+
+
+
+3. Install non rt RIC
+---------------------
+
+  sudo dep/bin/deploy-nonrtric -f dep/nonrtric/RECIPE_EXAMPLE/example_recipe.yaml
+
+
+
+
+
+
+-------
+X. logs
+--------
+root@ran1:/home/vagrant# dep/bin/deploy-nonrtric -f dep/nonrtric/RECIPE_EXAMPLE/example_recipe.yaml
+** /home/vagrant/dep/bin
+rm: cannot remove '/home/vagrant/dep/bin/../nonrtric/helm/*/charts/*.tgz': No such file or directory
+/tmp /home/vagrant
+Installing ChartMuseum binary...
+--2024-03-28 12:28:24--  https://get.helm.sh/chartmuseum-v0.16.1-linux-amd64.tar.gz
+Resolving get.helm.sh (get.helm.sh)... 152.195.19.97, 2606:2800:11f:1cb7:261b:1f9c:2074:3c
+Connecting to get.helm.sh (get.helm.sh)|152.195.19.97|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 19261781 (18M) [application/x-tar]
+Saving to: ‘chartmuseum-v0.16.1-linux-amd64.tar.gz’
+
+chartmuseum-v0.16.1-linux-amd64. 100%[==========================================================>]  18.37M   109MB/s    in 0.2s
+
+2024-03-28 12:28:24 (109 MB/s) - ‘chartmuseum-v0.16.1-linux-amd64.tar.gz’ saved [19261781/19261781]
+
+linux-amd64/
+linux-amd64/LICENSE
+linux-amd64/chartmuseum
+linux-amd64/README.md
+/home/vagrant
+rm: cannot remove './chartstorage/*': No such file or directory
+Starting ChartMuseum on port 8879...
+Failed to establish a connection with the ChartMuseum server. Retrying after 5s
+Error: no repo named "local" found
+"local" has been added to your repositories
+
+Packaging NONRTRIC common [nonrtric-common]
+Successfully packaged chart and saved it to: /tmp/nonrtric-common-2.0.0.tgz
+{"saved":true}Packaging NONRTRIC component [controlpanel]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/controlpanel-2.0.0.tgz
+Chart upload status of controlpanel is 201
+Packaging NONRTRIC component [a1controller]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/a1controller-2.0.0.tgz
+Chart upload status of a1controller is 201
+Packaging NONRTRIC component [a1simulator]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/a1simulator-2.0.0.tgz
+Chart upload status of a1simulator is 201
+Packaging NONRTRIC component [policymanagementservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/policymanagementservice-2.0.0.tgz
+Chart upload status of policymanagementservice is 201
+Packaging NONRTRIC component [informationservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/informationservice-1.0.0.tgz
+Chart upload status of informationservice is 201
+Packaging NONRTRIC component [rappcatalogueservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/rappcatalogueservice-1.0.0.tgz
+Chart upload status of rappcatalogueservice is 201
+Packaging NONRTRIC component [rappcatalogueenhancedservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/rappcatalogueenhancedservice-1.0.0.tgz
+Chart upload status of rappcatalogueenhancedservice is 201
+Packaging NONRTRIC component [nonrtricgateway]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/nonrtricgateway-1.0.0.tgz
+Chart upload status of nonrtricgateway is 201
+Packaging NONRTRIC component [dmaapadapterservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/dmaapadapterservice-1.0.0.tgz
+Chart upload status of dmaapadapterservice is 201
+Packaging NONRTRIC component [dmaapmediatorservice]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/dmaapmediatorservice-1.0.0.tgz
+Chart upload status of dmaapmediatorservice is 201
+Packaging NONRTRIC component [helmmanager]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/helmmanager-1.0.0.tgz
+Chart upload status of helmmanager is 201
+Packaging NONRTRIC component [orufhrecovery]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/orufhrecovery-1.0.0.tgz
+Chart upload status of orufhrecovery is 201
+Packaging NONRTRIC component [ransliceassurance]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/ransliceassurance-1.0.0.tgz
+Chart upload status of ransliceassurance is 201
+Packaging NONRTRIC component [capifcore]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/capifcore-1.0.0.tgz
+Chart upload status of capifcore is 201
+Packaging NONRTRIC component [rappmanager]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "incubator" chart repository
+...Successfully got an update from the "rancher" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/rappmanager-1.0.0.tgz
+Chart upload status of rappmanager is 201
+Packaging NONRTRIC component [dmeparticipant]
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+Successfully packaged chart and saved it to: /tmp/dmeparticipant-1.0.0.tgz
+Chart upload status of dmeparticipant is 201
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "local" chart repository
+...Successfully got an update from the "rancher" chart repository
+...Successfully got an update from the "incubator" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 17 charts
+Downloading a1controller from repo http://127.0.0.1:8879/charts
+Downloading a1simulator from repo http://127.0.0.1:8879/charts
+Downloading controlpanel from repo http://127.0.0.1:8879/charts
+Downloading policymanagementservice from repo http://127.0.0.1:8879/charts
+Downloading informationservice from repo http://127.0.0.1:8879/charts
+Downloading nonrtric-common from repo http://127.0.0.1:8879/charts
+Downloading rappcatalogueservice from repo http://127.0.0.1:8879/charts
+Downloading rappcatalogueenhancedservice from repo http://127.0.0.1:8879/charts
+Downloading nonrtricgateway from repo http://127.0.0.1:8879/charts
+Downloading dmaapadapterservice from repo http://127.0.0.1:8879/charts
+Downloading dmaapmediatorservice from repo http://127.0.0.1:8879/charts
+Downloading helmmanager from repo http://127.0.0.1:8879/charts
+Downloading ransliceassurance from repo http://127.0.0.1:8879/charts
+Downloading orufhrecovery from repo http://127.0.0.1:8879/charts
+Downloading capifcore from repo http://127.0.0.1:8879/charts
+Downloading rappmanager from repo http://127.0.0.1:8879/charts
+Downloading dmeparticipant from repo http://127.0.0.1:8879/charts
+Deleting outdated charts
+"local" has been added to your repositories
+Finished Packaging NONRTRIC components [controlpanel a1controller a1simulator policymanagementservice informationservice rappcatalogueservice rappcatalogueenhancedservice nonrtricgateway dmaapadapterservice dmaapmediatorservice helmmanager orufhrecovery ransliceassurance capifcore rappmanager dmeparticipant]
+namespace/nonrtric created
+namespace/onap created
+Install Kong- false
+configmap/nonrtric-recipe created
+Deploying NONRTRIC
+Install Ranpm- false
+helm install -f dep/nonrtric/RECIPE_EXAMPLE/example_recipe.yaml --namespace nonrtric  r3-dev-nonrtric /home/vagrant/dep/bin/../nonrtric/helm/nonrtric
+NAME: r3-dev-nonrtric
+LAST DEPLOYED: Thu Mar 28 12:29:00 2024
+NAMESPACE: nonrtric
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+
+
+
+
+
+
+
+
+
+root@ran1:/home/vagrant# kubectl get po -A
+NAMESPACE         NAME                                                    READY   STATUS      RESTARTS   AGE
+calico-system     calico-kube-controllers-7f7959b5db-d9fnv                1/1     Running     0          34m
+calico-system     calico-node-4m54l                                       1/1     Running     0          34m
+calico-system     calico-typha-64454d79cb-rljjx                           1/1     Running     0          34m
+kube-system       cloud-controller-manager-ran1                           1/1     Running     0          35m
+kube-system       etcd-ran1                                               1/1     Running     0          35m
+kube-system       helm-install-rke2-calico-5rcnt                          0/1     Completed   1          35m
+kube-system       helm-install-rke2-calico-crd-r94xm                      0/1     Completed   0          35m
+kube-system       helm-install-rke2-coredns-rzpzm                         0/1     Completed   0          35m
+kube-system       helm-install-rke2-ingress-nginx-wfdtk                   0/1     Completed   0          35m
+kube-system       helm-install-rke2-metrics-server-2zcx2                  0/1     Completed   0          35m
+kube-system       helm-install-rke2-multus-q7n2d                          0/1     Completed   0          35m
+kube-system       kube-apiserver-ran1                                     1/1     Running     0          34m
+kube-system       kube-controller-manager-ran1                            1/1     Running     0          34m
+kube-system       kube-proxy-ran1                                         1/1     Running     0          35m
+kube-system       kube-scheduler-ran1                                     1/1     Running     0          34m
+kube-system       rke2-coredns-rke2-coredns-775c5b4bb4-qrzbp              1/1     Running     0          35m
+kube-system       rke2-coredns-rke2-coredns-autoscaler-695fc554c9-zzmzn   1/1     Running     0          35m
+kube-system       rke2-ingress-nginx-controller-lpv7f                     1/1     Running     0          34m
+kube-system       rke2-metrics-server-644f588b5-ljk5q                     1/1     Running     0          34m
+kube-system       rke2-multus-ds-8dtzr                                    1/1     Running     0          35m
+nonrtric          a1-sim-osc-0                                            1/1     Running     0          32m
+nonrtric          a1-sim-osc-1                                            1/1     Running     0          30m
+nonrtric          a1-sim-std-0                                            1/1     Running     0          32m
+nonrtric          a1-sim-std-1                                            1/1     Running     0          30m
+nonrtric          a1-sim-std2-0                                           1/1     Running     0          32m
+nonrtric          a1-sim-std2-1                                           1/1     Running     0          30m
+nonrtric          a1controller-d566f665d-4wghk                            1/1     Running     0          32m
+nonrtric          capifcore-f7df55548-sczxn                               1/1     Running     0          32m
+nonrtric          controlpanel-6d98b5848f-s44lq                           1/1     Running     0          32m
+nonrtric          db-55c786598c-lz788                                     1/1     Running     0          32m
+nonrtric          dmaapadapterservice-0                                   1/1     Running     0          32m
+nonrtric          dmaapmediatorservice-0                                  1/1     Running     0          32m
+nonrtric          helmmanager-0                                           1/1     Running     0          32m
+nonrtric          informationservice-0                                    1/1     Running     0          32m
+nonrtric          nonrtricgateway-fb586597b-vdsvz                         1/1     Running     0          32m
+nonrtric          orufhrecovery-6d44dd5849-klvrz                          1/1     Running     0          32m
+nonrtric          policymanagementservice-0                               1/1     Running     0          32m
+nonrtric          ransliceassurance-5f9457b749-ws6k4                      1/1     Running     0          32m
+nonrtric          rappcatalogueenhancedservice-579f4dc4cc-7gwdg           1/1     Running     0          32m
+nonrtric          rappcatalogueservice-c5f776b5c-2x7hx                    1/1     Running     0          32m
+nonrtric          rappmanager-0                                           1/1     Running     0          32m
+tigera-operator   tigera-operator-b77ddd45f-5kc2f                         1/1     Running     0          35m
+
+
+
+root@ran1:/home/vagrant# helm ls -A
+NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                                               APP VERSION
+r3-dev-nonrtric         nonrtric        1               2024-03-28 12:29:00.075308289 -0400 EDT deployed        nonrtric-2.0.0      
+rke2-calico             kube-system     1               2024-03-28 16:26:29.914684352 +0000 UTC deployed        rke2-calico-v3.24.501                               v3.24.5
+rke2-calico-crd         kube-system     1               2024-03-28 16:26:26.36804388 +0000 UTC  deployed        rke2-calico-crd-v3.24.501
+rke2-coredns            kube-system     1               2024-03-28 16:26:26.762468517 +0000 UTC deployed        rke2-coredns-1.19.401                               1.9.3
+rke2-ingress-nginx      kube-system     1               2024-03-28 16:27:19.014047733 +0000 UTC deployed        rke2-ingress-nginx-4.1.008                          1.2.0
+rke2-metrics-server     kube-system     1               2024-03-28 16:27:16.600683755 +0000 UTC deployed        rke2-metrics-server-2.11.100-build2022101107        0.6.1
+rke2-multus             kube-system     1               2024-03-28 16:26:28.888087965 +0000 UTC deployed        rke2-multus-v3.9-build2022102805                    3.9
+
+
+
+
+
+
+root@ran1:/home/vagrant# cat dep/nonrtric/RECIPE_EXAMPLE/example_recipe.yaml
+#  ============LICENSE_START===============================================
+#  Copyright (C) 2023 Nordix Foundation. All rights reserved.
+#  Copyright (C) 2023-2024 OpenInfra Foundation Europe. All rights reserved.
+#  ========================================================================
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#  ============LICENSE_END=================================================
+
+#-------------------------------------------------------------------------
+# Global common setting
+#-------------------------------------------------------------------------
+
+
+# Here you can enable inclusion or exclusion of each component. A not enabled component will not be installed.
+nonrtric:
+  installPms: true
+  installA1controller: true
+  installA1simulator: true
+  installControlpanel: true
+  installInformationservice: true
+  installRappcatalogueservice: true
+  installRappcatalogueenhancedservice: true
+  installNonrtricgateway: true
+  installKong: false
+  installDmaapadapterservice: true
+  installDmaapmediatorservice: true
+  installHelmmanager: true
+  installOrufhrecovery: true
+  installRansliceassurance: true
+  installCapifcore: true
+  installRanpm: false
+  # rApp Manager functionality relies on ACM for its operation
+  installrAppmanager: true
+  # DME Participant should only be activated when ACM installation is available for this participant to utilize
+  installDmeParticipant: false
+
+  volume1:
+    # Set the size to 0 if you do not need the volume (if you are using Dynamic Volume Provisioning)
+    size: 2Gi
+    storageClassName: pms-storage
+    hostPath: /var/nonrtric/pms-storage
+  volume2:
+     # Set the size to 0 if you do not need the volume (if you are using Dynamic Volume Provisioning)
+    size: 2Gi
+    storageClassName: ics-storage
+    hostPath: /var/nonrtric/ics-storage
+  volume3:
+    size: 1Gi
+    storageClassName: helmmanager-storage
+common:
+  releasePrefix: r3-dev-nonrtric
+# Do not change the namespace
+  namespace:
+    nonrtric: nonrtric
+  ingressClassName: kong
+
+informationservice:
+  informationservice:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: 'nonrtric-plt-informationcoordinatorservice'
+      tag: 1.6.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 9082
+      targetPort1: 8083
+      httpsName: https
+      internalPort2: 9083
+      targetPort2: 8434
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    persistence:
+      # Either refer to a volume created under the nonrtric by storageClassName. Then the claimed size should be the same.
+      # The alternative use a dynamic volume provisioner in the cluster. Storage class can then be for instance 'standard' or 'gluster-fs' (depeneds on which classes that are available)
+      size: 2Gi
+      storageClassName: ics-storage
+    ingress:
+      enabled: true
+
+# Need to check the external port Availability
+policymanagementservice:
+  policymanagementservice:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: nonrtric-plt-a1policymanagementservice
+      tag: 2.7.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 9080
+      targetPort1: 8081
+      httpsName: https
+      internalPort2: 9081
+      targetPort2: 8433
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    persistence:
+      # Either refer to a volume created under the nonrtric by storageClassName. Then the claimed size should be the same.
+      # The alternative use a dynamic volume provisioner in the cluster. Storage class can then be for instance 'standard' or 'gluster-fs' (depeneds on which classes that are available)
+      size: 2Gi
+      storageClassName: pms-storage
+    ingress:
+      enabled: true
+
+# A1 Controller may take few more minutes to start. Increase the initialDelaySeconds in liveness to avoid container restart.
+a1controller:
+  a1controller:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.onap.org:10002/onap'
+      name: sdnc-image
+      tag: 2.1.6
+    replicaCount: 1
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 8282
+      targetPort1: 8181
+      httpsName: https
+      internalPort2: 8383
+      targetPort2: 8443
+    liveness:
+      initialDelaySeconds: 300
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+
+a1simulator:
+  a1simulator:
+    name: a1-sim
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: a1-simulator
+      tag: 2.6.1
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 8085
+      targetPort1: 8085
+      httpsName: https
+      internalPort2: 8185
+      targetPort2: 8185
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    oscVersion:
+      name: a1-sim-osc
+      replicaCount: 2
+    stdVersion:
+      name: a1-sim-std
+      replicaCount: 2
+    stdVersion2:
+      name: a1-sim-std2
+      replicaCount: 2
+
+controlpanel:
+  controlpanel:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: nonrtric-controlpanel
+      tag: 2.5.0
+    replicaCount: 1
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 8080
+      targetPort1: 8080
+      externalPort1: 30091
+      httpsName: https
+      internalPort2: 8081
+      targetPort2: 8082
+      externalPort2: 30092
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    ingress:
+      enabled: false
+
+rappcatalogueservice:
+  rappcatalogueservice:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: nonrtric-plt-rappcatalogue
+      tag: 1.2.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 9085
+      targetPort1: 8680
+      httpsName: https
+      internalPort2: 9086
+      targetPort2: 8633
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+
+rappcatalogueenhancedservice:
+  rappcatalogueenhancedservice:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: nonrtric-plt-rappcatalogue-enhanced
+      tag: 1.1.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 9696
+      targetPort1: 9696
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+
+nonrtricgateway:
+  nonrtricgateway:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: nonrtric-gateway
+      tag: 1.2.0
+    service:
+      httpName: http
+      internalPort1: 9090
+      targetPort1: 9090
+      externalPort1: 30093
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+
+dmaapadapterservice:
+  dmaapadapterservice:
+    imagePullPolicy: Always
+    image:
+      registry: 'nexus3.o-ran-sc.org:10002/o-ran-sc'
+      name: 'nonrtric-plt-dmaapadapter'
+      tag: 1.3.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 9087
+      targetPort1: 8084
+      httpsName: https
+      internalPort2: 9088
+      targetPort2: 8435
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+
+dmaapmediatorservice:
+  dmaapmediatorservice:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: "nonrtric-plt-dmaapmediatorproducer"
+      tag: 1.2.0
+    service:
+      allowHttp: true
+      httpName: http
+      internalPort1: 8085
+      targetPort1: 8085
+      httpsName: https
+      internalPort2: 8185
+      targetPort2: 8185
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+
+helmmanager:
+  helmmanager:
+    clusterRoleName: cluster-admin
+    imagePullPolicy: Always
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: "nonrtric-plt-helmmanager"
+      tag: 1.3.0
+    service:
+      httpName: http
+      internalPort1: 8112
+      targetPort1: 8083
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    persistence:
+      # Either refer to a volume created under the nonrtric by storageClassName. Then the claimed size should be the same.
+      # The alternative use a dynamic volume provisioner in the cluster. Storage class can then be for instance 'standard' or 'gluster-fs' (depeneds on which classes that are available)
+      size: 1Gi
+      storageClassName: helmmanager-storage
+
+ransliceassurance:
+  ransliceassurance:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: "nonrtric-rapp-ransliceassurance"
+      tag: 1.3.0
+    env:
+      mr_host: "http://onap-dmaap"
+      mr_port: "3904"
+      sdnr_address: "http://sdnr:8181"
+      sdnr_user: "admin"
+      sdnr_password: "Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U"
+      log_level: "Info"
+      polltime: "10"
+      node_id: "o-du-1122"
+
+orufhrecovery:
+  orufhrecovery:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: "nonrtric-rapp-orufhrecovery-consumer"
+      tag: 1.1.0
+    env:
+      consumer_host: "http://mrproducer"
+      consumer_port: "8095"
+      consumer_cert_path: "security/consumer.crt"
+      consumer_key_path: "security/consumer.key"
+      info_coord_addr: "http://ics:8083"
+      sdnr_address: "http://sdnr:8282"
+      sdnr_user: "admin"
+      sdnr_password: "Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U"
+      oru_to_odu_map_file: "o-ru-to-o-du-map.csv"
+      log_level: "Info"
+
+
+capifcore:
+  capifcore:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: nonrtric-plt-capifcore
+      tag: 1.2.0
+    env:
+      chart_museum_url: "http://chartmuseum:8080"
+      repo_name: "capifcore"
+
+rappmanager:
+  rappmanager:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: nonrtric-plt-rappmanager
+      tag: 0.0.1
+    service:
+      httpName: http
+      internalPort1: 8080
+      targetPort1: 8080
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    ingress:
+      enabled: true
+    acm:
+      username: cnVudGltZVVzZXI=
+      password: emIhWHp0RzM0
+
+dmeparticipant:
+  dmeparticipant:
+    imagePullPolicy: IfNotPresent
+    image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      name: nonrtric-plt-participant-impl-dme
+      tag: 0.0.1
+    service:
+      httpName: http
+      internalPort1: 8080
+      targetPort1: 8080
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    ingress:
+      enabled: false
+    security:
+      username: cGFydGljaXBhbnRVc2VyCg==
+      password: emIhWHp0RzM0
+root@ran1:/home/vagrant#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
