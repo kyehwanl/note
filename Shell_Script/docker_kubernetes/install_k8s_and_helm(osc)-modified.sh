@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 #
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
@@ -61,7 +61,8 @@ start_ipv6_if () {
   fi
 }
 
-KUBEV="1.16.0"
+#KUBEV="1.16.0"
+KUBEV="1.29.1"
 KUBECNIV="0.7.5"
 HELMV="3.5.4"
 DOCKERV="20.10.21"
@@ -152,7 +153,7 @@ echo "### k8s version     = "${KUBEV}
 echo "### helm version    = "${HELMV}
 echo "### k8s cni version = "${KUBECNIV}
 
-KUBEVERSION="${KUBEV}-00"
+KUBEVERSION="${KUBEV}-1.1"
 CNIVERSION="${KUBECNIV}-00"
 DOCKERVERSION="${DOCKERV}"
 
@@ -178,8 +179,8 @@ fi
 
 echo "docker version to use = "${DOCKERVERSION}
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
+#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+#echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
 
 mkdir -p /etc/apt/apt.conf.d
 echo "APT::Acquire::Retries \"3\";" > /etc/apt/apt.conf.d/80-retries
@@ -208,25 +209,66 @@ for PKG in kubeadm docker.io; do
 done
 apt-get -y autoremove
 
-if [ -z ${DOCKERVERSION} ]; then
-  apt-get install -y $APTOPTS docker.io
-else
-  apt-get install -y $APTOPTS docker.io=${DOCKERVERSION}
-fi
-cat > /etc/docker/daemon.json <<EOF
-{
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2"
-}
+
+
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg]  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo apt install -y apt-transport-https ca-certificates curl
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# Fix Containerd so that it does not disable CRI for Kubernetes
+sudo rm /etc/containerd/config.toml
+cat <<EOF >/etc/containerd/config.toml
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+   [plugins."io.containerd.grpc.v1.cri".containerd]
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
 EOF
-mkdir -p /etc/systemd/system/docker.service.d
-systemctl enable docker.service
-systemctl daemon-reload
-systemctl restart docker
+sudo systemctl restart containerd
+
+
+# Bridged Network Traffic
+modprobe br_netfilter
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+
+sudo apt update 
+#sudo apt install -y kubeadm=1.29.1-1.1 kubelet=1.29.1-1.1 kubectl=1.29.1-1.1
+#sudo apt-mark hold kubelet kubeadm kubectl
+
+
+#if [ -z ${DOCKERVERSION} ]; then
+#  apt-get install -y $APTOPTS docker.io
+#else
+#  apt-get install -y $APTOPTS docker.io=${DOCKERVERSION}
+#fi
+#cat > /etc/docker/daemon.json <<EOF
+#{
+#  "exec-opts": ["native.cgroupdriver=systemd"],
+#  "log-driver": "json-file",
+#  "log-opts": {
+#    "max-size": "100m"
+#  },
+#  "storage-driver": "overlay2"
+#}
+#EOF
+#mkdir -p /etc/systemd/system/docker.service.d
+#systemctl enable docker.service
+#systemctl daemon-reload
+#systemctl restart docker
 
 if [ -z ${CNIVERSION} ]; then
   apt-get install -y $APTOPTS kubernetes-cni
@@ -299,6 +341,20 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 mode: ipvs
 EOF
+  elif [[ ${KUBEV} == 1.29.* ]]; then
+    cat <<EOF >/root/config.yaml
+apiVersion: kubeadm.k8s.io/v1beta3
+kubernetesVersion: v${KUBEV}
+kind: ClusterConfiguration
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/12
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: ipvs
+EOF
   else
     echo "Unsupported Kubernetes version requested.  Bail."
     exit
@@ -339,11 +395,14 @@ EOF
   kubectl get pods --all-namespaces
 
   # we refer to version 0.18.1 because later versions use namespace kube-flannel instead of kube-system TODO
-  kubectl apply -f "https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml"
+  #kubectl apply -f "https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml"
+  kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
-  wait_for_pods_running 8 kube-system
+  wait_for_pods_running 7 kube-system
 
-  kubectl taint nodes --all node-role.kubernetes.io/master-
+  # master node is no longer used, instead control-plane
+  #kubectl taint nodes --all node-role.kubernetes.io/master-
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
   HELMV=$(cat /opt/config/helm_version.txt)
   HELMVERSION=${HELMV}

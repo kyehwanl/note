@@ -1,0 +1,270 @@
+
+------------------
+1. Function Test
+------------------
+https://wiki.o-ran-sc.org/display/RICNR/Function+Test
+
+(1)
+	Required environment:
+
+	Bash shell
+	docker (latest)
+	docker-compose (latest)
+	python3 (latest)
+	minikube (latest) or a local kubernetes cluster - only needed when running in kubernetes mode
+
+
+	$ git clone "https://gerrit.o-ran-sc.org/r/nonrtric"
+	$ cd nonrtric/test/autotest
+
+
+(2) command log
+	$ ./FTC100.sh remote docker --env-file ../common/test_env-oran-cherry.sh
+
+
+	root@ric:~/nonrtric/test/auto-test# ./FTC100.sh remote docker --env-file ../common/test_env-oran-g-release.sh                       
+	Test case started as: ./FTC100.sh remote docker --env-file ../common/test_env-oran-g-release.sh
+	-------------------------------------------------------------------------------------------------
+	-----------------------------------      Test case: FTC100
+	-----------------------------------      Started:   Thu 04 Apr 2024 01:52:01 PM EDT
+	-------------------------------------------------------------------------------------------------
+	-- Description: Full a1pms API walkthrough using a1pms REST and with/without SDNC A1 Controller
+	-------------------------------------------------------------------------------------------------
+	-----------------------------------      Test case setup      -----------------------------------
+	Setting AUTOTEST_HOME=/root/nonrtric/test/auto-test
+	Setting RUNMODE=DOCKER
+	Option set - Reading test env from: ../common/test_env-oran-g-release.sh
+
+	Sourcing env vars from: ../common/test_env-oran-g-release.sh
+	Test case supports the selected test env file
+
+	Auto adding system apps
+	 None
+	Auto adding included apps
+	 Auto-adding included app CP                Sourcing ../common/cp_api_functions.sh
+	 Auto-adding included app CR                Sourcing ../common/cr_api_functions.sh
+	 Auto-adding included app MR                Sourcing ../common/mr_api_functions.sh
+	 Auto-adding included app A1PMS             Sourcing ../common/a1pms_api_functions.sh
+	 Auto-adding included app RICSIM            Sourcing ../common/ricsim_api_functions.sh
+	 Auto-adding included app SDNC              Sourcing ../common/sdnc_api_functions.sh
+	 Auto-adding included app NGW               Sourcing ../common/ngw_api_functions.sh
+	 Auto-adding included app KUBEPROXY         Sourcing ../common/kubeproxy_api_functions.sh
+
+	Test environment info
+	 bash is installed and using version:
+	  GNU bash, version 5.0.17(1)-release (x86_64-pc-linux-gnu)
+	  Copyright (C) 2019 Free Software Foundation, Inc.
+	  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+	  This is free software; you are free to change and redistribute it.
+	  There is NO WARRANTY, to the extent permitted by law.
+	 python3 is installed and using version: Python 3.8.10
+	 docker is installed and using versions:
+	  Client version 20.10.21 Server version 20.10.21
+	 docker-compose installed and using version Docker Compose version v2.26.0
+
+	Checking configured image setting for this test case
+
+	Images configured for start arg: remote
+	 Application                App short name  Image                                                                      tag            tag-switch
+	 Policy Management Service  A1PMS           nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-plt-a1policymanagementservice  2.5.0          REMOTE
+	 SDNC A1 Controller         SDNC            nexus3.onap.org:10002/onap/sdnc-image                                      2.3.2          REMOTE_RELEASE_ONAP
+	 SDNC DB                    SDNC            nexus3.o-ran-sc.org:10001/mariadb                                          10.5           REMOTE_PROXY
+	 Control Panel              CP              nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-controlpanel                   2.4.0          REMOTE
+	 NonRT-RIC Gateway          NGW             nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-gateway                        1.1.0          REMOTE
+	 Near-RT RIC A1 Simulator   RICSIM          nexus3.o-ran-sc.org:10004/o-ran-sc/a1-simulator                            2.4.0          REMOTE
+	 Message Router stub        MR              mrstub                                                                     latest-x86_64  LOCAL
+	 Callback receiver          CR              callback-receiver                                                          latest-x86_64  LOCAL
+	 Kube Http Proxy            KUBEPROXY       nodejs-kube-proxy                                                          latest-x86_64  LOCAL
+
+	Setting var to main dir of all container/simulator scripts
+	 SIM_GROUP auto set to:  /root/nonrtric/test/auto-test/../simulator-group
+
+	Deleting namespaces
+	 Namespace delete option not set or ignored
+
+	Deleting containers
+	 Contatiner delete option not set or ignored
+
+	Pulling configured images, if needed
+	 Checking Policy Management Service container(s) with basename: policymanagementservice using image: nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-plt-a1policymanagementservice:2.5.0
+-->	Error response from daemon: manifest for nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-plt-a1policymanagementservice:2.5.0 not found: manifest unknown: manifest unknown
+
+-->	  Pulling image - could not be pulled
+
+	 Excluding ICS image from image check/pull
+	 Checking SDNC A1 Controller container(s) with basename: a1controller using image: nexus3.onap.org:10002/onap/sdnc-image:2.3.2
+-->	  Pulling image - Newer image pulled
+	 Checking SDNC DB container(s) with basename: a1controller using image: nexus3.o-ran-sc.org:10001/mariadb:10.5
+	  Pulling image - OK (exists in local repository)
+	 Checking Control Panel container(s) with basename: controlpanel using image: nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-controlpanel:2.4.0
+	Error response from daemon: manifest for nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-controlpanel:2.4.0 not found: manifest unknown: manifest unknown
+
+	  Pulling image - could not be pulled
+
+	 Checking NonRT-RIC Gateway container(s) with basename: nonrtricgateway using image: nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-gateway:1.1.0
+	Error response from daemon: manifest for nexus3.o-ran-sc.org:10004/o-ran-sc/nonrtric-gateway:1.1.0 not found: manifest unknown: manifest unknown
+
+	  Pulling image - could not be pulled
+
+	 Excluding RC image from image check/pull
+	 Checking Near-RT RIC A1 Simulator container(s) with basename: ricsim_g using image: nexus3.o-ran-sc.org:10004/o-ran-sc/a1-simulator:2.4.0
+	Error response from daemon: manifest for nexus3.o-ran-sc.org:10004/o-ran-sc/a1-simulator:2.4.0 not found: manifest unknown: manifest unknown
+
+	  Pulling image - could not be pulled
+
+	 Excluding RICMEDIATORSIM image from image check/pull
+	 Excluding HTTPPROXY image from image check/pull
+	 Excluding DMAAPMR image from image check/pull
+	 Excluding PRODSTUB image from image check/pull
+	 Excluding DMAAPMED image from image check/pull
+	 Excluding DMAAPADP image from image check/pull
+	 Excluding PVCCLEANER image from image check/pull
+	 Excluding KAFKAPC image from image check/pull
+	 Excluding CHARTMUS image from image check/pull
+	 Excluding HELMMANAGER image from image check/pull
+	 Excluding LOCALHELM image from image check/pull
+	 Excluding KEYCLOAK image from image check/pull
+	 Excluding ISTIO image from image check/pull
+	 Excluding AUTHSIDECAR image from image check/pull
+
+ 	#################################################################################################
+	One or more images could not be pulled or containers using the images could not be stopped/removed
+	Or local image, overriding remote image, does not exist
+
+	Note that SNAPSHOT and staging images may be purged from nexus after a certain period.
+	In addition, the image may not have been updated in the current release so no SNAPSHOT or staging image exists
+	In these cases, switch to use a released image instead, use the flag '--use-release-image <App-short-name>'
+	Use the 'App-short-name' for the applicable image from the above table: 'Images configured for start arg'.
+	#################################################################################################
+
+	root@ric:~/nonrtric/test/auto-test#
+
+
+
+(3) Result
+ pulling image error causes test failure
+
+
+
+-----------------------------------
+2. Release I - Run in Docker Test
+-----------------------------------
+https://wiki.o-ran-sc.org/display/RICNR/Release+I+-+Run+in+Docker
+
+
+(1) Run the A1 Simulator (Near-RT-RIC simulator) Docker Containers
+--> failed 
+ric1,2,3 not activated 
+
+(2) Run the NONRTRIC Gateway and NONRTRIC Control Panel Docker Container
+--> port 9090 doesn't respond 
+cannot read ric policy or access any or ric
+
+
+
+
+
+
+-------------------------------------
+3. install_k8s_and_helm from ric-dep
+-------------------------------------
+
+root@ramp:~# cd ric-dep/bin/
+root@ramp:~/ric-dep/bin# ./install_k8s_and_helm.sh 
++ KUBEV=1.16.0                           
++ KUBECNIV=0.7.5                         
++ HELMV=3.5.4                            
++ DOCKERV=20.10.21                       
++ echo running ./install_k8s_and_helm.sh 
+...
+
++ echo '### Docker version  = 20.10.21'
+### Docker version  = 20.10.21         
++ echo '### k8s version     = 1.16.0'  
+### k8s version     = 1.16.0           
++ echo '### helm version    = 3.5.4'   
+### helm version    = 3.5.4            
++ echo '### k8s cni version = 0.7.5'   
+### k8s cni version = 0.7.5            
++ KUBEVERSION=1.16.0-00                
++ CNIVERSION=0.7.5-00                  
++ DOCKERVERSION=20.10.21               
+
+...
+
+docker version to use = 20.10.21-0ubuntu1~18.04.4                
++ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg  
++ apt-key add -                                                  
+OK                                                               
++ echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main'    
++ mkdir -p /etc/apt/apt.conf.d                                   
++ echo 'APT::Acquire::Retries "3";'                              
++ apt-get update
+Hit:1 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu bionic InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+Ign:5 https://packages.cloud.google.com/apt kubernetes-xenial InRelease
+Err:6 https://packages.cloud.google.com/apt kubernetes-xenial Release
+  404  Not Found [IP: 142.250.72.46 443]
+Reading package lists... Done
+E: The repository 'http://apt.kubernetes.io kubernetes-xenial Release' does not have a Release file.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+
+
+
+
+---> CAUSE
+google cloud no longer (after 3/26/2024) available,
+https://v1-28.docs.kubernetes.io/blog/2023/08/31/legacy-package-repository-deprecation/
+
+Need to change key repository to the place where community-owned:
+https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

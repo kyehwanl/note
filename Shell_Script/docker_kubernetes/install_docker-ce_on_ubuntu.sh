@@ -15,6 +15,9 @@ sudo apt update -y
 # Install Docker on Ubuntu 18.04
 sudo apt install -y docker-ce
 
+# optional 
+#sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# docker-compose-plugin : docker compose [command] <-- this is not the same with 'docker-compose'
 
 
 

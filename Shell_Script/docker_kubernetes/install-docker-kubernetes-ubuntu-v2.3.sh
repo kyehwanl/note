@@ -14,7 +14,7 @@ sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 
 
-# 2. Install Kubernetes 
+# 2. Install Kubernetes  <-- *** repository deprecated ***
 # written on the official web page
 
 sudo apt-get update && sudo apt-get install -y apt-transport-https curl
@@ -24,6 +24,21 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 sudo apt-get update
 sudo apt-get install -y kubelet=1.25.5-00 kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+
+# ----------------------------
+# 2 (updated, 2024.03)
+# ----------------------------
+# confer to following pages,
+# https://v1-28.docs.kubernetes.io/blog/2023/08/31/legacy-package-repository-deprecation/
+# https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/
+#
+sudo apt-get install -y apt-transport-https ca-certificates curl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.25/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.25/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
 

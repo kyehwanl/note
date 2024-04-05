@@ -815,90 +815,40 @@ local/ric-common        3.3.2                           Common templates for inc
 vagrant@oran:~/ric-dep/bin$
 vagrant@oran:~/ric-dep/bin$ helm ls -A
 NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+vagrant@oran:~/ric-dep/bin$ helm repo list
+Error: no repositories to show
+vagrant@oran:~/ric-dep/bin$ helm repo
 
+This command consists of multiple subcommands to interact with chart repositories.
+
+It can be used to add, remove, list, and index chart repositories.
+
+Usage:
+  helm repo [command]
+
+Available Commands:
+  add         add a chart repository
+  index       generate an index file given a directory containing packaged charts
+  list        list chart repositories
+  remove      remove one or more chart repositories
+  update      update information of available charts locally from chart repositories
+
+Flags:
+  -h, --help   help for repo
+
+Global Flags:
+      --debug                       enable verbose output
+      --kube-apiserver string       the address and the port for the Kubernetes API server
+      --kube-as-group stringArray   group to impersonate for the operation, this flag can be repeated to specify multiple groups.
+      --kube-as-user string         username to impersonate for the operation
+      --kube-ca-file string         the certificate authority file for the Kubernetes API server connection
+      --kube-context string         name of the kubeconfig context to use
+      --kube-token string           bearer token used for authentication
+      --kubeconfig string           path to the kubeconfig file
+  -n, --namespace string            namespace scope for this request
+      --registry-config string      path to the registry config file (default "/home/vagrant/.config/helm/registry.json")
+      --repository-cache string     path to the file containing cached repository indexes (default "/home/vagrant/.cache/helm/repository")
+      --repository-config string    path to the file containing repository names and URLs (default "/home/vagrant/.config/helm/repositories.yaml")
+
+Use "helm repo [command] --help" for more information about a command.
 vagrant@oran:~/ric-dep/bin$
-
-
-
-
-
-
-
-
-root@oran:~/ric-dep/RECIPE_EXAMPLE# curl -v http://localhost:32080/appmgr/ric/v1/health/ready                                                                                                                    
-* TCP_NODELAY set                                                                                                                                                                                                
-^C
-
-root@oran:~/ric-dep/RECIPE_EXAMPLE# kubectl get svc                                                                                                                                                              
-kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   24h                root@oran:~/ric-dep/RECIPE_EXAMPLE# kubectl get svc -A
-NAMESPACE     NAME                                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                           AGE                                                                       
-kube-system   kube-dns                                    ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP            24h                                                                       
-ricplt        aux-entry                                   ClusterIP   10.106.200.0     <none>        80/TCP,443/TCP                    5m52s                                                                     
-ricplt        r4-infrastructure-prometheus-alertmanager   ClusterIP   10.97.218.76     <none>        80/TCP                            5m52s                                                                     
-ricplt        service-ricplt-a1mediator-http              ClusterIP   10.102.209.180   <none>        10000/TCP                         5m                                                                        
-ricplt        service-ricplt-alarmmanager-http            ClusterIP   10.104.225.132   <none>        8080/TCP                          4m26s                                                                     
-ricplt        service-ricplt-appmgr-http                  ClusterIP   10.108.188.178   <none>        8080/TCP                          5m34s                                                                     
-ricplt        service-ricplt-dbaas-tcp                    ClusterIP   None             <none>        6379/TCP                          5m43s                                                                     
-ricplt        service-ricplt-e2mgr-rmr                    ClusterIP   10.105.174.31    <none>        4561/TCP,3801/TCP                 5m17s                                                                     
-ricplt        service-ricplt-e2term-rmr-alpha             ClusterIP   10.103.94.119    <none>        4561/TCP,38000/TCP                5m9s                                                                      
-ricplt        service-ricplt-o1mediator-http              ClusterIP   10.111.177.39    <none>        9001/TCP,8080/TCP,3000/TCP        4m35s                                                                     
-ricplt        service-ricplt-rtmgr-rmr                    ClusterIP   10.98.10.197     <none>        4561/TCP,4560/TCP                 5m26s
-ricplt        service-ricplt-submgr-http                  ClusterIP   None             <none>        3800/TCP                          4m52s
-ricplt        service-ricplt-submgr-rmr                   ClusterIP   None             <none>        4560/TCP,4561/TCP                 4m52s
-ricplt        service-ricplt-vespamgr-http                ClusterIP   10.100.247.58    <none>        8080/TCP,9095/TCP                 4m43s
-ricxapp       aux-entry                                   ClusterIP   10.103.152.17    <none>        80/TCP,443/TCP                    5m52s
-
-     *   Trying 127.0.0.1:32080...
-     ^C
-																															
-     NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
-																															
-     default       kubernetes                                  ClusterIP   10.96.0.1        <none>        443/TCP                           24h                                                                                                         
-     ricinfra      service-tiller-ricxapp                      ClusterIP   10.109.238.213   <none>        44134/TCP                         5m52s                                                                                                       
-     ricplt        r4-infrastructure-kong-proxy                NodePort    10.105.57.170    <none>        32080:32080/TCP,32443:32443/TCP   5m52s                                                                                                       
-     ricplt        r4-infrastructure-prometheus-server         ClusterIP   10.111.41.26     <none>        80/TCP                            5m52s                                                                                                       
-     ricplt        service-ricplt-a1mediator-rmr               ClusterIP   10.109.170.251   <none>        4561/TCP,4562/TCP                 5m                                                                                                          
-     ricplt        service-ricplt-alarmmanager-rmr             ClusterIP   10.106.129.94    <none>        4560/TCP,4561/TCP                 4m26s                                                                                                       
-     ricplt        service-ricplt-appmgr-rmr                   ClusterIP   10.109.67.205    <none>        4561/TCP,4560/TCP                 5m34s                                                                                                       
-     ricplt        service-ricplt-e2mgr-http                   ClusterIP   10.96.230.62     <none>        3800/TCP                          5m17s                                                                                                       
-     ricplt        service-ricplt-e2term-prometheus-alpha      ClusterIP   10.101.65.89     <none>        8088/TCP                          5m9s                                                                                                        
-     ricplt        service-ricplt-e2term-sctp-alpha            NodePort    10.98.183.110    <none>        36422:32222/SCTP                  5m9s                                                                                                        
-     ricplt        service-ricplt-o1mediator-tcp-netconf       NodePort    10.106.89.75     <none>        830:30830/TCP                     4m35s                                                                                                       
-     ricplt        service-ricplt-rtmgr-http                   ClusterIP   10.104.99.177    <none>        3800/TCP                          5m26s 
-
-
-
-
-
-< Connection: keep-alive
-< Date: Wed, 21 Feb 2024 17:57:52 GMT
-< X-Kong-Upstream-Latency: 1
-< X-Kong-Proxy-Latency: 1
-< Via: kong/1.4.3
-<
-* Connection #0 to host 10.105.57.170 left intact
-
-
-
-
-
-
-root@oran:~/ric-dep/RECIPE_EXAMPLE# curl -v http://10.105.57.170:32080/appmgr/ric/v1/health/ready
-                                                                                                 
-   Trying 10.105.57.170:32080...
- TCP_NODELAY set
- Connected to 10.105.57.170 (10.105.57.170) port 32080 (#0)
- GET /appmgr/ric/v1/health/ready HTTP/1.1
- Host: 10.105.57.170:32080
- User-Agent: curl/7.68.0
- Accept: */*
-
- Mark bundle as not supporting multiuse
- HTTP/1.1 200 OK
- Content-Length: 0
-
-
-
-
-
-

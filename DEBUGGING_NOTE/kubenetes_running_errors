@@ -407,3 +407,39 @@ Getting rid of taint, add '-' at the end of command argument
 		  sudo apt update
 		  sudo apt install containerd.io -y
 
+
+
+
+
+
+
+
+
+
+
+
+
+---------------
+ETC
+---------------
+
+kubeadm reset : when need to stop, reset kubeadm init
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
