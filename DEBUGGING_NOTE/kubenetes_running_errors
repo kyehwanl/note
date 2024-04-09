@@ -410,9 +410,93 @@ Getting rid of taint, add '-' at the end of command argument
 
 
 
+-------------------------------------------------------
+11. Kubelet not Starting, no Connection to API Server
+-------------------------------------------------------
+(https://admantium.com/blog/kube11_k8s_with_kubeadm_tutorial/)
+
+[issues]
+"Unable to register node with API server" err="Post \"https://167.235.73.16:6443/api/v1/nodes\": dial tcp 167.235.73.16:6443: connect: connection refused" node="kubeadm-master"
+
+
+< solution >
+No containers are started. I followed the kubeadm documentation and used the provided container-d configuration. But this turned out to be wrong. After several attempts, trying configurations on Github, I ended up with this /etc/containerd/config.toml:
+
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+   [plugins."io.containerd.grpc.v1.cri".containerd]
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
 
 
 
+
+-------------------------------------------
+12.  still not see a starting container
+-------------------------------------------
+(https://admantium.com/blog/kube11_k8s_with_kubeadm_tutorial/)
+
+[error]
+ error="failed to create containerd container: get apparmor_parser version: exec: \"apparmor_parser\": executable file not found in $PATH"
+
+
+[Solution]
+> apt install apparmor apparmor-utils
+
+
+
+---------------------------------------------
+13. Persist IPv4 and Bridge Network Settings
+---------------------------------------------
+(https://admantium.com/blog/kube11_k8s_with_kubeadm_tutorial/)
+
+
+# Source: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#forwarding-ipv4-and-letting-iptables-see-bridged-traffic
+> cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+> sudo modprobe overlay
+> sudo modprobe br_netfilter
+
+# sysctl params required by setup, params persist across reboots
+> cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# Apply sysctl params without reboot
+> sudo sysctl --system
+
+
+
+
+-----------------------------------
+14. "unknown field "serviceName" 
+-----------------------------------
+
+(https://stackoverflow.com/questions/64125048/get-error-unknown-field-servicename-in-io-k8s-api-networking-v1-ingressbacken)
+
+
+  paths:
+  - path: /
+	backend:
+	  serviceName: test-app
+	  servicePort: 5000
+
+since 1.19 cluster, it sould be fixed like following, 
+
+	backend:
+	  service:
+		name: test
+		port:
+		  number: 80
 
 
 
