@@ -1,0 +1,87 @@
+
+
+1. Ingress endpoint on k8s after v1.24
+----------------------------------------
+https://stackoverflow.com/questions/76107126/ingress-endpoint-on-k8s-v1-26-3
+
+
+Error:
+
+Error from server
+
+(BadRequest): error when creating "ingress.yaml": 
+Ingress in version "v1" cannot be handled as a Ingress: strict decoding error: 
+unknown field "spec.rules[0].http.paths[0].backend.serviceName", 
+unknown field "spec.rules[0].http.paths[0].backend.servicePort"
+
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    env: prod
+    app: demo-ms
+    layer: frontend
+  name: prod-demo-ingress
+  namespace: prod
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: demo.abc.in
+      http:
+        paths:
+          - backend:
+              serviceName: prod-demo-service
+              servicePort: 8080
+            path: /
+~~
+
+
+
+
+
+
+
+
+( Answers: )
+
+serviceName & servicePort were part of networking.k8s.io/v1beta1
+
+You may have updated the apiVersion but forget to update other fields
+
+Latest config
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx-example
+  rules:
+  - host: demo.abc.in
+    http:
+      paths:
+      - path: /testpath
+        pathType: Prefix
+        backend:
+          service:
+            name: test
+            port:
+              number: 80
+Ref doc : https://kubernetes.io/docs/concepts/services-networking/ingress/
+
+
+
+
+
+
+
+
+
+
+
