@@ -802,6 +802,9 @@ A. When adding vboxnet0,1,2,3,
 
     # No addresses are allowed for host-only adapters
 
+	or 
+	create one again, 
+	sudo vboxmanage hostonlyif ipconfig vboxnet0 --ip 192.168.10.1 --netmask 255.255.255.0
 
 
 

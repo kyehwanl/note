@@ -10,6 +10,12 @@ Vagrant Errors and Issues
 
 (Solution)
     go to VBoxManager in GUI, completely purge or remove the image and try to restart all again
+    
+
+    or 
+
+    try to create again,
+    sudo vboxmanage hostonlyif ipconfig vboxnet0 --ip 192.168.10.1 --netmask 255.255.255.0
 
 
 
