@@ -267,31 +267,31 @@ egrep is exactly same as ‘grep -E’
 2. exclude leading # or empty lines in file
     grep -v -E ‘^\#|^$’ /etc/squid/squid.conf
 3. show lines surrounding each match : -B num (Before), -A num (After) num: number of lines
-	(example)
-		$ cat sd-core/Chart.lock | grep bess-upf -B 3 -A 3
-		- name: 5g-control-plane
-		  repository: https://charts.aetherproject.org
-		  version: 0.6.20
-		- name: bess-upf
-		  repository: https://charts.aetherproject.org
-		  version: 0.0.6
-		- name: 5g-ran-sim
+    (example)
+        $ cat sd-core/Chart.lock | grep bess-upf -B 3 -A 3
+        - name: 5g-control-plane
+          repository: https://charts.aetherproject.org
+          version: 0.6.20
+        - name: bess-upf
+          repository: https://charts.aetherproject.org
+          version: 0.0.6
+        - name: 5g-ran-sim
 4. grep OR, AND, NOT
 (https://www.thegeekstuff.com/2011/10/grep-or-and-not-operators/)
-	(1) OR
-   		grep 'pattern1\|pattern2' filename
-		grep -E 'pattern1|pattern2' filename
-		grep -e pattern1 -e pattern2 filename
-		egrep 'pattern1|pattern2' filename
+    (1) OR
+        grep 'pattern1\|pattern2' filename
+        grep -E 'pattern1|pattern2' filename
+        grep -e pattern1 -e pattern2 filename
+        egrep 'pattern1|pattern2' filename
 
-	(2) AND
-		grep -E 'pattern1.*pattern2' filename
-		grep -E 'pattern1.*pattern2|pattern2.*pattern1' filename
-		grep -E 'pattern1' filename | grep -E 'pattern2'
+    (2) AND
+        grep -E 'pattern1.*pattern2' filename
+        grep -E 'pattern1.*pattern2|pattern2.*pattern1' filename
+        grep -E 'pattern1' filename | grep -E 'pattern2'
 
-	(3) NOT
-		grep -v 'pattern1' filename
-		(example) egrep 'Manager|Developer' employee.txt | grep -v Sales
+    (3) NOT
+        grep -v 'pattern1' filename
+        (example) egrep 'Manager|Developer' employee.txt | grep -v Sales
 
 
 
@@ -358,8 +358,8 @@ egrep is exactly same as ‘grep -E’
 5. gcc -m64 -Xlinker --verbose  2>/dev/null | grep SEARCH | sed 's/SEARCH_DIR("=\?\([^""]\+\)"); */\1\n/g'  | grep -vE '^$'
 
 6. To add library into ldconfig's Cache (ld.so.cache)
-	create a file in /etc/ld.so.conf.d/<filename.conf>, which includes the library path, e.g., /usr/local/lib64/srx/
-	And then, call 'ldconfig' command to update ld.so.cache
+    create a file in /etc/ld.so.conf.d/<filename.conf>, which includes the library path, e.g., /usr/local/lib64/srx/
+    And then, call 'ldconfig' command to update ld.so.cache
 
 
 
@@ -474,54 +474,54 @@ EOF
 
 
  2. kill shell and terminal session
-	(https://www.baeldung.com/linux/kill-terminal)
-	< case > while loop infinately continues, but sesssion lost, so need to kill a certain process(iperf3, here)
+    (https://www.baeldung.com/linux/kill-terminal)
+    < case > while loop infinately continues, but sesssion lost, so need to kill a certain process(iperf3, here)
 
 
-	-- first check out terminal session, pts/6
-	onfadmin@5g1-comp3:~$ ps aux | grep iperf3                                                            
-	onfadmin 42982  0.8  0.0  10540  1236 pts/6    S+   11:42   0:00 iperf3 -c 10.5.0.1 -B 172.250.237.123
-	onfadmin 43007  0.0  0.0  13140  1084 pts/0    S+   11:43   0:00 grep --color=auto iperf3
+    -- first check out terminal session, pts/6
+    onfadmin@5g1-comp3:~$ ps aux | grep iperf3                                                            
+    onfadmin 42982  0.8  0.0  10540  1236 pts/6    S+   11:42   0:00 iperf3 -c 10.5.0.1 -B 172.250.237.123
+    onfadmin 43007  0.0  0.0  13140  1084 pts/0    S+   11:43   0:00 grep --color=auto iperf3
 
-	-- current terminal
-	onfadmin@5g1-comp3:~$ tty                
-	/dev/pts/0                               
+    -- current terminal
+    onfadmin@5g1-comp3:~$ tty                
+    /dev/pts/0                               
 
-	-- list terminal processes (-H: hierarchy, -t: given tty)
-	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/0
-	  PID TTY          TIME CMD              
-	18078 pts/0    00:00:03 bash             
-	45678 pts/0    00:00:00   ps             
+    -- list terminal processes (-H: hierarchy, -t: given tty)
+    onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/0
+      PID TTY          TIME CMD              
+    18078 pts/0    00:00:03 bash             
+    45678 pts/0    00:00:00   ps             
 
-	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6
-	  PID TTY          TIME CMD              
-	38031 pts/6    00:00:02 bash             
-	45748 pts/6    00:00:00   iperf3         
+    onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6
+      PID TTY          TIME CMD              
+    38031 pts/6    00:00:02 bash             
+    45748 pts/6    00:00:00   iperf3         
 
-	-- useful to see parent pid with pstree
-	onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3                         
-			   |                              `-bash(38031)---iperf3(47602) 
+    -- useful to see parent pid with pstree
+    onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3                         
+               |                              `-bash(38031)---iperf3(47602) 
 
-	-- kill or pkill the pid of bash
-	onfadmin@5g1-comp3:~$ kill -9 38031                   
-	onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3       
-	onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6             
-	error: TTY could not be found                         
-														  
+    -- kill or pkill the pid of bash
+    onfadmin@5g1-comp3:~$ kill -9 38031                   
+    onfadmin@5g1-comp3:~$ pstree -hup | grep iperf3       
+    onfadmin@5g1-comp3:~$ ps -H -t /dev/pts/6             
+    error: TTY could not be found                         
+                                                          
 
-	< Otherwise, use this way >
-		(1) shell script to prevent infinite while loop  >
+    < Otherwise, use this way >
+        (1) shell script to prevent infinite while loop  >
 
-		(https://unix.stackexchange.com/questions/42287/terminating-an-infinite-loop)
+        (https://unix.stackexchange.com/questions/42287/terminating-an-infinite-loop)
 
-			while :;  do iperf3 -c 10.5.0.1 -B 172.250.237.124; test $? -eq 1 && break || echo $?; done
+            while :;  do iperf3 -c 10.5.0.1 -B 172.250.237.124; test $? -eq 1 && break || echo $?; done
 
-		--> POSIX also specifies that the value of a command that terminated by a signal is greater than 128
-		For example if you interrupt a command with control-C the exit code will be 130,                                    because SIGINT is signal 2 on Unix systems.
+        --> POSIX also specifies that the value of a command that terminated by a signal is greater than 128
+        For example if you interrupt a command with control-C the exit code will be 130,                                    because SIGINT is signal 2 on Unix systems.
 
 
-		(2) use -tinf switch
-			iperf3 -tinf
+        (2) use -tinf switch
+            iperf3 -tinf
 
 
 
@@ -609,8 +609,8 @@ ssh -i /mnt/c/Users/kyehwanl/Documents/id_rsa -p 22 kyehwanl@pc849.emulab.net
 
 
 
-(36) Create a new Account
-=========================
+(36) Create a new Account 
+===============================
 Use the -m (--create-home) option to create the user home directory as /home/username:
 
 useradd : command adds an entry to the /etc/passwd, /etc/shadow, /etc/group and /etc/gshadow files
@@ -626,8 +626,43 @@ sudo useradd -s /bin/bash username
 
 
 --> Practical Usage
-	useradd -m <userid> -s /bin/bash
-	usermod -aG sudo,adm <userid>
+    useradd -m <userid> -s /bin/bash
+    passwd <userid>
+    usermod -aG sudo,adm,root,wheel <userid>
+
+    ------------------
+     example
+    ------------------
+    # useradd -m kyel -s /bin/bash
+
+    # passwd kyel
+    Changing password for user kyel.
+    New password:
+    Retype new password:
+    passwd: all authentication tokens updated successfully
+
+    # usermod -aG adm,root,wheel kyel
+
+    < check >
+    [root@vmware-005 ~]# su kyel
+    [kyel@vmware-005 root]$ cd
+    [kyel@vmware-005 ~]$ id
+    uid=1001(kyel) gid=1002(kyel) groups=1002(kyel),0(root),4(adm),10(wheel)
+
+
+
+    ------------------------------------------------------------
+     in case of creating a local account same as a NIS account 
+    ------------------------------------------------------------
+    Add a local user as the same name with the NIS account,
+    * useradd -m kyehwanl -s /bin/bash
+        if same name error, delete '+kyehwanl' line in /etc/passwd
+    * usermod -aG sudo,adm,root,wheel kyehwanl
+    * create no password in /etc/shadow (example: kyehwanl::19828:0:99999:7:::)
+    * passwd kyehwanl
+    * change a new uid(1001) to NIS's uid(40021) in /etc/passwd
+
+
 
 
 (37) download from web, curl
@@ -640,16 +675,16 @@ normally, following curl options are used
 (38) Writing Text with Cat command
 ===================================
 A. 
-	cat >> file1
-	111
-	222
-	<Ctl-D>
+    cat >> file1
+    111
+    222
+    <Ctl-D>
 
 B. 
-	cat > file2 << EOF
-	1111
-	2222
-	EOF
+    cat > file2 << EOF
+    1111
+    2222
+    EOF
 
 
 
@@ -657,8 +692,8 @@ B.
 (39) journalctl to see error status
 ===================================
 journalctl <service>
-	$ sudo journalctl -u xrdp.service -f
-		-u: sepcified unit,  -f: follow
+    $ sudo journalctl -u xrdp.service -f
+        -u: sepcified unit,  -f: follow
 
 
 
@@ -666,11 +701,11 @@ journalctl <service>
 (40) set hostname
 ==================
 - set hostname 
-	sudo hostnamectl set-hostname server1.5gtb.nist.gov
+    sudo hostnamectl set-hostname server1.5gtb.nist.gov
 
 - add hostnames to /etc/hosts at each node
-	sudo vim /etc/hosts 
-	192.168.10.20 server1.5gtb.nist.gov
+    sudo vim /etc/hosts 
+    192.168.10.20 server1.5gtb.nist.gov
 
 
 
@@ -678,13 +713,13 @@ journalctl <service>
 (41) ifconfig, netstat install 
 ==============================
 - ubuntu: 
-	apt install net-tools
+    apt install net-tools
 - centos/RHEL:
-	yum install net-tools
+    yum install net-tools
 
 
  (cf) netstat usage: 
-	netstat -tapn | grep "words"
+    netstat -tapn | grep "words"
 
 
 

@@ -1,0 +1,75 @@
+
+------------------------------------
+ Make NIST account to Local account
+------------------------------------
+
+1.  NIS (Netowrk Information System) from Network file system (NFS), 
+
+    in /etc/passwd, 
+    +kyehwanl 
+
+    in /etc/shadow 
+    no entry
+
+
+2. How to change
+
+  (1) if you change password from root without any modification
+    --> Authenciation Error occurs
+
+      # passwd kyehwanl
+      Changing password for user kyehwanl.
+      passwd: Authentication token manipulation error 
+
+
+  (2) Order
+
+    * go to /etc/passwd file, delete +kyehwanl line
+    * input like following, 
+
+        kyehwanl:x:1003:1000::/users/kyehwanl:/bin/bash
+
+     (1003 - next to the last number /etc/passwd numbered) or 1001 if there's no 1001
+     (1000 - admin group number, which shows in /etc/group)
+
+    * add temp password at the end of /etc/shadow file (empty password)
+        kyehwanl::19828:0:99999:7:::
+
+    * as a root, add password by the command 'passwd'
+
+      [root@vmware-059 ~]# passwd kyehwanl
+      Changing password for user kyehwanl.
+      New password:
+      Retype new password:
+      passwd: all authentication tokens updated successfully.
+
+
+    * check from other machine,
+
+      kyehwanl@vmware-065:~$ ssh vmware-059
+      kyehwanl@vmware-059's password:
+      Last login: Mon Apr 15 19:21:08 2024 from vmware-065.antd.nist.gov
+      vmware-059 [1]{~}$
+      vmware-059 [1]{~}$ id
+      uid=1003(kyehwanl) gid=1000(admin) groups=1000(admin),772(antd)
+
+
+
+    
+  (3) if you check /etc/shadow later, 
+        password changed 
+
+      [root@vmware-059 ~]# tail /etc/shadow
+      systemd-bus-proxy:!!:16784::::::
+      systemd-network:!!:16784::::::
+      geoclue:!!:16784::::::
+      setroubleshoot:!!:16784::::::
+      swiagent:!!:17686::::::
+      gluster:!!:17694::::::
+      saned:!!:17931::::::
+      dockerroot:!!:18702::::::
+      kyel:$6$DLYmWN4Y$fEoEvYJ8g9qI/SAa.DdrPj0OgL/6Etr7/YMPy2GRbEGTLC/nqdR334DAo3TuMvFmAAVKBvdcvbSTb6Ffqhalf0:19828:0:99999:7:::
+      kyehwanl:$6$QD0A5qlI$ZlhqODNqCPEFkzVNduQtBJsewc8QPJK1xfu2SOI.ynDOFLkWf5n0MOaXuSIdr3GLOhHpJIQNjRuukJfFoRqrN1:19828:0:99999:7::: 
+
+
+

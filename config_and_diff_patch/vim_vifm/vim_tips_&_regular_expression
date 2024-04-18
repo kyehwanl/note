@@ -389,6 +389,18 @@ In case window switching is not working, (mapping <c-h> to <c-w>h)
 
 
 
+ Replace Tabs with Spaces in python
+======================================
+ retab & set expandtab
+
+1. when using Vim to edit a downloaded or written code, there will be possibly have tab & space problem,
+    which might occur compile errors.
+    vim setting, ":set expandtab" cannot change the tabs which are already written
+    because the setting, set expandtab, are only applied the code which is after the command starts
+
+2. So in order for applying into the previous tabs, command, ":retab"”will change the tabs forcibly
+
+
 
 
 

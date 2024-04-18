@@ -75,9 +75,14 @@ installation
 
 --------------------------
 5. Install Latest version
-	updated on 2023.02.01
+	* updated on 2023.02.01
+ 	* updated, 2024.04.15
 --------------------------
 (https://go.dev/doc/install)
+
+ * updated, 2024.04.15
+ 	- lastest release is v.1.22.2,  https://go.dev/dl/go1.22.2.linux-amd64.tar.gz
+
 
 0. download 
 		wget https://go.dev/dl/go1.19.5.linux-amd64.tar.gz
