@@ -1,0 +1,54 @@
+
+FreeBSD configuration Commands
+===============================
+https://docs.freebsd.org/en/books/handbook/network/
+https://forums.freebsd.org/threads/none-pci.75135/
+
+
+1. booting message grep
+    dmesg | grep bge0
+
+
+2. routing table 
+    netstat -rn 
+
+
+3. system routing restart : /etc/rc.conf apply
+
+
+4. pciconf 
+
+   pciconf -lv
+   pciconf -lv | grep -A1 -B3 network  <-- A1: after 1 line more, -B3: before 3 lines more
+
+
+5. interface config
+
+ ifconfig em0 inet 192.168.1.150/24
+ sysrc ifconfig_em0="inet 192.168.1.150 netmask 255.255.255.0"  : persist after reboot
+ sysrc defaultrouter="192.168.1.1"
+
+
+6. DNS setting in /etc/resolv.conf
+    nameserver 8.8.8.8
+    nameserver 8.8.4.4
+
+
+7. apply and restart 
+    service netif restart && service routing restart
+
+
+
+8. search other intel driver
+    pkg search intel
+
+
+
+
+
+
+
+
+
+
+
