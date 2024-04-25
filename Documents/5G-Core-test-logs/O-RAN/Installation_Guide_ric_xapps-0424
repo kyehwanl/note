@@ -225,9 +225,11 @@ eefa2a2beb3a   chartmuseum/chartmuseum:latest   "/chartmuseum"   38 minutes ago 
 
 
 
-3. Software Installation and Deployment
------------------------------------------
+3. Software, xApp, Installation and Deployment - hw-python
+-----------------------------------------------------------
 https://github.com/o-ran-sc/ric-app-hw-python
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
 
 (1) configure the export CHART_REPO_URL to point chartmuseme
 	export CHART_REPO_URL=http://0.0.0.0:8090
@@ -300,8 +302,23 @@ https://github.com/o-ran-sc/ric-app-hw-python
 
 (4) deploy(install) xapp with helm 
 
+  -- Option.1 : using "dms_cli install" command
+
 	root@ran3:~/hw-python/init# dms_cli install hw-python 1.0.0 ricxapp
 	status: OK
+
+  -- Option.2 :  directly install helm chart which was downloaded by dms_cli
+
+	$ [CHART_REPO_URL=http://<ip>:<port>] dms_cli download_helm_chart <chart-name> <version>
+
+	  root@ran3:~/hw-go# dms_cli download_helm_chart hw-go 1.0.0
+	  status: OK
+
+	  root@ran3:~/hw-go# ll
+	  ...
+	  -rw-r--r-- 1 root root 7.5K Apr 23 22:57 hw-go-1.0.0.tgz
+
+	  And then untar this file and if necessary, modify resources and install
 
 
 
@@ -311,6 +328,7 @@ https://github.com/o-ran-sc/ric-app-hw-python
 	ricxapp       ricxapp-hw-python-6965b44676-tx6sp      ●  0/1   ImagePullBackOff         0 10.244.0.21  ran3
 
 
+	< Error >
 
 	--> successfully deploying but errors with ImagePullBackOff
 		That's because of the following event log
@@ -335,14 +353,157 @@ https://github.com/o-ran-sc/ric-app-hw-python
 			Warning  Failed         2s (x2 over 28s)   kubelet            Error: ImagePullBackOff                                                                                                                                                           
 
 
+	< Solved >
+	--> see 3-2's solution 
+		
+
+
+
+3-2. Software, xApp, Installation and Deployment - hw-go
+-----------------------------------------------------------
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+(1) install 
+
+	******************* HW-GO
+	git clone https://gerrit.o-ran-sc.org/r/ric-app/hw-go
+	cd hw-go
+	docker build -t example.com:80/hw-go:1.2 .
+	export CHART_REPO_URL=http://0.0.0.0:8090
+	vi config/config-file.json
+		modify tag = 1.2
+		modify example.com:80 for "registry"
+		modify name in image to "hw-go"
+	dms_cli onboard ./config/config-file.json ./config/schema.json
+
+
+
+(2) deploy
+	dms_cli install hw-go 1.0.0 ricxapp
+
+
+(3) error 
+	Error: ErrImagePull
+
+
+
+(4) < Solved > use containerd runtime image
+
+		* Reason: 
+			- image, 'example.com:80/hw-go' is made of 'docker build'
+			- But, after kubernetes v1.24, "containerd" is used as a container runtime
+			- So, docker image should be converted into containerd format
+
+
+		* procedures
+			- convert to containerd image
+				docker save -o hw-go.tar example.com:80/hw-go:1.2
+				
+			- import saved tar file 
+		   		ctr -n=k8s.io image import hw-go.tar	
+
+				( -n=k8s.io MUST be presented for kubernetes image )
+
+  			- check list, not using 'crictl images', but use 'ctr image'
+				ctr -n=k8s.io image list
+				...
+				docker.io/library/hw-go:latest
+
+			- need to tag(modify name) 
+  				ctr -n=k8s.io image tag docker.io/library/hw-go:latest example.com:80/hw-go:1.2
+				example.com:80/hw-go:1.2
+
+
+
+(5)  install again with helm chart command
+	root@ran3:~/ric-dep/bin/charts/hw-go# helm install -n ricxapp hw-go ./
+	NAME: hw-go
+	LAST DEPLOYED: Wed Apr 24 00:43:04 2024
+	NAMESPACE: ricxapp
+	STATUS: deployed
+	REVISION: 1
+	TEST SUITE: None
+
+
+	< in k9s display >
+	ricxapp       ricxapp-hw-go-7c8945ccb6-k2rkn      ●  1/1   Running   0 10.244.0.27  ran3  95m
+
+
+	< kubectl log >
+	root@ran3:~/ric-dep/bin/charts/hw-go# kubectl logs -n ricxapp ricxapp-hw-go-7c8945ccb6-k2rkn
+	{"ts":1713933868751,"crit":"INFO","id":"hw-go","mdc":{"time":"2024-04-24T04:44:28"},"msg":"Using config file: config/config-file.json"}
+	{"ts":1713933868752,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Serving metrics on: url=/ric/v1/metrics namespace=ricxapp"}
+	redis: got 7 elements in COMMAND reply, wanted 6
+	{"ts":1713933868758,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp SDL Stored The total number of stored SDL transactions map[]}"}
+	{"ts":1713933868758,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp SDL StoreError The total number of SDL store errors map[]}"}
+	redis: got 7 elements in COMMAND reply, wanted 6
+	{"ts":1713933868763,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp hw_go RICIndicationRx Total number of RIC Indication message received map[]}"}
+	1713933868763 7/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (d07cc97 4.7.0 built: Apr  1 2021)
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"new rmrClient with parameters: ProtPort=4560 MaxSize=2072 ThreadType=0 StatDesc=RMR LowLatency=false FastAck=false Policies=[1]"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR Transmitted The total number of transmited RMR messages map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR Received The total number of received RMR messages map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR TransmitError The total number of RMR transmission errors map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR ReceiveError The total number of RMR receive errors map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Interface name is not able to resolve route ip+net: invalid network interface name"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Xapp started, listening on: :8080"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"rmrClient: Waiting for RMR to be ready ..."}
+	{"ts":1713933869766,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"rmrClient: RMR is ready after 1 seconds waiting..."}
+	{"ts":1713933869767,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"xApp ready call back received"}
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+	{"ts":1713933869770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"List for connected eNBs :"}
+	{"ts":1713933869770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"List of connected gNBs :"}
+	RMR is ready now ...
+	{"ts":1713933873765,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:33"},"msg":"Application='hw-go' is not ready yet, waiting ..."}
+	{"ts":1713933875154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:35"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	{"ts":1713933875154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:35"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933878770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"getService: SERVICE_RICXAPP_HW-GO_HTTP_PORT [tcp: 10.104.238.203:8080]"}
+	{"ts":1713933878770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"getService: SERVICE_RICXAPP_HW-GO_RMR_PORT [tcp: 10.107.149.103:4560]"}
+	{"ts":1713933878789,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"restapi: method=GET url=/ric/v1/config"}
+	{"ts":1713933878790,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Inside appconfigHandler"}
+	{"ts":1713933878794,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Post to 'http://service-ricplt-appmgr-http.ricplt:8080/ric/v1/register' done, status:201 Created"}
+	{"ts":1713933878794,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Registration done, proceeding with startup ..."}
+	{"ts":1713933878835,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"restapi: method=GET url=/ric/v1/config"}
+	{"ts":1713933878835,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Inside appconfigHandler"}
+	{"ts":1713933890153,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:50"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933890154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:50"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+	{"ts":1713933905155,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:05"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933905156,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:05"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	{"ts":1713933920154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:20"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933920155,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:20"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
 
 
 
 
 
-(5) uninstall
+
+
+
+
+
+
+	
+
+
+
+4. Uninstall
+-------------
 	root@ran3:~/hw-python/init# dms_cli uninstall hw-python ricxapp
 	status: OK
+
+	or 
+	helm uninstall  command
+
+
+
+
+
 
 
 

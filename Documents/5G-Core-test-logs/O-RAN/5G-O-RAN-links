@@ -1,0 +1,71 @@
+
+
+1. OSC 
+https://github.com/o-ran-sc
+https://wiki.o-ran-sc.org/display/GS/Getting+Started
+
+1-2. Jira board
+https://jira.o-ran-sc.org/browse/RIC-1054?jql=project%20%3D%20RIC%20AND%20type%20%3D%20Bug%20and%20status%20!%3D%20done%20and%20createdDate%20%3E%20%272020-06-24%2000%3A00%27%20ORDER%20BY%20createdDate%20DESC
+https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=allissues
+
+
+
+
+2. near RT RIC
+
+https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#ric-applications
+https://docs.o-ran-sc.org/projects/o-ran-sc-ric-plt-ric-dep/en/latest/installation-guides.html
+https://github.com/o-ran-sc/ric-plt-ric-dep/tree/master/new-installer
+https://wiki.o-ran-sc.org/display/SIM/Near-RT+RIC+Deployment
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+
+2-2. E2 Sim
+https://wiki.o-ran-sc.org/display/SIM/E2+Simulator#E2Simulator-Buildingdockerimageandrunningsimulatorinstance
+
+
+
+
+3. xApp
+https://docs.o-ran-sc.org/projects/o-ran-sc-ric-app-hw-go/en/latest/onboard-and-deploy.html
+https://github.com/o-ran-sc/ric-app-hw-python/tree/master
+https://hackmd.io/@Min-xiang/HJZF3-xgt
+
+
+
+
+4. SMO, non RT RIC
+https://gerrit.o-ran-sc.org/r/gitweb?p=it/dep.git;a=blob_plain;f=smo-install/README.md;hb=refs/heads/master
+https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#ric-applications
+
+
+
+5. Good example Experiment to read, Min-Xiang
+-----------------------------------------------
+Introduction of Open RAN (Radio Access Network)
+https://hackmd.io/@Min-xiang/rJTdxbECu
+
+[Release D & E]Manual of xApp Installation using DMS Tool
+https://hackmd.io/@Min-xiang/HJZF3-xgt
+
+[F Release] Installation Guide of Near-RT RIC Platform
+https://hackmd.io/@Min-xiang/SJD9Xh5c9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
