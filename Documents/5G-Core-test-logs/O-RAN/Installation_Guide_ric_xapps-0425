@@ -653,7 +653,7 @@ https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?versi
   cd build/
   cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
   cp *.deb ../e2sm_examples/kpm_e2sm/
-  cd ../e2sm_examples/kpm_e2sm/
+  cd ../    <-- location where Dockerfile_kpm is
   docker build -t oransim:0.0.999 .
   docker run -d --name oransim -it oransim:0.0.999
   docker exec -ti oransim /bin/bash
