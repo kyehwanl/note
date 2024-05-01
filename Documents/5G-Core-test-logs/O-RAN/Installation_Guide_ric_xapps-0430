@@ -67,7 +67,12 @@ use script, https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=alliss
 	 ./install -f  ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
 	 --> this command leads to the next actual helm install command
 
-	 helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-infrastructure /root/ric-dep/bin/../he
+      ... 
+      kubectl create configmap -n ricplt ricplt-recipe --from-file=recipe=../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-infrastructure /root/ric-dep/bin/../helm/nfrastructure 
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-dbaas /root/ric-dep/bin/../helm/dbaas                  
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-appmgr /root/ric-dep/bin/../helm/appmgr
+      ...
 
 
 	 --- 3. install Kong ---
@@ -1080,6 +1085,43 @@ https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?versi
 -- ** query to appmgr to get list of all the deployed xapps :
   	curl http://service-ricplt-appmgr-http.ricplt:8080/ric/v1/xapps | jq .
 
+    (example, in my case)
+    root@ran3:~# curl http://10.110.206.238:8080/ric/v1/xapps | jq .                
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current 
+                                     Dload  Upload   Total   Spent    Left  Speed   
+    100   333  100   333    0     0  16650      0 --:--:-- --:--:-- --:--:-- 16650  
+    [                                                                               
+      {                                                                             
+        "instances": [                                                              
+          {                                                                         
+            "ip": "service-ricxapp-hw-go-rmr.ricxapp",                              
+            "name": "hw-go",                                                        
+            "policies": [                                                           
+              1                                                                     
+            ],                                                                      
+            "port": 4560,                                                           
+            "rxMessages": [                                                         
+              "RIC_SUB_RESP",                                                       
+              "A1_POLICY_REQ",                                                      
+              "RIC_HEALTH_CHECK_REQ"                                                
+            ],                                                                      
+            "status": "deployed",                                                   
+            "txMessages": [                                                         
+              "RIC_SUB_REQ",                                                        
+              "A1_POLICY_RESP",                                                     
+              "A1_POLICY_QUERY",                                                    
+              "RIC_HEALTH_CHECK_RESP"                                               
+            ]                                                                       
+          }                                                                         
+        ],                                                                          
+        "name": "hw-go",                                                            
+        "status": "deployed",                                                       
+        "version": "1.0.0"                                                          
+      }                                                                             
+    ]
+
+
+    -- in case of failure, there are 2 options to use port-forwarding
 
 	(Option.1) with port-forwarding command to service-ricplt-appmgr-http
 
@@ -1760,22 +1802,207 @@ ricxapp      service-ricxapp-hw-go-rmr                  ClusterIP  10.107.9.182 
 
 
 
+------------------------------------------
+ gNB in srsRAN project 
+------------------------------------------
+https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/source/index.html
+- e2sim can be replaced or both run with gnb, from srsRAN project
+
+
+
+
+(1) installation
+  $ sudo apt-get install cmake make gcc g++ pkg-config libfftw3-dev libmbedtls-dev libsctp-dev libyaml-cpp-dev libgtest-dev
+  $ git clone https://github.com/srsran/srsRAN Project.git
+  $ cd srsRAN Project
+  $ mkdir build
+  $ cd build
+  $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+  $ make -j‵nproc‵
+  $ make test -j‵nproc‵ <-- optinoal
+  $ sudo make install
+
+
+
+(2) config and run
+
+  -- in gnb-config.yaml, 
+
+  ...
+  e2:
+    enable du e2: true
+    addr: 192.0.13.4        <-- whre RIC runs
+    bind addr: 192.0.13.2   <-- gnb node itself
+    e2sm kpm enabled: true
+
+
+  -- to run, 
+      gnb e2 --enable_du_e2=true --addr=10.110.48.165 --port=36422 --bind_addr=10.0.2.15 --e2sm_kpm_enabled=true
+      or 
+      gnb -c <gnb-config.yaml>
+
+        <FYI>
+        root@ran3:~/ric-dep/bin# gnb e2 --help                                      
+        E2 parameters                                                               
+        Usage: gnb e2 [OPTIONS]                                                     
+                                                                                    
+        Options:                                                                    
+          -h,--help                   Print this help message and exit              
+          --enable_du_e2 BOOLEAN      Enable DU E2 agent                            
+          --addr TEXT                 RIC IP address                                
+          --port UINT:INT in [20000 - 40000] [36421]                                
+                                      RIC port                                      
+          --bind_addr TEXT:IPV4       Local IP address to bind for RIC connection   
+          --sctp_rto_initial INT      SCTP initial RTO value                        
+          --sctp_rto_min INT          SCTP RTO min                                  
+          --sctp_rto_max INT          SCTP RTO max                                  
+          --sctp_init_max_attempts INT                                              
+                                      SCTP init max attempts                        
+          --sctp_max_init_timeo INT   SCTP max init timeout                         
+          --e2sm_kpm_enabled BOOLEAN  Enable KPM service module                     
+          --e2sm_rc_enabled BOOLEAN   Enable RC service module                      
+
+
+
+(3) first attempt, error,
+
+The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}
+srsGNB ERROR: The CPU does not support the required CPU features that were configured during compile time: sse4.1(ok) avx(ok) avx2(ok)
+ fma(na) pclmul(ok)
+
+    --> it says, CPU requirements not met ?
+
+        -->  vagrant virtual machine is not good enough ??
+
+        root@ran3:~/ric-dep/bin# lscpu                                           
+        Architecture:                    x86_64                                  
+        CPU op-mode(s):                  32-bit, 64-bit                          
+        Byte Order:                      Little Endian                           
+        Address sizes:                   46 bits physical, 48 bits virtual       
+        CPU(s):                          8                                       
+        On-line CPU(s) list:             0-7                                     
+        Thread(s) per core:              1                                       
+        Core(s) per socket:              8                                       
+        Socket(s):                       1                                       
+        NUMA node(s):                    1                                       
+        Vendor ID:                       GenuineIntel                            
+        CPU family:                      6                                       
+        Model:                           85                                      
+        Model name:                      Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz
+        Stepping:                        4                                       
+        CPU MHz:                         2394.146                                
+        BogoMIPS:                        4788.29                                 
+        Hypervisor vendor:               KVM                                     
+        Virtualization type:             full                                    
+        L1d cache:                       256 KiB                                 
+        L1i cache:                       256 KiB                                 
+        L2 cache:                        8 MiB                                   
+        L3 cache:                        220 MiB  
+
+
+
+
+  < Possible Solution >
+    a. 
+    --> What if I disable or drop the following ZMQ related options on installation, 
+        $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+
+    b. How about using VirtualBox ? 
+    
+
+  < same issue >
+  https://github.com/srsran/srsRAN_Project/discussions/179
 
 
 
 
 
+(4) Error, kubernetes disk-pressure untolerated 
+
+    -- <Cause> 
+        with installing srsRAN Project.git, it took long time to compile and almost 3GB in size.
+        It resulted in low disk space, and kubernetes rejected to make or run its pods anymore. 
+        And in the end, it went to error with disk-pressure, untolerated error message as well. 
+
+        Especially k9s has EoS (End of stream) error
+       
+
+
+diskspace comparison
+(4.1) before installation of srsRAN
+
+root@ran3:~/ric-dep/bin# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+udev                               5.9G     0  5.9G   0% /dev
+tmpfs                              1.2G  4.0M  1.2G   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv   31G   23G  6.2G  79% /
+tmpfs                              5.9G     0  5.9G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+tmpfs                              5.9G     0  5.9G   0% /sys/fs/cgroup
+/dev/loop0                          62M   62M     0 100% /snap/core20/1611
+/dev/loop1                          68M   68M     0 100% /snap/lxd/22753
+/dev/sda2                          2.0G  106M  1.7G   6% /boot
+vagrant                            798G  589G  210G  74% /vagrant
+tmpfs                              1.2G     0  1.2G   0% /run/user/1000
+/dev/loop3                          64M   64M     0 100% /snap/core20/2264
+/dev/loop4                          92M   92M     0 100% /snap/lxd/24061
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/shm
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/5c4d2c754b0e91d21a7e8edb8f9456936053bacdb456ce7125bdeb032af22aef/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/ef0e019900fe4f13f74ba56c7893bfcff4bc9747b3f2c66e1759370afa622deb/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/c838628679c6ddd007ac35d7acbbd169a9b1f3f0d12ea68d13382f7d7c074d75/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/6339fc26c1cf4516e576cc7b0dd17809cb434279d8a0630b010f3e3372b70084/rootfs
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/121f79b0-9fae-4fc3-a1f9-3d0ec5f7fcfd/volumes/kubernetes.io~projected/kube-api-access-qk7x8
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/ecea6d10-6b9b-44f1-916d-aa35b6b07150/volumes/kubernetes.io~projected/kube-api-access-k2j5q
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/fde14f38-7792-44bd-9c69-7fc558f52123/volumes/kubernetes.io~projected/kube-api-access-p4crx
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/f5ee39f4-6073-470b-8f24-d9c4bbaf0bb4/volumes/kubernetes.io~projected/kube-api-access-5kjlp
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/c853964122474ccc6f9548ef1d798a65696a99f985bc24bd99c0cec1f8feaff4/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/e281c78dce50b7baa5c5519d042a6f21d39f21b7b8ba8293dede28898e08d42e/shm
+...
 
 
 
 
+(4.2) After install of srsRAN
 
-
-
-
-
-
-
+root@ran3:~/ric-dep/bin# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+udev                               5.9G     0  5.9G   0% /dev
+tmpfs                              1.2G  3.4M  1.2G   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv   31G   25G  4.0G  87% /
+tmpfs                              5.9G     0  5.9G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+tmpfs                              5.9G     0  5.9G   0% /sys/fs/cgroup
+/dev/loop0                          62M   62M     0 100% /snap/core20/1611
+/dev/loop1                          68M   68M     0 100% /snap/lxd/22753
+/dev/sda2                          2.0G  106M  1.7G   6% /boot
+vagrant                            798G  589G  210G  74% /vagrant
+tmpfs                              1.2G     0  1.2G   0% /run/user/1000
+/dev/loop3                          64M   64M     0 100% /snap/core20/2264
+/dev/loop4                          92M   92M     0 100% /snap/lxd/24061
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/shm
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/5c4d2c754b0e91d21a7e8edb8f9456936053bacdb456ce7125bdeb032af22aef/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/ef0e019900fe4f13f74ba56c7893bfcff4bc9747b3f2c66e1759370afa622deb/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/c838628679c6ddd007ac35d7acbbd169a9b1f3f0d12ea68d13382f7d7c074d75/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/6339fc26c1cf4516e576cc7b0dd17809cb434279d8a0630b010f3e3372b70084/rootfs
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/121f79b0-9fae-4fc3-a1f9-3d0ec5f7fcfd/volumes/kubernetes.io~projected/kube-api-access-qk7x8
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/ecea6d10-6b9b-44f1-916d-aa35b6b07150/volumes/kubernetes.io~projected/kube-api-access-k2j5q
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/fde14f38-7792-44bd-9c69-7fc558f52123/volumes/kubernetes.io~projected/kube-api-access-p4crx
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/f5ee39f4-6073-470b-8f24-d9c4bbaf0bb4/volumes/kubernetes.io~projected/kube-api-access-5kjlp
+...
 
 
 
