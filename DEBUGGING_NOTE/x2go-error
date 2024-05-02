@@ -60,6 +60,72 @@ Solution
 
 
 
+III. x2go client connection error
+==================================
+
+< Error Message >
+
+(1) in client side, (windows 10)
+
+ - dialog box1:
+"The remote proxy closed the connection while negotiating the session. 
+This may be due to the wrong authentication credentials passed to the server."
+
+ - dialog box2: ...unable ssh Tunnel ... audio ...
+  
+
+
+(2) server side, 
+
+  x2go server state file for this session does not exist: /tmp/.x2go
+
+
+	kyehwanl@pwct2:~$ sudo service x2goserver status
+	● x2goserver.service - X2Go Server Daemon
+		 Loaded: loaded (/lib/systemd/system/x2goserver.service; enabled; vendor preset: enabled)
+		 Active: active (running) since Fri 2024-04-19 15:51:01 EDT; 1 week 5 days ago
+		   Docs: man:x2goserver.conf(5)
+	   Main PID: 2157 (x2gocleansessio)
+		  Tasks: 1 (limit: 308903)
+		 Memory: 20.7M
+			CPU: 1d 5h 37min 50.826s
+		 CGroup: /system.slice/x2goserver.service
+				 └─2157 /usr/bin/perl /usr/sbin/x2gocleansessions
+
+	May 01 18:44:14 pwct2 su[2689658]: (to kyehwanl) root on none
+	May 01 18:44:14 pwct2 su[2689658]: pam_unix(su:session): session opened for user kyehwanl(uid=1003) by (uid=0)
+	May 01 18:44:15 pwct2 su[2689658]: pam_unix(su:session): session closed for user kyehwanl
+	May 01 19:03:22 pwct2 /usr/sbin/x2gocleansessions[2157]: kyehwanl-50-1714604601_stDMATE_dp32: state file for this session does not exist: /tmp/.x2go-kyehwanl/C-kyehwanl-50-1714604601_stDMATE_dp32/state (this can be ignored during session startups)
+	May 01 19:04:24 pwct2 su[2692311]: (to kyehwanl) root on none
+
+
+
+
+< Solution >
+(https://bugs.x2go.org/cgi-bin/bugreport.cgi?bug=1219)
+
+Same as I's answer, 
+Somehow 'AllowTcpForwarding' in /etc/ssh/ssd_config changed, (maybe system update ?)
+
+  - AllowTcpForwarding no --> yes, 
+  - then restart ssh service 
+  		kyehwanl@pwct2:~$ sudo service ssh restart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ------------------------------
  Additional useful commands

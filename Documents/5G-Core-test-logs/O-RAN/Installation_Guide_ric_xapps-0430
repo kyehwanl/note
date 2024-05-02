@@ -1811,20 +1811,44 @@ https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/
 
 
 
-(1) installation
+(1) Installation
   $ sudo apt-get install cmake make gcc g++ pkg-config libfftw3-dev libmbedtls-dev libsctp-dev libyaml-cpp-dev libgtest-dev
-  $ git clone https://github.com/srsran/srsRAN Project.git
+  $ git clone https://github.com/srsran/srsRAN_Project.git
   $ cd srsRAN Project
   $ mkdir build
   $ cd build
   $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
-  $ make -j‵nproc‵
-  $ make test -j‵nproc‵ <-- optinoal
+
+  During cmake, it is important that ZMQ is found:
+  -- FINDING ZEROMQ.
+  -- Checking for module ’ZeroMQ’
+  --   No package ’ZeroMQ’ found
+  -- Found libZEROMQ: /usr/local/include, /usr/local/lib/libzmq.so
+  If not, need to enable SCTP.
+
+  -- check SCTP installed
+    As the connections between gNB, Open5GS and FlexRIC use the Stream Control
+    Transmission Protocol (SCTP), it should be enabled on the corresponding servers by
+
+    * installing libsctp-dev
+    $ sudo apt install libsctp-dev
+
+    * using lsmod | grep ’sctp’ to check if SCTP is enabled, 
+
+    * if nothing is returned, comment out the lines in /etc/modprobe.d/sctp.conf:
+    #install sctp /bin/true
+
+    * Then, load the SCTP module by
+    $ sudo modprobe sctp
+
+
+  $ make -j`nproc`
+  $ make test -j‵nproc‵ <-- optional
   $ sudo make install
 
 
 
-(2) config and run
+(2) Config and Run
 
   -- in gnb-config.yaml, 
 
