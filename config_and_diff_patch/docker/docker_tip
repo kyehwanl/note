@@ -117,8 +117,16 @@ Docker Tips
     - To create an image from a running container, save into a new image 
             (for tag name, <username>/<imagename> is recommended)
         docker run -d ubuntu /bin/sh -c "apt-get install -y hello"
+        docker commit [-m <text>] <containerID> <name> 
         docker commit -m "My first container" `dl` tcnksm/hello  <-- 'dl': docker ps -ql, container id
 
+        (example) 
+        $ docker commit -m 'srsRAN_Project gNB on Ubuntu 20.04' 59b4e7f84b56 srsran/gnb
+        sha256:a2b2059b988e5e662366a78ad8548bb8fad38d4bbb908c8b961273ea562d0bf9
+
+        $ docker images 
+        REPOSITORY                     TAG               IMAGE ID       CREATED         SIZE
+        srsran/gnb                     latest            a2b2059b988e   6 seconds ago   3.58GB
 
         *** How can we add capabilities to a running docker container? ***
         (https://stackoverflow.com/questions/38758627/how-can-we-add-capabilities-to-a-running-docker-container)
@@ -178,10 +186,23 @@ Docker Tips
         lets save a local copy of the verse_gapminder docker image we made:
 
             docker save verse_gapminder > verse_gapminder.tar
+            or
+            docker save -o verse_gapminder.tar verse_gapminder  
         
         If we want to load that Docker container from the archived tar file in the future, we can use the docker load command:
 
-            docker load --input verse_gapminder.tar
+            docker load -i|--input verse_gapminder.tar
+
+            < example >
+            vagrant@ran1:~$ docker load -i /vagrant/oransim-e2sim.tar
+            b43408d5f11b: Loading layer  65.62MB/65.62MB
+            23135df75b44: Loading layer  15.87kB/15.87kB
+            ...
+            Loaded image: oransim:0.0.999
+
+            vagrant@ran1:~$ docker images
+            REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+            oransim      0.0.999   dba6483eb351   4 weeks ago   2.65GB
  
 
 10. set IP address to a docker container
