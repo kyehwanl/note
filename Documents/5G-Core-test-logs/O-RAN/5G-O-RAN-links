@@ -4,15 +4,15 @@
 https://github.com/o-ran-sc
 https://wiki.o-ran-sc.org/display/GS/Getting+Started
 
+
 1-2. Jira board
+https://jira.o-ran-sc.org/secure/Dashboard.jspa  <-- System Dashboard (all)
 https://jira.o-ran-sc.org/browse/RIC-1054?jql=project%20%3D%20RIC%20AND%20type%20%3D%20Bug%20and%20status%20!%3D%20done%20and%20createdDate%20%3E%20%272020-06-24%2000%3A00%27%20ORDER%20BY%20createdDate%20DESC
 https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=allissues
 
 
 
-
 2. near RT RIC
-
 https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#ric-applications
 https://docs.o-ran-sc.org/projects/o-ran-sc-ric-plt-ric-dep/en/latest/installation-guides.html
 https://github.com/o-ran-sc/ric-plt-ric-dep/tree/master/new-installer
@@ -34,9 +34,10 @@ https://hackmd.io/@Min-xiang/HJZF3-xgt
 
 
 
-4. SMO, non RT RIC
+4. SMO (Service Management and Orchestration), non RT RIC
 https://gerrit.o-ran-sc.org/r/gitweb?p=it/dep.git;a=blob_plain;f=smo-install/README.md;hb=refs/heads/master
 https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#ric-applications
+https://docs.o-ran-sc.org/projects/o-ran-sc-oam/en/latest/overview.html
 
 
 
