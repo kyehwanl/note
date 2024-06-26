@@ -507,108 +507,127 @@ tmux tips
 (https://github.com/tmux-plugins/tpm)
 TPM is for Installs and loads tmux plugins.
 
-1. Installation
-Requirements: tmux version 1.9 (or higher), git, bash.
+  1. Installation
+  Requirements: tmux version 1.9 (or higher), git, bash.
 
-	(1) Clone TPM:
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-
-	(2) Put this at the bottom of ~/.tmux.conf ($XDG_CONFIG_HOME/tmux/tmux.conf works too):
-
-	# List of plugins
-	set -g @plugin 'tmux-plugins/tpm'
-	set -g @plugin 'tmux-plugins/tmux-sensible'
-
-	# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-	run '~/.tmux/plugins/tpm/tpm'
+	  (1) Clone TPM:
+	  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 
-	(3) Reload TMUX environment so TPM is sourced:
+	  (2) Put this at the bottom of ~/.tmux.conf ($XDG_CONFIG_HOME/tmux/tmux.conf works too):
 
-	# type this in terminal if tmux is already running
-	tmux source ~/.tmux.conf
+	  # List of plugins
+	  set -g @plugin 'tmux-plugins/tpm'
+	  set -g @plugin 'tmux-plugins/tmux-sensible'
 
-
-2. Installing plugins
-	Add new plugin to ~/.tmux.conf with set -g @plugin '...'
-	Press prefix + I (capital i, as in Install) to fetch the plugin.
-	You're good to go! The plugin was cloned to ~/.tmux/plugins/ dir and sourced.
+	  # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+	  run '~/.tmux/plugins/tpm/tpm'
 
 
+	  (3) Reload TMUX environment so TPM is sourced:
 
-3. Uninstalling plugins
-	Remove (or comment out) plugin from the list.
-	Press prefix + alt + u (lowercase u as in uninstall) to remove the plugin.
-	All the plugins are installed to ~/.tmux/plugins/ so alternatively you can find plugin directory there and remove it.
+	  # type this in terminal if tmux is already running
+	  tmux source ~/.tmux.conf
 
 
-4. Key bindings
-  	(1) prefix + I
-	- Installs new plugins from GitHub or any other git repository
-	- Refreshes TMUX environment
-
-	(2) prefix + U
-	- updates plugin(s)
-
-	(3)	prefix + alt + u
-	- remove/uninstall plugins not on the plugin list
+  2. Installing plugins
+	  Add new plugin to ~/.tmux.conf with set -g @plugin '...'
+	  Press prefix + I (capital i, as in Install) to fetch the plugin.
+	  You're good to go! The plugin was cloned to ~/.tmux/plugins/ dir and sourced.
 
 
 
-5. Useful Plugin
-
-(1)  Resurrect 
-(https://github.com/tmux-plugins/tmux-resurrect?tab=readme-ov-file#installation-with-tmux-plugin-manager-recommended)
-
-  A. Install
-	Add plugin to the list of TPM plugins in .tmux.conf:
-	set -g @plugin 'tmux-plugins/tmux-resurrect'
-
-  B. fetch and source
-	(i)  Hit prefix + I to fetch the plugin and 
-	(ii) source it by typeing "tmux source .tmux.conf" 
-	  (You should now be able to use the plugin)
-
-	  < screenshot when prefix+I to install >
-									  [0/0]
-		TMUX environment reloaded.  
-		Done, press ENTER to continue.
-
-  C. Save 
-	  < Result txt when prefix + Ctrl+s >
-	  "Tmux Environment Saved!"
-	  
-  D. Load
-  	<prefix> + Ctrl+r
-	"Restroing..."
-	"Tmux restore complete!"
-
-  E. save file 
-  	.tmux/resurrect or .local/share/tmux/resurrect/last
-
-  F. For test,
-    generate your tmux pane, window, session etc
-  	tmux kill-server
-	tmux and then <prefix> + Ctrl+r
+  3. Uninstalling plugins
+	  Remove (or comment out) plugin from the list.
+	  Press prefix + alt + u (lowercase u as in uninstall) to remove the plugin.
+	  All the plugins are installed to ~/.tmux/plugins/ so alternatively you can find plugin directory there and remove it.
 
 
-  G. ETC, 
-    # Optional features for vim
-  	tmux-resurrect will now restore vim and neovim sessions if Session.vim file is present.
-    set -g @resurrect-strategy-vim 'session'
+  4. Key bindings
+	  (1) prefix + I
+	  - Installs new plugins from GitHub or any other git repository
+	  - Refreshes TMUX environment
+
+	  (2) prefix + U
+	  - updates plugin(s)
+
+	  (3)	prefix + alt + u
+	  - remove/uninstall plugins not on the plugin list
 
 
 
-6. Other goodies
-tmux-copycat - a plugin for regex searches in tmux and fast match selection
-	(https://github.com/tmux-plugins/tmux-copycat)
-tmux-yank - enables copying highlighted text to system clipboard
-	(https://github.com/tmux-plugins/tmux-yank)
-tmux-open - a plugin for quickly opening highlighted file or a url
-	(https://github.com/tmux-plugins/tmux-open)
-tmux-continuum - automatic restoring and continuous saving of tmux env
-	(https://github.com/tmux-plugins/tmux-continuum)
+  5. Useful Plugin
+
+  (1)  Resurrect 
+  (https://github.com/tmux-plugins/tmux-resurrect?tab=readme-ov-file#installation-with-tmux-plugin-manager-recommended)
+
+	A. Install
+	  Add plugin to the list of TPM plugins in .tmux.conf:
+	  set -g @plugin 'tmux-plugins/tmux-resurrect'
+
+	B. fetch and source
+	  (i)  Hit prefix + I to fetch the plugin and 
+	  (ii) source it by typeing "tmux source .tmux.conf" 
+		(You should now be able to use the plugin)
+
+		< screenshot when prefix+I to install >
+										[0/0]
+		  TMUX environment reloaded.  
+		  Done, press ENTER to continue.
+
+	C. Save 
+		< Result txt when prefix + Ctrl+s >
+		"Tmux Environment Saved!"
+		
+	D. Load
+	  <prefix> + Ctrl+r
+	  "Restroing..."
+	  "Tmux restore complete!"
+
+	E. save file 
+	  .tmux/resurrect or .local/share/tmux/resurrect/last
+
+	F. For test,
+	  generate your tmux pane, window, session etc
+	  tmux kill-server
+	  tmux and then <prefix> + Ctrl+r
+
+
+	G. ETC, 
+	  # Optional features for vim
+	  tmux-resurrect will now restore vim and neovim sessions if Session.vim file is present.
+	  set -g @resurrect-strategy-vim 'session'
+
+
+
+  6. Other goodies
+  -----------------
+  tmux-copycat - a plugin for regex searches in tmux and fast match selection
+	  (https://github.com/tmux-plugins/tmux-copycat)
+  tmux-yank - enables copying highlighted text to system clipboard
+	  (https://github.com/tmux-plugins/tmux-yank)
+  tmux-open - a plugin for quickly opening highlighted file or a url
+	  (https://github.com/tmux-plugins/tmux-open)
+  tmux-continuum - automatic restoring and continuous saving of tmux env
+	  (https://github.com/tmux-plugins/tmux-continuum)
+
+
+
+
+
+
+16. Synchronize panes 
+----------------------
+(command all panes by hitting one command)
+https://medium.com/@thehackadda/synchronize-panes-in-tmux-5cd6bc54ca83
+
+
+[prefix]:setw synchronize-panes --> toggle
+
+
+
+
+
 
 
 
