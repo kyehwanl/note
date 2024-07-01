@@ -456,8 +456,8 @@ tmux tips
 
 
 
-13. window reorder 
------------------------
+13. window index reorder 
+-------------------------
 (1) with swap
  :swap-window -s 3 -t 0  --> source-window number 3 and target-window number 1 swap their position
 
@@ -468,6 +468,9 @@ tmux tips
    :move-window -t 7  	--> move the current window to #7
 
 
+
+(3) automatic reorder
+  set-option -g renumber-windows on
 
 
  

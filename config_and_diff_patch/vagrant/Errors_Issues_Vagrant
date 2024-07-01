@@ -7,11 +7,14 @@ Vagrant Errors and Issues
 
     Command: ["startvm", "ee98ae13-5b96-46fd-8d5b-2545eaa11c87", "--type", "headless"]   
 
+    OR
+    
+    Often vboxnet is not being used for a while, the network interface has gone
+
 
 (Solution)
     go to VBoxManager in GUI, completely purge or remove the image and try to restart all again
     
-
     or 
 
     try to create again,
