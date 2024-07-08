@@ -1,0 +1,11 @@
+
+fugitive bundle not working in Ubuntu
+======================================
+
+- if that case happens, 
+  -- start vim
+  -- :bundles
+  -- if there are fugivie related errors
+        move ~/.vim/bundle/vim-fugitive/ to ~/.vim/
+
+  -- start vim again to see if fugitive works
