@@ -1929,6 +1929,14 @@ https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/
     bind addr: 192.0.13.2   <-- gnb node itself
     e2sm kpm enabled: true
 
+    (example)
+      e2:
+        enable_du_e2: true          # Enable DU E2 agent (one for each DU instance)
+        e2sm_kpm_enabled: true      # Enable KPM service module
+        addr: 10.5.0.2              # RIC IP address --> 5g1-comp1 node
+        bind_addr: 172.17.0.4       # A local IP that the E2 agent binds to for traffic from the RIC. --> docker container
+        port: 32222                 # RIC port
+
 
   -- to run, 
       gnb e2 --enable_du_e2=true --addr=10.110.48.165 --port=36422 --bind_addr=10.0.2.15 --e2sm_kpm_enabled=true
@@ -2097,6 +2105,91 @@ tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/e
 tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/fde14f38-7792-44bd-9c69-7fc558f52123/volumes/kubernetes.io~projected/kube-api-access-p4crx
 tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/f5ee39f4-6073-470b-8f24-d9c4bbaf0bb4/volumes/kubernetes.io~projected/kube-api-access-5kjlp
 ...
+
+
+
+
+(5) Running in a docker container
+
+- List install commands in Ubuntu container
+  root@5g1-comp1:~# docker run -d -it --name gnb ubuntu:20.04
+  root@59b4e7f84b56:/# apt update
+  root@59b4e7f84b56:/# apt-get install cmake make gcc g++ pkg-config libfftw3-dev libmbedtls-dev libsctp-dev
+  root@59b4e7f84b56:/# git clone https://github.com/srsran/srsRAN_Project.git
+  root@59b4e7f84b56:/# apt install cmake
+  root@59b4e7f84b56:/# cd srsRAN_Project/
+  root@59b4e7f84b56:/srsRAN_Project# mkdir build
+  root@59b4e7f84b56:/srsRAN_Project# cd build/
+
+  root@59b4e7f84b56:/srsRAN_Project/build# apt install kmod
+  root@59b4e7f84b56:/srsRAN_Project/build# modprobe sctp
+  root@59b4e7f84b56:/srsRAN_Project/build# lsmod | grep sctp
+  root@59b4e7f84b56:/srsRAN_Project/build# ssh-keygen -f "/root/.ssh/known_hosts" -R "129.6.142.13"^C
+
+  root@59b4e7f84b56:/srsRAN_Project/build# cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+  root@59b4e7f84b56:/srsRAN_Project/build# make -j`nproc`
+  root@59b4e7f84b56:/srsRAN_Project/build# make install
+  root@59b4e7f84b56:/srsRAN_Project/build# gnb
+
+
+- Execute  --> not working
+  root@59b4e7f84b56:/srsRAN_Project/configs# gnb e2 --enable_du_e2=true --addr=10.0.5.2 --port=32222 --
+  bind_addr=172.17.0.4 --e2sm_kpm_enabled=true
+
+  
+- Instead, gnb.yaml file
+
+      amf:
+        no_core: true               # Skip this amf section for later use
+        addr: 10.53.1.2             # The address or hostname of the AMF.
+        bind_addr: 10.53.1.1        # A local IP that the gNB binds to for traffic from the AMF.
+
+        ...
+
+      e2:
+        enable_du_e2: true          # Enable DU E2 agent (one for each DU instance)
+        e2sm_kpm_enabled: true      # Enable KPM service module
+        addr: 10.5.0.2              # RIC IP address --> 5g1-comp1 node
+        bind_addr: 172.17.0.4       # A local IP that the E2 agent binds to for traffic from the RIC. --> docker container
+        port: 32222                 # RIC port
+
+
+- Result 
+    root@59b4e7f84b56:/srsRAN_Project/configs# gnb -c ./gnb.yaml
+
+    The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}.
+    Warning: Scheduling priority of thread "du_cell#0" not changed. Cause: Not enough privileges.
+
+    --== srsRAN gNB (commit f3ed07a5a) ==--
+
+    Connecting to NearRT-RIC on 10.5.0.2:32222
+    Cell pci=1, bw=10 MHz, 1T1R, dl_arfcn=368500 (n3), dl_freq=1842.5 MHz, dl_ssb_arfcn=368410, ul_freq=1747.5 MHz
+
+    ==== gNodeB started ===
+    Type <t> to view trace
+    t
+
+
+
+- Save to a docker image
+  onfadmin@5g1-comp1:~$ docker commit -m 'srsRAN_Project gNB on Ubuntu 20.04' 59b4e7f84b56 srsran/gnb
+  sha256:bf0ec0c11037e11cd4b58b45f7f6e783956a826343799b1ea2405d5b108590bd
+
+  onfadmin@5g1-comp1:~$ docker images
+  REPOSITORY                                                 TAG               IMAGE ID       CREATED          SIZE
+  srsran/gnb                                                 latest            bf0ec0c11037   37 seconds ago   3.64GB
+
+
+
+
+- Run with --privileged
+
+  --privileged is used for network admin functions such as 'ip netns'
+  'ip' tool can be installed by 'apt install iproute2'
+
+  onfadmin@5g1-comp1:~$ docker commit -m 'srsRAN_Project gNB 2nd image with srsUE on Ubuntu 20.04' 59b4e7f84b56 srsran/gnb-2
+  onfadmin@5g1-comp1:~$ docker run -d -it --name gnb --privileged -v /home/onfadmin/O-RAN/:/shared srsran/gnb-2
+
 
 
 

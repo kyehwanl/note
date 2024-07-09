@@ -1,0 +1,65 @@
+
+
+kubeadm init error when using advertiseAddress
+-----------------------------------------------
+
+<issue>
+  when kubeadm init --config=<file> like following
+
+    cat <<EOF >/root/config.yaml
+    apiVersion: kubeadm.k8s.io/v1beta3
+    kind: InitConfiguration
+    bootstrapTokens:
+      - token: "123456.1234567890123456"
+        description: "kubeadm bootstrap token"
+        ttl: "0"
+    localAPIEndpoint:
+      advertiseAddress: 192.168.1.10
+      bindPort: 6443
+    ---
+    apiVersion: kubeadm.k8s.io/v1beta3
+    kubernetesVersion: v1.29.1
+    kind: ClusterConfiguration
+    networking:
+      dnsDomain: cluster.local
+      podSubnet: 10.244.0.0/16
+      serviceSubnet: 10.96.0.0/12
+    ---
+    apiVersion: kubeproxy.config.k8s.io/v1alpha1
+    kind: KubeProxyConfiguration
+    mode: ipvs
+    EOF
+
+
+--> Always being stuck with kubelet not alive
+
+    [kubelet-start] Starting the kubelet
+    [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+    [kubelet-check] Initial timeout of 40s passed.
+    ^C
+
+
+
+< Cause >
+
+    advertiseAddress should be used the same IP address with the node's IP  
+    In the above case, the setting IP is 192.168.1.10) but actually this machine's IP is 192.168.1.11
+
+      root@t-k8s:~# ip a
+        ...
+      2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+          inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+      3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+          inet 192.168.1.11/24 brd 192.168.1.255 scope global eth1
+        ...
+
+
+< Solution >
+
+
+    change IP address with the machine's IP address
+
+      advertiseAddress: 10.0.2.15 or 192.168.1.11
+
+
+
