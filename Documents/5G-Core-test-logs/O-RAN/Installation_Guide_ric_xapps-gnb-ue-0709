@@ -1,0 +1,2355 @@
+
+================================
+RIC (near RT RIC) in Kubernetes
+================================
+
+0. pre-requisite
+----------------
+RIC source download 
+git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep"
+
+online Installation Guide
+https://docs.o-ran-sc.org/projects/o-ran-sc-ric-plt-ric-dep/en/latest/installation-guides.html
+
+
+
+1. Install k8s
+---------------
+3 options
+(option.1)
+use script, https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=allissues
+    install_k8s_docker_helm_v1.28-Anusha.sh
+    --> install v1.28  kubeadm, kubectl, kubelet with docker but actullay containerd 
+                helm v3.14.2
+or
+(option.2)
+my modified script, 
+   install_k8s_and_helm(osc)-modified-KL.sh (this version uses clusterConfiguration yaml for kubeadm init)
+    --> install v1.29 kubeadm kubelet kubectl with containerd
+                helm v3.5.2
+
+or
+(option.3)
+my modified script, 
+   install_k8s_helm_prereq-commands.sh
+    - same with install_k8s_and_helm(osc)-modified-KL.sh, but kubeadm init with one-liner configuration
+    - added helm v3.14.2
+	- execute ./install_common_templates_to_helm.sh at the end
+
+
+
+2.  kong install
+----------------
+2 options
+(option.1)
+use script, https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=allissues
+    install_kong-Anusha.sh
+
+    It also includes
+    - change v1beta1 to v1
+    - remove ingress features in yaml configuration 
+		cd ${RICPATH}/helm/appmgr/templates; rm ingress-appmgr.yaml
+		cd ${RICPATH}/helm/e2mgr/templates; rm ingress-e2mgr.yaml
+		cd ${RICPATH}/helm/a1mediator/templates; rm ingress-a1mediator.yaml
+
+
+(option.2)
+  This is what I did manually to install kong in order to avoid errors
+
+	 --------- 1. Need to diable Kong setting first  ------------
+	 install without kong enabled
+	 --> In values.yaml need to change kong enabled parameter as false under ric-dep/helm/infrastructure folder.
+		 Kong pod will be in crashloopbackoff if we enabled as true
+
+
+	 -------  2.  Replace serviceName, servicePort in v1beta1 to service.name, service.port.number in v1
+	 they will be found at ./ric-dep/helm/a1mediator/templates/ingress-a1mediator.yaml
+	 ./install -f  ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
+	 --> this command leads to the next actual helm install command
+
+      ... 
+      kubectl create configmap -n ricplt ricplt-recipe --from-file=recipe=../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-infrastructure /root/ric-dep/bin/../helm/nfrastructure 
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-dbaas /root/ric-dep/bin/../helm/dbaas                  
+      helm install -f ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml --namespace ricplt r4-appmgr /root/ric-dep/bin/../helm/appmgr
+      ...
+
+
+	 --- 3. install Kong ---
+	helm repo add kong https://charts.konghq.com
+	helm repo update
+	# helm install kong kong/ingress -n ricplt <-- instead of this, use following command
+	helm install -f ~/ric-dep/helm/infrastructure/subcharts/kong/values.yaml kong kong/ingress -n ricplt
+
+
+
+
+
+
+3.  Modify the deployment recipe: modify extsvcplt
+---------------------------------------------------
+ Not sure if this needed or not
+
+
+ in ric-dep/RECIPE_EXAMPLE/example_recipe_latest_stable.yaml, or example_recipe_oran_i_release 
+
+ change following section to node's real ip
+   extsvcplt:
+	  riccp:"10.0.0.1" 	--> 192.168.10.124 or 10.0.2.15
+	  auxip:"10.0.0.1"	--> 192.168.10.124 or 10.0.2.15
+	
+
+
+
+
+4. install common teamplte to helm 
+-----------------------------------
+
+root@ran3:~/ric-dep/bin# ./install_common_templates_to_helm.sh
+	- install chartmuseum into helm with "helm servecm"
+	- install ric-common template into helm by chartmuseum
+
+
+
+
+
+
+5. remote version mismatched ingress yamls
+--------------------------------------------
+It needs to remove stale version of lines in ingress yaml files
+(Option.1)
+
+  ------- A. Need to diable Kong setting first  ------------
+  - install without kong enabled
+    In values.yaml need to change kong enabled parameter as false under ric-dep/helm/infrastructure folder
+	Kong pod will be in crashloopbackoff if we enabled as true
+
+  ------- B.  Replace serviceName, servicePort in v1beta1 to service.name, service.port.number in v1
+  they will be found at 
+    ./ric-dep/helm/a1mediator/templates/ingress-a1mediator.yaml
+    ./ric-dep/helm/appmgr/templates/ingress-appmgr.yaml
+    ./ric-dep/helm/e2mgr/templates/ingress-e2mgr.yaml
+
+  ------- C. install Kong (optional)
+	helm repo add kong https://charts.konghq.com
+	helm repo update
+	helm install -f ~/ric-dep/helm/infrastructure/subcharts/kong/values.yaml kong kong/ingress -n ricplt
+
+
+
+(Option.2)
+Or Shell scripts automatically change all the required conditions,
+
+(contributed by Anusha Nalluri,
+ https://jira.o-ran-sc.org/projects/RIC/issues/RIC-1053?filter=allissues)
+
+  # Modify RIC-PLT Path in RICPATH Variables
+  RICPATH="/root/ric-dep"
+  snap install yq
+
+  # Changing api version in ric-dep folder as v1 API Version is deprecated
+  cd ${RICPATH}/helm
+  find ${RICPATH}/helm -type f -print0 | xargs -0 sed -i 's\v1beta1\v1\g'
+
+  cd ${RICPATH}/depRicKubernetesOperator
+  find ${RICPATH}/depRicKubernetesOperator -type f -print0 | xargs -0 sed -i 's\v1beta1\v1\g'
+
+  cd ${RICPATH}/ric-common
+  find ${RICPATH}/ric-common -type f -print0 | xargs -0 sed -i 's\v1beta1\v1\g'
+
+  # Disabling kong pod
+  cd ${RICPATH}/helm/infrastructure/
+  yq '.kong.enabled = false' -i values.yaml
+  yq '.kong.enabled' values.yaml
+
+  # Removing Ingress files
+  cd ${RICPATH}/helm/appmgr/templates
+  rm ingress-appmgr.yaml
+  cd ${RICPATH}/helm/e2mgr/templates
+  rm ingress-e2mgr.yaml
+  cd ${RICPATH}/helm/a1mediator/templates
+  rm ingress-a1mediator.yaml
+
+  #(kong install-Optional)
+  kubectl create ns kong
+  helm repo add kong https://charts.konghq.com
+  helm repo update
+  helm install kong kong/ingress -n kong
+
+
+
+
+
+6. Installing the RIC
+----------------------
+ in ric-dep/bin
+	./install -f  ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
+
+	root@ran3:~/ric-dep/bin# ./install -f  ../RECIPE_EXAMPLE/example_recipe_oran_i_release.yaml
+
+
+NAMESPACE↑    NAME                                                        PF READY STATUS            RESTARTS IP           NODE
+kong          kong-controller-55b777f995-2wqxc                            ●  1/1   Running                  0 10.244.0.5   ran3
+kong          kong-gateway-868d48556c-sz9js                               ●  1/1   Running                  0 10.244.0.4   ran3
+kube-flannel  kube-flannel-ds-lvfsg                                       ●  1/1   Running                  0 10.0.2.15    ran3
+kube-system   coredns-5dd5756b68-nqt75                                    ●  1/1   Running                  0 10.244.0.2   ran3
+kube-system   coredns-5dd5756b68-q85fw                                    ●  1/1   Running                  0 10.244.0.3   ran3
+kube-system   etcd-ran3                                                   ●  1/1   Running                  0 10.0.2.15    ran3
+kube-system   kube-apiserver-ran3                                         ●  1/1   Running                  0 10.0.2.15    ran3
+kube-system   kube-controller-manager-ran3                                ●  1/1   Running                  0 10.0.2.15    ran3
+kube-system   kube-proxy-7bhfk                                            ●  1/1   Running                  0 10.0.2.15    ran3
+kube-system   kube-scheduler-ran3                                         ●  1/1   Running                  0 10.0.2.15    ran3
+ricinfra      deployment-tiller-ricxapp-676dfd8664-9czh8                  ●  1/1   Running                  0 10.244.0.10  ran3
+ricinfra      tiller-secret-generator-qn2kd                               ●  0/1   Completed                0 10.244.0.7   ran3
+ricplt        deployment-ricplt-a1mediator-64fd4bf64-77wv2                ●  1/1   Running                  0 10.244.0.14  ran3
+ricplt        deployment-ricplt-alarmmanager-7d47d8f4d4-xzmhp             ●  1/1   Running                  0 10.244.0.19  ran3
+ricplt        deployment-ricplt-appmgr-5bdd7cbb54-pmd9c                   ●  1/1   Running                  0 10.244.0.11  ran3
+ricplt        deployment-ricplt-e2mgr-b988db566-6gn97                     ●  1/1   Running                  0 10.244.0.13  ran3
+ricplt        deployment-ricplt-e2term-alpha-75d8ccb646-dw6pf             ●  1/1   Running                  0 10.244.0.15  ran3
+ricplt        deployment-ricplt-o1mediator-76c4646878-szk4v               ●  1/1   Running                  0 10.244.0.18  ran3
+ricplt        deployment-ricplt-rtmgr-6556c5bc7b-c2pdz                    ●  1/1   Running                  2 10.244.0.12  ran3
+ricplt        deployment-ricplt-submgr-599754c984-jc7nr                   ●  1/1   Running                  0 10.244.0.16  ran3
+ricplt        deployment-ricplt-vespamgr-786666549b-vtbwc                 ●  1/1   Running                  0 10.244.0.17  ran3
+ricplt        r4-infrastructure-prometheus-alertmanager-64f9876d6d-9nsvp  ●  2/2   Running                  0 10.244.0.8   ran3
+ricplt        r4-infrastructure-prometheus-server-bcc8cc897-6cbcw         ●  1/1   Running                  0 10.244.0.6   ran3
+ricplt        statefulset-ricplt-dbaas-server-0                           ●  1/1   Running                  0 10.244.0.9   ran3
+
+
+
+
+
+
+========================
+ RIC application, xApps
+========================
+
+1. chartmuseum in docker 
+------------------------
+
+docker run for running chartmuseum 
+
+	docker run --rm -u 0 -it -d -p 8090:8080 -e DEBUG=1 -e STORAGE=local -e STORAGE_LOCAL_ROOTDIR=/charts -v $(pwd)/charts:/charts chartmuseum/chartmuseum:latest
+
+root@ran3:~/hw-python/init# docker ps
+CONTAINER ID   IMAGE                            COMMAND          CREATED          STATUS          PORTS                                       NAMES
+eefa2a2beb3a   chartmuseum/chartmuseum:latest   "/chartmuseum"   38 minutes ago   Up 38 minutes   0.0.0.0:8090->8080/tcp, :::8090->8080/tcp   stoic_dhawan
+
+
+
+- even though chartmuseum is running on helm with servccm, docker can run chartmuseum in the container
+  root@ran3:~/ric-dep/bin# ps aux | grep museum
+  root       52655  0.0  0.3 844700 38168 pts/0    Sl   11:19   0:00 chartmuseum --port=8879 --context-path=/charts --storage local --storage-local-rootdir /root/.cache/helm/repository/local/
+
+
+- Set up the environment variables for CLI connection using the same port as used above.
+	--> this is because docker run opens 8090
+
+	#Set CHART_REPO_URL env variable
+	export CHART_REPO_URL=http://0.0.0.0:8090
+
+
+
+
+2. Install dms_cli tool
+-------------------------
+(0) How it works: 
+	https://hackmd.io/@Min-xiang/HJZF3-xgt
+
+
+(1) Instalation guide
+	#Git clone appmgr
+	git clone "https://gerrit.o-ran-sc.org/r/ric-plt/appmgr"
+
+	#Change dir to xapp_onboarder
+	cd appmgr/xapp_orchestrater/dev/xapp_onboarder
+
+	#If pip3 is not installed, install using the following command
+	yum install python3-pip
+
+	#In case dms_cli binary is already installed, it can be uninstalled using following command
+	pip3 uninstall xapp_onboarder
+
+	#Install xapp_onboarder using following command
+	pip3 install ./
+
+
+	(optional)
+	 chmod 755 /usr/local/bin/dms_cli
+	 chmod -R 755 /usr/local/lib/python3.8
+
+
+(2) execution 
+	root@ran3:~/ric-dep/bin/appmgr/xapp_orchestrater/dev/xapp_onboarder# dms_cli health
+	Failed to connect to helm chart repo http://0.0.0.0:8080 after 3 retries and 1.8071374893188477 seconds. (Caused by: ConnectionError)
+	False
+
+	--> without CHART_REPO_URL set, it tried to connect to the port, 8080 as a default, maybe
+
+	- set env variable
+	root@ran3:~/ric-dep/bin/appmgr/xapp_orchestrater/dev/xapp_onboarder# export CHART_REPO_URL=http://0.0.0.0:8090
+	root@ran3:~/ric-dep/bin/appmgr/xapp_orchestrater/dev/xapp_onboarder# dms_cli health
+	True
+
+	--> then it's ok
+
+
+
+
+
+
+3. Software, xApp, Installation and Deployment - hw-python
+-----------------------------------------------------------
+https://github.com/o-ran-sc/ric-app-hw-python
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+
+(1) configure the export CHART_REPO_URL to point chartmuseme
+	export CHART_REPO_URL=http://0.0.0.0:8090
+
+
+(2) Onboarding 
+	dms_cli onboard with config file and schema file
+	
+	- config files
+	  cd init folder, those two files are found
+
+		root@ran3:~/hw-python/init# ls
+		config-file.json  init_script.py  schema.json  test_route.rt
+	
+	- onboard command,
+
+	  root@ran3:~/hw-python/init# dms_cli onboard --config_file_path=config-file.json --shcema_file_path=schema.json
+	  {
+			"status": "Created"
+	  }
+
+
+
+(3) check if hw-python is onboarded,
+
+	root@ran3:~/hw-python/init# dms_cli get_charts_list
+	{
+		"hw-python": [
+			{
+				"apiVersion": "v1",
+				"appVersion": "1.0",
+				"created": "2024-04-23T15:43:43.399273639Z",
+				"description": "Standard xApp Helm Chart",
+				"digest": "deb21c533192227fc33c43ee5953428c912f73665d03e257473244d19ed9ca08",
+				"name": "hw-python",
+				"urls": [
+					"charts/hw-python-1.0.0.tgz"
+				],
+				"version": "1.0.0"
+			}
+		]
+	}
+
+
+
+	** To check where hw-python is downloaded,
+
+	- docker is ruuning with the volume parameter, -v $(pwd)/charts:/charts
+	-- inside docker container, 
+
+		root@ran3:~/hw-python/init# docker exec -it eefa /bin/sh
+		/ #
+		/ # cd charts/
+		/charts # ll
+		total 12K
+		-rw-r--r--    1 root     root         374 Apr 23 15:43 index-cache.yaml
+		-rw-r--r--    1 root     root        7.2K Apr 23 15:43 hw-python-1.0.0.tgz
+		/charts #
+
+
+	-- outside, running directory
+		root@ran3:~/ric-dep/bin/charts# pwd
+		/root/ric-dep/bin/charts
+		root@ran3:~/ric-dep/bin/charts# ll
+		total 12K
+		-rw-r--r-- 1 root root  374 Apr 23 11:43 index-cache.yaml
+		-rw-r--r-- 1 root root 7.3K Apr 23 11:43 hw-python-1.0.0.tgz
+
+
+
+(4) deploy(install) xapp with helm 
+
+  -- Option.1 : using "dms_cli install" command
+
+	root@ran3:~/hw-python/init# dms_cli install hw-python 1.0.0 ricxapp
+	status: OK
+
+  -- Option.2 :  directly install helm chart which was downloaded by dms_cli
+
+	$ [CHART_REPO_URL=http://<ip>:<port>] dms_cli download_helm_chart <chart-name> <version>
+
+	  root@ran3:~/hw-go# dms_cli download_helm_chart hw-go 1.0.0
+	  status: OK
+
+	  root@ran3:~/hw-go# ll
+	  ...
+	  -rw-r--r-- 1 root root 7.5K Apr 23 22:57 hw-go-1.0.0.tgz
+
+	  And then untar this file and if necessary, modify resources and install
+
+
+
+	< in k9s >
+	NAMESPACE↑    NAME                                    PF READY STATUS            RESTARTS IP           NODE
+	...
+	ricxapp       ricxapp-hw-python-6965b44676-tx6sp      ●  0/1   ImagePullBackOff         0 10.244.0.21  ran3
+
+
+	< Error >
+
+	--> successfully deploying but errors with ImagePullBackOff
+		That's because of the following event log
+		Unable to retrieve some image pull secrets (nexus3-o-ran-sc-org-10004); attempting to pull the image may not succeed.
+
+		in image: nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0
+
+		--> not finding the proper image source from nexus3
+			maybe correct path or image, then it will be loaded and worked
+
+
+		  Events:                                                                                                                                                                                                                                                             
+			Type     Reason         Age                From               Message                                                                                                                                                                           
+			----     ------         ----               ----               -------                                                                                                                                                                           
+			Normal   Scheduled      29s                default-scheduler  Successfully assigned ricxapp/ricxapp-hw-python-6965b44676-v9mzz to ran3                                                                                                          
+			Normal   Pulling        17s (x2 over 29s)  kubelet            Pulling image "nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0"                                                                                                        
+			Warning  Failed         17s (x2 over 28s)  kubelet            Failed to pull image "nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0": rpc error: code = NotFound desc = failed to pull and unpack image "nexus3.o-ran-sc.org:10004/o-
+		  ran-sc/ric-app-hw-python:1.1.0": failed to resolve reference "nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0": nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0: not found                                                                    
+			Warning  Failed         17s (x2 over 28s)  kubelet    k       Error: ErrImagePull                                                                                                                                                               
+			Warning  FailedToRetrieveImagePullSecret  2s (x4 over 29s)   kubelet            Unable to retrieve some image pull secrets (nexus3-o-ran-sc-org-10004); attempting to pull the image may not succeed.                                                             
+			Normal   BackOff        2s (x2 over 28s)   kubelet            Back-off pulling image "nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0"                                                                                               
+			Warning  Failed         2s (x2 over 28s)   kubelet            Error: ImagePullBackOff                                                                                                                                                           
+
+
+	< Solved >
+	--> see 3-2's solution 
+		
+
+
+
+3-2. Software, xApp, Installation and Deployment - hw-go
+-----------------------------------------------------------
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+(1) install 
+
+	******************* HW-GO
+	git clone https://gerrit.o-ran-sc.org/r/ric-app/hw-go
+	cd hw-go
+	docker build -t example.com:80/hw-go:1.2 .
+	export CHART_REPO_URL=http://0.0.0.0:8090
+	vi config/config-file.json
+		modify tag = 1.2
+		modify example.com:80 for "registry"
+		modify name in image to "hw-go"
+	dms_cli onboard ./config/config-file.json ./config/schema.json
+
+
+
+!! IMPORTANT !!
+(1-2) import docker image into containerd format
+
+	root@ran3:~/ric-dep/bin/charts/hw-go# docker images | grep hw-go
+	hw-go             latest    bbb4142f2a53   45 hours ago    100MB
+
+	docker save -o hw-go.tar example.com:80/hw-go:1.2 (or docker save -o hw-go.tar hw-go:latest)
+	ctr -n=k8s.io image import hw-go.tar --> generates docker.io/library/hw-go:latest
+
+    (Only when 'example.com:80/hw-go:1.2' is not found)
+	root@ran3:~/hw-go/hw-go# ctr -n=k8s.io image tag docker.io/library/hw-go:latest example.com:80/hw-go:1.2
+
+	root@ran3:~/hw-go/hw-go# ctr -n=k8s.io image list | grep hw
+	docker.io/library/hw-go:latest  application/vnd.docker.distribution.manifest.v2+json      sha256:af7d..60.9 MiB  linux/amd64
+	example.com:80/hw-go:1.2        application/vnd.docker.distribution.manifest.v2+json      sha256:af7d..60.9 MiB  linux/amd64 
+    
+
+	--> the reason name changed with tag is when dms_cli configures tag and names in config-file.json
+
+
+(2) deploy
+	dms_cli install hw-go 1.0.0 ricxapp
+
+	< CAUTION > 
+	dms_cli generates helm chart manifests into the designated location, where chart musuem configured with parameters 
+
+	docker execution command:
+		docker run --rm -u 0 -it -d -p 8090:8080 -e DEBUG=1 -e STORAGE=local -e STORAGE_LOCAL_ROOTDIR=/charts -v $(pwd)/charts:/charts chartmuseum/chartmuseum:latest
+	docker ps
+
+	  root@ran3:~/hw-python# docker ps
+	  CONTAINER ID   IMAGE                            COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+	  44623223b91a   oransim:0.0.999                  "/bin/sh -c 'sleep 1…"   31 minutes ago   Up 31 minutes                                               oransim
+	  eefa2a2beb3a   chartmuseum/chartmuseum:latest   "/chartmuseum"           2 days ago       Up 2 days       0.0.0.0:8090->8080/tcp, :::8090->8080/tcp   stoic_dhawan
+
+	docker inspect to see where is STORATE_LOCAL_ROOTDIR
+	  root@ran3:~/hw-python# docker inspect eefa
+	  [
+		...
+		"HostConfig": {
+			"Binds": [
+				"/root/ric-dep/bin/charts:/charts"  <-- accidentally installed under ric-dep/bin, 
+														It should have been installed /root or other places, though
+			],
+			"ContainerIDFile": "",
+			"LogConfig": {
+				"Type": "json-file",
+				"Config": {
+					"max-size": "100m"
+				}
+			},
+			"NetworkMode": "default",
+			"PortBindings": {
+				"8080/tcp": [
+					{
+						"HostIp": "",
+						"HostPort": "8090"
+					}
+				]
+			},
+			...
+
+	  root@ran3:/vagrant# tree /root/ric-dep/bin/charts/
+	  /root/ric-dep/bin/charts/
+	  ├── hw-go
+	  │   ├── Chart.yaml
+	  │   ├── config
+	  │   │   └── config-file.json
+	  │   ├── descriptors
+	  │   │   └── schema.json
+	  │   ├── templates
+	  │   │   ├── appconfig.yaml
+	  │   │   ├── appenv.yaml
+	  │   │   ├── deployment.yaml
+	  │   │   ├── _helpers.tpl
+	  │   │   ├── service-http.yaml
+	  │   │   └── service-rmr.yaml
+	  │   └── values.yaml
+	  ├── hw-go-1.0.0.tgz
+	  ├── hw-python-1.0.0.tgz
+	  └── index-cache.yaml
+
+
+	< template verification >
+	helm template -n ricxapp hw-go-dryrun /root/ric-dep/bin/charts/hw-go
+
+	...
+	apiVersion: v1
+	kind: ConfigMap
+	metadata:
+	  name: configmap-ricxapp-hw-go-appconfig
+	data:
+	  config-file.json: |
+		{
+			"name": "hw-go",
+			"version": "1.0.0",
+			"containers": [{"image":{"name":"hw-go","registry":"example.com:80","tag":"1.2"},"name":"hw-go"}],
+ 	
+	...
+
+	---
+	apiVersion: apps/v1
+	kind: Deployment
+	metadata:
+	  name: ricxapp-hw-go
+	...
+	spec:
+	  replicas: 1
+	  selector:
+		matchLabels:
+		  app: ricxapp-hw-go
+		  release: hw-go-dryrun
+	  template:
+		metadata:
+		  labels:
+			app: ricxapp-hw-go
+			kubernetes_name: ricxapp_hw-go
+			release: hw-go-dryrun
+		spec:
+		  hostname: hw-go
+		  imagePullSecrets:
+			- name: example-com-80
+		  volumes:
+			- name: config-volume
+			  configMap:
+				name: configmap-ricxapp-hw-go-appconfig
+		  containers:
+			- name: hw-go
+			  image: "example.com:80/hw-go:1.2"
+			  imagePullPolicy: IfNotPresent
+			  ports:
+				- name: http
+				  containerPort: 8080
+				  protocol: TCP
+				- name: rmrroute
+				  containerPort: 4561
+				  protocol: TCP
+				- name: rmrdata
+				  containerPort: 4560
+				  protocol: TCP
+			  volumeMounts:
+				- name: config-volume
+				  mountPath: /opt/ric/config
+
+
+
+
+
+
+(3) error  (it was first time when I don't have knowlage about containerd's image, only used docker image)
+	Error: ErrImagePull
+
+
+
+(4) < Solved > use containerd runtime image
+
+		* Reason: 
+			- image, 'example.com:80/hw-go' is made of 'docker build'
+			- But, after kubernetes v1.24, "containerd" is used as a container runtime
+			- So, docker image should be converted into containerd format
+
+
+		* procedures
+			- convert to containerd image
+				docker save -o hw-go.tar example.com:80/hw-go:1.2
+				
+			- import saved tar file 
+		   		ctr -n=k8s.io image import hw-go.tar	
+				( -n=k8s.io MUST be presented for kubernetes image )
+
+  			- check list, not using 'crictl images', but use 'ctr image'
+				ctr -n=k8s.io image list
+				...
+				docker.io/library/hw-go:latest
+
+			- need to tag(modify name)  --> when 'ctr -n=k8s.io image list' was not able to find "example.com:80/hw-go:1.2"
+                                            only 'docker.io/library/hw-go:latest' is in the list. 
+                                            Then, name change with tag command below
+                                                
+  				ctr -n=k8s.io image tag docker.io/library/hw-go:latest example.com:80/hw-go:1.2
+				example.com:80/hw-go:1.2
+
+
+
+(5) Install again with helm chart command
+	root@ran3:~/ric-dep/bin/charts/hw-go# helm install -n ricxapp hw-go ./
+	NAME: hw-go
+	LAST DEPLOYED: Wed Apr 24 00:43:04 2024
+	NAMESPACE: ricxapp
+	STATUS: deployed
+	REVISION: 1
+	TEST SUITE: None
+
+
+	< in k9s display >
+	ricxapp       ricxapp-hw-go-7c8945ccb6-k2rkn      ●  1/1   Running   0 10.244.0.27  ran3  95m
+
+
+	< kubectl log >
+	root@ran3:~/ric-dep/bin/charts/hw-go# kubectl logs -n ricxapp ricxapp-hw-go-7c8945ccb6-k2rkn
+	{"ts":1713933868751,"crit":"INFO","id":"hw-go","mdc":{"time":"2024-04-24T04:44:28"},"msg":"Using config file: config/config-file.json"}
+	{"ts":1713933868752,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Serving metrics on: url=/ric/v1/metrics namespace=ricxapp"}
+	redis: got 7 elements in COMMAND reply, wanted 6
+	{"ts":1713933868758,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp SDL Stored The total number of stored SDL transactions map[]}"}
+	{"ts":1713933868758,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp SDL StoreError The total number of SDL store errors map[]}"}
+	redis: got 7 elements in COMMAND reply, wanted 6
+	{"ts":1713933868763,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp hw_go RICIndicationRx Total number of RIC Indication message received map[]}"}
+	1713933868763 7/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (d07cc97 4.7.0 built: Apr  1 2021)
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"new rmrClient with parameters: ProtPort=4560 MaxSize=2072 ThreadType=0 StatDesc=RMR LowLatency=false FastAck=false Policies=[1]"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR Transmitted The total number of transmited RMR messages map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR Received The total number of received RMR messages map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR TransmitError The total number of RMR transmission errors map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Register new counter with opts: {ricxapp RMR ReceiveError The total number of RMR receive errors map[]}"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Interface name is not able to resolve route ip+net: invalid network interface name"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"Xapp started, listening on: :8080"}
+	{"ts":1713933868764,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:28"},"msg":"rmrClient: Waiting for RMR to be ready ..."}
+	{"ts":1713933869766,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"rmrClient: RMR is ready after 1 seconds waiting..."}
+	{"ts":1713933869767,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"xApp ready call back received"}
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933869767 7/RMR [INFO] sends: ts=1713933869 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+	{"ts":1713933869770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"List for connected eNBs :"}
+	{"ts":1713933869770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:29"},"msg":"List of connected gNBs :"}
+	RMR is ready now ...
+	{"ts":1713933873765,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:33"},"msg":"Application='hw-go' is not ready yet, waiting ..."}
+	{"ts":1713933875154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:35"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	{"ts":1713933875154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:35"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933878770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"getService: SERVICE_RICXAPP_HW-GO_HTTP_PORT [tcp: 10.104.238.203:8080]"}
+	{"ts":1713933878770,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"getService: SERVICE_RICXAPP_HW-GO_RMR_PORT [tcp: 10.107.149.103:4560]"}
+	{"ts":1713933878789,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"restapi: method=GET url=/ric/v1/config"}
+	{"ts":1713933878790,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Inside appconfigHandler"}
+	{"ts":1713933878794,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Post to 'http://service-ricplt-appmgr-http.ricplt:8080/ric/v1/register' done, status:201 Created"}
+	{"ts":1713933878794,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Registration done, proceeding with startup ..."}
+	{"ts":1713933878835,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"restapi: method=GET url=/ric/v1/config"}
+	{"ts":1713933878835,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:38"},"msg":"Inside appconfigHandler"}
+	{"ts":1713933890153,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:50"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933890154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:44:50"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+	1713933900834 7/RMR [INFO] sends: ts=1713933900 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+	{"ts":1713933905155,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:05"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933905156,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:05"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+	{"ts":1713933920154,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:20"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+	{"ts":1713933920155,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-24T04:45:20"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+
+
+
+	
+
+
+
+4. Uninstall
+-------------
+	root@ran3:~/hw-python/init# dms_cli uninstall hw-python ricxapp
+	status: OK
+
+	or 
+	helm uninstall  command
+
+
+
+
+
+5. Another Try to deploy with e2sim and hello-xapp
+----------------------------------------------------
+(1) e2 simulator
+https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?version=2&modificationDate=1655964027497&api=v2
+
+  git clone https://gerrit.o-ran-sc.org/r/sim/e2-interface
+  apt-get install cmake g++ libsctp-dev
+  cd e2-interface/e2sim
+  vi Dockerfile_kpm    ### modify last line to "sleep 100000000"
+  mkdir build
+  cd build/
+  cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
+  cp *.deb ../e2sm_examples/kpm_e2sm/
+  cd ../    <-- location where Dockerfile_kpm is
+  docker build -t oransim:0.0.999 .
+  docker run -d --name oransim -it oransim:0.0.999
+  docker exec -ti oransim /bin/bash
+  kpm_sim <ip> 36422	 <-- ip comes from service, service-ricplt-e2term-sctp-alpha
+
+	<ref, kubectl get svc -n ricplt>
+	ricplt    service-ricplt-e2term-sctp-alpha   NodePort 10.96.147.226   sctp-alpha:36422►32222╱SCTP
+
+
+  < Execution Logs >
+  root@ran3:~/e2-interface/e2sim# docker run -d -it --name oransim oransim:0.0.999
+  root@ran3:~/e2-interface/e2sim# docker exec -it oransim /bin/bash
+
+
+
+  -- After e2sim connected to RIC, verify the connection
+
+	root@ran3:~# curl -X GET http://10.96.90.98:3800/v1/nodeb/states 2>/dev/null|jq
+	[
+	  {
+		"inventoryName": "gnb_734_373_16b8cef1",
+		"globalNbId": {
+		  "plmnId": "373437",
+		  "nbId": "10110101110001100111011110001"
+		},
+		"connectionStatus": "CONNECTED"
+	  }
+	]
+
+
+	--> ip address: 10.96.90.98
+	refer to service-ricplt-e2mgr-http
+
+	ricplt     service-ricplt-e2mgr-http       ClusterIP  10.96.90.98       http:3800►0
+
+
+
+
+  -- Following is the communication e2simulator with e2term through SCTP:36422
+
+  root@44623223b91a:/playpen# kpm_sim 10.96.147.226 36422
+  [kpm_callbacks.cpp:63] Starting KPM simulator
+  [encode_kpm.cpp:49] short_name: ORAN-E2SM-KPM, func_desc: KPM Monitor, e2sm_odi: OID123
+  [encode_kpm.cpp:72] Initialize event trigger style list structure
+  [encode_kpm.cpp:91] Initialize report style structure
+  %%about to register e2sm func desc for 0
+  %%about to register callback for subscription for func_id 0
+  Start E2 Agent (E2 Simulator
+  After reading input options
+  [e2sim_sctp.cpp:180] [SCTP] Binding client socket to source port 36422
+  [e2sim_sctp.cpp:187] [SCTP] Connecting to server at 10.96.147.226:36422 ...
+  [e2sim_sctp.cpp:194] [SCTP] Connection established
+  After starting client
+  client_fd value is 3
+  looping through ran func
+  about to call setup request encode
+  After generating e2setup req
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>1</procedureCode>
+		  <criticality><reject/></criticality>
+		  <value>
+			  <E2setupRequest>
+				  <protocolIEs>
+					  <E2setupRequestIEs>
+						  <id>49</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <TransactionID>1</TransactionID>
+						  </value>
+					  </E2setupRequestIEs>
+					  <E2setupRequestIEs>
+						  <id>3</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <GlobalE2node-ID>
+								  <gNB>
+									  <global-gNB-ID>
+										  <plmn-id>37 34 37</plmn-id>
+										  <gnb-id>
+											  <gnb-ID>
+												  10110101110001100111011110001
+											  </gnb-ID>
+										  </gnb-id>
+									  </global-gNB-ID>
+								  </gNB>
+							  </GlobalE2node-ID>
+						  </value>
+					  </E2setupRequestIEs>
+					  <E2setupRequestIEs>
+						  <id>10</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctions-List>
+								  <ProtocolIE-SingleContainer>
+									  <id>8</id>
+									  <criticality><reject/></criticality>
+									  <value>
+										  <RANfunction-Item>
+											  <ranFunctionID>0</ranFunctionID>
+											  <ranFunctionDefinition>
+												  68 30 4F 52 41 4E 2D 45 32 53 4D 2D 4B 50 4D 00
+												  00 05 4F 49 44 31 32 33 05 00 4B 50 4D 20 4D 6F
+												  6E 69 74 6F 72 01 01 00 01 01 07 00 50 65 72 69
+												  6F 64 69 63 20 52 65 70 6F 72 74 01 01 10 01 01
+												  09 00 45 32 20 4E 6F 64 65 20 4D 65 61 73 75 72
+												  65 6D 65 6E 74 01 01 00 08 44 60 44 52 42 2E 52
+												  6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 65 64
+												  56 6F 6C 75 6D 65 44 4C 5F 46 69 6C 74 65 72 80
+												  01 00 44 60 44 52 42 2E 52 6C 63 53 64 75 54 72
+												  61 6E 73 6D 69 74 74 65 64 56 6F 6C 75 6D 65 55
+												  4C 5F 46 69 6C 74 65 72 00 00 00 43 60 44 52 42
+												  2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 44 4C
+												  44 69 73 74 2E 42 69 6E 20 00 00 01 43 40 44 52
+												  42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 55
+												  4C 44 69 73 74 2E 42 69 6E 00 00 02 43 40 44 52
+												  42 2E 52 6C 63 50 61 63 6B 65 74 44 72 6F 70 52
+												  61 74 65 44 4C 44 69 73 74 00 00 03 42 E0 44 52
+												  42 2E 50 61 63 6B 65 74 4C 6F 73 73 52 61 74 65
+												  55 4C 44 69 73 74 00 00 04 42 20 4C 31 4D 2E 44
+												  4C 2D 53 53 2D 52 53 52 50 2E 53 53 42 00 00 05
+												  42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 52
+												  2E 53 53 42 00 00 06 41 C0 4C 31 4D 2E 55 4C 2D
+												  53 52 53 2D 52 53 52 50 00 00 07 01 01 01 01 00
+												  01 02 11 00 45 32 20 4E 6F 64 65 20 4D 65 61 73
+												  75 72 65 6D 65 6E 74 20 66 6F 72 20 61 20 73 69
+												  6E 67 6C 65 20 55 45 01 02 00 08 44 60 44 52 42
+												  2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74
+												  65 64 56 6F 6C 75 6D 65 44 4C 5F 46 69 6C 74 65
+												  72 80 01 00 44 60 44 52 42 2E 52 6C 63 53 64 75
+												  54 72 61 6E 73 6D 69 74 74 65 64 56 6F 6C 75 6D
+												  65 55 4C 5F 46 69 6C 74 65 72 00 00 00 43 60 44
+												  52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65
+												  44 4C 44 69 73 74 2E 42 69 6E 20 00 00 01 43 40
+												  44 52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D
+												  65 55 4C 44 69 73 74 2E 42 69 6E 00 00 02 43 40
+												  44 52 42 2E 52 6C 63 50 61 63 6B 65 74 44 72 6F
+												  70 52 61 74 65 44 4C 44 69 73 74 00 00 03 42 E0
+												  44 52 42 2E 50 61 63 6B 65 74 4C 6F 73 73 52 61
+												  74 65 55 4C 44 69 73 74 00 00 04 42 20 4C 31 4D
+												  2E 44 4C 2D 53 53 2D 52 53 52 50 2E 53 53 42 00
+												  00 05 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 53 49
+												  4E 52 2E 53 53 42 00 00 06 41 C0 4C 31 4D 2E 55
+												  4C 2D 53 52 53 2D 52 53 52 50 00 00 07 01 01 01
+												  01 00 01 03 16 00 43 6F 6E 64 69 74 69 6F 6E 2D
+												  62 61 73 65 64 2C 20 55 45 2D 6C 65 76 65 6C 20
+												  45 32 20 4E 6F 64 65 20 4D 65 61 73 75 72 65 6D
+												  65 6E 74 01 03 00 08 44 60 44 52 42 2E 52 6C 63
+												  53 64 75 54 72 61 6E 73 6D 69 74 74 65 64 56 6F
+												  6C 75 6D 65 44 4C 5F 46 69 6C 74 65 72 80 01 00
+												  44 60 44 52 42 2E 52 6C 63 53 64 75 54 72 61 6E
+												  73 6D 69 74 74 65 64 56 6F 6C 75 6D 65 55 4C 5F
+												  46 69 6C 74 65 72 00 00 00 43 60 44 52 42 2E 50
+												  65 72 44 61 74 61 56 6F 6C 75 6D 65 44 4C 44 69
+												  73 74 2E 42 69 6E 20 00 00 01 43 40 44 52 42 2E
+												  50 65 72 44 61 74 61 56 6F 6C 75 6D 65 55 4C 44
+												  69 73 74 2E 42 69 6E 00 00 02 43 40 44 52 42 2E
+												  52 6C 63 50 61 63 6B 65 74 44 72 6F 70 52 61 74
+												  65 44 4C 44 69 73 74 00 00 03 42 E0 44 52 42 2E
+												  50 61 63 6B 65 74 4C 6F 73 73 52 61 74 65 55 4C
+												  44 69 73 74 00 00 04 42 20 4C 31 4D 2E 44 4C 2D
+												  53 53 2D 52 53 52 50 2E 53 53 42 00 00 05 42 20
+												  4C 31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 52 2E 53
+												  53 42 00 00 06 41 C0 4C 31 4D 2E 55 4C 2D 53 52
+												  53 2D 52 53 52 50 00 00 07 01 01 01 02 00 01 04
+												  15 80 43 6F 6D 6D 6F 6E 20 43 6F 6E 64 69 74 69
+												  6F 6E 2D 62 61 73 65 64 2C 20 55 45 2D 6C 65 76
+												  65 6C 20 4D 65 61 73 75 72 65 6D 65 6E 74 01 04
+												  00 08 44 60 44 52 42 2E 52 6C 63 53 64 75 54 72
+												  61 6E 73 6D 69 74 74 65 64 56 6F 6C 75 6D 65 44
+												  4C 5F 46 69 6C 74 65 72 80 01 00 44 60 44 52 42
+												  2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74
+												  65 64 56 6F 6C 75 6D 65 55 4C 5F 46 69 6C 74 65
+												  72 00 00 00 43 60 44 52 42 2E 50 65 72 44 61 74
+												  61 56 6F 6C 75 6D 65 44 4C 44 69 73 74 2E 42 69
+												  6E 20 00 00 01 43 40 44 52 42 2E 50 65 72 44 61
+												  74 61 56 6F 6C 75 6D 65 55 4C 44 69 73 74 2E 42
+												  69 6E 00 00 02 43 40 44 52 42 2E 52 6C 63 50 61
+												  63 6B 65 74 44 72 6F 70 52 61 74 65 44 4C 44 69
+												  73 74 00 00 03 42 E0 44 52 42 2E 50 61 63 6B 65
+												  74 4C 6F 73 73 52 61 74 65 55 4C 44 69 73 74 00
+												  00 04 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 52 53
+												  52 50 2E 53 53 42 00 00 05 42 20 4C 31 4D 2E 44
+												  4C 2D 53 53 2D 53 49 4E 52 2E 53 53 42 00 00 06
+												  41 C0 4C 31 4D 2E 55 4C 2D 53 52 53 2D 52 53 52
+												  50 00 00 07 01 01 01 03 00 01 05 11 80 45 32 20
+												  4E 6F 64 65 20 4D 65 61 73 75 72 65 6D 65 6E 74
+												  20 66 6F 72 20 6D 75 6C 74 69 70 6C 65 20 55 45
+												  73 01 05 00 08 44 60 44 52 42 2E 52 6C 63 53 64
+												  75 54 72 61 6E 73 6D 69 74 74 65 64 56 6F 6C 75
+												  6D 65 44 4C 5F 46 69 6C 74 65 72 80 01 00 44 60
+												  44 52 42 2E 52 6C 63 53 64 75 54 72 61 6E 73 6D
+												  69 74 74 65 64 56 6F 6C 75 6D 65 55 4C 5F 46 69
+												  6C 74 65 72 00 00 00 43 60 44 52 42 2E 50 65 72
+												  44 61 74 61 56 6F 6C 75 6D 65 44 4C 44 69 73 74
+												  2E 42 69 6E 20 00 00 01 43 40 44 52 42 2E 50 65
+												  72 44 61 74 61 56 6F 6C 75 6D 65 55 4C 44 69 73
+												  74 2E 42 69 6E 00 00 02 43 40 44 52 42 2E 52 6C
+												  63 50 61 63 6B 65 74 44 72 6F 70 52 61 74 65 44
+												  4C 44 69 73 74 00 00 03 42 E0 44 52 42 2E 50 61
+												  63 6B 65 74 4C 6F 73 73 52 61 74 65 55 4C 44 69
+												  73 74 00 00 04 42 20 4C 31 4D 2E 44 4C 2D 53 53
+												  2D 52 53 52 50 2E 53 53 42 00 00 05 42 20 4C 31
+												  4D 2E 44 4C 2D 53 53 2D 53 49 4E 52 2E 53 53 42
+												  00 00 06 41 C0 4C 31 4D 2E 55 4C 2D 53 52 53 2D
+												  52 53 52 50 00 00 07 01 01 01 03
+											  </ranFunctionDefinition>
+											  <ranFunctionRevision>2</ranFunctionRevision>
+											  <ranFunctionOID>OID123</ranFunctionOID>
+										  </RANfunction-Item>
+									  </value>
+								  </ProtocolIE-SingleContainer>
+							  </RANfunctions-List>
+						  </value>
+					  </E2setupRequestIEs>
+					  <E2setupRequestIEs>
+						  <id>50</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <E2nodeComponentConfigAddition-List>
+								  <ProtocolIE-SingleContainer>
+									  <id>51</id>
+									  <criticality><reject/></criticality>
+									  <value>
+										  <E2nodeComponentConfigAddition-Item>
+											  <e2nodeComponentInterfaceType><ng/></e2nodeComponentInterfaceType>
+											  <e2nodeComponentID>
+												  <e2nodeComponentInterfaceTypeNG>
+													  <amf-name>nginterf</amf-name>
+												  </e2nodeComponentInterfaceTypeNG>
+											  </e2nodeComponentID>
+											  <e2nodeComponentConfiguration>
+												  <e2nodeComponentRequestPart>72 65 71 70 61 72 74</e2nodeComponentRequestPart>
+												  <e2nodeComponentResponsePart>72 65 73 70 61 72 74</e2nodeComponentResponsePart>
+											  </e2nodeComponentConfiguration>
+										  </E2nodeComponentConfigAddition-Item>
+									  </value>
+								  </ProtocolIE-SingleContainer>
+							  </E2nodeComponentConfigAddition-List>
+						  </value>
+					  </E2setupRequestIEs>
+				  </protocolIEs>
+			  </E2setupRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  After XER Encoding
+  error length 0
+  error buf
+  er encded is 1767
+  [e2sim.cpp:194] [SCTP] Sent E2-SETUP-REQUEST
+  about to call E2ResetRequest encode
+
+  [E2AP] Created E2ResetRequest
+  before
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>3</procedureCode>
+		  <criticality><reject/></criticality>
+		  <value>
+			  <ResetRequest>
+				  <protocolIEs>
+					  <ResetRequestIEs>
+						  <id>49</id>
+						  <criticality><ignore/></criticality>
+						  <value>
+							  <TransactionID>1</TransactionID>
+						  </value>
+					  </ResetRequestIEs>
+					  <ResetRequestIEs>
+						  <id>1</id>
+						  <criticality><ignore/></criticality>
+						  <value>
+							  <Cause>
+								  <e2Node><e2node-component-unknown/></e2Node>
+							  </Cause>
+						  </value>
+					  </ResetRequestIEs>
+				  </protocolIEs>
+			  </ResetRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  after
+
+  error length 0
+  error buf
+  er encoded is 18
+  [e2sim.cpp:226] Test to delete ReSet code
+  [e2sim.cpp:230] [SCTP] Waiting for SCTP data
+  [e2sim.cpp:237] [SCTP] Received new data of size 60
+  in e2ap_handle_sctp_data()
+  decoding...
+  full buffer
+
+  length of data 60
+  result 0
+  index is 2
+  showing xer of data
+  <E2AP-PDU>
+	  <successfulOutcome>
+		  <procedureCode>1</procedureCode>
+		  <criticality><reject/></criticality>
+		  <value>
+			  <E2setupResponse>
+				  <protocolIEs>
+					  <E2setupResponseIEs>
+						  <id>49</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <TransactionID>1</TransactionID>
+						  </value>
+					  </E2setupResponseIEs>
+					  <E2setupResponseIEs>
+						  <id>4</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <GlobalRIC-ID>
+								  <pLMN-Identity>13 10 14</pLMN-Identity>
+								  <ric-ID>
+									  10101010110011001110
+								  </ric-ID>
+							  </GlobalRIC-ID>
+						  </value>
+					  </E2setupResponseIEs>
+					  <E2setupResponseIEs>
+						  <id>9</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctionsID-List>
+								  <ProtocolIE-SingleContainer>
+									  <id>6</id>
+									  <criticality><ignore/></criticality>
+									  <value>
+										  <RANfunctionID-Item>
+											  <ranFunctionID>0</ranFunctionID>
+											  <ranFunctionRevision>2</ranFunctionRevision>
+										  </RANfunctionID-Item>
+									  </value>
+								  </ProtocolIE-SingleContainer>
+							  </RANfunctionsID-List>
+						  </value>
+					  </E2setupResponseIEs>
+					  <E2setupResponseIEs>
+						  <id>52</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <E2nodeComponentConfigAdditionAck-List>
+								  <ProtocolIE-SingleContainer>
+									  <id>53</id>
+									  <criticality><reject/></criticality>
+									  <value>
+										  <E2nodeComponentConfigAdditionAck-Item>
+											  <e2nodeComponentInterfaceType><ng/></e2nodeComponentInterfaceType>
+											  <e2nodeComponentID>
+												  <e2nodeComponentInterfaceTypeNG>
+													  <amf-name>nginterf</amf-name>
+												  </e2nodeComponentInterfaceTypeNG>
+											  </e2nodeComponentID>
+											  <e2nodeComponentConfigurationAck>
+												  <updateOutcome><success/></updateOutcome>
+											  </e2nodeComponentConfigurationAck>
+										  </E2nodeComponentConfigAdditionAck-Item>
+									  </value>
+								  </ProtocolIE-SingleContainer>
+							  </E2nodeComponentConfigAdditionAck-List>
+						  </value>
+					  </E2setupResponseIEs>
+				  </protocolIEs>
+			  </E2setupResponse>
+		  </value>
+	  </successfulOutcome>
+  </E2AP-PDU>
+  [E2AP] Unpacked E2AP-PDU: index = 2, procedureCode = 1
+
+  [e2ap_message_handler.cpp:80] [E2AP] Received SETUP-RESPONSE-SUCCESS
+
+
+
+  --> RIC and e2simulator  Set up is OK
+
+
+
+
+(2) hello-world xApp interactions
+
+
+-- Download and configure
+	git clone https://gerrit.o-ran-sc.org/r/ric-app/hw-go
+	cd hw-go
+	docker build -t example.com:80/hw-go:1.2 .
+	export CHART_REPO_URL=http://0.0.0.0:8090
+	vi config/config-file.json
+		modify tag = 1.2
+		modify example.com:80 for "registry"
+		modify name in image to "hw-go"
+
+-- using dms_cli onboard
+
+	root@ran3:~/hw-go# export CHART_REPO_URL=http://0.0.0.0:8090
+
+	root@ran3:~/hw-go# dms_cli health
+	True
+
+	root@ran3:~/hw-go# dms_cli onboard ./config/config-file.json ./config/schema.json
+	httpGet:
+	  path: '{{ index .Values "readinessProbe" "httpGet" "path" | toJson }}'
+	  port: '{{ index .Values "readinessProbe" "httpGet" "port" | toJson }}'
+	initialDelaySeconds: '{{ index .Values "readinessProbe" "initialDelaySeconds" | toJson }}'
+	periodSeconds: '{{ index .Values "readinessProbe" "periodSeconds" | toJson }}'
+
+	httpGet:
+	  path: '{{ index .Values "livenessProbe" "httpGet" "path" | toJson }}'
+	  port: '{{ index .Values "livenessProbe" "httpGet" "port" | toJson }}'
+	initialDelaySeconds: '{{ index .Values "livenessProbe" "initialDelaySeconds" | toJson }}'
+	periodSeconds: '{{ index .Values "livenessProbe" "periodSeconds" | toJson }}'
+
+	{
+		"status": "Created"
+	}
+
+	
+	
+-- ** query to appmgr to get list of all the deployed xapps :
+  	curl http://service-ricplt-appmgr-http.ricplt:8080/ric/v1/xapps | jq .
+
+    (example, in my case)
+    root@ran3:~# curl http://10.110.206.238:8080/ric/v1/xapps | jq .                
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current 
+                                     Dload  Upload   Total   Spent    Left  Speed   
+    100   333  100   333    0     0  16650      0 --:--:-- --:--:-- --:--:-- 16650  
+    [                                                                               
+      {                                                                             
+        "instances": [                                                              
+          {                                                                         
+            "ip": "service-ricxapp-hw-go-rmr.ricxapp",                              
+            "name": "hw-go",                                                        
+            "policies": [                                                           
+              1                                                                     
+            ],                                                                      
+            "port": 4560,                                                           
+            "rxMessages": [                                                         
+              "RIC_SUB_RESP",                                                       
+              "A1_POLICY_REQ",                                                      
+              "RIC_HEALTH_CHECK_REQ"                                                
+            ],                                                                      
+            "status": "deployed",                                                   
+            "txMessages": [                                                         
+              "RIC_SUB_REQ",                                                        
+              "A1_POLICY_RESP",                                                     
+              "A1_POLICY_QUERY",                                                    
+              "RIC_HEALTH_CHECK_RESP"                                               
+            ]                                                                       
+          }                                                                         
+        ],                                                                          
+        "name": "hw-go",                                                            
+        "status": "deployed",                                                       
+        "version": "1.0.0"                                                          
+      }                                                                             
+    ]
+
+
+    -- in case of failure, there are 2 options to use port-forwarding
+
+	(Option.1) with port-forwarding command to service-ricplt-appmgr-http
+
+	  root@ran3:~# k port-forward -n ricplt services/service-ricplt-appmgr-http 8081:8080
+	  Forwarding from 127.0.0.1:8081 -> 8080
+	  Forwarding from [::1]:8081 -> 8080
+
+	  Handling connection for 8081
+
+
+
+
+	(Option.2) k9s port-forwarding feature
+		- move cursor to service-ricplt-appmgr-http line
+		- press Shift+f, to create port-forwarding
+		┌────────────────<PortForward>─────────────────┐
+		│                                              │
+		│ ricplt/deployment-ricplt-appmgr-5bdd7cbb54-  │
+		│                    n5kfh                     │
+		│                                              │
+		│                Exposed Ports:                │
+		│     container-ricplt-appmgr::8080(http)      │
+		│   container-ricplt-appmgr::4561(rmrroute)    │
+		│    container-ricplt-appmgr::4560(rmrdata)    │
+		│                                              │
+		│ Container Port: ntainer-ricplt-appmgr::8080  │
+		│ Local Port:     8080                         │
+		│ Address:        localhost                    │
+		│                                              │
+		│                OK     Cancel                 │
+		│                                              │
+		└──────────────────────────────────────────────┘
+		- press OK
+
+
+
+	(Result)
+	  root@ran3:~# curl http://localhost:8081/ric/v1/xapps | jq .
+		% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+									   Dload  Upload   Total   Spent    Left  Speed
+	  100   333  100   333    0     0   6283      0 --:--:-- --:--:-- --:--:--  6403
+	  [
+		{
+		  "instances": [
+			{
+			  "ip": "service-ricxapp-hw-go-rmr.ricxapp",
+			  "name": "hw-go",
+			  "policies": [
+				1
+			  ],
+			  "port": 4560,
+			  "rxMessages": [
+				"RIC_SUB_RESP",
+				"A1_POLICY_REQ",
+				"RIC_HEALTH_CHECK_REQ"
+			  ],
+			  "status": "deployed",
+			  "txMessages": [
+				"RIC_SUB_REQ",
+				"A1_POLICY_RESP",
+				"A1_POLICY_QUERY",
+				"RIC_HEALTH_CHECK_RESP"
+			  ]
+			}
+		  ],
+		  "name": "hw-go",
+		  "status": "deployed",
+		  "version": "1.0.0"
+		}
+	  ]
+
+
+
+
+	--- kill port-forwarding
+
+	root@ran3:~# ps -ef | grep port-forward
+	root     2694321 2669768  0 14:50 pts/3    00:00:00 kubectl port-forward -n ricplt services/service-ricplt-appmgr-http 8081:8080
+
+	root@ran3:~# kill -9 2694321
+	
+
+
+
+-- kubectl logs
+
+  root@ran3:~/ric-dep/bin/charts/hw-go# dms_cli install hw-go 1.0.0 ricxapp
+  status: OK
+  root@ran3:~/ric-dep/bin/charts/hw-go# k logs -n ricxapp ricxapp-hw-go-7c8945ccb6-w5qrr
+  {"ts":1714059919372,"crit":"INFO","id":"hw-go","mdc":{"time":"2024-04-25T15:45:19"},"msg":"Using config file: config/config-file.json"}
+  {"ts":1714059919373,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Serving metrics on: url=/ric/v1/metrics namespace=ricxapp"}
+  redis: got 7 elements in COMMAND reply, wanted 6
+  {"ts":1714059919378,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp SDL Stored The total number of stored SDL transactions map[]}"}
+  {"ts":1714059919379,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp SDL StoreError The total number of SDL store errors map[]}"}
+  redis: got 7 elements in COMMAND reply, wanted 6
+  {"ts":1714059919387,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp hw_go RICIndicationRx Total number of RIC Indication message received map[]}"}
+  1714059919387 7/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (d07cc97 4.7.0 built: Apr  1 2021)
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"new rmrClient with parameters: ProtPort=4560 MaxSize=2072 ThreadType=0 StatDesc=RMR LowLatency=false FastAck=false Policies=[1]"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp RMR Transmitted The total number of transmited RMR messages map[]}"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp RMR Received The total number of received RMR messages map[]}"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp RMR TransmitError The total number of RMR transmission errors map[]}"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Register new counter with opts: {ricxapp RMR ReceiveError The total number of RMR receive errors map[]}"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Interface name is not able to resolve route ip+net: invalid network interface name"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"Xapp started, listening on: :8080"}
+  {"ts":1714059919388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:19"},"msg":"rmrClient: Waiting for RMR to be ready ..."}
+  {"ts":1714059920388,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"rmrClient: RMR is ready after 1 seconds waiting..."}
+  {"ts":1714059920389,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"xApp ready call back received"}
+  1714059920390 7/RMR [INFO] sends: ts=1714059920 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059920391 7/RMR [INFO] sends: ts=1714059920 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059920391 7/RMR [INFO] sends: ts=1714059920 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+  {"ts":1714059920396,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"List for connected eNBs :"}
+  {"ts":1714059920397,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"List of connected gNBs :"}
+  {"ts":1714059920397,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"1. gnbid : gnb_734_373_16b8cef1"}
+  {"ts":1714059920397,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"sending subscription request for meid : gnb_734_373_16b8cef1"}
+  {"ts":1714059920398,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"*****body: {\n  \"ClientEndpoint\": {\n    \"HTTPPort\": 8080,\n    \"Host\": \"service-ricxapp-hw-go-rmr.ricxapp\",\n    \"RMRPort\": 4560\n  },\n  \"Meid\": \"gnb_734_373_16b8cef1\",\n  \"RANFunctionID\": 1,\n  \"SubscriptionDetails\": [\n    {\n      \"ActionToBeSetupList\": [\n        {\n          \"ActionDefinition\": [\n            1,\n            2,\n            3,\n            4\n          ],\n          \"ActionID\": 1,\n          \"ActionType\": \"report\",\n          \"SubsequentAction\": {\n            \"SubsequentActionType\": \"continue\",\n            \"TimeToWait\": \"w10ms\"\n          }\n        }\n      ],\n      \"EventTriggers\": [\n        1,\n        2,\n        3,\n        4\n      ],\n      \"XappEventInstanceId\": 1234\n    }\n  ]\n} "}
+  {"ts":1714059920402,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:20"},"msg":"Successfully subcription done (gnb_734_373_16b8cef1), subscription id : 2fbBVXnbNf2iuHXDyFEGGCZHBUT"}
+  RMR is ready now ...
+  {"ts":1714059924390,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:24"},"msg":"Application='hw-go' is not ready yet, waiting ..."}
+  {"ts":1714059929392,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:29"},"msg":"Application='hw-go' is not ready yet, waiting ..."}
+  {"ts":1714059934019,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+  {"ts":1714059934020,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+  {"ts":1714059934392,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"getService: SERVICE_RICXAPP_HW-GO_HTTP_PORT [tcp: 10.108.169.130:8080]"}
+  {"ts":1714059934392,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"getService: SERVICE_RICXAPP_HW-GO_RMR_PORT [tcp: 10.103.201.76:4560]"}
+  {"ts":1714059934397,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"restapi: method=GET url=/ric/v1/config"}
+  {"ts":1714059934398,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"Inside appconfigHandler"}
+  {"ts":1714059934401,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"Post to 'http://service-ricplt-appmgr-http.ricplt:8080/ric/v1/register' done, status:201 Created"}
+  {"ts":1714059934401,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"Registration done, proceeding with startup ..."}
+  {"ts":1714059934411,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"restapi: method=GET url=/ric/v1/config"}
+  {"ts":1714059934411,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:34"},"msg":"Inside appconfigHandler"}
+  {"ts":1714059949019,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:49"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+  {"ts":1714059949019,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:45:49"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+  1714059951434 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=10.98.113.199:38000 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059951435 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059951435 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059951436 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059951436 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059951436 7/RMR [INFO] sends: ts=1714059951 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+  {"ts":1714059964025,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:46:04"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+  {"ts":1714059964025,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:46:04"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+  {"ts":1714059979021,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:46:19"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+  {"ts":1714059979021,"crit":"INFO","id":"hw-go","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","HWApp":"0.0.1","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2024-04-25T15:46:19"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=10.98.113.199:38000 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4591 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=localhost:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+  1714059982990 7/RMR [INFO] sends: ts=1714059982 src=service-ricxapp-hw-go-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+
+
+
+
+
+(3) e2sim 's event when xapp(hw-go) attached
+
+  [e2sim.cpp:237] [SCTP] Received new data of size 47
+  in e2ap_handle_sctp_data()
+  decoding...
+  full buffer
+
+  length of data 47
+  result 0
+  index is 1
+  showing xer of data
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>8</procedureCode>
+		  <criticality><ignore/></criticality>
+		  <value>
+			  <RICsubscriptionRequest>
+				  <protocolIEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>29</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICrequestID>
+								  <ricRequestorID>123</ricRequestorID>
+								  <ricInstanceID>4</ricInstanceID>
+							  </RICrequestID>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>5</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctionID>1</RANfunctionID>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>30</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICsubscriptionDetails>
+								  <ricEventTriggerDefinition>01 02 03 04</ricEventTriggerDefinition>
+								  <ricAction-ToBeSetup-List>
+									  <ProtocolIE-SingleContainer>
+										  <id>19</id>
+										  <criticality><ignore/></criticality>
+										  <value>
+											  <RICaction-ToBeSetup-Item>
+												  <ricActionID>1</ricActionID>
+												  <ricActionType><report/></ricActionType>
+												  <ricActionDefinition>01 02 03 04</ricActionDefinition>
+												  <ricSubsequentAction>
+													  <ricSubsequentActionType><continue/></ricSubsequentActionType>
+													  <ricTimeToWait><w20ms/></ricTimeToWait>
+												  </ricSubsequentAction>
+											  </RICaction-ToBeSetup-Item>
+										  </value>
+									  </ProtocolIE-SingleContainer>
+								  </ricAction-ToBeSetup-List>
+							  </RICsubscriptionDetails>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+				  </protocolIEs>
+			  </RICsubscriptionRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  initiating message
+  [E2AP] Unpacked E2AP-PDU: index = 1, procedureCode = 8
+
+  [e2ap_message_handler.cpp:116] [E2AP] Received RIC-SUBSCRIPTION-REQUEST
+  count3
+  size4
+  next present value 1
+  value of pres ranfuncid is 2
+  next present value 2
+  value of pres ranfuncid is 2
+  equal pres to ranfuncid
+  next present value 3
+  value of pres ranfuncid is 2
+  After loop, func_id is 1
+  Function Id of message is 1
+  %%we are getting the subscription callback for func id 1
+  Error: No RAN Function with this ID exists
+  [e2sim.cpp:237] [SCTP] Received new data of size 47
+  in e2ap_handle_sctp_data()
+  decoding...
+  full buffer
+
+  length of data 47
+  result 0
+  index is 1
+  showing xer of data
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>8</procedureCode>
+		  <criticality><ignore/></criticality>
+		  <value>
+			  <RICsubscriptionRequest>
+				  <protocolIEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>29</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICrequestID>
+								  <ricRequestorID>123</ricRequestorID>
+								  <ricInstanceID>4</ricInstanceID>
+							  </RICrequestID>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>5</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctionID>1</RANfunctionID>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+					  <RICsubscriptionRequest-IEs>
+						  <id>30</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICsubscriptionDetails>
+								  <ricEventTriggerDefinition>01 02 03 04</ricEventTriggerDefinition>
+								  <ricAction-ToBeSetup-List>
+									  <ProtocolIE-SingleContainer>
+										  <id>19</id>
+										  <criticality><ignore/></criticality>
+										  <value>
+											  <RICaction-ToBeSetup-Item>
+												  <ricActionID>1</ricActionID>
+												  <ricActionType><report/></ricActionType>
+												  <ricActionDefinition>01 02 03 04</ricActionDefinition>
+												  <ricSubsequentAction>
+													  <ricSubsequentActionType><continue/></ricSubsequentActionType>
+													  <ricTimeToWait><w20ms/></ricTimeToWait>
+												  </ricSubsequentAction>
+											  </RICaction-ToBeSetup-Item>
+										  </value>
+									  </ProtocolIE-SingleContainer>
+								  </ricAction-ToBeSetup-List>
+							  </RICsubscriptionDetails>
+						  </value>
+					  </RICsubscriptionRequest-IEs>
+				  </protocolIEs>
+			  </RICsubscriptionRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  initiating message
+  [E2AP] Unpacked E2AP-PDU: index = 1, procedureCode = 8
+
+  [e2ap_message_handler.cpp:116] [E2AP] Received RIC-SUBSCRIPTION-REQUEST
+  count3
+  size4
+  next present value 1
+  value of pres ranfuncid is 2
+  next present value 2
+  value of pres ranfuncid is 2
+  equal pres to ranfuncid
+  next present value 3
+  value of pres ranfuncid is 2
+  After loop, func_id is 1
+  Function Id of message is 1
+  %%we are getting the subscription callback for func id 1
+  Error: No RAN Function with this ID exists
+  [e2sim.cpp:237] [SCTP] Received new data of size 22
+  in e2ap_handle_sctp_data()
+  decoding...
+  full buffer
+
+  length of data 22
+  result 0
+  index is 1
+  showing xer of data
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>9</procedureCode>
+		  <criticality><ignore/></criticality>
+		  <value>
+			  <RICsubscriptionDeleteRequest>
+				  <protocolIEs>
+					  <RICsubscriptionDeleteRequest-IEs>
+						  <id>29</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICrequestID>
+								  <ricRequestorID>123</ricRequestorID>
+								  <ricInstanceID>4</ricInstanceID>
+							  </RICrequestID>
+						  </value>
+					  </RICsubscriptionDeleteRequest-IEs>
+					  <RICsubscriptionDeleteRequest-IEs>
+						  <id>5</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctionID>1</RANfunctionID>
+						  </value>
+					  </RICsubscriptionDeleteRequest-IEs>
+				  </protocolIEs>
+			  </RICsubscriptionDeleteRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  initiating message
+  [E2AP] Unpacked E2AP-PDU: index = 1, procedureCode = 9
+
+  [E2AP] No available handler for procedureCode=9
+  [e2sim.cpp:237] [SCTP] Received new data of size 22
+  in e2ap_handle_sctp_data()
+  decoding...
+  full buffer
+
+  length of data 22
+  result 0
+  index is 1
+  showing xer of data
+  <E2AP-PDU>
+	  <initiatingMessage>
+		  <procedureCode>9</procedureCode>
+		  <criticality><ignore/></criticality>
+		  <value>
+			  <RICsubscriptionDeleteRequest>
+				  <protocolIEs>
+					  <RICsubscriptionDeleteRequest-IEs>
+						  <id>29</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RICrequestID>
+								  <ricRequestorID>123</ricRequestorID>
+								  <ricInstanceID>4</ricInstanceID>
+							  </RICrequestID>
+						  </value>
+					  </RICsubscriptionDeleteRequest-IEs>
+					  <RICsubscriptionDeleteRequest-IEs>
+						  <id>5</id>
+						  <criticality><reject/></criticality>
+						  <value>
+							  <RANfunctionID>1</RANfunctionID>
+						  </value>
+					  </RICsubscriptionDeleteRequest-IEs>
+				  </protocolIEs>
+			  </RICsubscriptionDeleteRequest>
+		  </value>
+	  </initiatingMessage>
+  </E2AP-PDU>
+  initiating message
+  [E2AP] Unpacked E2AP-PDU: index = 1, procedureCode = 9
+
+  [E2AP] No available handler for procedureCode=9
+
+
+
+
+
+
+< Analysis of Message >
+
+ -- in hwApp.go
+
+	var (
+		A1_POLICY_QUERY      = 20013
+		POLICY_QUERY_PAYLOAD = "{\"policy_type_id\":20000}"
+		reqId                = int64(1)
+		seqId                = int64(1)
+		funId                = int64(1)
+		actionId             = int64(1)
+		actionType           = "report"
+		subsequestActioType  = "continue"
+		timeToWait           = "w10ms"
+		direction            = int64(0)
+		procedureCode        = int64(27)
+		xappEventInstanceID  = int64(1234)
+		typeOfMessage        = int64(1)
+		subscriptionId       = ""
+		hPort                = int64(8080)
+		rPort                = int64(4560)
+		clientEndpoint       = clientmodel.SubscriptionParamsClientEndpoint{Host: "service-ricxapp-hw-go-rmr.ricxapp", HTTPPort: &hPort, R
+	)
+
+	func (e *HWApp) sendSubscription(meid string) {
+
+		xapp.Logger.Info("sending subscription request for meid : %s", meid)
+
+		subscriptionParams := clientmodel.SubscriptionParams{
+			ClientEndpoint: &clientEndpoint,
+			Meid:           &meid,
+			RANFunctionID:  &funId,
+			SubscriptionDetails: clientmodel.SubscriptionDetailsList([]*clientmodel.SubscriptionDetail{
+				{
+					ActionToBeSetupList: clientmodel.ActionsToBeSetup{
+						&clientmodel.ActionToBeSetup{
+							ActionDefinition: clientmodel.ActionDefinition([]int64{1, 2, 3, 4}),
+							ActionID:         &actionId,
+							ActionType:       &actionType,
+							SubsequentAction: &clientmodel.SubsequentAction{
+								SubsequentActionType: &subsequestActioType,
+								TimeToWait:           &timeToWait,
+							},
+						},
+					},
+					EventTriggers:       clientmodel.EventTriggerDefinition([]int64{1, 2, 3, 4}),
+					XappEventInstanceID: &xappEventInstanceID,
+				},
+			}),
+		}
+
+
+ -- in Received message on E2sim
+
+	<value>
+		<RICaction-ToBeSetup-Item>
+			<ricActionID>1</ricActionID>
+			<ricActionType><report/></ricActionType>
+			<ricActionDefinition>01 02 03 04</ricActionDefinition>
+			<ricSubsequentAction>
+				<ricSubsequentActionType><continue/></ricSubsequentActionType>
+				<ricTimeToWait><w20ms/></ricTimeToWait>
+			</ricSubsequentAction>
+		</RICaction-ToBeSetup-Item>
+	</value>
+
+
+
+
+
+
+-- pods --
+
+NAMESPACE↑   NAME                                       TYPE       CLUSTER-IP      EXTERNAL-IP PORTS                               
+default      kubernetes                                 ClusterIP  10.96.0.1                   https:443►0                         
+kube-system  kube-dns                                   ClusterIP  10.96.0.10                  dns:53►0╱UDP dns-tcp:53►0 metrics:9 
+ricinfra     service-tiller-ricxapp                     ClusterIP  10.102.201.247              tiller:44134►0                      
+ricplt       aux-entry                                  ClusterIP  10.102.16.19                aux-entry-http-ingress-port:80►0 au 
+ricplt       r4-infrastructure-prometheus-alertmanager  ClusterIP  10.98.27.225                http:80►0                           
+ricplt       r4-infrastructure-prometheus-server        ClusterIP  10.103.155.235              http:80►0                           
+ricplt       service-ricplt-a1mediator-http             ClusterIP  10.100.51.89                http:10000►0                        
+ricplt       service-ricplt-a1mediator-rmr              ClusterIP  10.103.89.151               rmrroute:4561►0 rmrdata:4562►0      
+ricplt       service-ricplt-alarmmanager-http           ClusterIP  10.99.0.195                 http:8080►0                         
+ricplt       service-ricplt-alarmmanager-rmr            ClusterIP  10.97.216.241               rmrdata:4560►0 rmrroute:4561►0      
+ricplt       service-ricplt-appmgr-http                 ClusterIP  10.110.206.238              http:8080►0                         
+ricplt       service-ricplt-appmgr-rmr                  ClusterIP  10.105.53.117               rmrroute:4561►0 rmrdata:4560►0      
+ricplt       service-ricplt-dbaas-tcp                   ClusterIP                              server:6379►0                       
+ricplt       service-ricplt-e2mgr-http                  ClusterIP  10.96.90.98                 http:3800►0                         
+ricplt       service-ricplt-e2mgr-rmr                   ClusterIP  10.101.90.194               rmrroute:4561►0 rmrdata:3801►0      
+ricplt       service-ricplt-e2term-prometheus-alpha     ClusterIP  10.103.235.72               prmts-alpha:8088►0                  
+ricplt       service-ricplt-e2term-rmr-alpha            ClusterIP  10.98.113.199               rmrroute-alpha:4561►0 rmrdata-alpha 
+ricplt       service-ricplt-e2term-sctp-alpha           NodePort   10.96.147.226               sctp-alpha:36422►32222╱SCTP         
+ricplt       service-ricplt-o1mediator-http             ClusterIP  10.109.22.255               http-supervise:9001►0 http-mediatio 
+ricplt       service-ricplt-o1mediator-tcp-netconf      NodePort   10.111.98.8                 tcp-netconf:830►30830               
+ricplt       service-ricplt-rtmgr-http                  ClusterIP  10.96.240.229               http:3800►0                         
+ricplt       service-ricplt-rtmgr-rmr                   ClusterIP  10.98.100.235               rmrroute:4561►0 rmrdata:4560►0      
+ricplt       service-ricplt-submgr-http                 ClusterIP                              http:3800►0                         
+ricplt       service-ricplt-submgr-rmr                  ClusterIP                              rmrdata:4560►0 rmrroute:4561►0      
+ricplt       service-ricplt-vespamgr-http               ClusterIP  10.108.255.101              http:8080►0 alert:9095►0            
+ricxapp      aux-entry                                  ClusterIP  10.104.144.224              aux-entry-http-ingress-port:80►0 au 
+ricxapp      service-ricxapp-hw-go-http                 ClusterIP  10.109.192.59               http:8080►0                         
+ricxapp      service-ricxapp-hw-go-rmr                  ClusterIP  10.107.9.182                rmrdata:4560►0 rmrroute:4561►0      
+
+
+
+
+
+-- services --
+
+NAMESPACE↑   NAME                                       TYPE       CLUSTER-IP      EXTERNAL-IP PORTS                              
+default      kubernetes                                 ClusterIP  10.96.0.1                   https:443►0                        
+kube-system  kube-dns                                   ClusterIP  10.96.0.10                  dns:53►0╱UDP dns-tcp:53►0 metrics:9
+ricinfra     service-tiller-ricxapp                     ClusterIP  10.102.201.247              tiller:44134►0                     
+ricplt       aux-entry                                  ClusterIP  10.102.16.19                aux-entry-http-ingress-port:80►0 au
+ricplt       r4-infrastructure-prometheus-alertmanager  ClusterIP  10.98.27.225                http:80►0                          
+ricplt       r4-infrastructure-prometheus-server        ClusterIP  10.103.155.235              http:80►0                          
+ricplt       service-ricplt-a1mediator-http             ClusterIP  10.100.51.89                http:10000►0                       
+ricplt       service-ricplt-a1mediator-rmr              ClusterIP  10.103.89.151               rmrroute:4561►0 rmrdata:4562►0     
+ricplt       service-ricplt-alarmmanager-http           ClusterIP  10.99.0.195                 http:8080►0                        
+ricplt       service-ricplt-alarmmanager-rmr            ClusterIP  10.97.216.241               rmrdata:4560►0 rmrroute:4561►0     
+ricplt       service-ricplt-appmgr-http                 ClusterIP  10.110.206.238              http:8080►0                        
+ricplt       service-ricplt-appmgr-rmr                  ClusterIP  10.105.53.117               rmrroute:4561►0 rmrdata:4560►0     
+ricplt       service-ricplt-dbaas-tcp                   ClusterIP                              server:6379►0                      
+ricplt       service-ricplt-e2mgr-http                  ClusterIP  10.96.90.98                 http:3800►0                        
+ricplt       service-ricplt-e2mgr-rmr                   ClusterIP  10.101.90.194               rmrroute:4561►0 rmrdata:3801►0     
+ricplt       service-ricplt-e2term-prometheus-alpha     ClusterIP  10.103.235.72               prmts-alpha:8088►0                 
+ricplt       service-ricplt-e2term-rmr-alpha            ClusterIP  10.98.113.199               rmrroute-alpha:4561►0 rmrdata-alpha
+ricplt       service-ricplt-e2term-sctp-alpha           NodePort   10.96.147.226               sctp-alpha:36422►32222╱SCTP        
+ricplt       service-ricplt-o1mediator-http             ClusterIP  10.109.22.255               http-supervise:9001►0 http-mediatio
+ricplt       service-ricplt-o1mediator-tcp-netconf      NodePort   10.111.98.8                 tcp-netconf:830►30830              
+ricplt       service-ricplt-rtmgr-http                  ClusterIP  10.96.240.229               http:3800►0                        
+ricplt       service-ricplt-rtmgr-rmr                   ClusterIP  10.98.100.235               rmrroute:4561►0 rmrdata:4560►0     
+ricplt       service-ricplt-submgr-http                 ClusterIP                              http:3800►0                        
+ricplt       service-ricplt-submgr-rmr                  ClusterIP                              rmrdata:4560►0 rmrroute:4561►0     
+ricplt       service-ricplt-vespamgr-http               ClusterIP  10.108.255.101              http:8080►0 alert:9095►0           
+ricxapp      aux-entry                                  ClusterIP  10.104.144.224              aux-entry-http-ingress-port:80►0 au
+ricxapp      service-ricxapp-hw-go-http                 ClusterIP  10.109.192.59               http:8080►0                        
+ricxapp      service-ricxapp-hw-go-rmr                  ClusterIP  10.107.9.182                rmrdata:4560►0 rmrroute:4561►0     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  -----------
+   ETC 
+  -----------
+
+	  root@ran3:~/hw-python/init# helm ls -A
+	  NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART               APP VERSION
+	  hw-python               ricxapp         1               2024-04-23 12:06:56.320587726 -0400 EDT deployed        hw-python-1.0.0     1.0
+	  kong                    kong            1               2024-04-23 11:17:35.831725082 -0400 EDT deployed        ingress-0.12.0      3.6
+	  r4-a1mediator           ricplt          1               2024-04-23 11:23:43.092638825 -0400 EDT deployed        a1mediator-3.0.0    1.0
+	  r4-alarmmanager         ricplt          1               2024-04-23 11:24:19.864493459 -0400 EDT deployed        alarmmanager-5.0.0  1.0
+	  r4-appmgr               ricplt          1               2024-04-23 11:23:05.095988056 -0400 EDT deployed        appmgr-3.0.0        1.0
+	  r4-dbaas                ricplt          1               2024-04-23 11:22:55.877535939 -0400 EDT deployed        dbaas-2.0.0         1.0
+	  r4-e2mgr                ricplt          1               2024-04-23 11:23:24.504191626 -0400 EDT deployed        e2mgr-3.0.0         1.0
+	  r4-e2term               ricplt          1               2024-04-23 11:23:33.661875898 -0400 EDT deployed        e2term-3.0.0        1.0
+	  r4-infrastructure       ricplt          1               2024-04-23 11:22:42.467162839 -0400 EDT deployed        infrastructure-3.0.01.0
+	  r4-o1mediator           ricplt          1               2024-04-23 11:24:10.703868189 -0400 EDT deployed        o1mediator-3.0.0    1.0
+	  r4-rtmgr                ricplt          1               2024-04-23 11:23:15.573521979 -0400 EDT deployed        rtmgr-3.0.0         1.0
+	  r4-submgr               ricplt          1               2024-04-23 11:23:52.089692238 -0400 EDT deployed        submgr-3.0.0        1.0
+	  r4-vespamgr             ricplt          1               2024-04-23 11:24:01.333669625 -0400 EDT deployed        vespamgr-3.0.0      1.0
+
+	  root@ran3:~/hw-python/init# helm repo list
+	  NAME    URL
+	  kong    https://charts.konghq.com
+	  local   http://127.0.0.1:8879/charts
+
+
+
+
+	  root@ran3:~/hw-python/init# helm get manifest -n ricxapp hw-python
+	  ---
+	  # Source: hw-python/templates/appconfig.yaml
+	  apiVersion: v1
+	  kind: ConfigMap
+	  metadata:
+		name: configmap-ricxapp-hw-python-appconfig
+	  ...
+	  # Source: hw-python/templates/appenv.yaml 
+	  ...
+	  # Source: hw-python/templates/service-rmr.yaml
+	  ...
+	   # Source: hw-python/templates/service-http.yaml
+		apiVersion: v1
+		kind: Service
+		metadata:
+		  name: service-ricxapp-hw-python-http
+		  namespace: ricxapp
+		  labels:
+			app: ricxapp-hw-python
+			chart: hw-python-1.0.0
+			release: hw-python
+			heritage: Helm
+		spec:
+		  type: ClusterIP
+		  ports:
+			- port: 8080
+			  targetPort: http
+			  protocol: TCP
+			  name: http
+		  selector:
+			app: ricxapp-hw-python
+			release: hw-python
+
+		# Source: hw-python/templates/deployment.yaml
+		apiVersion: apps/v1
+		kind: Deployment
+		metadata:
+		  name: ricxapp-hw-python
+		  labels:
+			app: ricxapp-hw-python
+			chart: hw-python-1.0.0
+			release: hw-python
+			heritage: Helm
+		spec:
+		  replicas: 1
+		  selector:
+			matchLabels:
+			  app: ricxapp-hw-python
+			  release: hw-python
+		  template:
+			metadata:
+			  labels:
+				app: ricxapp-hw-python
+				kubernetes_name: ricxapp_hw-python
+				release: hw-python
+			spec:
+			  hostname: hw-python
+			  imagePullSecrets:
+				- name: nexus3-o-ran-sc-org-10004
+			  volumes:
+				- name: config-volume
+				  configMap:
+					name: configmap-ricxapp-hw-python-appconfig
+			  containers:
+				- name: hw-python
+				  image: "nexus3.o-ran-sc.org:10004/o-ran-sc/ric-app-hw-python:1.1.0"
+				  imagePullPolicy: IfNotPresent
+				  ports:
+					- name: http
+					  containerPort: 8080
+					  protocol: TCP
+					- name: rmrroute
+					  containerPort: 4561
+					  protocol: TCP
+					- name: rmrdata
+					  containerPort: 4560
+					  protocol: TCP
+				  volumeMounts:
+					- name: config-volume
+					  mountPath: /opt/ric/config
+				  envFrom:
+					- configMapRef:
+						name: configmap-ricxapp-hw-python-appenv
+					- configMapRef:
+						name: dbaas-appconfig
+
+
+
+
+
+
+
+------------------------------------------
+ gNB in srsRAN project 
+------------------------------------------
+https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/source/index.html
+- e2sim can be replaced or both run with gnb, from srsRAN project
+
+
+
+
+(1) Installation
+  $ sudo apt-get install cmake make gcc g++ pkg-config libfftw3-dev libmbedtls-dev libsctp-dev libyaml-cpp-dev libgtest-dev
+  $ git clone https://github.com/srsran/srsRAN_Project.git
+  $ cd srsRAN Project
+  $ mkdir build
+  $ cd build
+  $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+
+  During cmake, it is important that ZMQ is found:
+  -- FINDING ZEROMQ.
+  -- Checking for module ’ZeroMQ’
+  --   No package ’ZeroMQ’ found
+  -- Found libZEROMQ: /usr/local/include, /usr/local/lib/libzmq.so
+  If not, need to enable SCTP.
+
+    ____________________________________________
+    *** Need to check before cmake compile ***
+    ____________________________________________
+    in srsRAN_Project/CMakeLists.txt
+      ...
+      63 option(ENABLE_ZEROMQ    "Enable ZeroMQ"   ON)
+
+
+  -- check SCTP installed
+    As the connections between gNB, Open5GS and FlexRIC use the Stream Control
+    Transmission Protocol (SCTP), it should be enabled on the corresponding servers by
+
+    * installing libsctp-dev
+    $ sudo apt install libsctp-dev
+
+    * using lsmod | grep ’sctp’ to check if SCTP is enabled, 
+
+    * if nothing is returned, comment out the lines in /etc/modprobe.d/sctp.conf:
+    #install sctp /bin/true
+
+    * Then, load the SCTP module by
+    $ sudo modprobe sctp
+
+
+  $	make -j`nproc`
+  $ make test -j‵nproc‵ <-- optional
+  $ sudo make install
+
+
+
+
+(2) Config and Run
+
+  -- in gnb-config.yaml, 
+
+  ...
+  e2:
+    enable du e2: true
+    addr: 192.0.13.4        <-- whre RIC runs
+    bind addr: 192.0.13.2   <-- gnb node itself
+    e2sm kpm enabled: true
+
+    (example)
+      e2:
+        enable_du_e2: true          # Enable DU E2 agent (one for each DU instance)
+        e2sm_kpm_enabled: true      # Enable KPM service module
+        addr: 10.5.0.2              # RIC IP address --> 5g1-comp1 node
+        bind_addr: 172.17.0.4       # A local IP that the E2 agent binds to for traffic from the RIC. --> docker container
+        port: 32222                 # RIC port
+
+
+  -- to run, 
+      gnb e2 --enable_du_e2=true --addr=10.110.48.165 --port=36422 --bind_addr=10.0.2.15 --e2sm_kpm_enabled=true
+      or 
+      gnb -c <gnb-config.yaml>
+
+        <FYI>
+        root@ran3:~/ric-dep/bin# gnb e2 --help                                      
+        E2 parameters                                                               
+        Usage: gnb e2 [OPTIONS]                                                     
+                                                                                    
+        Options:                                                                    
+          -h,--help                   Print this help message and exit              
+          --enable_du_e2 BOOLEAN      Enable DU E2 agent                            
+          --addr TEXT                 RIC IP address                                
+          --port UINT:INT in [20000 - 40000] [36421]                                
+                                      RIC port                                      
+          --bind_addr TEXT:IPV4       Local IP address to bind for RIC connection   
+          --sctp_rto_initial INT      SCTP initial RTO value                        
+          --sctp_rto_min INT          SCTP RTO min                                  
+          --sctp_rto_max INT          SCTP RTO max                                  
+          --sctp_init_max_attempts INT                                              
+                                      SCTP init max attempts                        
+          --sctp_max_init_timeo INT   SCTP max init timeout                         
+          --e2sm_kpm_enabled BOOLEAN  Enable KPM service module                     
+          --e2sm_rc_enabled BOOLEAN   Enable RC service module                      
+
+
+
+(3) first attempt, error,
+
+The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}
+srsGNB ERROR: The CPU does not support the required CPU features that were configured during compile time: sse4.1(ok) avx(ok) avx2(ok)
+ fma(na) pclmul(ok)
+
+    --> it says, CPU requirements not met ?
+
+        -->  vagrant virtual machine is not good enough ??
+
+        root@ran3:~/ric-dep/bin# lscpu                                           
+        Architecture:                    x86_64                                  
+        CPU op-mode(s):                  32-bit, 64-bit                          
+        Byte Order:                      Little Endian                           
+        Address sizes:                   46 bits physical, 48 bits virtual       
+        CPU(s):                          8                                       
+        On-line CPU(s) list:             0-7                                     
+        Thread(s) per core:              1                                       
+        Core(s) per socket:              8                                       
+        Socket(s):                       1                                       
+        NUMA node(s):                    1                                       
+        Vendor ID:                       GenuineIntel                            
+        CPU family:                      6                                       
+        Model:                           85                                      
+        Model name:                      Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz
+        Stepping:                        4                                       
+        CPU MHz:                         2394.146                                
+        BogoMIPS:                        4788.29                                 
+        Hypervisor vendor:               KVM                                     
+        Virtualization type:             full                                    
+        L1d cache:                       256 KiB                                 
+        L1i cache:                       256 KiB                                 
+        L2 cache:                        8 MiB                                   
+        L3 cache:                        220 MiB  
+
+
+
+
+  < Possible Solution >
+    a. 
+    --> What if I disable or drop the following ZMQ related options on installation, 
+        $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+
+    b. How about using VirtualBox ? 
+    
+
+  < same issue >
+  https://github.com/srsran/srsRAN_Project/discussions/179
+
+
+
+
+
+(4) Error, kubernetes disk-pressure untolerated 
+
+    -- <Cause> 
+        with installing srsRAN Project.git, it took long time to compile and almost 3GB in size.
+        It resulted in low disk space, and kubernetes rejected to make or run its pods anymore. 
+        And in the end, it went to error with disk-pressure, untolerated error message as well. 
+
+        Especially k9s has EoS (End of stream) error
+       
+
+
+diskspace comparison
+(4.1) before installation of srsRAN
+
+root@ran3:~/ric-dep/bin# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+udev                               5.9G     0  5.9G   0% /dev
+tmpfs                              1.2G  4.0M  1.2G   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv   31G   23G  6.2G  79% /
+tmpfs                              5.9G     0  5.9G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+tmpfs                              5.9G     0  5.9G   0% /sys/fs/cgroup
+/dev/loop0                          62M   62M     0 100% /snap/core20/1611
+/dev/loop1                          68M   68M     0 100% /snap/lxd/22753
+/dev/sda2                          2.0G  106M  1.7G   6% /boot
+vagrant                            798G  589G  210G  74% /vagrant
+tmpfs                              1.2G     0  1.2G   0% /run/user/1000
+/dev/loop3                          64M   64M     0 100% /snap/core20/2264
+/dev/loop4                          92M   92M     0 100% /snap/lxd/24061
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/shm
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/5c4d2c754b0e91d21a7e8edb8f9456936053bacdb456ce7125bdeb032af22aef/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/ef0e019900fe4f13f74ba56c7893bfcff4bc9747b3f2c66e1759370afa622deb/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/c838628679c6ddd007ac35d7acbbd169a9b1f3f0d12ea68d13382f7d7c074d75/rootfs
+overlay                             31G   23G  6.2G  79% /run/containerd/io.containerd.runtime.v2.task/k8s.io/6339fc26c1cf4516e576cc7b0dd17809cb434279d8a0630b010f3e3372b70084/rootfs
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/121f79b0-9fae-4fc3-a1f9-3d0ec5f7fcfd/volumes/kubernetes.io~projected/kube-api-access-qk7x8
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/ecea6d10-6b9b-44f1-916d-aa35b6b07150/volumes/kubernetes.io~projected/kube-api-access-k2j5q
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/fde14f38-7792-44bd-9c69-7fc558f52123/volumes/kubernetes.io~projected/kube-api-access-p4crx
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/f5ee39f4-6073-470b-8f24-d9c4bbaf0bb4/volumes/kubernetes.io~projected/kube-api-access-5kjlp
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/c853964122474ccc6f9548ef1d798a65696a99f985bc24bd99c0cec1f8feaff4/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/e281c78dce50b7baa5c5519d042a6f21d39f21b7b8ba8293dede28898e08d42e/shm
+...
+
+
+
+
+(4.2) After install of srsRAN
+
+root@ran3:~/ric-dep/bin# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+udev                               5.9G     0  5.9G   0% /dev
+tmpfs                              1.2G  3.4M  1.2G   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv   31G   25G  4.0G  87% /
+tmpfs                              5.9G     0  5.9G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+tmpfs                              5.9G     0  5.9G   0% /sys/fs/cgroup
+/dev/loop0                          62M   62M     0 100% /snap/core20/1611
+/dev/loop1                          68M   68M     0 100% /snap/lxd/22753
+/dev/sda2                          2.0G  106M  1.7G   6% /boot
+vagrant                            798G  589G  210G  74% /vagrant
+tmpfs                              1.2G     0  1.2G   0% /run/user/1000
+/dev/loop3                          64M   64M     0 100% /snap/core20/2264
+/dev/loop4                          92M   92M     0 100% /snap/lxd/24061
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/shm
+shm                                 64M     0   64M   0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/shm
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/46cb4a39a9b375e05db558587799ed61676455e05bd9cd1665b940c127a2a0e7/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/81a040d5de45fcb31ca7bf305bdbba418c2fa9920d28b9f48abbfb8879b2c303/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/65fc94f8e5aece356820700c3ff35d38af21545566cab32c4cc41330215e10a0/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/34993a6ff2a53f72bd5ffc80b7534c3bbcf37e24d7feb30c158e36592bfc7fb3/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/5c4d2c754b0e91d21a7e8edb8f9456936053bacdb456ce7125bdeb032af22aef/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/ef0e019900fe4f13f74ba56c7893bfcff4bc9747b3f2c66e1759370afa622deb/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/c838628679c6ddd007ac35d7acbbd169a9b1f3f0d12ea68d13382f7d7c074d75/rootfs
+overlay                             31G   25G  4.0G  87% /run/containerd/io.containerd.runtime.v2.task/k8s.io/6339fc26c1cf4516e576cc7b0dd17809cb434279d8a0630b010f3e3372b70084/rootfs
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/121f79b0-9fae-4fc3-a1f9-3d0ec5f7fcfd/volumes/kubernetes.io~projected/kube-api-access-qk7x8
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/ecea6d10-6b9b-44f1-916d-aa35b6b07150/volumes/kubernetes.io~projected/kube-api-access-k2j5q
+tmpfs                               12G   12K   12G   1% /var/lib/kubelet/pods/fde14f38-7792-44bd-9c69-7fc558f52123/volumes/kubernetes.io~projected/kube-api-access-p4crx
+tmpfs                              170M   12K  170M   1% /var/lib/kubelet/pods/f5ee39f4-6073-470b-8f24-d9c4bbaf0bb4/volumes/kubernetes.io~projected/kube-api-access-5kjlp
+...
+
+
+
+
+(5) Running in a docker container
+
+- List install commands in Ubuntu container
+  root@5g1-comp1:~# docker run -d -it --name gnb ubuntu:20.04
+  root@59b4e7f84b56:/# apt update
+  root@59b4e7f84b56:/# apt-get install cmake make gcc g++ pkg-config libfftw3-dev libmbedtls-dev libsctp-dev
+  root@59b4e7f84b56:/# git clone https://github.com/srsran/srsRAN_Project.git
+  root@59b4e7f84b56:/# apt install cmake
+  root@59b4e7f84b56:/# cd srsRAN_Project/
+  root@59b4e7f84b56:/srsRAN_Project# mkdir build
+  root@59b4e7f84b56:/srsRAN_Project# cd build/
+
+  root@59b4e7f84b56:/srsRAN_Project/build# apt install kmod
+  root@59b4e7f84b56:/srsRAN_Project/build# modprobe sctp
+  root@59b4e7f84b56:/srsRAN_Project/build# lsmod | grep sctp
+  root@59b4e7f84b56:/srsRAN_Project/build# ssh-keygen -f "/root/.ssh/known_hosts" -R "129.6.142.13"^C
+
+  root@59b4e7f84b56:/srsRAN_Project/build# cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+  root@59b4e7f84b56:/srsRAN_Project/build# make -j`nproc`
+  root@59b4e7f84b56:/srsRAN_Project/build# make install
+  root@59b4e7f84b56:/srsRAN_Project/build# gnb
+
+
+- Execute  --> not working
+  root@59b4e7f84b56:/srsRAN_Project/configs# gnb e2 --enable_du_e2=true --addr=10.0.5.2 --port=32222 --
+  bind_addr=172.17.0.4 --e2sm_kpm_enabled=true
+
+  
+- Instead, gnb.yaml file
+
+      amf:
+        no_core: true               # Skip this amf section for later use
+        addr: 10.53.1.2             # The address or hostname of the AMF.
+        bind_addr: 10.53.1.1        # A local IP that the gNB binds to for traffic from the AMF.
+
+        ...
+
+      e2:
+        enable_du_e2: true          # Enable DU E2 agent (one for each DU instance)
+        e2sm_kpm_enabled: true      # Enable KPM service module
+        addr: 10.5.0.2              # RIC IP address --> 5g1-comp1 node
+        bind_addr: 172.17.0.4       # A local IP that the E2 agent binds to for traffic from the RIC. --> docker container
+        port: 32222                 # RIC port
+
+
+- Result 
+    root@59b4e7f84b56:/srsRAN_Project/configs# gnb -c ./gnb.yaml
+
+    The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}.
+    Warning: Scheduling priority of thread "du_cell#0" not changed. Cause: Not enough privileges.
+
+    --== srsRAN gNB (commit f3ed07a5a) ==--
+
+    Connecting to NearRT-RIC on 10.5.0.2:32222
+    Cell pci=1, bw=10 MHz, 1T1R, dl_arfcn=368500 (n3), dl_freq=1842.5 MHz, dl_ssb_arfcn=368410, ul_freq=1747.5 MHz
+
+    ==== gNodeB started ===
+    Type <t> to view trace
+    t
+
+
+
+- Save to a docker image
+  onfadmin@5g1-comp1:~$ docker commit -m 'srsRAN_Project gNB on Ubuntu 20.04' 59b4e7f84b56 srsran/gnb
+  sha256:bf0ec0c11037e11cd4b58b45f7f6e783956a826343799b1ea2405d5b108590bd
+
+  onfadmin@5g1-comp1:~$ docker images
+  REPOSITORY                                                 TAG               IMAGE ID       CREATED          SIZE
+  srsran/gnb                                                 latest            bf0ec0c11037   37 seconds ago   3.64GB
+
+
+
+
+- Run with --privileged
+
+  --privileged is used for network admin functions such as 'ip netns'
+  'ip' tool can be installed by 'apt install iproute2'
+
+  onfadmin@5g1-comp1:~$ docker commit -m 'srsRAN_Project gNB 2nd image with srsUE on Ubuntu 20.04' 59b4e7f84b56 srsran/gnb-2
+  onfadmin@5g1-comp1:~$ docker run -d -it --name gnb --privileged -v /home/onfadmin/O-RAN/:/shared srsran/gnb-2
+
+
+
+
+
+------------------------------------------
+ UE in srsRAN_4G 
+------------------------------------------
+https://docs.srsran.com/projects/4g/en/latest/app_notes/source/zeromq/source/index.html
+https://docs.srsran.com/projects/4g/en/latest/general/source/1_installation.html
+
+1. ZMQ enabled installation
+(https://docs.srsran.com/projects/project/en/latest/user_manuals/source/installation.html#clone-and-build)
+
+(1) zmq library install from binary
+  sudo apt-get install libzmq3-dev
+
+(2) zmq library install from source
+  git clone https://github.com/zeromq/libzmq.git
+  cd libzmq
+  ./autogen.sh
+  ./configure
+  make
+  sudo make install
+  sudo ldconfig 
+
+
+
+
+
+
+2. UE install from srsRAN_4G
+(https://docs.srsran.com/projects/4g/en/latest/general/source/1_installation.html)
+
+  sudo apt-get install build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev
+  git clone https://github.com/srsRAN/srsRAN 4G.git
+  cd srsRAN 4G
+  mkdir build
+  cd build
+  cmake ../
+
+
+  During cmake, it is important that ZMQ is found:
+  -- FINDING ZEROMQ.
+  -- Checking for module ’ZeroMQ’
+  -- No package ’ZeroMQ’ found
+  -- Found libZEROMQ: /usr/local/include, /usr/local/lib/libzmq.so
+
+
+  make
+  make test 
+  sudo make install
+  srsran_install_configs.sh user
+
+
+
+
+
+
+
+
+
+-----------------------------
+gNB and UE connection check
+-----------------------------
+
+1. gNB
+
+root@0c3085a2dc52:/srsRAN_Project/build# gnb -c ../configs/gnb.yaml
+
+The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}.
+Lower PHY in executor blocking mode.
+
+--== srsRAN gNB (commit f3ed07a5a) ==--
+
+Available radio types: zmq.
+Connecting to NearRT-RIC on 10.5.0.2:32222
+Cell pci=1, bw=10 MHz, 1T1R, dl_arfcn=368500 (n3), dl_freq=1842.5 MHz, dl_ssb_arfcn=368410, ul_freq=1747.5 MHz
+
+==== gNodeB started ===
+Type <t> to view trace
+
+
+
+2. UE
+- in the following logs, when gNB runs, several "Random Access Transmission: ..." lines were added
+
+root@0c3085a2dc52:/srsRAN_4G# srsue ue_zmq.conf
+Active RF plugins: libsrsran_rf_zmq.so
+Inactive RF plugins:
+Reading configuration file ue_zmq.conf...
+
+Built in Release mode using commit ec29b0c1f on branch master.
+
+Opening 1 channels in RF device=zmq with args=tx_port=tcp://127.0.0.1:2001,rx_port=tcp://127.0.0.1:2000,base_srate=23.04e6
+Supported RF device list: zmq file
+CHx base_srate=23.04e6
+Current sample rate is 1.92 MHz with a base rate of 23.04 MHz (x12 decimation)
+CH0 rx_port=tcp://127.0.0.1:2000
+CH0 tx_port=tcp://127.0.0.1:2001
+Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
+Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
+Waiting PHY to initialize ... done!
+Attaching UE...
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=174
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=334
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=494
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=654
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=814
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=974
+Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=1134
+
+
+
+
+3. netstat 
+- port 2000, 2001 established with each other (srsue, gnb)
+
+root@0c3085a2dc52:/srsRAN_Project/configs# netstat -tapn
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:2000          0.0.0.0:*               LISTEN      236/gnb
+tcp        0      0 127.0.0.1:2001          0.0.0.0:*               LISTEN      219/srsue
+tcp        0      0 127.0.0.1:2000          127.0.0.1:56324         ESTABLISHED 236/gnb
+tcp        0      5 127.0.0.1:56324         127.0.0.1:2000          ESTABLISHED 219/srsue
+tcp        0      0 127.0.0.1:2001          127.0.0.1:32822         ESTABLISHED 219/srsue
+tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 236/gnb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

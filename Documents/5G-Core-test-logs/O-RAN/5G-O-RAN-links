@@ -57,13 +57,31 @@ https://hackmd.io/@Min-xiang/SJD9Xh5c9
 
 
 
+6. NON RT RIC
+----------------
+(1) install
+https://wiki.o-ran-sc.org/display/RICNR/Release+J+-+Run+in+Kubernetes
+
+(2) A1 Simulator
+(2.1)
+https://wiki.o-ran-sc.org/pages/viewpage.action?pageId=20878049
+ - policy type test
+
+    Put an example policy_type into the started near-rt-ric-simulator instances by running these curl commands (in this example to ric1 exposed to port 8085 and ric2 exposed to port 8086):
+    curl -X PUT -v "http://localhost:8085/a1-p/policytypes/123" -H "accept: application/json" \
+     -H "Content-Type: application/json" --data-binary @pt1.json
+    curl -X PUT -v "http://localhost:8086/a1-p/policytypes/123" -H "accept: application/json" \
+     -H "Content-Type: application/json" --data-binary @pt1.json 
+
+(2.2) Run the A1 Policy Management Service Docker Container
+https://wiki.o-ran-sc.org/display/RICNR/Release+J+-+Run+in+Docker
 
 
 
-
-
-
-
+(2.3) using Control Panel
+https://wiki.o-ran-sc.org/display/RICNR/Testing+End+to+End+call+in+release+D
+https://wiki.o-ran-sc.org/display/RICNR/Testing+End+to+End+call+in+Release+E
+https://wiki.o-ran-sc.org/display/RICNR/Testing+End+to+End+call+in+Release+F
 
 
 
