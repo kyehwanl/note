@@ -373,8 +373,8 @@ Indentation Guide lines
 (https://vi.stackexchange.com/questions/666/how-to-add-indentation-guides-lines)
 Simple Usage is to use following settings
 
-set cursorcolumn
-set cursorline
+set [no]cursorcolumn
+set [no]cursorline
 
 
 
@@ -399,6 +399,33 @@ In case window switching is not working, (mapping <c-h> to <c-w>h)
     because the setting, set expandtab, are only applied the code which is after the command starts
 
 2. So in order for applying into the previous tabs, command, ":retab"”will change the tabs forcibly
+
+
+
+
+Case incensitive search 
+=========================
+(https://stackoverflow.com/questions/2287440/how-to-do-case-insensitive-search-in-vim)
+
+1.  use the \c escape sequence anywhere in the pattern. 
+
+  For example:
+	  /\ccopyright or /copyright\c or even /copyri\cght
+
+  To do the inverse (case sensitive matching), 
+	  use \C (capital C) instead.
+
+
+2. add "set ignorecase" for case-insensitive searching in vimrc, 
+   use \C to do a case-sensitive
+
+
+
+3. set smartcase ( Only works when set ignorecase is already active)
+
+
+
+
 
 
 
