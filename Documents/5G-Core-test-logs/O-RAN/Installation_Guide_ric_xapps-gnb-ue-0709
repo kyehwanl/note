@@ -1894,7 +1894,7 @@ https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/
   -- Checking for module ’ZeroMQ’
   --   No package ’ZeroMQ’ found
   -- Found libZEROMQ: /usr/local/include, /usr/local/lib/libzmq.so
-  If not, need to enable SCTP.
+  If not, need to enable SCTP and ZMQ enabled install
 
     ____________________________________________
     *** Need to check before cmake compile ***
@@ -1918,6 +1918,19 @@ https://docs.srsran.com/projects/project/en/latest/tutorials/source/near-rt-ric/
 
     * Then, load the SCTP module by
     $ sudo modprobe sctp
+
+
+  -- ZMQ enabled installation
+    (https://docs.srsran.com/projects/project/en/latest/user_manuals/source/installation.html#manual-installation-build)
+    apt-get install libzmq3-dev
+
+
+  -- After Found sctp and zmq, cmake configure again. 
+     Check ZMQ found message below
+    $ cmake ../ -DENABLE_EXPORT=ON -DENABLE_ZEROMQ=ON
+    ...
+    -- Found libZEROMQ: /usr/include, /usr/lib/x86_64-linux-gnu/libzmq.so 
+    ...
 
 
   $	make -j`nproc`
@@ -2331,10 +2344,31 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
 
 
 
+-----------------------------
+ Open5gc
+-----------------------------
+
+1. Run
+root@5g1-comp1:~/srsRAN_Project/docker# docker compose up --build 5gc
 
 
+2.srsRAN UE and gNB installed container is able to be made into a docker image for later use
 
+  root@5g1-comp1:~# docker images | grep srsran
+  srsran/gnb-ue                   latest            4379bcb067a0   4 days ago      5.28GB
 
+  root@5g1-comp1:~# docker run -d --rm -it --net d348edd91e3d --ip 10.53.1.11 --name gnb --privileged \
+                    -v /home/onfadmin/O-RAN/:/shared srsran/gnb-ue
+
+    where, net d348edd91e3d comes from 
+
+      root@5g1-comp1:~# docker network ls
+      NETWORK ID     NAME             DRIVER    SCOPE
+      ad2562bc4410   bridge           bridge    local
+      5ce36e3cf0f2   docker_metrics   bridge    local  
+      d348edd91e3d   docker_ran       bridge    local <-- "docker compose up 5gc" made this network
+      f9fc01bf11c1   host             host      local
+      0faaa179a6f9   none             null      local
 
 
 

@@ -43,3 +43,37 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 
 
+4. Remove gpg key that I added using apt-key add -?
+-----------------------------------------------------
+(https://askubuntu.com/questions/107177/how-can-i-remove-gpg-key-that-i-added-using-apt-key-add)
+
+(example)
+    sudo apt-key list
+    sudo apt-key del "D4CC 8597 4C31 396B 18B3  6837 D615 560B A5C7 FF72"
+
+
+
+
+5. error : APT error: NO_PUBKEY A2F683C52980AECF
+------------------------------------------------
+(https://askubuntu.com/questions/1449847/how-do-i-get-rid-of-virtualbox-so-it-isnt-stopping-me-from-updating-via-gpg-err)
+
+ look into /etc/apt/sources.list
+ delete that entry
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

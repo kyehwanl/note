@@ -1,4 +1,45 @@
 
+-------------------------------------------------------
+VirtualBox and Vagrant compatible versions and install
+ (updated 2024.07.13)
+-------------------------------------------------------
+
+ 1. Ubuntu 18
+ ^^^^^^^^^^^^^
+ - Binary installation with "apt install virtualbox vagrant" --> DOES NOT work
+ 	virtualbox 5.0 and vagrant 1.x version to be installed
+
+	So, need to manual install like below
+
+ (1) virtualbox
+(https://linuxize.com/post/how-to-install-virtualbox-on-ubuntu-18-04/)
+
+	https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+	wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+	sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+
+	sudo apt update
+	sudo apt install virtualbox-6.1  <-- check with apt list virtualbox-*
+
+
+ (2) vagrant  
+	(https://developer.hashicorp.com/vagrant/downloads)
+
+	curl https://releases.hashicorp.com/vagrant/2.2.7/vagrant_2.2.7_x86_64.deb -O
+	sudo dpkg -i vagrant_2.2.7_x86_64.deb
+	rm vagrant_2.2.7_x86_64.deb
+	vagrant -v 
+
+
+
+
+
+
+
+
+
+
 ---------------------------------
   I. VirtualBox Installation
 ---------------------------------

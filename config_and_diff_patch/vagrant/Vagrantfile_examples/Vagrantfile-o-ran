@@ -1,0 +1,105 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VM1 = "oran"
+VM2 = "ran1"
+VM3 = "ran2"
+VM4 = "ran3"
+
+HostName1 = "oran.local"
+HostName2 = "ran1.local"
+HostName3 = "ran2.local"
+HostName4 = "ran3.local"
+
+#ServerIP  = "192.168.50.55"
+IP1 = "192.168.10.121"
+IP2 = "192.168.10.122"
+IP3 = "192.168.10.123"
+IP4 = "192.168.10.124"
+
+
+servers = [
+  { :hostname => HostName1, :ip => IP1, :memory => "16384", :vm => VM1, :cpu => 8},
+  { :hostname => HostName2, :ip => IP2, :memory => "16384", :vm => VM2, :cpu => 8},
+  { :hostname => HostName3, :ip => IP3, :memory => "12288", :vm => VM3, :cpu => 8 },
+  { :hostname => HostName4, :ip => IP4, :memory => "12288", :vm => VM4, :cpu => 8 },
+]
+
+$script = <<-SCRIPT
+apt update
+apt install -y make vifm bash-completion git curl net-tools
+SCRIPT
+
+$script_user = <<-SCRIPT_USER
+git clone https://github.com/kyehwanl/config_ready_to_use.git
+config_ready_to_use/vagrant_vim_env_config.sh
+SCRIPT_USER
+
+
+Vagrant.configure("2") do |config|
+  #config.vm.box = "bento/ubuntu-18.04"
+  config.vm.box = "bento/ubuntu-20.04"
+  #config.vm.box = "bento/ubuntu-22.04"
+  #config.disksize.size= '150GB'
+
+  servers.each do |conf|
+    config.vm.define conf[:vm] do |node|
+      node.vm.hostname = conf[:hostname]
+      node.vm.network "private_network", ip: conf[:ip]
+      node.vm.synced_folder ".", "/vagrant"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = conf[:memory]
+        vb.cpus = conf[:cpu]
+        #vb.gui = true
+      end
+
+      #node.vm.provision "shell", inline: "sudo apt-get update"
+      #node.vm.provision "shell", inline: "sudo apt-get install -y xfce4 virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
+      #node.vm.provision "shell", inline: "sudo sed -i 's/allowed_users=.*$/allowed_users=anybody/' /etc/X11/Xwrapper.config"
+      node.vm.provision "shell", inline: $script, privileged: true
+      node.vm.provision "shell", inline: $script_user, privileged: false 
+    end 
+  end
+
+
+  config.vm.define "ric" do |ric|
+	#ric.vm.box = "ubuntu/focal64"
+    ric.vm.box = "bento/ubuntu-20.04"
+	#ric.vm.box = "bento/ubuntu-22.04"
+	ric.vm.hostname = "ric.local"
+	ric.vm.network "private_network", ip:"192.168.10.124" , hostname: true
+    ric.vm.synced_folder ".", "/vagrant"
+	#ric.vm.network "forwarded_port", guest: 3000, host: 9000
+	#ric.vm.network "forwarded_port", guest: 38412, host: 38412
+
+	## add this line before provisioning to avoid overriding
+	#ric.vm.synced_folder "shared_dirs/ric_data/configs" , "/etc/ric/"
+	#ric.vm.synced_folder "shared_dirs/ric_data/" , "/home/vagrant/data"
+
+	## add this line before provisioning to avoid overriding
+	ric.vm.post_up_message = "This is the 5G server based on Open5GS for development, do not use in production"
+	ric.vm.provider "virtualbox" do |vb|
+	  # Display the VirtualBox GUI when booting the machine
+	  #vb.gui = true
+	  # Customize the amount of memory on the VM:
+	  vb.memory = "16384"
+	  vb.cpus = 8
+	end
+	ric.vm.provision "shell", inline: $script, privileged: true
+	ric.vm.provision "shell", inline: $script_user, privileged: false 
+	#ric.vm.provision "shell", path:"installation/install_ric.sh"
+  end
+
+end
+
+
+
+
+
+
+
+
+
+
+  

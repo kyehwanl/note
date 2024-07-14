@@ -779,6 +779,7 @@ J. compare files over ssh with vimdiff
    AND (in vim command mode) :vsp scp://ts1/~/Projects/proj-bgp/quaggasrx/test_install/etc/bgpd.conf
 K. NFS mount: mount -t nfs -o rsize=8192,wsize=8192,nfsvers=3 fs5-141:/users/kyehwanl /users/kyehwanl
 L. iptables(bgp) iptables -I INPUT 1 -p tcp --dport 179 -j ACCEPT
+   iptables -L --line-numbers: show lines, iptables -D INPUT <number>: delete nth line in INPUT
 M. X11 configuration problem: (1) goto root with sudo -s, (2) xauth merge /users/kyehwanl/.Xauthority
 N. Convert VirtualBox image to KVM: qemu-img convert mininet-vm-x86_64.vmdk -O qcow2 Mininet-VM.qcow2
    How to run: kvm -m 2048 -net nic,macaddr=00:11:22:CC:CC:10 -net tap Mininet-VM.qcow2
