@@ -2246,8 +2246,8 @@ https://docs.srsran.com/projects/4g/en/latest/general/source/1_installation.html
 (https://docs.srsran.com/projects/4g/en/latest/general/source/1_installation.html)
 
   sudo apt-get install build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev
-  git clone https://github.com/srsRAN/srsRAN 4G.git
-  cd srsRAN 4G
+  git clone https://github.com/srsRAN/srsRAN_4G.git
+  cd srsRAN_4G
   mkdir build
   cd build
   cmake ../
@@ -2264,81 +2264,6 @@ https://docs.srsran.com/projects/4g/en/latest/general/source/1_installation.html
   make test 
   sudo make install
   srsran_install_configs.sh user
-
-
-
-
-
-
-
-
-
------------------------------
-gNB and UE connection check
------------------------------
-
-1. gNB
-
-root@0c3085a2dc52:/srsRAN_Project/build# gnb -c ../configs/gnb.yaml
-
-The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}.
-Lower PHY in executor blocking mode.
-
---== srsRAN gNB (commit f3ed07a5a) ==--
-
-Available radio types: zmq.
-Connecting to NearRT-RIC on 10.5.0.2:32222
-Cell pci=1, bw=10 MHz, 1T1R, dl_arfcn=368500 (n3), dl_freq=1842.5 MHz, dl_ssb_arfcn=368410, ul_freq=1747.5 MHz
-
-==== gNodeB started ===
-Type <t> to view trace
-
-
-
-2. UE
-- in the following logs, when gNB runs, several "Random Access Transmission: ..." lines were added
-
-root@0c3085a2dc52:/srsRAN_4G# srsue ue_zmq.conf
-Active RF plugins: libsrsran_rf_zmq.so
-Inactive RF plugins:
-Reading configuration file ue_zmq.conf...
-
-Built in Release mode using commit ec29b0c1f on branch master.
-
-Opening 1 channels in RF device=zmq with args=tx_port=tcp://127.0.0.1:2001,rx_port=tcp://127.0.0.1:2000,base_srate=23.04e6
-Supported RF device list: zmq file
-CHx base_srate=23.04e6
-Current sample rate is 1.92 MHz with a base rate of 23.04 MHz (x12 decimation)
-CH0 rx_port=tcp://127.0.0.1:2000
-CH0 tx_port=tcp://127.0.0.1:2001
-Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
-Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
-Waiting PHY to initialize ... done!
-Attaching UE...
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=174
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=334
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=494
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=654
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=814
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=974
-Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=1134
-
-
-
-
-3. netstat 
-- port 2000, 2001 established with each other (srsue, gnb)
-
-root@0c3085a2dc52:/srsRAN_Project/configs# netstat -tapn
-Active Internet connections (servers and established)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 127.0.0.1:2000          0.0.0.0:*               LISTEN      236/gnb
-tcp        0      0 127.0.0.1:2001          0.0.0.0:*               LISTEN      219/srsue
-tcp        0      0 127.0.0.1:2000          127.0.0.1:56324         ESTABLISHED 236/gnb
-tcp        0      5 127.0.0.1:56324         127.0.0.1:2000          ESTABLISHED 219/srsue
-tcp        0      0 127.0.0.1:2001          127.0.0.1:32822         ESTABLISHED 219/srsue
-tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 236/gnb
-
 
 
 
@@ -2369,6 +2294,379 @@ root@5g1-comp1:~/srsRAN_Project/docker# docker compose up --build 5gc
       d348edd91e3d   docker_ran       bridge    local <-- "docker compose up 5gc" made this network
       f9fc01bf11c1   host             host      local
       0faaa179a6f9   none             null      local
+
+
+
+
+
+--------------------------------------
+gNB and UE connection check + Open5gs
+--------------------------------------
+
+1. gNB
+^^^^^^^
+(1) configuration
+
+    amf:
+      addr: 10.53.1.2                  
+      bind_addr: 10.53.1.1             
+
+    ru_sdr:
+      device_driver: zmq                
+      device_args: tx_port=tcp://127.0.0.1:2000,rx_port=tcp://127.0.0.1:2001,base_srate=23.04e6
+      srate: 23.04                      
+      tx_gain: 75                       
+      rx_gain: 75                       
+
+    cell_cfg:
+      dl_arfcn: 368500                  
+      band: 3                           
+      channel_bandwidth_MHz: 20   <-- 10 not working
+      common_scs: 15                    
+      plmn: "00101"                     
+      tac: 7                            
+      pdcch:
+        common:
+          ss0_index: 0                  
+          #coreset0_index: 6            
+          coreset0_index: 12            
+        dedicated:
+          ss2_type: common              
+          dci_format_0_1_and_1_1: false 
+      prach:
+        prach_config_index: 1           
+
+    cu_cp:
+      inactivity_timer: 7200           
+        ...
+    e2:
+      enable_du_e2: true               
+      e2sm_kpm_enabled: true           
+      addr: 10.5.0.2                   
+      bind_addr: 10.5.0.2          
+      port: 32222                      
+
+
+
+
+(2) Run
+
+  root@5g1-comp1:/srsRAN_Project# gnb -c ./gnb.yaml
+
+  The PRACH detector will not meet the performance requirements with the configuration {Format 0, ZCZ 0, SCS 1.25kHz, Rx ports 1}.
+  Lower PHY in executor blocking mode.
+
+  --== srsRAN gNB (commit f3ed07a5a) ==--
+
+  Connecting to AMF on 10.53.1.2:38412
+  Available radio types: zmq.
+  Connecting to NearRT-RIC on 10.5.0.2:32222
+  Cell pci=1, bw=20 MHz, 1T1R, dl_arfcn=368500 (n3), dl_freq=1842.5 MHz, dl_ssb_arfcn=368410, ul_freq=1747.5 MHz
+
+  ==== gNodeB started ===
+  Type <t> to view trace
+
+
+
+2. UE
+^^^^^
+- in the following logs, when gNB runs, several "Random Access Transmission: ..." lines were added
+(1) configuration
+
+    [rf]
+    freq_offset = 0
+    tx_gain = 50
+    rx_gain = 40
+    srate = 23.04e6
+    nof_antennas = 1
+
+    device_name = zmq
+    device_args = tx_port=tcp://127.0.0.1:2001,rx_port=tcp://127.0.0.1:2000,base_srate=23.04e6
+
+    [rat.eutra]
+    dl_earfcn = 2850
+    nof_carriers = 0
+
+    [rat.nr]
+    bands = 3
+    nof_carriers = 1
+    max_nof_prb = 106
+    nof_prb = 106
+
+    ...
+
+    [usim]
+    mode = soft
+    algo = milenage
+    opc  = 63BFA50EE6523365FF14C1F45F88737D
+    k    = 00112233445566778899aabbccddeeff
+    imsi = 001010123456780
+    imei = 353490069873319
+
+    [rrc]
+    release = 15
+    ue_category = 4
+
+    [nas]
+    apn = srsapn
+    apn_protocol = ipv4
+
+    [gw]
+    netns = ue1
+    ip_devname = tun_srsue
+    ip_netmask = 255.255.255.0
+    ...
+
+
+
+(2) Run
+
+  root@5g1-comp1:/srsRAN_4G# srsue ue_zmq.conf
+  Active RF plugins: libsrsran_rf_zmq.so
+  Inactive RF plugins:
+  Reading configuration file ue_zmq.conf...
+
+  Built in Release mode using commit ec29b0c1f on branch master.
+
+  Opening 1 channels in RF device=zmq with args=tx_port=tcp://127.0.0.1:2001,rx_port=tcp://127.0.0.1:2000,base_srate=23.04e6
+  Supported RF device list: zmq file
+  CHx base_srate=23.04e6
+  Current sample rate is 1.92 MHz with a base rate of 23.04 MHz (x12 decimation)
+  CH0 rx_port=tcp://127.0.0.1:2000
+  CH0 tx_port=tcp://127.0.0.1:2001
+  Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
+  Current sample rate is 23.04 MHz with a base rate of 23.04 MHz (x1 decimation)
+  Waiting PHY to initialize ... done!
+  Attaching UE...
+  Random Access Transmission: prach_occasion=0, preamble_index=0, ra-rnti=0x39, tti=334
+  Random Access Complete.     c-rnti=0x4601, ta=0
+  RRC Connected
+  PDU Session Establishment successful. IP: 10.45.1.2
+  RRC NR reconfiguration successful.
+
+
+
+
+
+(3) status with  netstat 
+- port 2000, 2001 established with each other (srsue, gnb)
+
+root@0c3085a2dc52:/srsRAN_Project/configs# netstat -tapn
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:2000          0.0.0.0:*               LISTEN      236/gnb
+tcp        0      0 127.0.0.1:2001          0.0.0.0:*               LISTEN      219/srsue
+tcp        0      0 127.0.0.1:2000          127.0.0.1:56324         ESTABLISHED 236/gnb
+tcp        0      5 127.0.0.1:56324         127.0.0.1:2000          ESTABLISHED 219/srsue
+tcp        0      0 127.0.0.1:2001          127.0.0.1:32822         ESTABLISHED 219/srsue
+tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 236/gnb
+
+
+
+
+
+
+3. open5gs 
+^^^^^^^^^^^
+
+(1) When gNB is connected to amf in 5gcore
+
+  open5gs_5gc  | 07/15 03:00:40.132: [amf] INFO: gNB-N2 accepted[10.53.1.1]:48329 in ng-path module (../src/amf/ngap-sctp.c:113)
+  open5gs_5gc  | 07/15 03:00:40.132: [amf] INFO: gNB-N2 accepted[10.53.1.1] in master_sm module (../src/amf/amf-sm.c:741)
+  open5gs_5gc  | 07/15 03:00:40.138: [amf] INFO: [Added] Number of gNBs is now 1 (../src/amf/context.c:1231)
+  open5gs_5gc  | 07/15 03:00:40.138: [amf] INFO: gNB-N2[10.53.1.1] max_num_of_ostreams : 30 (../src/amf/amf-sm.c:780)
+
+
+(2) When UE is also connected 
+
+  open5gs_5gc  | 07/15 03:00:49.169: [amf] INFO: InitialUEMessage (../src/amf/ngap-handler.c:401)
+  open5gs_5gc  | 07/15 03:00:49.169: [amf] INFO: [Added] Number of gNB-UEs is now 1 (../src/amf/context.c:2550)
+  open5gs_5gc  | 07/15 03:00:49.169: [amf] INFO:     RAN_UE_NGAP_ID[0] AMF_UE_NGAP_ID[3] TAC[7] CellID[0x66c000] (../src/amf/ngap-handler.c:562)
+  open5gs_5gc  | 07/15 03:00:49.169: [amf] INFO: [suci-0-001-01-0000-0-0-0123456780] Unknown UE by SUCI (../src/amf/context.c:1835)
+  open5gs_5gc  | 07/15 03:00:49.169: [amf] INFO: [Added] Number of AMF-UEs is now 1 (../src/amf/context.c:1616)
+  open5gs_5gc  | 07/15 03:00:49.169: [gmm] INFO: Registration request (../src/amf/gmm-sm.c:1165)
+  open5gs_5gc  | 07/15 03:00:49.169: [gmm] INFO: [suci-0-001-01-0000-0-0-0123456780]    SUCI (../src/amf/gmm-handler.c:166)
+  open5gs_5gc  | 07/15 03:00:49.359: [gmm] INFO: [imsi-001010123456780] Registration complete (../src/amf/gmm-sm.c:2146)
+  open5gs_5gc  | 07/15 03:00:49.359: [amf] INFO: [imsi-001010123456780] Configuration update command (../src/amf/nas-path.c:612)
+  open5gs_5gc  | 07/15 03:00:49.359: [gmm] INFO:     UTC [2024-07-15T03:00:49] Timezone[0]/DST[0] (../src/amf/gmm-build.c:559)
+  open5gs_5gc  | 07/15 03:00:49.359: [gmm] INFO:     LOCAL [2024-07-15T03:00:49] Timezone[0]/DST[0] (../src/amf/gmm-build.c:564)
+  open5gs_5gc  | 07/15 03:00:49.359: [amf] INFO: [Added] Number of AMF-Sessions is now 1 (../src/amf/context.c:2571)
+  open5gs_5gc  | 07/15 03:00:49.359: [gmm] INFO: UE SUPI[imsi-001010123456780] DNN[srsapn] S_NSSAI[SST:1 SD:0xffffff] smContextRef [NULL] (../src/amf/gmm-handler.c:1241)
+  open5gs_5gc  | 07/15 03:00:49.359: [gmm] INFO: SMF Instance [a8a093b8-4160-41ef-b180-934a09f0cc3a] (../src/amf/gmm-handler.c:1280)
+  open5gs_5gc  | 07/15 03:00:49.361: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1019)
+  open5gs_5gc  | 07/15 03:00:49.361: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3068)
+  open5gs_5gc  | 07/15 03:00:49.366: [smf] INFO: UE SUPI[imsi-001010123456780] DNN[srsapn] IPv4[10.45.1.2] IPv6[] (../src/smf/npcf-handler.c:539)
+  open5gs_5gc  | 07/15 03:00:49.366: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:208)
+  open5gs_5gc  | 07/15 03:00:49.366: [upf] INFO: UE F-SEID[UP:0xec3 CP:0xc2f] APN[srsapn] PDN-Type[1] IPv4[10.45.1.2] IPv6[] (../src/upf/context.c:485)
+  open5gs_5gc  | 07/15 03:00:49.366: [upf] INFO: UE F-SEID[UP:0xec3 CP:0xc2f] APN[srsapn] PDN-Type[1] IPv4[10.45.1.2] IPv6[] (../src/upf/context.c:485)
+  open5gs_5gc  | 07/15 03:00:49.455: [amf] INFO: [imsi-001010123456780:1:11][0:0:NULL] /nsmf-pdusession/v1/sm-contexts/{smContextRef}/modify (../src/amf/nsmf-handler.c:837)
+  open5gs_5gc  | 07/15 03:00:49.575: [gmm] INFO: [imsi-001010123456780] No GUTI allocated (../src/amf/gmm-sm.c:1443)
+ 
+
+
+
+
+(3) Routing Configuration
+(https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html#zmq-testing)
+
+- need to add a route to the UE on the host machine (i.e. the one running the Open5GS docker container):
+
+    sudo ip ro add 10.45.0.0/16 via 10.53.1.2
+
+- Check the host routing table:
+
+    route -n
+
+- add a default route for the UE as follows:
+
+    sudo ip netns exec ue1 ip route add default via 10.45.1.1 dev tun_srsue
+
+
+
+- Check the routing table of ue1:
+
+    sudo ip netns exec ue1 route -n
+
+
+
+(4) ping 
+
+- uplink 
+
+    ip netns exec ue1 ping 10.45.1.1
+
+- downlink
+
+    ping 10.45.1.2
+
+
+(5) iperf3
+
+- Network-side
+    Start the iPerf3 server the machine running the core network (i.e., Open5GS docker container):
+
+    iperf3 -s -i 1
+
+
+- UE-side
+    With the network and the iPerf3 server up and running, the client can be run from the UE’s machine with the following command:
+
+    sudo ip netns exec ue1 iperf3 -c 10.53.1.1 -i 1 -t 60
+
+
+
+4. Actual Test (gnb and ue are deployed in docker container)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Docker command to run gnb and ue
+
+  root@5g1-comp1:~# docker run -d --rm -it --network=host --name gnb --privileged -v /root/srsRAN_Project:/shared srsran/gnb-ue
+  dcf91ba51cf47cd48aecf1602ad46944bbb2029025f2c5bfc85fce244aed405a
+
+- Docker images
+  root@5g1-comp1:~/srsRAN_Project# docker images
+  REPOSITORY                       TAG               IMAGE ID       CREATED         SIZE
+  docker-5gc                       latest            90d2019d54d1   2 days ago      2.14GB
+  srsran/gnb-ue                    latest            4379bcb067a0   5 days ago      5.28GB
+
+
+(1) Host side:
+
+  root@5g1-comp1:~/srsRAN_Project# docker exec -it gnb /bin/bash
+
+  root@5g1-comp1:/# ip ro add 10.45.0.0/16 via 10.53.1.2
+
+  root@5g1-comp1:/# route -n
+  Kernel IP routing table
+  Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+  0.0.0.0         10.5.0.1        0.0.0.0         UG    0      0        0 eno3
+  10.5.0.0        0.0.0.0         255.255.255.0   U     0      0        0 eno3
+  10.5.1.0        0.0.0.0         255.255.255.0   U     0      0        0 eno4
+  10.5.2.0        0.0.0.0         255.255.255.0   U     0      0        0 enp59s0f0np0
+  10.5.3.0        0.0.0.0         255.255.255.0   U     0      0        0 enp94s0f0
+  10.45.0.0       10.53.1.2       255.255.0.0     UG    0      0        0 br-d348edd91e3d  <-- point 1 
+  10.53.1.0       0.0.0.0         255.255.255.0   U     0      0        0 br-d348edd91e3d  <-- point 2
+  10.200.0.0      0.0.0.0         255.255.255.0   U     0      0        0 enp94s0f1
+  10.244.0.0      0.0.0.0         255.255.255.0   U     0      0        0 cni0
+  172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+  172.19.1.0      0.0.0.0         255.255.255.0   U     0      0        0 br-5ce36e3cf0f2
+  192.168.84.192  0.0.0.0         255.255.255.192 U     0      0        0 *
+
+  root@5g1-comp1:/# ping 10.45.1.2
+  PING 10.45.1.2 (10.45.1.2) 56(84) bytes of data.
+  64 bytes from 10.45.1.2: icmp_seq=1 ttl=63 time=37.5 ms
+  64 bytes from 10.45.1.2: icmp_seq=2 ttl=63 time=25.3 ms
+
+
+  root@5g1-comp1:/# iperf3 -s -i 1
+  -----------------------------------------------------------
+  Server listening on 5201
+  -----------------------------------------------------------
+  Accepted connection from 10.53.1.2, port 34350
+  [  5] local 10.53.1.1 port 5201 connected to 10.53.1.2 port 34360
+  [ ID] Interval           Transfer     Bitrate
+  [  5]   0.00-1.00   sec  2.17 MBytes  18.2 Mbits/sec
+  [  5]   1.00-2.00   sec  3.83 MBytes  32.1 Mbits/sec
+  [  5]   2.00-3.00   sec  4.14 MBytes  34.7 Mbits/sec
+  [  5]   3.00-4.00   sec  4.16 MBytes  34.9 Mbits/sec
+  [  5]   3.00-4.00   sec  4.16 MBytes  34.9 Mbits/sec
+  - - - - - - - - - - - - - - - - - - - - - - - - -
+  [ ID] Interval           Transfer     Bitrate
+  [  5]   0.00-4.00   sec  14.8 MBytes  31.1 Mbits/sec                  receiver
+  iperf3: the client has terminated
+
+
+
+(2) UE side:
+
+  onfadmin@5g1-comp1:~$ docker exec -it gnb /bin/bash
+
+  root@5g1-comp1:/# ip netns exec ue1 ip route add default via 10.45.1.1 dev tun_srsue
+
+  root@5g1-comp1:/# ip netns exec ue1 route -n
+  Kernel IP routing table
+  Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+  0.0.0.0         10.45.1.1       0.0.0.0         UG    0      0        0 tun_srsue
+  10.45.1.0       0.0.0.0         255.255.255.0   U     0      0        0 tun_srsue
+
+
+  root@5g1-comp1:/# ip netns exec ue1 ping 10.45.1.1
+  PING 10.45.1.1 (10.45.1.1) 56(84) bytes of data.
+  64 bytes from 10.45.1.1: icmp_seq=1 ttl=64 time=26.3 ms
+  64 bytes from 10.45.1.1: icmp_seq=2 ttl=64 time=35.5 ms
+  ^C
+  --- 10.45.1.1 ping statistics ---      
+  2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+  rtt min/avg/max/mdev = 26.338/30.924/35.511/4.586 ms
+
+
+  root@5g1-comp1:/# ip netns exec ue1 iperf3 -c 10.53.1.1 -i 1 -t 60
+  Connecting to host 10.53.1.1, port 5201
+  [  5] local 10.45.1.2 port 40950 connected to 10.53.1.1 port 5201
+  [ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+  [  5]   0.00-1.00   sec  2.74 MBytes  23.0 Mbits/sec    0    133 KBytes
+  [  5]   1.00-2.00   sec  4.72 MBytes  39.6 Mbits/sec    0    346 KBytes
+  [  5]   2.00-3.00   sec  5.10 MBytes  42.7 Mbits/sec   20    236 KBytes
+  ^C[  5]   3.00-3.27   sec   954 KBytes  29.0 Mbits/sec    0    243 KBytes
+  - - - - - - - - - - - - - - - - - - - - - - - - -
+  [ ID] Interval           Transfer     Bitrate         Retr
+  [  5]   0.00-3.27   sec  13.5 MBytes  34.6 Mbits/sec   20             sender
+  [  5]   0.00-3.27   sec  0.00 Bytes  0.00 bits/sec                  receiver
+  iperf3: interrupt - the client has terminated
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

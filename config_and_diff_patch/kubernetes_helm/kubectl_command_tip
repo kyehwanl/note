@@ -11,7 +11,9 @@ Kubectl Tips
 
 
 1. delete all components
-    kubectl delete all --all
+    kubectl delete all [--all] [--all-namespaces|-A]
+        --all refers to all resources, including uninitialized ones
+        --all-namespaces in all all namespaces
 
 
 2. assign external ip address to service
