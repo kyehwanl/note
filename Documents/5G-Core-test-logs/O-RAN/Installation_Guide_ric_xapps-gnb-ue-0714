@@ -2510,33 +2510,25 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
 (https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html#zmq-testing)
 
 - need to add a route to the UE on the host machine (i.e. the one running the Open5GS docker container):
-
     sudo ip ro add 10.45.0.0/16 via 10.53.1.2
 
 - Check the host routing table:
-
     route -n
 
 - add a default route for the UE as follows:
-
     sudo ip netns exec ue1 ip route add default via 10.45.1.1 dev tun_srsue
 
 
-
 - Check the routing table of ue1:
-
     sudo ip netns exec ue1 route -n
-
 
 
 (4) ping 
 
 - uplink 
-
     ip netns exec ue1 ping 10.45.1.1
 
 - downlink
-
     ping 10.45.1.2
 
 
@@ -2546,7 +2538,6 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
     Start the iPerf3 server the machine running the core network (i.e., Open5GS docker container):
 
     iperf3 -s -i 1
-
 
 - UE-side
     With the network and the iPerf3 server up and running, the client can be run from the UE’s machine with the following command:
@@ -2568,6 +2559,23 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
   REPOSITORY                       TAG               IMAGE ID       CREATED         SIZE
   docker-5gc                       latest            90d2019d54d1   2 days ago      2.14GB
   srsran/gnb-ue                    latest            4379bcb067a0   5 days ago      5.28GB
+
+
+- in case of copying srsran/gnb-ue docker image to another host
+
+    < save>
+    root@5g1-comp1:~/O-RAN# docker save -o srsran_gnb-ue.tar srsran/gnb-ue:latest
+
+    <load>
+    root@5g1-comp3:~# docker load -i srsran_gnb-ue.tar                                                
+    4a1518ebc26e: Loading layer [==================================================>]  75.19MB/75.19MB
+    a2ac88a22b26: Loading layer [==================================================>]  4.994GB/4.994GB
+    1636e04f0ef6: Loading layer [==================================================>]  261.6MB/261.6MB
+    Loaded image: srsran/gnb-ue:latest                                                                
+
+    <list>
+    root@5g1-comp3:~# docker images | grep srsran                                                           
+    srsran/gnb-ue               latest    4379bcb067a0   6 days ago     5.28GB
 
 
 (1) Host side:
@@ -2663,7 +2671,13 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
 
 
 
+--------------------------------------
+ non realtim RIC install
+--------------------------------------
+(https://wiki.o-ran-sc.org/display/RICNR/Release+J+-+Run+in+Kubernetes)
 
+git clone "https://gerrit.o-ran-sc.org/r/it/dep"
+sudo dep/bin/deploy-nonrtric -f dep/nonrtric/RECIPE_EXAMPLE/example_recipe.yaml
 
 
 
