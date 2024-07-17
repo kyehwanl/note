@@ -471,7 +471,7 @@ https://wiki.o-ran-sc.org/download/attachments/51904936/demo_f_release.txt?versi
 
 
 (2) deploy
-	dms_cli install hw-go 1.0.0 ricxapp
+	dms_cli install hw-go 1.0.0 ricxapp  (for uninstall, dms_cli uninstall hw-go ricxapp)
 
 	< CAUTION > 
 	dms_cli generates helm chart manifests into the designated location, where chart musuem configured with parameters 
