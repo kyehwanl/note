@@ -2629,6 +2629,12 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
 
   onfadmin@5g1-comp1:~$ docker exec -it gnb /bin/bash
 
+  - network namespace, ue1, generation(delete the exist one first)
+    (Actually, if there is only one UE, it may not use the network namespace)
+
+  root@5g1-comp1:/# ip netns delete ue1 
+  root@5g1-comp1:/#  ip netns add ue1
+
   root@5g1-comp1:/# ip netns exec ue1 ip route add default via 10.45.1.1 dev tun_srsue
 
   root@5g1-comp1:/# ip netns exec ue1 route -n
@@ -2664,6 +2670,64 @@ tcp        0      5 127.0.0.1:32822         127.0.0.1:2001          ESTABLISHED 
 
 
 
+
+(3) UE IP Forwarding
+(https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html#ue-ip-forwarding)
+
+- Hostside
+^^^^^^^^^^^
+  To ensure that the UE traffic is sent correctly to the internet the correct IP forwarding must be enabled. 
+  IP Forwarding should be enabled on the host machine, i.e. the one running the Open5GS docker container. 
+  This can be done with the following command:
+
+    sudo sysctl -w net.ipv4.ip_forward=1
+    sudo iptables -t nat -A POSTROUTING -o <IFNAME> -j MASQUERADE
+
+      Where <IFNAME> is the name of the interface connected to the internet
+
+    sudo ip netns exec ue1 ping -i 1 8.8.8.8
+
+
+  < in my experiment on 5g1-comp3 node>
+
+  root@5g1-comp3:~/5G-o-ran# sysctl -w net.ipv4.ip_forward=1 
+  net.ipv4.ip_forward = 1                                    
+  root@5g1-comp3:~/5G-o-ran# cat /proc/sys/net/ipv4/ip_forward 
+  1                                                            
+  root@5g1-comp3:~/5G-o-ran# iptables -t nat -A POSTROUTING -o eno3 -j MASQUERADE
+
+
+- UE side check
+^^^^^^^^^^^^^^^^
+  root@5g1-comp3:/# ip netns exec ue1 /bin/sh
+  #
+  # route -n
+  Kernel IP routing table
+  Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+  0.0.0.0         10.45.1.1       0.0.0.0         UG    0      0        0 tun_srsue
+  10.45.1.0       0.0.0.0         255.255.255.0   U     0      0        0 tun_srsue
+
+  # ping 10.45.1.1
+  PING 10.45.1.1 (10.45.1.1) 56(84) bytes of data.
+  64 bytes from 10.45.1.1: icmp_seq=1 ttl=64 time=21.4 ms
+  64 bytes from 10.45.1.1: icmp_seq=2 ttl=64 time=25.6 ms
+  64 bytes from 10.45.1.1: icmp_seq=3 ttl=64 time=30.0 ms
+  ^C
+  --- 10.45.1.1 ping statistics ---
+  3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+  rtt min/avg/max/mdev = 21.439/25.696/30.013/3.500 ms
+
+  -- if DNS setting modified, (/etc/resolv.conf), domain name is also ok 
+      "nameserver 8.8.8.8"
+
+  # ping google.com
+  PING google.com (142.251.40.110) 56(84) bytes of data.
+  64 bytes from lga25s79-in-f14.1e100.net (142.251.40.110): icmp_seq=1 ttl=105 time=42.5 ms
+  64 bytes from lga25s79-in-f14.1e100.net (142.251.40.110): icmp_seq=2 ttl=105 time=49.0 ms
+  ^C
+  --- google.com ping statistics ---
+  2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+  rtt min/avg/max/mdev = 42.532/45.759/48.987/3.227 ms
 
 
 

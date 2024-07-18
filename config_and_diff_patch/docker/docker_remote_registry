@@ -63,7 +63,7 @@
 
 
   (*) To Read certs and key
-    $ openssl x509 -in domain.cert -text
+    $ openssl x509 -in domain.cert -text -noout 
     $ openssl rsa -in domain.key -text
 
 
@@ -94,6 +94,31 @@
     --> Success !!
 
 
+
+    < login to docker local private repository >
+
+    docker login
+
+    --> The login process creates or updates a config.json file that holds an authorization token
+    cat ~/.docker/config.json
+
+
+    - copy domain.cert and domain.key into /etc/docker/certs.d/10.0.50.11:5000/
+    - docker loing 10.0.50.11:5000
+    - id: kyehwanl pw: Lee at my #
+
+    root@5g1-comp1:/etc/docker/certs.d/10.0.50.11:5000# docker login 10.0.50.11:5000
+    Username: kyehwanl
+    Password:
+    WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+    Configure a credential helper to remove this warning. See
+    https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+    Login Succeeded
+
+
+
+
     B. 
       [root@vmware-011 go_temp_test2]# docker push 10.0.50.11:5000/srx_grpc
       Using default tag: latest
@@ -120,6 +145,8 @@
 
 
         (ii) Generate key and cert as new
+            (check expiration with the following command)
+                $ openssl x509 -in domain.cert -text -noout 
 
             [root@vmware-011 docker_test]# openssl req -newkey rsa:4096 -nodes -sha256 \
             -keyout registry_certs/domain.key -x509 -days 999 -out registry_certs/domain.cert
@@ -385,4 +412,61 @@
 
 
 
-      
+---------------------------------
+ ctr containerd push with cert
+---------------------------------
+
+  - Copy all certs into /etc/ssl/certs
+  root@5g1-comp1:/etc/docker/certs.d/10.0.50.11:5000# ll
+  total 24K
+  -rw-r----- 1 root     root     1.9K Jul 17 16:22 ca.crt
+  -rw-r----- 1 root     root     1.9K Jul 17 16:50 10.0.50.11:5000.crt
+  -rw-r----- 1 onfadmin onfadmin 3.2K Jul 17 17:09 domain.key
+  -rw-r----- 1 root     root     3.2K Jul 17 17:09 10.0.50.11:5000.key
+  -rw-r----- 1 root     root     1.9K Jul 17 17:18 10.0.50.11:5000.cert
+  -rw-r----- 1 root     root     1.9K Jul 17 17:19 domain.cert
+
+  root@5g1-comp1:/etc/docker/certs.d/10.0.50.11:5000# cp 10.0.50.11\:5000.* domain.* /etc/ssl/certs/
+
+
+  - Push into docker registry
+  root@5g1-comp1:~# ctr -n=k8s.io image push 10.0.50.11:5000/ctr-srx
+  manifest-latest@sha256:93c5bf987336339584e537f1f314038eed9350a8bf619261c6333abb2e5a9a06: done           |++++++++++++++++++++++++++++++++++++++|
+  config-sha256:bfdaf0ef555fb3906a60caa730934b94ad0f2f436f21c6a003eb4fdf42b2b79e:          done           |++++++++++++++++++++++++++++++++++++++|
+  elapsed: 13.0s                                                                           total:  12.0 K (943.0 B/s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

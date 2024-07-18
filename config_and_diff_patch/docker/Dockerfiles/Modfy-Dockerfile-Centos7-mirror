@@ -1,0 +1,28 @@
+
+
+Issue: 
+    Dockerfile, Centos7, 
+        yum update --> isseus
+
+Cause:
+
+  Centos 7 has reached EOL (End of Life) today, 1 July 2024, thus mirrorlist.centos.org is no longer required. 
+  In order to install packages, you have to adjust repositories from "mirrorlist" to "baseurl". 
+  For most cases vault.centos.org will work well.
+
+
+Solution:
+(https://serverfault.com/questions/1161816/mirrorlist-centos-org-no-longer-resolve)
+
+    To resolve the issue you can mass update all .repo files:
+
+    sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+    sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+    sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+
+
+    ( in Dockerfile )
+    RUN sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+    RUN sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+    RUN sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+

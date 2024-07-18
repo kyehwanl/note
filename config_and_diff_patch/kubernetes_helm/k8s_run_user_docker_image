@@ -1,0 +1,65 @@
+
+
+Use docker image into Kubernetes cluster
+=========================================
+0. prerequisite
+
+    kubernetes cluster > 1.28
+    docker image 
+
+
+1. docker image in local --> save to a tar
+    docker save -o srx.tar srx
+ 
+
+ (in case, need to transfer docker image to other node)
+    docker load -i srx.tar
+
+
+2. transform containerd's image
+    ctr -n=k8s.io image import srx.tar
+
+
+
+3. making deployment manifest file
+
+(1) making manifest by dry-run
+ kubectl create deployment <deployment-name> --dry-run -o yaml --image=srx > deploy-srx.yaml
+
+
+    < deploy-srx.yaml>
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: srx
+      name: srx
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: srx
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: srx
+        spec:
+          containers:
+          - image: srx
+            imagePullPolicy: Never <-- Here, need to add this line
+            name: srx
+            resources: {}
+    status: {}
+
+
+(2) apply
+    kubectl apply -f deploy-srx.yaml 
+
+    # kubectl get po -o wide | grep srx
+    srx-5b98847545-4pw6s   1/1     Running   0          155m   10.244.0.22   5g1-comp1   <none>           <none>
+
+
+

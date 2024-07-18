@@ -8,6 +8,10 @@ ENV container docker
 
 
 ################## BEGIN INSTALLATION ######################
+RUN sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+RUN sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+RUN sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+
 RUN yum -y install epel-release 
 RUN yum -y install git golang unzip gcc automake autoconf libtool psmisc readline-devel patch
 RUN yum -y install wget libconfig libconfig-devel openssl openssl-devel libcrypto.so.* less gcc uthash-devel
