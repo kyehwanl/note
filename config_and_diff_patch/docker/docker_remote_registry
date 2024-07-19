@@ -45,6 +45,59 @@
           Common Name (eg, your name or your server's hostname) []:10.0.50.11
           Email Address []:
 
+    ^^^^^^^^
+    < 중요>
+    ^^^^^^^^
+    If domain.cert doesn't have SAN (Subject Alt Name: IP address), 
+    later docker login, docker push, pull WON'T WORK !!!
+    - Error message: 
+      --  Service Unavailable
+      --  tls failed to verify certificate x509 cannot validate certificat because it doesn't contain any IP SANs
+    
+
+    So, MUST check SAN in certs
+
+    - Two ways to make SAN
+
+    -- 1. /etc/ssl/openss.cnf, fill SAN info
+    -- 2. use CSR (example below), openssl command with -config option
+        openssl req -config tls.csr -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 3650 -out domain.cert
+    
+        < tls.csr >
+        [req]
+        distinguished_name = private_registry_cert_req
+        x509_extensions = v3_req
+        prompt = no         
+
+        [private_registry_cert_req] 
+        OU = NIST
+                                                        
+        [v3_req]
+        keyUsage = keyEncipherment, dataEncipherment
+        extendedKeyUsage = serverAuth
+        subjectAltName = @alt_names
+
+        [alt_names]
+        IP = 129.6.142.11
+
+
+
+    - Verify with docker login, pull, push or curl -k http://<host>:<port>/v2/_catalog
+
+        (example)
+        # docker login 129.6.142.11:5000
+        Username: kyehwanl     
+        Password:
+        WARNING! Your password will be stored unencrypted in /root/.docker/config.json.    
+        Configure a credential helper to remove this warning. See
+        https://docs.docker.com/engine/reference/commandline/login/#credential-stores  
+
+        Login Succeeded
+
+
+
+    
+
 
  (2) Run the Private Docker Registry with TLS
      (using "--restart=always" for continuously running)
@@ -413,6 +466,7 @@
 
 
 ---------------------------------
+Kubernetes
  ctr containerd push with cert
 ---------------------------------
 
@@ -437,23 +491,141 @@
 
 
 
+  - Pull needs to have a full name including version, so, it is necessary to have a full name when making push
+          Otherwise, kubectl couldn't find the image
+  root@5g1-comp1:~/Download# ctr -n=k8s.io image tag 10.0.50.11:5000/ctr-srx 10.0.50.11:5000/ctr-srx:6
+  10.0.50.11:5000/ctr-srx:6
+
+
+  - push again with full name including version number
+  root@5g1-comp1:~/Download# ctr -n=k8s.io image push 10.0.50.11:5000/ctr-srx:6
+  manifest-latest@sha256:93c5bf987336339584e537f1f314038eed9350a8bf619261c6333abb2e5a9a06: done           |++++++++++++++++++++++++++++++++++++++|
+  config-sha256:bfdaf0ef555fb3906a60caa730934b94ad0f2f436f21c6a003eb4fdf42b2b79e:          done           |++++++++++++++++++++++++++++++++++++++|
+  elapsed: 0.3 s                                                                           total:  12.0 K (39.8 KiB/s)
+
+
+  - check the registry catalog whether it is pushed even though it doesn't show version number
+  root@5g1-comp1:~/Download# curl -k https://10.0.50.11:5000/v2/_catalog
+  {"repositories":["ctr-srx","exabgpsec_src","gobgpsec_src","nist-bgp-srx","srx","srx-grpc","srx-swarm","srx_grpc","srxcryptoapi_src","srxsuite_gl","srxsuite_src"]}
+
+
+  - Now pull again --> success !!
+  root@5g1-comp1:~/Download# ctr -n=k8s.io image pull 10.0.50.11:5000/ctr-srx:6
+  10.0.50.11:5000/ctr-srx:6:                                                        resolved       |++++++++++++++++++++++++++++++++++++++|
+  manifest-sha256:93c5bf987336339584e537f1f314038eed9350a8bf619261c6333abb2e5a9a06: done           |++++++++++++++++++++++++++++++++++++++|
+  config-sha256:bfdaf0ef555fb3906a60caa730934b94ad0f2f436f21c6a003eb4fdf42b2b79e:   done           |++++++++++++++++++++++++++++++++++++++|
+  ...
+  layer-sha256:723358298de86fa010e9f6236cff314fb0b8d0f51b468c61c3a84f6095c4c642:    done           |++++++++++++++++++++++++++++++++++++++|
+  elapsed: 0.1 s                                                                    total:   0.0 B (0.0 B/s)
+  unpacking linux/amd64 sha256:93c5bf987336339584e537f1f314038eed9350a8bf619261c6333abb2e5a9a06...
+  done: 25.101069ms
 
 
 
 
+-----------------------------------
+ kubectl deploy certificate error
+-----------------------------------
+
+<issue>
+Kubernetes pull still has "x509: certificate signed by unknown authority" error  --> Solved 2.(1),(2)
+
+so followed all instructions here.
+(https://stackoverflow.com/questions/72102770/x509-certificate-signed-by-unknown-authority-possibly-because-of-crypto-rsa)
+
+1.  vim /etc/docker/daemon.json I have added:  <-- not sure it's needed
+
+{ "insecure-registries":["my.local.registry:5000"] }
+
+
+2. cert copy
+
+(1) bring registry certs into /usr/local/share/ca-certificates/ca.crt
+
+        scp 10.0.50.11:<cert> /etc/docker/cert.d/10.0.50.11:5000/domain.cert
+        mv /usr/local/share/ca-certificates/ca.crt /usr/local/share/ca-certificates/ca.crt.orig
+        cp /etc/docker/cert.d/10.0.50.11:5000/domain.cert /usr/local/share/ca-certificates/ca.crt
+
+        -- copy cert to /etc/ssl/certs
+        root@5g1-comp1:/etc/docker/certs.d/10.0.50.11:5000# cp 10.0.50.11\:5000.* domain.* /etc/ssl/certs/
+        root@5g1-comp1:~/Download# ls /etc/docker/certs.d/10.0.50.11:5000
+        10.0.50.11:5000.cert  10.0.50.11:5000.crt  10.0.50.11:5000.key  ca.crt  domain.cert  domain.key
+
+    --> TODO: need to know what is the right place where the certs should be
+
+
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    --> Solved !!! (updated. 2024.07.18)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        Only copy a cert file, domain.crt(not cert), into /etc/ssl/certs 
+        and then, it's enough restart following services
+          update-ca-certificates
+          service docker restart      
+          systemctl restart containerd
 
 
 
+(2) update & restart services
+
+        sudo update-ca-certificates  <-- it seems this one is important
+
+            root@5g1-comp1:/etc/docker/certs.d/10.0.50.11:5000# update-ca-certificates
+            Updating certificates in /etc/ssl/certs...
+            rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+            rehash: warning: skipping duplicate certificate in ca.pem                                       
+            rehash: warning: skipping duplicate certificate in 10.0.50.11:5000.crt
+            rehash: warning: skipping tls.crt,it does not contain exactly one certificate or CRL            
+            1 added, 0 removed; done.
+            Running hooks in /etc/ca-certificates/update.d...                                               
+            done.
+
+        sudo service docker restart
+        sudo systemctl restart containerd
 
 
 
+3. kubectl apply
+
+    root@5g1-comp1:~/Download# cat repo4.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: srx-swarm
+      name: srx-swarm
+    spec:
+      containers:
+      - image: 10.0.50.11:5000/srx-swarm
+        name: srx-swarm
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+    status: {}
+
+    root@5g1-comp1:~/Download# kubectl apply -f repo4.yaml
+    pod/srx-swarm created
+
+
+    root@5g1-comp1:~/Download# kubectl get po | grep srx
+    ctr-srx                1/1     Running   0          116m
+    srx-5b98847545-4pw6s   1/1     Running   0          12h
+    srx-swarm              1/1     Running   0          101m
 
 
 
+    **** where ****
+    - ctr-srx: In 5g1-comp1, generated ctr-srx containerd image and pushed into 10.0.50.11:5000 registry 
+                And then, kubectl apply the following file
+        ...
+        containers:
+        - image: 10.0.50.11:5000/ctr-srx:6
+          name: ctr-srx
+        
+    - srx-5b98847545-4pw6s : ctr imported srx image which was downloaded in forms of srx.tar
 
-
-
-
+    - srx-swarm: without any conversion to containerd or being imported, 
+                 just used origianl docker file in the registry by applying repo4.yaml above
 
 
 

@@ -39,3 +39,43 @@
   root@vagrant:~# crictl images
   IMAGE                                TAG                 IMAGE ID            SIZE
   10.0.50.11:5000/srx                  latest              95d50477b3e65       151MB
+
+
+
+
+
+
+
+
+
+
+2. container runtime error occurs 
+---------------------------------
+
+WARN[0000] runtime connect using default endpoints: [unix:///var/run/dockershim.sock 
+unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock unix:///var/run/cri-dockerd.sock].
+...
+
+  < Solution.1 >
+  (https://kubernetes.io/docs/tasks/debug/debug-cluster/crictl/)
+
+  vagrant@vagrant:~$ sudo crictl config --set runtime-endpoint=unix:///var/run/containerd/containerd.sock
+  vagrant@vagrant:~$ sudo crictl exec -it 3b69b6959a156 /bin/bash
+  [root@private-reg ~]#
+
+
+  < Solution.2 >
+  sudo -s (root account)
+  export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
+  /var/lib/rancher/rke2/bin/crictl ps
+
+
+  <Solution. 3 > <-- EASY
+  root@m-k8s:~# vim /etc/crictl.yaml
+  runtime-endpoint: unix:///run/containerd/containerd.sock
+  imageruntime-endpoint: unix:///run/containerd/containerd.sock
+
+
+
+
+

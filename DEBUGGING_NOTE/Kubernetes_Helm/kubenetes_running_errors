@@ -346,6 +346,12 @@ Getting rid of taint, add '-' at the end of command argument
   /var/lib/rancher/rke2/bin/crictl ps
 
 
+  <Solution. 3 > <-- EASY
+  root@m-k8s:~# vim /etc/crictl.yaml
+  runtime-endpoint: unix:///run/containerd/containerd.sock
+  imageruntime-endpoint: unix:///run/containerd/containerd.sock
+
+
 
 ------------------------------------------------------------
 10. failed to run Kubelet: validate service connection: 
