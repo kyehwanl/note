@@ -428,6 +428,17 @@ Case incensitive search
 
 
 
+Swap view horizontal or vertical
+===================================
+
+(https://learnbyexample.github.io/tips/vim-tip-14/)
+
+Ctrl+w followed by HJKL (uppercase):
+    moves the current split to the farthest possible location in the respective direction
+
+    (for example) when vertically splitted windows, go to the right window (with ctrl+w l)
+                  and then, Ctrl+w J, makes the right side window be placed at the bottom
+
 
 
 
