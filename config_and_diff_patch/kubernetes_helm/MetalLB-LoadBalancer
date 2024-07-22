@@ -1,0 +1,46 @@
+
+
+How to use MetalLB loadbalancer
+================================
+
+1. install MetalLB 
+kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb.yaml
+
+
+
+2. MetalLB config
+kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb-l2config.yaml
+
+  < metallb-l2config.yaml >
+  apiVersion: v1                   
+  kind: ConfigMap                  
+  metadata:                        
+    namespace: metallb-system      
+    name: config                   
+  data:                            
+    config: |                      
+      address-pools:               
+      - name: nginx-ip-range       
+        protocol: layer2           
+        addresses:                 
+        - 192.168.1.10-192.168.1.12
+
+
+3. deploy service
+    kubectl create deployment lb-hname-pods --image=sysnet4admin/echo-hname
+
+
+
+4. expose service
+    kubectl expose deployment lb-hname-pods --type=LoadBalancer --name=lb-hname-svc --port=80
+
+    ~# kubectl get svc -o wide                                                                
+    NAME           TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE     SELECTOR         
+    kubernetes     ClusterIP      10.96.0.1       <none>         443/TCP        3h56m   <none>           
+    lb-hname-svc   LoadBalancer   10.99.41.105    192.168.1.10   80:30446/TCP   19m     app=lb-hname-pods
+
+
+5. access from outside
+
+  onfadmin@5g1-comp2:~$ curl 192.168.1.10
+  lb-hname-pods-5f777c764d-tdg9g

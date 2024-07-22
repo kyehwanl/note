@@ -26,7 +26,7 @@ echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docke
 
 sudo apt update
 sudo apt install -y apt-transport-https ca-certificates curl
-sudo apt install -y git vim
+sudo apt install -y git vim bash-completion
 
 # Bridged Network Traffic
 modprobe br_netfilter

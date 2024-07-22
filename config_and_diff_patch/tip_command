@@ -727,7 +727,6 @@ journalctl <service>
 
 
 
-
 (42) Change Default Gateway
 ==============================
 route del default
@@ -735,6 +734,26 @@ route add default 1.2.3.4
 
 
 
+
+
+
+(43) NFS setup
+================
+- file server: fs7 (129.6.140.212)
+  -- command (need nfs-common installed, otherwise, "mount bad option; for several filesystems" error)
+        
+  mount -t nfs -o rsize=8192,wsize=8192,nfsvers=3 fs7:/users/kyehwanl /users/kyehwanl
+
+  -- in /etc/fstab
+  fs7:/temp            /temp           nfs     rsize=8192,wsize=8192,nfsvers=3,hard,intr 0 0
+  fs7:/users/www       /users/www      nfs     rsize=8192,wsize=8192,nfsvers=3,hard,intr 0 0
+  fs7:/users/kyehwanl  /users/kyehwanl nfs     rsize=8192,wsize=8192,nfsvers=3,hard,intr 0 0
+
+
+- Error, "Busy Device on Umount", try to find the processes to use /user/kyehwanl
+    
+    -- lsof /users/kyehwanl
+    -- fuser -vm /users/kyehwanl
 
 
 
@@ -778,6 +797,7 @@ J. compare files over ssh with vimdiff
     or scp://bgp2.antd.nist.gov/~/config_and_diff_patch/tip_command
    AND (in vim command mode) :vsp scp://ts1/~/Projects/proj-bgp/quaggasrx/test_install/etc/bgpd.conf
 K. NFS mount: mount -t nfs -o rsize=8192,wsize=8192,nfsvers=3 fs5-141:/users/kyehwanl /users/kyehwanl
+   --  mount -t nfs -o rsize=8192,wsize=8192,nfsvers=3 fs7:/users/kyehwanl /users/kyehwanl
 L. iptables(bgp) iptables -I INPUT 1 -p tcp --dport 179 -j ACCEPT
    iptables -L --line-numbers: show lines, iptables -D INPUT <number>: delete nth line in INPUT
 M. X11 configuration problem: (1) goto root with sudo -s, (2) xauth merge /users/kyehwanl/.Xauthority

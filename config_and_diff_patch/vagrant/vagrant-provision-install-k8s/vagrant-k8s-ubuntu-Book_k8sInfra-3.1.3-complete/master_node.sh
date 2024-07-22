@@ -62,6 +62,7 @@ kubectl get pods --all-namespaces
 ### Pod Network (CNI)
 # policy/v1beta1 PodSecurityPolicy in flannel, is deprecated in v1.21
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+#kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 #kubectl apply -f https://raw.githubusercontent.com/sysnet4admin/IaC/master/manifests/172.16_net_calico.yaml
 #kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 
