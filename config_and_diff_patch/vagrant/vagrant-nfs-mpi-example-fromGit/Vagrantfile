@@ -29,6 +29,9 @@ SCRIPT
 
 
 # Install Network File System (NFS) on server
+#   --  NFS will translate any root operations on the client to the nobody:nogroup credentials as a security measure. 
+#       Therefore, we need to change the directory ownership to match those credentials
+#   --  sed $a - append to the end of file command
 $installNFSServer = <<SCRIPT
 apt install nfs-kernel-server -y
 mkdir -p /mnt/mirror

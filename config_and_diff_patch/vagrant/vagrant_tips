@@ -427,6 +427,17 @@ Only the initial boot-up will take longer time than the succeeding boots.
 
 
 
+(3) command directory ssh
+	ssh -p <PORT> -i .vagrant/machines/<name>/virtualbox/private_key vagrant@127.0.0.1 [commands]
+
+	(example)
+	$ ssh -p 60010 -i .vagrant/machines/m-k8s/virtualbox/private_key vagrant@127.0.0.1 sudo id && hostname
+	uid=0(root) gid=0(root) groups=0(root)
+	pwct1
+
+
+
+
 
 2. Vagrantfile with username and password
 ==========================================

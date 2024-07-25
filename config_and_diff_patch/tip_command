@@ -737,8 +737,8 @@ route add default 1.2.3.4
 
 
 
-(43) NFS setup
-================
+(43) NFS setup on NIST fs
+==========================
 - file server: fs7 (129.6.140.212)
   -- command (need nfs-common installed, otherwise, "mount bad option; for several filesystems" error)
         
@@ -754,6 +754,74 @@ route add default 1.2.3.4
     
     -- lsof /users/kyehwanl
     -- fuser -vm /users/kyehwanl
+
+
+
+
+(44) NFS server client on Ubuntu
+=================================
+https://ubuntu.com/server/docs/network-file-system-nfs
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04
+
+(example 1)
+# Install Network File System (NFS) on server
+#   --  NFS will translate any root operations on the client to the nobody:nogroup credentials as a security measure.
+#       Therefore, we need to change the directory ownership to match those credentials
+#   --  sed $a - append to the end of file command
+    apt install nfs-kernel-server -y
+    mkdir -p /mnt/mirror
+    chown -R nobody:nogroup /mnt/mirror
+    chmod 777 /mnt/mirror/
+    sed -i -e '$a/mnt/mirror 192.168.10.0/24(rw,sync)' /etc/exports
+    exportfs -a
+    systemctl restart nfs-kernel-server.service
+
+
+# Install NFS on clients
+    apt install nfs-common -y
+    mkdir -p /mnt/mirror
+    mount <serverip:192.168.10.2>:/mnt/mirror /mnt/mirror
+    touch /mnt/mirror/file.txt
+    echo hello >> /mnt/mirror/file.txt
+
+
+(example 2)
+Exporting the Home Directory
+ - from server
+ -- /etc/exports
+    /home      client_ip(rw,sync,no_root_squash,no_subtree_check)
+
+        no_subtree_check: This option prevents subtree checking, which is a process where the host must check 
+                          whether the file is actually still available in the exported tree for every request. 
+                          This can cause many problems when a file is renamed while the client has it opened. 
+                          In almost all cases, it is better to disable subtree checking.
+        no_root_squash: By default, NFS translates requests from a root user remotely into a non-privileged user on the server. 
+                        This was intended as security feature to prevent a root account on the client from using the file system 
+                        of the host as root. no_root_squash disables this behavior for certain shares.
+
+ -- sudo systemctl restart nfs-kernel-server
+ -- sudo ufw allow from client_ip to any port nfs --> port usually 2049
+
+
+ - in client
+ -- sudo mkdir -p /nfs/home
+ -- sudo mount host_ip:/home /nfs/home
+
+
+ (for verifying nfs)
+
+  - server,
+  -- checking nfs mount with following commands:
+      showmount -e localhost or
+      exportfs -v
+      nfsstat -m
+
+  - client
+  -- to check nfs mount position,
+      showmount -e 192.168.10.2
+
+  -- to check nfs mount result,
+      df -hT
 
 
 
