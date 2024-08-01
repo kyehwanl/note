@@ -202,8 +202,40 @@
 
 
 
+3. using Access Token
+----------------------
+(https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
+
+(1) create Access Token for NIST Gitlab
+    https://gitlab.nist.gov/gitlab/-/user_settings/personal_access_tokens
+
+        --> access token: glpat-<Hexadecimal codes>
+
+(2) cloning with Access Token,
+
+    git clone https://<username>:<personal_token>@gitlab.com/gitlab-org/gitlab.git
+
+    (example)
+    root@ric:~# git clone https://kyehwanl:glpat-RLxcxSYJjz96TxPvRU56@gitlab.nist.gov/gitlab/itrg-students/ansible-testbed-automation.git
+    Cloning into 'ansible-testbed-automation'...
+    remote: Enumerating objects: 5, done.
+    remote: Counting objects: 100% (5/5), done.
+    remote: Compressing objects: 100% (4/4), done.
+    remote: Total 5 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+    Unpacking objects: 100% (5/5), 3.03 KiB | 1.01 MiB/s, done
 
 
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
