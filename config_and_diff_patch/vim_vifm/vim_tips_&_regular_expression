@@ -292,6 +292,13 @@ Vim folding commands
   ]z move to end of open fold.
 
 
+  (cf.) 
+  with 	nmap <leader>f0 :set foldlevel=0<CR> 	in .vimrc setting, 
+  		...
+    	nmap <leader>f9 :set foldlevel=9<CR> 	where <leader> is ','
+
+	, + f + <0-9> : change folder level
+
 
 
 
