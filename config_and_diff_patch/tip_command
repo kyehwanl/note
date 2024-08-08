@@ -294,6 +294,23 @@ egrep is exactly same as ‘grep -E’
         (example) egrep 'Manager|Developer' employee.txt | grep -v Sales
 
 
+5. grep context
+    (include context before, after or both(-C or just -NUM)
+
+    -B, --before-context=NUM  print NUM lines of leading context
+    -A, --after-context=NUM   print NUM lines of trailing context
+    -C, --context=NUM         print NUM lines of output context
+    -NUM                      same as --context=NUM
+
+    (example)
+    -- all result are the same
+
+      ifconfig | grep 192.168 -B 3 -A 3
+      ifconfig | grep 192.168 -C 3
+      ifconfig | grep 192.168 -3
+
+
+
 
 (16) ssh tunnel
 ====================

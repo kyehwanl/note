@@ -22,13 +22,35 @@ LoadBalancer MetalLB test
           addresses:
           - 192.168.1.11-192.168.1.29 
 
+
+
+    After install, following might be needed
+
+    kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb-l2config.yaml
+
+    (metallb-l2config.yaml)
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: |
+          address-pools:
+          - name: nginx-ip-range
+            protocol: layer2
+            addresses:
+            - 192.168.1.10-192.168.1.12
+
+
+
     1.2) using yaml manifests
 
     kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb.yaml --> (cf.) Ref. 
     kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb-l2config.yaml
 
 
-      # cat metallb-configmap.yaml
+      # cat metallb-configmap.yaml (or metallb-l2config.yaml)
       apiVersion: v1
       kind: ConfigMap
       metadata:
@@ -74,7 +96,7 @@ LoadBalancer MetalLB test
 
     -- other service install
 
-    kubectl run nginx-test --image=nginx
+    kubectl run nginx-test --image=nginx (or kubectl create deployment dep-nginx --image=nginx)
     kubectl expose pod nginx-test --type=LoadBalancer --name=svc-nginx --port=80 
 
 

@@ -44,3 +44,46 @@ kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb-l2config.yaml
 
   onfadmin@5g1-comp2:~$ curl 192.168.1.10
   lb-hname-pods-5f777c764d-tdg9g
+
+
+
+
+
+
+
+
+
+
+
+ < logs >
+
+    root@m-k8s:~# kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb.yaml
+    namespace/metallb-system created
+    serviceaccount/controller created
+    serviceaccount/speaker created
+    clusterrole.rbac.authorization.k8s.io/metallb-system:controller created
+    clusterrole.rbac.authorization.k8s.io/metallb-system:speaker created
+    role.rbac.authorization.k8s.io/config-watcher created
+    clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller created
+    clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker created
+    rolebinding.rbac.authorization.k8s.io/config-watcher created
+    Warning: spec.template.spec.nodeSelector[beta.kubernetes.io/os]: deprecated since v1.14; use "kubernetes.io/os" instead
+    daemonset.apps/speaker created
+    deployment.apps/controller created
+    error: resource mapping not found for name: "speaker" namespace: "metallb-system" from "/vagrant/_Book_k8sInfra/ch3/3.3.4/metallb.yaml": no matches for kind "PodSecurityPolicy" in version "policy/v1beta1"
+    ensure CRDs are installed first
+
+    root@m-k8s:~# kubectl apply -f /vagrant/_Book_k8sInfra/ch3/3.3.4/metallb-l2config.yaml
+    configmap/config created
+
+    root@m-k8s:~# k expose deployment lb-hname-pods --name=lb-hname-svc --port=80 --type=LoadBalancer
+    service/lb-hname-svc exposed
+
+    root@m-k8s:~# kubectl get svc -o wide
+    NAME           TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE     SELECTOR
+    kubernetes     ClusterIP      10.96.0.1       <none>         443/TCP        3h56m   <none>
+    lb-hname-svc   LoadBalancer   10.99.41.105    192.168.1.10   80:30446/TCP   19m     app=lb-hname-pods
+    svc-nginx      NodePort       10.107.191.39   <none>         80:31271/TCP   36m     run=nginx-test
+
+    root@m-k8s:~# curl -k 192.168.1.10
+    lb-hname-pods-5f777c764d-tdg9g
