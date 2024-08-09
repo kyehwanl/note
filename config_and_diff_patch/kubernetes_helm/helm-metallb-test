@@ -12,6 +12,13 @@ LoadBalancer MetalLB test
     helm repo update
     helm install metallb metallb/metallb [-f metallb-values.yaml]
 
+    < (c.f.) from Troubleshoot in this document >
+      -- To Resolve the issue, install metallb by setting validationFailurePolicy=Ignore#
+          helm upgrade --install metallb  metallb/metallb --create-namespace --namespace metallb-system \ 
+              --set crds.validationFailurePolicy=Ignore --wait
+
+
+
         # cat metallb-values.yaml
         apiVersion: metallb.io/v1beta1
         kind: IPAddressPool
